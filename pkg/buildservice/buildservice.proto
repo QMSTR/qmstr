@@ -20,9 +20,18 @@ message BuildMessage {
 }
 
 message BuildResponse {
-  bool cool = 1;
+  bool success = 1;
+}
+
+message LogMessage {
+  bytes msg = 1;
+}
+
+message LogResponse {
+  bool success = 1;
 }
 
 service BuildService {
   rpc Build(BuildMessage) returns (BuildResponse) {}
+  rpc Log(LogMessage) returns (LogResponse) {}
 }

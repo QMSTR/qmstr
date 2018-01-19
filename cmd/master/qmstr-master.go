@@ -20,7 +20,12 @@ type server struct{}
 
 func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildResponse, error) {
 	// TODO implement handling
-	return &pb.BuildResponse{Cool: true}, nil
+	return &pb.BuildResponse{Success: true}, nil
+}
+
+func (s *server) Log(ctx context.Context, in *pb.LogMessage) (*pb.LogResponse, error) {
+	log.Printf("REMOTE: %s", string(in.Msg))
+	return &pb.LogResponse{Success: true}, nil
 }
 
 func main() {
@@ -32,6 +37,9 @@ func main() {
 	pb.RegisterBuildServiceServer(s, &server{})
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
+
+	log.Print("About to serve")
+
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
