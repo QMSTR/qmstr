@@ -1,0 +1,28 @@
+syntax = "proto3";
+package buildservice;
+
+message File {
+  string path = 1;
+}
+
+message BuildMessage {
+  message Compile {
+    File source = 1;
+    File target = 2;
+  }
+  message Link {
+    File target = 1;
+    repeated File dependencies = 2;
+  }
+  repeated Compile compilations = 1;
+  // can be zero
+  repeated Link binaries = 2;
+}
+
+message BuildResponse {
+  bool cool = 1;
+}
+
+service BuildService {
+  rpc Build(BuildMessage) returns (BuildResponse) {}
+}
