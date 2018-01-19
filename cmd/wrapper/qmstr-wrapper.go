@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"log"
+	"os"
 
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
 	"github.com/QMSTR/qmstr/pkg/wrapper"
@@ -37,9 +38,22 @@ func main() {
 	}
 	defer conn.Close()
 	buildServiceClient = pb.NewBuildServiceClient(conn)
+
 	initLogging()
-	// DO SOMETHING MEANINGFUL
-	logger.Printf("Testing remote logging %s", "as it is important")
+
+	commandLine := os.Args
+	logger.Printf("QMSTR called via %v", commandLine)
+
+	// find out where we are
+	workingDir, err := os.Getwd()
+	if err != nil {
+		log.Fatal("Could not get current working dir.")
+	}
+	logger.Printf("Wrapper running in %s", workingDir)
+
+	w := wrapper.NewWrapper(commandLine, logger)
+	w.Wrap()
+	logger.Printf("Analyze commandline %v", commandLine)
 }
 
 func send_result(buildmsg pb.BuildMessage) error {
