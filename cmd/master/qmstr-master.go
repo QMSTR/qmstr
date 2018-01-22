@@ -16,6 +16,8 @@ const (
 	port = ":50051"
 )
 
+var quitServer chan interface{}
+
 type server struct{}
 
 func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildResponse, error) {
@@ -28,6 +30,19 @@ func (s *server) Log(ctx context.Context, in *pb.LogMessage) (*pb.LogResponse, e
 	return &pb.LogResponse{Success: true}, nil
 }
 
+func (s *server) Quit(ctx context.Context, in *pb.QuitMessage) (*pb.QuitResponse, error) {
+	if in.Kill {
+		log.Fatalf("qmstr was killed hard by client")
+	}
+
+	// Wait for pending tasks to complete e.g. synchronize channels
+
+	// Schedule shutdown
+	quitServer <- nil
+
+	return &pb.QuitResponse{Success: true}, nil
+}
+
 func main() {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
@@ -37,6 +52,15 @@ func main() {
 	pb.RegisterBuildServiceServer(s, &server{})
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
+
+	quitServer = make(chan interface{})
+	go func() {
+		<-quitServer
+		log.Println("qmstr terminated by client")
+		s.GracefulStop()
+		close(quitServer)
+		quitServer = nil
+	}()
 
 	log.Print("About to serve")
 
