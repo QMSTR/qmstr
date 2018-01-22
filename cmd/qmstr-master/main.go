@@ -21,7 +21,12 @@ var quitServer chan interface{}
 type server struct{}
 
 func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildResponse, error) {
-	// TODO implement handling
+	for _, bin := range in.Binary {
+		log.Printf("Linked target: %v", bin)
+	}
+	for _, compile := range in.Compilations {
+		log.Printf("Compiled %v", compile)
+	}
 	return &pb.BuildResponse{Success: true}, nil
 }
 
