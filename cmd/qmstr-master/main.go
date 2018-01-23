@@ -21,6 +21,7 @@ const (
 	clientPort = "localhost:9080"
 )
 
+var cl *client.Dgraph
 var quitServer chan interface{}
 
 type server struct{}
@@ -32,6 +33,7 @@ func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildRespo
 	for _, compile := range in.Compilations {
 		log.Printf("Compiled %v", compile)
 	}
+	dgraph.AddData(cl, in)
 	return &pb.BuildResponse{Success: true}, nil
 }
 
@@ -69,10 +71,10 @@ func main() {
 		log.Fatalf("Failed to connect to the dgraph server: %v", err)
 	}
 	defer conn.Close()
-	cl := client.NewDgraphClient(api.NewDgraphClient(conn))
+	cl = client.NewDgraphClient(api.NewDgraphClient(conn))
 	// Set up our dgraph schema
 	dgraph.Setup(cl)
-	
+
 	quitServer = make(chan interface{})
 	go func() {
 		<-quitServer
