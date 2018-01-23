@@ -10,10 +10,15 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+
+	"github.com/QMSTR/qmstr/pkg/dgraph"
+	"github.com/dgraph-io/dgraph/client"
+	"github.com/dgraph-io/dgraph/protos/api"
 )
 
 const (
-	port = ":50051"
+	serverPort = ":50051"
+	clientPort = "localhost:9080"
 )
 
 var quitServer chan interface{}
@@ -49,7 +54,7 @@ func (s *server) Quit(ctx context.Context, in *pb.QuitMessage) (*pb.QuitResponse
 }
 
 func main() {
-	lis, err := net.Listen("tcp", port)
+	lis, err := net.Listen("tcp", serverPort)
 	if err != nil {
 		log.Fatalf("Failed to setup socket and listen: %v", err)
 	}
@@ -58,6 +63,16 @@ func main() {
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
 
+	// Create a client connection
+	conn, err := grpc.Dial(clientPort, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Failed to connect to the dgraph server: %v", err)
+	}
+	defer conn.Close()
+	cl := client.NewDgraphClient(api.NewDgraphClient(conn))
+	// Set up our dgraph schema
+	dgraph.Setup(cl)
+	
 	quitServer = make(chan interface{})
 	go func() {
 		<-quitServer
