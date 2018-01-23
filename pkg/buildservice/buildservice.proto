@@ -31,7 +31,16 @@ message LogResponse {
   bool success = 1;
 }
 
+message QuitMessage {
+  bool kill = 1;
+}
+
+message QuitResponse {
+  bool success = 1;
+}
+
 service BuildService {
   rpc Build(BuildMessage) returns (BuildResponse) {}
   rpc Log(LogMessage) returns (LogResponse) {}
+  rpc Quit(QuitMessage) returns (QuitResponse) {}
 }
