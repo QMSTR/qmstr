@@ -9,6 +9,7 @@ import (
 	"os"
 
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
+	"github.com/QMSTR/qmstr/pkg/compiler"
 	"github.com/QMSTR/qmstr/pkg/wrapper"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -54,10 +55,15 @@ func main() {
 	w := wrapper.NewWrapper(commandLine, logger)
 	w.Wrap()
 	logger.Printf("Analyze commandline %v", commandLine)
+	compiler := compiler.GetCompiler(w.Program, workingDir, logger)
+	buildMsg, err := compiler.Analyze(commandLine)
+	if err == nil {
+		send_result(buildMsg)
+	}
 }
 
-func send_result(buildmsg pb.BuildMessage) error {
-	r, err := buildServiceClient.Build(context.Background(), &buildmsg)
+func send_result(buildmsg *pb.BuildMessage) error {
+	r, err := buildServiceClient.Build(context.Background(), buildmsg)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}

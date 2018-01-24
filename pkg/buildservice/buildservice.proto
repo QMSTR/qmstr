@@ -16,7 +16,7 @@ message BuildMessage {
   }
   repeated Compile compilations = 1;
   // can be zero
-  repeated Link binaries = 2;
+  repeated Link binary = 2;
 }
 
 message BuildResponse {
