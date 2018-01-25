@@ -31,13 +31,24 @@ var (
 		"-W":               struct{}{},
 		"-O":               struct{}{},
 		"-f":               struct{}{},
+		"-C":               struct{}{},
 		"-std":             struct{}{},
 		"-nostdinc":        struct{}{},
 		"-print-file-name": struct{}{},
+		"-MD":              struct{}{},
+		"-m":               struct{}{},
+		"-v":               struct{}{},
+		"-g":               struct{}{},
+		"-pg":              struct{}{},
+		"-P":               struct{}{},
+		"-pipe":            struct{}{},
+		"--version":        struct{}{},
 	}
 
 	stringArgs = map[string]struct{}{
 		"-D": struct{}{},
+		"-U": struct{}{},
+		"-x": struct{}{},
 	}
 
 	stringArgsRE = "\\s+\\w+={0,1}\\S*\\s"
@@ -170,6 +181,7 @@ func (g *GccCompiler) parseCommandLine(args []string) {
 	gccFlags.StringSliceP("includepath", "I", []string{}, "include path")
 	gccFlags.String("isystem", undef, "system include path")
 	gccFlags.String("include", undef, "include header file")
+	gccFlags.StringSliceP("linklib", "l", []string{}, "include header file")
 
 	g.logger.Printf("Parsing cleaned commandline: %v", g.Args)
 	err := gccFlags.Parse(g.Args)
