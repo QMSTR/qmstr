@@ -1,8 +1,10 @@
 package wrapper
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -44,6 +46,49 @@ func (w *Wrapper) Wrap() {
 	var stdoutbuf, stderrbuf bytes.Buffer
 	cmd.Stdout = &stdoutbuf
 	cmd.Stderr = &stderrbuf
+
+	// connect stdin to pass piped data through and save for analysis
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		w.logger.Panic(err)
+	}
+
+	stdinChannel := make(chan []byte, 1024)
+	stdinHandler := func(stdin io.WriteCloser, c chan []byte) {
+		w.logger.Println("stdin handler")
+		defer stdin.Close()
+		tee := io.TeeReader(os.Stdin, stdin)
+		r := bufio.NewReader(tee)
+		nBytes, nChunks := int64(0), int64(0)
+		buf := make([]byte, 0, 1024)
+		for {
+			w.logger.Println("Reading data from stdin")
+			n, err := r.Read(buf[:cap(buf)])
+			buf = buf[:n]
+			if n == 0 {
+				if err == nil {
+					continue
+				}
+				if err == io.EOF {
+					break
+				}
+				w.logger.Fatal(err)
+			}
+			nChunks++
+			nBytes += int64(len(buf))
+			// process buf
+			w.logger.Println("Write data to channel")
+			c <- buf
+			w.logger.Printf("data: %s", buf)
+			if err != nil && err != io.EOF {
+				w.logger.Fatal(err)
+			}
+		}
+	}
+
+	go stdinHandler(stdin, stdinChannel)
+
+	w.logger.Println("Starting wrapper")
 
 	err = cmd.Run()
 	if err != nil {
