@@ -34,6 +34,7 @@ var (
 		"-C":               struct{}{},
 		"-std":             struct{}{},
 		"-nostdinc":        struct{}{},
+		"-nostdlib":        struct{}{},
 		"-print-file-name": struct{}{},
 		"-MD":              struct{}{},
 		"-m":               struct{}{},
@@ -42,6 +43,9 @@ var (
 		"-pg":              struct{}{},
 		"-P":               struct{}{},
 		"-pipe":            struct{}{},
+		"-rdynamic":        struct{}{},
+		"-shared":          struct{}{},
+		"-static":          struct{}{},
 		"--version":        struct{}{},
 	}
 
@@ -65,15 +69,17 @@ type GccCompiler struct {
 	Output  []string
 	WorkDir string
 	Args    []string
-	logger  *log.Logger
+	GeneralCompiler
 }
 
-func NewGccCompiler(workDir string, logger *log.Logger) *GccCompiler {
-	return &GccCompiler{Link, []string{}, []string{}, workDir, []string{}, logger}
+func NewGccCompiler(workDir string, logger *log.Logger, debug bool) *GccCompiler {
+	return &GccCompiler{Link, []string{}, []string{}, workDir, []string{}, GeneralCompiler{logger, debug}}
 }
 
 func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
-	g.logger.Printf("Parsing commandline %v", commandline)
+	if g.debug {
+		g.logger.Printf("Parsing commandline %v", commandline)
+	}
 	g.parseCommandLine(commandline[1:])
 
 	switch g.Mode {
@@ -96,7 +102,9 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 		buildMsg.Compilations = []*pb.BuildMessage_Compile{}
 
 		for idx, inFile := range g.Input {
-			g.logger.Printf("This is the source file %s indexed %d", inFile, idx)
+			if g.debug {
+				g.logger.Printf("This is the source file %s indexed %d", inFile, idx)
+			}
 			sourceFile := pb.File{Path: wrapper.BuildCleanPath(g.WorkDir, inFile)}
 			targetFile := pb.File{Path: wrapper.BuildCleanPath(g.WorkDir, g.Output[idx])}
 			buildMsg.Compilations = append(buildMsg.Compilations, &pb.BuildMessage_Compile{Source: &sourceFile, Target: &targetFile})
@@ -110,15 +118,22 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 func (g *GccCompiler) cleanCmdLine(args []string) {
 	clearIdxSet := map[int]struct{}{}
 	for idx, arg := range args {
-		g.logger.Printf("%d - %s", idx, arg)
+
+		if g.debug {
+			g.logger.Printf("%d - %s", idx, arg)
+		}
 
 		// index string flags
 		if idx < len(args)-1 {
 			for key := range stringArgs {
-				g.logger.Printf("Find %s string arg in %s with %s", key, fmt.Sprintf("%s %s ", arg, args[idx+1]), fmt.Sprintf("%s%s", key, stringArgsRE))
+				if g.debug {
+					g.logger.Printf("Find %s string arg in %s with %s", key, fmt.Sprintf("%s %s ", arg, args[idx+1]), fmt.Sprintf("%s%s", key, stringArgsRE))
+				}
 				re := regexp.MustCompile(fmt.Sprintf("%s%s", key, stringArgsRE))
 				if re.MatchString(fmt.Sprintf("%s %s ", arg, args[idx+1])) {
-					g.logger.Printf("Found %v string arg", args[idx:idx+1])
+					if g.debug {
+						g.logger.Printf("Found %v string arg", args[idx:idx+1])
+					}
 					clearIdxSet[idx] = struct{}{}
 					clearIdxSet[idx+1] = struct{}{}
 				}
@@ -149,26 +164,38 @@ func (g *GccCompiler) cleanCmdLine(args []string) {
 	}
 	sort.Sort(sort.IntSlice(clear))
 
-	g.logger.Printf("To be cleaned %v", clear)
+	if g.debug {
+		g.logger.Printf("To be cleaned %v", clear)
+	}
 	initialArgsSize := len(args)
 	for _, idx := range clear {
-		g.logger.Printf("Clearing %d", idx)
+		if g.debug {
+			g.logger.Printf("Clearing %d", idx)
+		}
 		offset := initialArgsSize - len(args)
 		offsetIdx := idx - offset
-		g.logger.Printf("Actually clearing %d", offsetIdx)
+		if g.debug {
+			g.logger.Printf("Actually clearing %d", offsetIdx)
+		}
 		if initialArgsSize-1 == idx {
-			g.logger.Printf("Cut last arg")
+			if g.debug {
+				g.logger.Printf("Cut last arg")
+			}
 			args = args[:offsetIdx]
 		} else {
 			args = append(args[:offsetIdx], args[offsetIdx+1:]...)
 		}
-		g.logger.Printf("new slice is %v", args)
+		if g.debug {
+			g.logger.Printf("new slice is %v", args)
+		}
 	}
 	g.Args = args
 }
 
 func (g *GccCompiler) parseCommandLine(args []string) {
-	g.logger.Printf("Parsing arguments: %v", args)
+	if g.debug {
+		g.logger.Printf("Parsing arguments: %v", args)
+	}
 
 	// remove all flags we don't care about but that would break parsing
 	g.cleanCmdLine(args)
@@ -183,7 +210,9 @@ func (g *GccCompiler) parseCommandLine(args []string) {
 	gccFlags.String("include", undef, "include header file")
 	gccFlags.StringSliceP("linklib", "l", []string{}, "include header file")
 
-	g.logger.Printf("Parsing cleaned commandline: %v", g.Args)
+	if g.debug {
+		g.logger.Printf("Parsing cleaned commandline: %v", g.Args)
+	}
 	err := gccFlags.Parse(g.Args)
 	if err != nil {
 		g.logger.Fatalf("Unrecoverable commandline parsing error: %s", err)

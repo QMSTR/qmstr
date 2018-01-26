@@ -17,10 +17,11 @@ type Wrapper struct {
 	logger          *log.Logger
 	Program         string
 	commandlineArgs []string
+	debug           bool
 }
 
 // NewWrapper returns an instance of a Wrapper for the given command line
-func NewWrapper(commandline []string, logger *log.Logger) *Wrapper {
+func NewWrapper(commandline []string, logger *log.Logger, debug bool) *Wrapper {
 	// extract the compiler that was supposed to run
 	w := Wrapper{}
 	w.logger = logger
@@ -55,14 +56,15 @@ func (w *Wrapper) Wrap() {
 
 	stdinChannel := make(chan []byte, 1024)
 	stdinHandler := func(stdin io.WriteCloser, c chan []byte) {
-		w.logger.Println("stdin handler")
 		defer stdin.Close()
 		tee := io.TeeReader(os.Stdin, stdin)
 		r := bufio.NewReader(tee)
 		nBytes, nChunks := int64(0), int64(0)
 		buf := make([]byte, 0, 1024)
 		for {
-			w.logger.Println("Reading data from stdin")
+			if w.debug {
+				w.logger.Println("Reading data from stdin")
+			}
 			n, err := r.Read(buf[:cap(buf)])
 			buf = buf[:n]
 			if n == 0 {
@@ -76,10 +78,13 @@ func (w *Wrapper) Wrap() {
 			}
 			nChunks++
 			nBytes += int64(len(buf))
-			// process buf
-			w.logger.Println("Write data to channel")
+			if w.debug {
+				w.logger.Println("Writing data to channel")
+			}
 			c <- buf
-			w.logger.Printf("data: %s", buf)
+			if w.debug {
+				w.logger.Printf("data: %s", buf)
+			}
 			if err != nil && err != io.EOF {
 				w.logger.Fatal(err)
 			}
@@ -88,7 +93,9 @@ func (w *Wrapper) Wrap() {
 
 	go stdinHandler(stdin, stdinChannel)
 
-	w.logger.Println("Starting wrapper")
+	if w.debug {
+		w.logger.Println("Starting wrapped program")
+	}
 
 	err = cmd.Run()
 	if err != nil {
@@ -112,7 +119,9 @@ func (w *Wrapper) Wrap() {
 		fmt.Fprintf(os.Stdout, "%s", stdout)
 	}
 
-	w.logger.Print("Actual compiler finished successfully")
+	if w.debug {
+		w.logger.Print("Actual compiler finished successfully")
+	}
 }
 
 // CheckExecutable checks the given file to be no directory and executable flagged

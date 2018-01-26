@@ -10,10 +10,15 @@ type Compiler interface {
 	Analyze(commandline []string) (*pb.BuildMessage, error)
 }
 
-func GetCompiler(prog string, workDir string, logger *log.Logger) Compiler {
+type GeneralCompiler struct {
+	logger *log.Logger
+	debug  bool
+}
+
+func GetCompiler(prog string, workDir string, logger *log.Logger, debug bool) Compiler {
 	switch prog {
 	case "gcc", "g++":
-		return NewGccCompiler(workDir, logger)
+		return NewGccCompiler(workDir, logger, debug)
 	default:
 		log.Printf("Compiler %s not available", prog)
 	}
