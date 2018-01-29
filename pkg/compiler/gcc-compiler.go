@@ -107,6 +107,10 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 		buildMsg := pb.BuildMessage{}
 		buildMsg.Compilations = []*pb.BuildMessage_Compile{}
 
+		if g.debug {
+			g.logger.Printf("This is our input %v", g.Input)
+			g.logger.Printf("This is our output %v", g.Output)
+		}
 		for idx, inFile := range g.Input {
 			if g.debug {
 				g.logger.Printf("This is the source file %s indexed %d", inFile, idx)
@@ -235,6 +239,9 @@ func (g *GccCompiler) parseCommandLine(args []string) {
 	}
 	if ok, err := gccFlags.GetBool("preprocess"); ok && err == nil {
 		g.Mode = Preproc
+	}
+	if g.debug {
+		g.logger.Printf("Mode set to: %v", g.Mode)
 	}
 
 	if output, err := gccFlags.GetString("output"); err == nil && output != undef {
