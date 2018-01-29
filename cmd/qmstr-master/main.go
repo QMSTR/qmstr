@@ -9,7 +9,6 @@ import (
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 
 	"github.com/QMSTR/qmstr/pkg/dgraph"
 	"github.com/dgraph-io/dgraph/client"
@@ -62,8 +61,6 @@ func main() {
 	}
 	s := grpc.NewServer()
 	pb.RegisterBuildServiceServer(s, &server{})
-	// Register reflection service on gRPC server.
-	reflection.Register(s)
 
 	// Create a client connection
 	conn, err := grpc.Dial(clientPort, grpc.WithInsecure(), grpc.WithBlock())
