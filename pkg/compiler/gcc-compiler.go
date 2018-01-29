@@ -64,16 +64,18 @@ var (
 )
 
 type GccCompiler struct {
-	Mode    mode
-	Input   []string
-	Output  []string
-	WorkDir string
-	Args    []string
+	Mode     mode
+	Input    []string
+	Output   []string
+	WorkDir  string
+	LinkLibs []string
+	LibPath  []string
+	Args     []string
 	GeneralCompiler
 }
 
 func NewGccCompiler(workDir string, logger *log.Logger, debug bool) *GccCompiler {
-	return &GccCompiler{Link, []string{}, []string{}, workDir, []string{}, GeneralCompiler{logger, debug}}
+	return &GccCompiler{Link, []string{}, []string{}, workDir, []string{}, []string{}, []string{}, GeneralCompiler{logger, debug}}
 }
 
 func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
@@ -91,7 +93,11 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			inputFile := pb.File{Path: wrapper.BuildCleanPath(g.WorkDir, inFile)}
 			dependencies = append(dependencies, &inputFile)
 		}
-		buildLinkMsg.Dependencies = dependencies
+		buildLinkMsg.Input = dependencies
+
+		buildLinkMsg.LinkLibs = g.LinkLibs
+		buildLinkMsg.LibDirs = g.LibPath
+
 		buildMsg := pb.BuildMessage{}
 		buildMsg.Binary = []*pb.BuildMessage_Link{&buildLinkMsg}
 
@@ -208,7 +214,8 @@ func (g *GccCompiler) parseCommandLine(args []string) {
 	gccFlags.StringSliceP("includepath", "I", []string{}, "include path")
 	gccFlags.String("isystem", undef, "system include path")
 	gccFlags.String("include", undef, "include header file")
-	gccFlags.StringSliceP("linklib", "l", []string{}, "include header file")
+	gccFlags.StringSliceVarP(&g.LinkLibs, "linklib", "l", []string{}, "link libs")
+	gccFlags.StringSliceVarP(&g.LibPath, "linklibdir", "L", []string{}, "search dir for link libs")
 
 	if g.debug {
 		g.logger.Printf("Parsing cleaned commandline: %v", g.Args)
