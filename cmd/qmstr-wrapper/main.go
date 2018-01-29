@@ -16,13 +16,15 @@ import (
 )
 
 const (
-	address = "localhost:50051"
+	address  = "localhost:50051"
+	debugEnv = "QMSTR_DEBUG"
 )
 
 var (
 	buildServiceClient pb.BuildServiceClient
 	logger             *log.Logger
 	conn               *grpc.ClientConn
+	debug              bool
 )
 
 func initLogging() {
@@ -32,6 +34,7 @@ func initLogging() {
 }
 
 func main() {
+	_, debug = os.LookupEnv(debugEnv)
 	// Set up server connection
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -43,19 +46,22 @@ func main() {
 	initLogging()
 
 	commandLine := os.Args
-	logger.Printf("QMSTR called via %v", commandLine)
+	if debug {
+		logger.Printf("QMSTR called via %v", commandLine)
+	}
 
 	// find out where we are
 	workingDir, err := os.Getwd()
 	if err != nil {
 		log.Fatal("Could not get current working dir.")
 	}
-	logger.Printf("Wrapper running in %s", workingDir)
+	if debug {
+		logger.Printf("Wrapper running in %s", workingDir)
+	}
 
-	w := wrapper.NewWrapper(commandLine, logger)
+	w := wrapper.NewWrapper(commandLine, logger, debug)
 	w.Wrap()
-	logger.Printf("Analyze commandline %v", commandLine)
-	compiler := compiler.GetCompiler(w.Program, workingDir, logger)
+	compiler := compiler.GetCompiler(w.Program, workingDir, logger, debug)
 	buildMsg, err := compiler.Analyze(commandLine)
 	if err == nil {
 		send_result(buildMsg)

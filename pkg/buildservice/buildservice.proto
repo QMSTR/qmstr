@@ -12,7 +12,9 @@ message BuildMessage {
   }
   message Link {
     File target = 1;
-    repeated File dependencies = 2;
+    repeated File input = 2;
+    repeated string linkLibs = 3;
+    repeated string libDirs = 4;
   }
   repeated Compile compilations = 1;
   // can be zero

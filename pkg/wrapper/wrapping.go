@@ -1,8 +1,10 @@
 package wrapper
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -15,10 +17,11 @@ type Wrapper struct {
 	logger          *log.Logger
 	Program         string
 	commandlineArgs []string
+	debug           bool
 }
 
 // NewWrapper returns an instance of a Wrapper for the given command line
-func NewWrapper(commandline []string, logger *log.Logger) *Wrapper {
+func NewWrapper(commandline []string, logger *log.Logger, debug bool) *Wrapper {
 	// extract the compiler that was supposed to run
 	w := Wrapper{}
 	w.logger = logger
@@ -45,6 +48,55 @@ func (w *Wrapper) Wrap() {
 	cmd.Stdout = &stdoutbuf
 	cmd.Stderr = &stderrbuf
 
+	// connect stdin to pass piped data through and save for analysis
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		w.logger.Panic(err)
+	}
+
+	stdinChannel := make(chan []byte, 1024)
+	stdinHandler := func(stdin io.WriteCloser, c chan []byte) {
+		defer stdin.Close()
+		tee := io.TeeReader(os.Stdin, stdin)
+		r := bufio.NewReader(tee)
+		nBytes, nChunks := int64(0), int64(0)
+		buf := make([]byte, 0, 1024)
+		for {
+			if w.debug {
+				w.logger.Println("Reading data from stdin")
+			}
+			n, err := r.Read(buf[:cap(buf)])
+			buf = buf[:n]
+			if n == 0 {
+				if err == nil {
+					continue
+				}
+				if err == io.EOF {
+					break
+				}
+				w.logger.Fatal(err)
+			}
+			nChunks++
+			nBytes += int64(len(buf))
+			if w.debug {
+				w.logger.Println("Writing data to channel")
+			}
+			c <- buf
+			if w.debug {
+				w.logger.Printf("data: %s", buf)
+			}
+			if err != nil && err != io.EOF {
+				w.logger.Fatal(err)
+			}
+		}
+	}
+
+	go stdinHandler(stdin, stdinChannel)
+
+	if w.debug {
+		w.logger.Println("Starting wrapped program")
+	}
+
 	err = cmd.Run()
 	if err != nil {
 		if exiterr, ok := err.(*exec.ExitError); ok {
@@ -67,7 +119,9 @@ func (w *Wrapper) Wrap() {
 		fmt.Fprintf(os.Stdout, "%s", stdout)
 	}
 
-	w.logger.Print("Actual compiler finished successfully")
+	if w.debug {
+		w.logger.Print("Actual compiler finished successfully")
+	}
 }
 
 // CheckExecutable checks the given file to be no directory and executable flagged
