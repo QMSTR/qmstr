@@ -9,7 +9,6 @@ import (
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 const (
@@ -55,8 +54,6 @@ func main() {
 	}
 	s := grpc.NewServer()
 	pb.RegisterBuildServiceServer(s, &server{})
-	// Register reflection service on gRPC server.
-	reflection.Register(s)
 
 	quitServer = make(chan interface{})
 	go func() {
