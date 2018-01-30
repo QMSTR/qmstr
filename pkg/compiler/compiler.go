@@ -4,6 +4,7 @@ import (
 	"log"
 
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
+	"github.com/QMSTR/qmstr/pkg/wrapper"
 )
 
 type Compiler interface {
@@ -24,4 +25,12 @@ func GetCompiler(prog string, workDir string, logger *log.Logger, debug bool) Co
 	}
 
 	return nil
+}
+
+func NewFile(path string) (*pb.File, error) {
+	hash, err := wrapper.Hash(path)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.File{Hash: hash, Path: path}, nil
 }

@@ -9,12 +9,18 @@ import (
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+
+	"github.com/QMSTR/qmstr/pkg/dgraph"
+	"github.com/dgraph-io/dgraph/client"
+	"github.com/dgraph-io/dgraph/protos/api"
 )
 
 const (
-	port = ":50051"
+	buildServicePort = ":50051"
+	dgraphAddress    = "localhost:9080"
 )
 
+var cl *client.Dgraph
 var quitServer chan interface{}
 
 type server struct{}
@@ -26,6 +32,7 @@ func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildRespo
 	for _, compile := range in.Compilations {
 		log.Printf("Compiled %v", compile)
 	}
+	dgraph.AddData(cl, in)
 	return &pb.BuildResponse{Success: true}, nil
 }
 
@@ -48,7 +55,17 @@ func (s *server) Quit(ctx context.Context, in *pb.QuitMessage) (*pb.QuitResponse
 }
 
 func main() {
-	lis, err := net.Listen("tcp", port)
+	// Setup dgraph
+	conn, err := grpc.Dial(dgraphAddress, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Failed to connect to the dgraph server: %v", err)
+	}
+	defer conn.Close()
+	cl = client.NewDgraphClient(api.NewDgraphClient(conn))
+	dgraph.Setup(cl)
+
+	// Setup buildservice
+	lis, err := net.Listen("tcp", buildServicePort)
 	if err != nil {
 		log.Fatalf("Failed to setup socket and listen: %v", err)
 	}
@@ -64,8 +81,7 @@ func main() {
 		quitServer = nil
 	}()
 
-	log.Print("About to serve")
-
+	log.Print("qmstr master running")
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

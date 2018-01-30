@@ -2,7 +2,8 @@ syntax = "proto3";
 package buildservice;
 
 message File {
-  string path = 1;
+  string hash = 1;
+  string path = 2;
 }
 
 message BuildMessage {
