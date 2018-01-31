@@ -12,9 +12,9 @@ import (
 )
 
 const schema = `
-path: string @index(exact) .
+path: string @index(trigram) .
 hash: string @index(exact) .
-type: string .
+type: string @index(hash) .
 `
 
 type Node struct {
