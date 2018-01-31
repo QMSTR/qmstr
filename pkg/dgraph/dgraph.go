@@ -17,6 +17,12 @@ hash: string @index(exact) .
 type: string @index(hash) .
 `
 
+const (
+	artifactTypeLink string = "linkedtarget"
+	artifactTypeSrc  string = "sourcecode"
+	artifactTypeObj  string = "object"
+)
+
 type Node struct {
 	Uid         string  `json:"uid,omitempty"`
 	Hash        string  `json:"hash,omitempty"`
@@ -89,6 +95,7 @@ func AddData(c *client.Dgraph, buildMessage *pb.BuildMessage) {
 				src = Node{
 					Hash: comp.Source.GetHash(),
 					Path: comp.Source.GetPath(),
+					Type: artifactTypeSrc,
 				}
 			} else {
 				src = s.Node[0]
@@ -97,6 +104,7 @@ func AddData(c *client.Dgraph, buildMessage *pb.BuildMessage) {
 				Hash:        comp.Target.GetHash(),
 				Path:        comp.Target.GetPath(),
 				DerivedFrom: []Node{src},
+				Type:        artifactTypeObj,
 			}
 
 			uid, err := addToDB(txn, &targ)
@@ -160,6 +168,7 @@ func AddData(c *client.Dgraph, buildMessage *pb.BuildMessage) {
 				Hash:        bin.Target.GetHash(),
 				Path:        bin.Target.GetPath(),
 				DerivedFrom: deps,
+				Type:        artifactTypeLink,
 			}
 
 			uid, err := addToDB(txn, &targ)
