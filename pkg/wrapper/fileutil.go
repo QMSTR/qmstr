@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 func BuildCleanPath(base string, subpath string) string {
@@ -98,7 +99,23 @@ func FindActualProgram(prog string) (string, error) {
 // FindActualProgram discovers the actual program that is wrapper on the PATH
 func FindActualLibraries(libs []string, libpath []string) ([]string, error) {
 	actualLibPaths := []string{}
-	syslibpath := []string{"/lib", "/usr/lib"}
+	var libprefix string
+	var libsuffix string
+	var syslibpath []string
+	switch runtime.GOOS {
+	case "linux":
+		libprefix = "lib"
+		libsuffix = ".so"
+		syslibpath = []string{"/lib", "/usr/lib"}
+	case "darwin":
+		libprefix = "lib"
+		libsuffix = ".dylib"
+		syslibpath = []string{"/usr/lib"}
+	case "windows":
+		libprefix = ""
+		libsuffix = ".dll"
+		syslibpath = []string{""}
+	}
 	for _, lib := range libs {
 		for _, dir := range append(libpath, syslibpath...) {
 			if dir == "" {
@@ -106,7 +123,7 @@ func FindActualLibraries(libs []string, libpath []string) ([]string, error) {
 				dir = "."
 			}
 			err := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
-				if f.Name() == fmt.Sprintf("lib%s.so", lib) {
+				if f.Name() == fmt.Sprintf("%s%s%s", libprefix, lib, libsuffix) {
 					actualLibPaths = append(actualLibPaths, path)
 					return fmt.Errorf("Found %s", path)
 				}
