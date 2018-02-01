@@ -87,12 +87,33 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 	switch g.Mode {
 	case Link:
 		g.logger.Printf("gcc linking")
-		buildLinkMsg := pb.BuildMessage_Link{Target: &pb.File{Path: g.Output[0]}}
+		linkedTarget, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[0]))
+		if err != nil {
+			g.logger.Fatalf("Failed to collect file information: %v", err)
+		}
+		buildLinkMsg := pb.BuildMessage_Link{Target: linkedTarget}
 		dependencies := []*pb.File{}
 		for _, inFile := range g.Input {
-			inputFile := pb.File{Path: wrapper.BuildCleanPath(g.WorkDir, inFile)}
-			dependencies = append(dependencies, &inputFile)
+			inputFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile))
+			if err != nil {
+				g.logger.Fatalf("Failed to collect file information: %v", err)
+			}
+			dependencies = append(dependencies, inputFile)
+
 		}
+
+		actualLibs, err := wrapper.FindActualLibraries(g.LinkLibs, g.LibPath)
+		if err != nil {
+			g.logger.Fatalf("Failed to collect dependencies: %v", err)
+		}
+		for _, lib := range actualLibs {
+			linkLib, err := NewFile(lib)
+			if err != nil {
+				g.logger.Fatalf("Failed to collect file information for linked library: %v", err)
+			}
+			dependencies = append(dependencies, linkLib)
+		}
+
 		buildLinkMsg.Input = dependencies
 
 		buildLinkMsg.LinkLibs = g.LinkLibs
@@ -115,9 +136,15 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			if g.debug {
 				g.logger.Printf("This is the source file %s indexed %d", inFile, idx)
 			}
-			sourceFile := pb.File{Path: wrapper.BuildCleanPath(g.WorkDir, inFile)}
-			targetFile := pb.File{Path: wrapper.BuildCleanPath(g.WorkDir, g.Output[idx])}
-			buildMsg.Compilations = append(buildMsg.Compilations, &pb.BuildMessage_Compile{Source: &sourceFile, Target: &targetFile})
+			sourceFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile))
+			if err != nil {
+				g.logger.Fatalf("Failed to collect file information: %v", err)
+			}
+			targetFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[idx]))
+			if err != nil {
+				g.logger.Fatalf("Failed to collect file information: %v", err)
+			}
+			buildMsg.Compilations = append(buildMsg.Compilations, &pb.BuildMessage_Compile{Source: sourceFile, Target: targetFile})
 		}
 		return &buildMsg, nil
 	default:
