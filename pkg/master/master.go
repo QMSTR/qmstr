@@ -1,10 +1,11 @@
 package master
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
+
+	"golang.org/x/net/context"
 
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
 	"github.com/QMSTR/qmstr/pkg/database"
