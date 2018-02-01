@@ -65,7 +65,7 @@ func Setup(dbAddr string) (*DataBase, error) {
 
 // AddNode adds a node to the DB and returns it's UID
 func (db *DataBase) AddNode(node *Node) (string, error) {
-	return dbInser(db.client, node)
+	return dbInsert(db.client, node)
 }
 
 // HasNode returns the UID of the node if exists otherwise ""
@@ -97,7 +97,7 @@ func (db *DataBase) HasNode(hash string) (string, error) {
 }
 
 // the data should be JSON marshalable
-func dbInser(c *client.Dgraph, data interface{}) (string, error) {
+func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 	txn := c.NewTxn()
 	defer txn.Discard(context.Background())
 
