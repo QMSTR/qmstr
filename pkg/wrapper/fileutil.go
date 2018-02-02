@@ -106,7 +106,7 @@ func FindActualLibraries(libs []string, libpath []string) ([]string, error) {
 	case "linux":
 		libprefix = "lib"
 		libsuffix = []string{".so"}
-		syslibpath = []string{"/lib", "/usr/lib"}
+		syslibpath = []string{"/lib", "/usr/lib", "/usr/local/lib"}
 	case "darwin":
 		libprefix = "lib"
 		libsuffix = []string{".dylib", ".so"}
