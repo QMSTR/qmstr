@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
 	"encoding/json"
 
@@ -16,6 +17,7 @@ const schema = `
 path: string @index(trigram) .
 hash: string @index(exact) .
 type: string @index(hash) .
+name: string .
 `
 
 const (
@@ -29,6 +31,7 @@ type Node struct {
 	Hash        string  `json:"hash,omitempty"`
 	Type        string  `json:"type,omitempty"`
 	Path        string  `json:"path,omitempty"`
+	Name        string  `json:"name,omitempty"`
 	DerivedFrom []Node  `json:"derivedFrom,omitempty"`
 	License     License `json:"license,omitempty"`
 }
@@ -40,6 +43,15 @@ type License struct {
 
 type DataBase struct {
 	client *client.Dgraph
+}
+
+func NewNode(path string, hash string) Node {
+	node := Node{
+		Path: path,
+		Hash: hash,
+		Name: filepath.Base(path),
+	}
+	return node
 }
 
 // Setup connects to dgraph and returns the instance
