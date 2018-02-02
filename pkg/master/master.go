@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"path/filepath"
 
 	"golang.org/x/net/context"
 
@@ -35,26 +36,20 @@ func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildRespo
 				return &pb.BuildResponse{Success: false}, err
 			}
 
-			src := database.Node{}
+			var src database.Node
 
 			// no such node exist
 			if uidSrc == "" {
-				src = database.Node{
-					Hash: compile.Source.GetHash(),
-					Path: compile.Source.GetPath(),
-					Type: database.ArtifactTypeSrc,
-				}
+				src = database.NewNode(compile.Source.GetPath(), compile.Source.GetHash())
+				src.Type = database.ArtifactTypeSrc
 			} else {
 				src = database.Node{
 					Uid: uidSrc,
 				}
 			}
-			trgt := database.Node{
-				Hash:        compile.Target.GetHash(),
-				Path:        compile.Target.GetPath(),
-				DerivedFrom: []database.Node{src},
-				Type:        database.ArtifactTypeObj,
-			}
+			trgt := database.NewNode(compile.Target.GetPath(), compile.Target.GetHash())
+			trgt.DerivedFrom = []database.Node{src}
+			trgt.Type = database.ArtifactTypeObj
 
 			uidTrgt, err := s.db.AddNode(&trgt)
 			if err != nil {
@@ -86,10 +81,8 @@ func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildRespo
 
 				// dep not in db
 				if uidDep == "" {
-					depNode = database.Node{
-						Hash: dep.GetHash(),
-						Path: dep.GetPath(),
-					}
+					depNode = database.NewNode(dep.GetPath(), dep.GetHash())
+					depNode.Name = filepath.Base(dep.GetPath())
 				} else {
 					depNode = database.Node{
 						Uid: uidDep,
@@ -97,12 +90,9 @@ func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildRespo
 				}
 				deps = append(deps, depNode)
 			}
-			trgt := database.Node{
-				Hash:        bin.Target.GetHash(),
-				Path:        bin.Target.GetPath(),
-				DerivedFrom: deps,
-				Type:        database.ArtifactTypeLink,
-			}
+			trgt := database.NewNode(bin.Target.GetPath(), bin.Target.GetHash())
+			trgt.DerivedFrom = deps
+			trgt.Type = database.ArtifactTypeLink
 
 			uidTrgt, err := s.db.AddNode(&trgt)
 			if err != nil {
