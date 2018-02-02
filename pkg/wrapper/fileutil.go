@@ -9,6 +9,10 @@ import (
 	"runtime"
 )
 
+const (
+	libPathVar = "LIBRARY_PATH"
+)
+
 func BuildCleanPath(base string, subpath string) string {
 	if filepath.IsAbs(subpath) {
 		return filepath.Clean(subpath)
@@ -99,6 +103,10 @@ func FindActualProgram(prog string) (string, error) {
 // FindActualProgram discovers the actual program that is wrapper on the PATH
 func FindActualLibraries(libs []string, libpath []string) ([]string, error) {
 	actualLibPaths := []string{}
+	libpathvar, present := os.LookupEnv(libPathVar)
+	if present && libpathvar != "" {
+		libpath = append([]string{libpathvar}, libpath...)
+	}
 	var libprefix string
 	var libsuffix string
 	var syslibpath []string
