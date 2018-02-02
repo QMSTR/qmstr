@@ -100,7 +100,7 @@ func FindActualProgram(prog string) (string, error) {
 	return "", fmt.Errorf("executable file %s not found in [%s]", prog, path)
 }
 
-// FindActualProgram discovers the actual program that is wrapper on the PATH
+// FindActualLibraries discovers the actual libraries on the path
 func FindActualLibraries(libs []string, libpath []string) ([]string, error) {
 	actualLibPaths := []string{}
 	libpathvar, present := os.LookupEnv(libPathVar)
@@ -108,20 +108,20 @@ func FindActualLibraries(libs []string, libpath []string) ([]string, error) {
 		libpath = append([]string{libpathvar}, libpath...)
 	}
 	var libprefix string
-	var libsuffix string
+	var libsuffix []string
 	var syslibpath []string
 	switch runtime.GOOS {
 	case "linux":
 		libprefix = "lib"
-		libsuffix = ".so"
-		syslibpath = []string{"/lib", "/usr/lib"}
+		libsuffix = []string{".so"}
+		syslibpath = []string{"/lib", "/usr/lib", "/usr/local/lib"}
 	case "darwin":
 		libprefix = "lib"
-		libsuffix = ".dylib"
-		syslibpath = []string{"/usr/lib"}
+		libsuffix = []string{".dylib", ".so"}
+		syslibpath = []string{"/usr/lib", "/usr/local/lib"}
 	case "windows":
 		libprefix = ""
-		libsuffix = ".dll"
+		libsuffix = []string{".dll"}
 		syslibpath = []string{""}
 	}
 	for _, lib := range libs {
@@ -131,9 +131,11 @@ func FindActualLibraries(libs []string, libpath []string) ([]string, error) {
 				dir = "."
 			}
 			err := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
-				if f.Name() == fmt.Sprintf("%s%s%s", libprefix, lib, libsuffix) {
-					actualLibPaths = append(actualLibPaths, path)
-					return fmt.Errorf("Found %s", path)
+				for _, suffix := range libsuffix {
+					if f.Name() == fmt.Sprintf("%s%s%s", libprefix, lib, suffix) {
+						actualLibPaths = append(actualLibPaths, path)
+						return fmt.Errorf("Found %s", path)
+					}
 				}
 				return nil
 
