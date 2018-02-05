@@ -42,8 +42,17 @@ message QuitResponse {
   bool success = 1;
 }
 
+message AnalysisMessage {
+  map <string, string> config = 1;
+}
+
+message AnalysisResponse {
+  bool success = 1;
+}
+
 service BuildService {
   rpc Build(BuildMessage) returns (BuildResponse) {}
   rpc Log(LogMessage) returns (LogResponse) {}
   rpc Quit(QuitMessage) returns (QuitResponse) {}
+  rpc Analyze(AnalysisMessage) returns (AnalysisResponse) {}
 }
