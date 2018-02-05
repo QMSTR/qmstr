@@ -79,6 +79,8 @@ func Setup(dbAddr string) (*DataBase, error) {
 	}
 
 	go queueWorker(db)
+	go queueWorker(db)
+	go queueWorker(db)
 
 	return db, nil
 }
