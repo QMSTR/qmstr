@@ -31,31 +31,13 @@ func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildRespo
 
 		// no such node exist
 		if uidTrgt == "" {
-			uidSrc, err := s.db.HasNode(compile.Source.GetHash())
-			if err != nil {
-				return &pb.BuildResponse{Success: false}, err
-			}
-
-			var src database.Node
-
-			// no such node exist
-			if uidSrc == "" {
-				src = database.NewNode(compile.Source.GetPath(), compile.Source.GetHash())
-				src.Type = database.ArtifactTypeSrc
-			} else {
-				src = database.Node{
-					Uid: uidSrc,
-				}
-			}
+			src := database.NewNode(compile.Source.GetPath(), compile.Source.GetHash())
+			src.Type = database.ArtifactTypeSrc
 			trgt := database.NewNode(compile.Target.GetPath(), compile.Target.GetHash())
 			trgt.DerivedFrom = []database.Node{src}
 			trgt.Type = database.ArtifactTypeObj
 
-			uidTrgt, err := s.db.AddNode(&trgt)
-			if err != nil {
-				return &pb.BuildResponse{Success: false}, err
-			}
-			log.Printf("Target node with UID: %s added\n", uidTrgt)
+			s.db.AddNode(trgt)
 		}
 	}
 
@@ -72,36 +54,17 @@ func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildRespo
 		// no such node exist
 		if uidTrgt == "" {
 			for _, dep := range bin.GetInput() {
-				uidDep, err := s.db.HasNode(dep.GetHash())
-				if err != nil {
-					return &pb.BuildResponse{Success: false}, err
-				}
-
-				depNode := database.Node{}
-
-				// dep not in db
-				if uidDep == "" {
-					depNode = database.NewNode(dep.GetPath(), dep.GetHash())
-					depNode.Name = filepath.Base(dep.GetPath())
-				} else {
-					depNode = database.Node{
-						Uid: uidDep,
-					}
-				}
+				depNode := database.NewNode(dep.GetPath(), dep.GetHash())
+				depNode.Name = filepath.Base(dep.GetPath())
 				deps = append(deps, depNode)
 			}
 			trgt := database.NewNode(bin.Target.GetPath(), bin.Target.GetHash())
 			trgt.DerivedFrom = deps
 			trgt.Type = database.ArtifactTypeLink
 
-			uidTrgt, err := s.db.AddNode(&trgt)
-			if err != nil {
-				return &pb.BuildResponse{Success: false}, err
-			}
-			log.Printf("Target node with UID: %s added\n", uidTrgt)
+			s.db.AddNode(trgt)
 		}
 	}
-
 	return &pb.BuildResponse{Success: true}, nil
 }
 
