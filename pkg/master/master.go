@@ -8,6 +8,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/QMSTR/qmstr/pkg/analysis"
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
 	"github.com/QMSTR/qmstr/pkg/database"
 	"google.golang.org/grpc"
@@ -16,7 +17,29 @@ import (
 var quitServer chan interface{}
 
 type server struct {
-	db *database.DataBase
+	db            *database.DataBase
+	analyzerQueue chan analysis.Analyzer
+}
+
+func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.AnalysisResponse, error) {
+	nodeSelector := in.Selector
+	nodes, err := s.db.GetNodesByType(nodeSelector)
+	if err != nil {
+		return &pb.AnalysisResponse{Success: false}, err
+	}
+
+	configMap := in.Config
+	for key, val := range configMap {
+		fmt.Printf("%s : %s", key, val)
+	}
+
+	go func(nodes []database.Node) {
+		for _, node := range nodes {
+			fmt.Printf("Run analysis on node %v", node)
+		}
+	}(nodes)
+
+	return &pb.AnalysisResponse{Success: true}, nil
 }
 
 func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildResponse, error) {

@@ -147,13 +147,9 @@ func (db *DataBase) HasNode(hash string) (string, error) {
 
 	vars := map[string]string{"$Hash": hash}
 
-	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
+	err := db.queryNodes(q, vars, &ret)
 	if err != nil {
-		return "", fmt.Errorf("Could not query with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", q, vars, err)
-	}
-
-	if err = json.Unmarshal(resp.Json, &ret); err != nil {
-		return "", fmt.Errorf("Could not unmashal `hasNode` response: %v", err)
+		return "", err
 	}
 
 	// no node with such hash
@@ -180,4 +176,37 @@ func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 
 	uid := ret.Uids["blank-0"]
 	return uid, nil
+}
+
+func (db *DataBase) GetNodesByType(nodetype string) ([]Node, error) {
+
+	ret := map[string][]Node{}
+
+	q := `query NodeByType($Type: string){
+		  getNodeByType(func: eq(type, $Tash)) {
+			uid
+			hash
+			path
+		  }}`
+
+	vars := map[string]string{"$Type": nodetype}
+
+	err := db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	return ret["getNodeByType"], nil
+}
+
+func (db *DataBase) queryNodes(query string, queryVars map[string]string, resultMap *map[string][]Node) error {
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
+	if err != nil {
+		return fmt.Errorf("Could not query with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
+	}
+
+	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
+		return fmt.Errorf("Could not unmashal query response: %v", err)
+	}
+	return nil
 }

@@ -43,7 +43,8 @@ message QuitResponse {
 }
 
 message AnalysisMessage {
-  map <string, string> config = 1;
+  string selector = 1;
+  map <string, string> config = 2;
 }
 
 message AnalysisResponse {
