@@ -29,7 +29,7 @@ func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.Analy
 	var analyzer analysis.Analyzer
 	switch analyzerSelector {
 	case "spdx":
-		analyzer = &analysis.SpdxAnalyzer{Config: in.Config}
+		analyzer = analysis.NewSpdxAnalyzer(in.Config, s.db)
 	default:
 		return &pb.AnalysisResponse{Success: false}, fmt.Errorf("No such analyzer %s", analyzerSelector)
 	}
@@ -46,6 +46,8 @@ func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.Analy
 			err := analyzer.Analyze(&node)
 			if err == nil {
 				s.db.AlterNode(&node)
+			} else {
+				log.Printf("Analysis of %s failed: %v", node.Path, err)
 			}
 		}
 	}(nodes)

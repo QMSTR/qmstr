@@ -15,6 +15,11 @@ var spdxPattern = regexp.MustCompile(`SPDX-License-Identifier: (.+)\s*`)
 
 type SpdxAnalyzer struct {
 	Config map[string]string
+	db     *database.DataBase
+}
+
+func NewSpdxAnalyzer(config map[string]string, db *database.DataBase) *SpdxAnalyzer {
+	return &SpdxAnalyzer{Config: config, db: db}
 }
 
 func (spdx *SpdxAnalyzer) Analyze(node *database.Node) error {
@@ -30,8 +35,13 @@ func (spdx *SpdxAnalyzer) Analyze(node *database.Node) error {
 	if err != nil {
 		return err
 	}
+
+	uid, err := spdx.db.GetLicenseUid(license)
+	if err != nil {
+		return err
+	}
 	// TODO merge with currently set licenses
-	node.License = database.License{Name: license}
+	node.License = database.License{Uid: uid}
 	return nil
 }
 

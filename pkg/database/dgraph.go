@@ -18,6 +18,7 @@ const schema = `
 path: string @index(trigram) .
 hash: string @index(exact) .
 type: string @index(hash) .
+spdxIdentifier: string @index(hash) .
 name: string .
 `
 
@@ -38,8 +39,8 @@ type Node struct {
 }
 
 type License struct {
-	Uid  string `json:"uid,omitempty"`
-	Name string `json:"name,omitempty"`
+	Uid            string `json:"uid,omitempty"`
+	SpdxIdentifier string `json:"spdxIdentifier,omitempty"`
 }
 
 type DataBase struct {
@@ -211,6 +212,67 @@ func (db *DataBase) queryNodes(query string, queryVars map[string]string, result
 
 	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
 		return fmt.Errorf("Could not unmashal query response: %v", err)
+	}
+	return nil
+}
+
+// Get License will return the license uid for the given spdx license identifier
+func (db *DataBase) GetLicenseUid(license string) (string, error) {
+
+	var uid string
+	ret := map[string][]License{}
+
+	err := db.queryLicense(license, &ret)
+	if err != nil {
+		return "", err
+	}
+
+	// license not found
+	if len(ret["getLicenseByName"]) == 0 {
+		uid, err = db.insertLicense(license)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		uid = ret["getLicenseByName"][0].Uid
+	}
+	return uid, nil
+}
+
+func (db *DataBase) insertLicense(license string) (string, error) {
+	var uid string
+	ret := map[string][]License{}
+	db.insertMutex.Lock()
+	err := db.queryLicense(license, &ret)
+	if err != nil {
+		return "", err
+	}
+	if len(ret["getLicenseByName"]) == 0 {
+		uid, err = dbInsert(db.client, License{SpdxIdentifier: license})
+		if err != nil {
+			return "", err
+		}
+	} else {
+		uid = ret["getLicenseByName"][0].Uid
+	}
+	db.insertMutex.Unlock()
+	return uid, nil
+}
+
+func (db *DataBase) queryLicense(license string, resultMap *map[string][]License) error {
+	q := `query LicenseByName($Name: string){
+		  getLicenseByName(func: eq(spdxIdentifier, $Name)) {
+			uid
+		  }}`
+
+	vars := map[string]string{"$Name": license}
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
+	if err != nil {
+		return fmt.Errorf("Could not query with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", q, vars, err)
+	}
+
+	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
+		return fmt.Errorf("Could not unmashal license query response: %v", err)
 	}
 	return nil
 }
