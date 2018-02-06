@@ -22,20 +22,31 @@ type server struct {
 }
 
 func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.AnalysisResponse, error) {
+	log.Printf("Analysis requested: %s for %s", in.Analyzer, in.Selector)
 	nodeSelector := in.Selector
+	analyzerSelector := in.Analyzer
+
+	var analyzer analysis.Analyzer
+	switch analyzerSelector {
+	case "spdx":
+		analyzer = &analysis.SpdxAnalyzer{Config: in.Config}
+	default:
+		return &pb.AnalysisResponse{Success: false}, fmt.Errorf("No such analyzer %s", analyzerSelector)
+	}
+
 	nodes, err := s.db.GetNodesByType(nodeSelector)
 	if err != nil {
 		return &pb.AnalysisResponse{Success: false}, err
 	}
 
-	configMap := in.Config
-	for key, val := range configMap {
-		fmt.Printf("%s : %s", key, val)
-	}
-
 	go func(nodes []database.Node) {
+		log.Printf("Starting analysis: %s", analyzerSelector)
 		for _, node := range nodes {
 			fmt.Printf("Run analysis on node %v", node)
+			err := analyzer.Analyze(&node)
+			if err == nil {
+				s.db.AlterNode(&node)
+			}
 		}
 	}(nodes)
 

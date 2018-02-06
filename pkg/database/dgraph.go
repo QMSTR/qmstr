@@ -135,6 +135,10 @@ func queueWorker(db *DataBase) {
 	}
 }
 
+func (db *DataBase) AlterNode(node *Node) (string, error) {
+	return dbInsert(db.client, node)
+}
+
 // HasNode returns the UID of the node if exists otherwise ""
 func (db *DataBase) HasNode(hash string) (string, error) {
 
@@ -183,7 +187,7 @@ func (db *DataBase) GetNodesByType(nodetype string) ([]Node, error) {
 	ret := map[string][]Node{}
 
 	q := `query NodeByType($Type: string){
-		  getNodeByType(func: eq(type, $Tash)) {
+		  getNodeByType(func: eq(type, $Type)) {
 			uid
 			hash
 			path

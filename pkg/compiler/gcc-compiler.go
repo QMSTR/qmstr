@@ -87,14 +87,14 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 	switch g.Mode {
 	case Link:
 		g.logger.Printf("gcc linking")
-		linkedTarget, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[0]))
+		linkedTarget, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[0], false))
 		if err != nil {
 			g.logger.Fatalf("Failed to collect file information: %v", err)
 		}
 		buildLinkMsg := pb.BuildMessage_Link{Target: linkedTarget}
 		dependencies := []*pb.File{}
 		for _, inFile := range g.Input {
-			inputFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile))
+			inputFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile, false))
 			if err != nil {
 				g.logger.Fatalf("Failed to collect file information: %v", err)
 			}
@@ -136,11 +136,11 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			if g.debug {
 				g.logger.Printf("This is the source file %s indexed %d", inFile, idx)
 			}
-			sourceFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile))
+			sourceFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile, false))
 			if err != nil {
 				g.logger.Fatalf("Failed to collect file information: %v", err)
 			}
-			targetFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[idx]))
+			targetFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[idx], false))
 			if err != nil {
 				g.logger.Fatalf("Failed to collect file information: %v", err)
 			}

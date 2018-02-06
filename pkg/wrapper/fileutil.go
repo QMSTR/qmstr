@@ -13,15 +13,16 @@ const (
 	libPathVar = "LIBRARY_PATH"
 )
 
-func BuildCleanPath(base string, subpath string) string {
+func BuildCleanPath(base string, subpath string, abs bool) string {
 	if filepath.IsAbs(subpath) {
 		return filepath.Clean(subpath)
 	}
 
-	if !filepath.IsAbs(base) {
+	if abs && !filepath.IsAbs(base) {
 		// ignore error and use non absolute path
 		base, _ = filepath.Abs(base)
 	}
+
 	tmpPath := filepath.Join(base, subpath)
 	return filepath.Clean(tmpPath)
 }
