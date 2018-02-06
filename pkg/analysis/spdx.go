@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"regexp"
-	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/database"
 )
@@ -22,26 +21,16 @@ func NewSpdxAnalyzer(config map[string]string, db *database.DataBase) *SpdxAnaly
 	return &SpdxAnalyzer{Config: config, db: db}
 }
 
-func (spdx *SpdxAnalyzer) Analyze(node *database.Node) error {
-	log.Printf("Spdx Analyzer analyzing %s", node.Name)
+func (spdx *SpdxAnalyzer) Analyze(node *AnalysisNode) error {
+	log.Printf("SPDX Analyzer analyzing %s", node.GetName())
 
-	actualPath := node.Path
-	if pathsub, ok := spdx.Config["pathSubstitution"]; ok {
-		subs := strings.Split(pathsub, ":")
-		actualPath = strings.Replace(node.Path, subs[0], subs[1], 1)
-	}
-
-	license, err := detectSPDXLicense(actualPath)
+	license, err := detectSPDXLicense(node.GetPath())
 	if err != nil {
 		return err
 	}
 
-	uid, err := spdx.db.GetLicenseUid(license)
-	if err != nil {
-		return err
-	}
 	// TODO merge with currently set licenses
-	node.License = database.License{Uid: uid}
+	node.SetLicense(license)
 	return nil
 }
 

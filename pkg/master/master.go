@@ -43,11 +43,15 @@ func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.Analy
 		log.Printf("Starting analysis: %s", analyzerSelector)
 		for _, node := range nodes {
 			fmt.Printf("Run analysis on node %v", node)
-			err := analyzer.Analyze(&node)
-			if err == nil {
-				s.db.AlterNode(&node)
-			} else {
+
+			anaNode := analysis.NewAnalysisNode(&node, in.PathSub, s.db)
+			err := analyzer.Analyze(anaNode)
+			if err != nil {
 				log.Printf("Analysis of %s failed: %v", node.Path, err)
+			}
+			err = anaNode.Store()
+			if err != nil {
+				log.Printf("Storing failed: %v", err)
 			}
 		}
 	}(nodes)
