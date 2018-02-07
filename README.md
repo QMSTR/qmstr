@@ -11,8 +11,10 @@ Install protobuf from your package manager
 Install protobuf go compiler plugin
 `go get -u github.com/golang/protobuf/protoc-gen-go`
 
+Make sure $GOBIN is part of your $PATH.
+
 Install the master server
-`(go get github.com/QMSTR/qmstr/cmd/qmstr-master || go generate github.com/QMSTR/qmstr/cmd/master; go get github.com/QMSTR/qmstr/cmd/master)`
+`(go get github.com/QMSTR/qmstr/cmd/qmstr-master || go generate github.com/QMSTR/qmstr/cmd/qmstr-master; go get github.com/QMSTR/qmstr/cmd/qmstr-master)`
 
 Install the wrapper
 `go get github.com/QMSTR/qmstr/cmd/qmstr-wrapper`
