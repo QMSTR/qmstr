@@ -32,7 +32,6 @@ func Hash(fileName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	nBytes, nChunks := int64(0), int64(0)
 	buf := make([]byte, 0, 4*1024)
 	for {
 		n, err := f.Read(buf[:cap(buf)])
@@ -46,8 +45,6 @@ func Hash(fileName string) (string, error) {
 			}
 			return "", err
 		}
-		nChunks++
-		nBytes += int64(len(buf))
 		h.Write(buf)
 		if err != nil && err != io.EOF {
 			return "", err
