@@ -1,6 +1,7 @@
 package analysis
 
 import (
+	"log"
 	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/buildservice"
@@ -11,15 +12,21 @@ type Analyzer interface {
 	Analyze(node *AnalysisNode) error
 }
 
+type Analysis struct {
+	Name     string
+	Nodes    []AnalysisNode
+	Analyzer Analyzer
+}
+
 type AnalysisNode struct {
-	actualNode *database.Node
+	actualNode database.Node
 	pathSub    []*buildservice.PathSubstitutionMessage
 	db         *database.DataBase
 	dirty      bool
 }
 
-func NewAnalysisNode(actualNode *database.Node, pathSub []*buildservice.PathSubstitutionMessage, db *database.DataBase) *AnalysisNode {
-	return &AnalysisNode{actualNode: actualNode, pathSub: pathSub, db: db, dirty: false}
+func NewAnalysisNode(actualNode database.Node, pathSub []*buildservice.PathSubstitutionMessage, db *database.DataBase) AnalysisNode {
+	return AnalysisNode{actualNode: actualNode, pathSub: pathSub, db: db, dirty: false}
 }
 
 func (an *AnalysisNode) GetPath() string {
@@ -46,10 +53,24 @@ func (an *AnalysisNode) SetLicense(spdxLicenseIdentifier string) error {
 
 func (an *AnalysisNode) Store() error {
 	if an.dirty {
-		_, err := an.db.AlterNode(an.actualNode)
+		_, err := an.db.AlterNode(&an.actualNode)
 		if err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func RunAnalysis(analysis Analysis) {
+	log.Printf("Starting analysis: %s", analysis.Name)
+	for _, node := range analysis.Nodes {
+		err := analysis.Analyzer.Analyze(&node)
+		if err != nil {
+			log.Printf("Analysis of %s failed: %v\n", node.GetPath(), err)
+		}
+		err = node.Store()
+		if err != nil {
+			log.Printf("Storing failed: %v\n", err)
+		}
+	}
 }

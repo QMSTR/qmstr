@@ -18,7 +18,7 @@ var quitServer chan interface{}
 
 type server struct {
 	db            *database.DataBase
-	analyzerQueue chan analysis.Analyzer
+	analyzerQueue chan analysis.Analysis
 }
 
 func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.AnalysisResponse, error) {
@@ -39,22 +39,12 @@ func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.Analy
 		return &pb.AnalysisResponse{Success: false}, err
 	}
 
-	go func(nodes []database.Node) {
-		log.Printf("Starting analysis: %s", analyzerSelector)
-		for _, node := range nodes {
-			fmt.Printf("Run analysis on node %v", node)
+	anaNodes := []analysis.AnalysisNode{}
+	for _, node := range nodes {
+		anaNodes = append(anaNodes, analysis.NewAnalysisNode(node, in.PathSub, s.db))
+	}
 
-			anaNode := analysis.NewAnalysisNode(&node, in.PathSub, s.db)
-			err := analyzer.Analyze(anaNode)
-			if err != nil {
-				log.Printf("Analysis of %s failed: %v", node.Path, err)
-			}
-			err = anaNode.Store()
-			if err != nil {
-				log.Printf("Storing failed: %v", err)
-			}
-		}
-	}(nodes)
+	s.analyzerQueue <- analysis.Analysis{Nodes: anaNodes, Analyzer: analyzer}
 
 	return &pb.AnalysisResponse{Success: true}, nil
 }
@@ -134,6 +124,8 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 		return fmt.Errorf("Could not setup database: %v", err)
 	}
 
+	analyzerQueue := make(chan analysis.Analysis, 100)
+
 	// Setup buildservice
 	lis, err := net.Listen("tcp", rpcAddr)
 	if err != nil {
@@ -141,7 +133,8 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 	}
 	s := grpc.NewServer()
 	pb.RegisterBuildServiceServer(s, &server{
-		db: db,
+		db:            db,
+		analyzerQueue: analyzerQueue,
 	})
 
 	quitServer = make(chan interface{})
@@ -151,6 +144,14 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 		s.GracefulStop()
 		close(quitServer)
 		quitServer = nil
+	}()
+
+	go func() {
+		fmt.Println("Analysis queue worker started")
+		for ana := range analyzerQueue {
+			analysis.RunAnalysis(ana)
+		}
+
 	}()
 
 	log.Print("qmstr master running")

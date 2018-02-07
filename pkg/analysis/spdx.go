@@ -3,7 +3,6 @@ package analysis
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 
@@ -22,8 +21,6 @@ func NewSpdxAnalyzer(config map[string]string, db *database.DataBase) *SpdxAnaly
 }
 
 func (spdx *SpdxAnalyzer) Analyze(node *AnalysisNode) error {
-	log.Printf("SPDX Analyzer analyzing %s", node.GetName())
-
 	license, err := detectSPDXLicense(node.GetPath())
 	if err != nil {
 		return err
