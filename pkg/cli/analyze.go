@@ -1,8 +1,8 @@
 package cli
 
 import (
+	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"golang.org/x/net/context"
@@ -19,14 +19,14 @@ var anaCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) != 1 {
-			log.Fatalln("Please provide one yaml file")
+			fmt.Println("Please provide one yaml file")
+			os.Exit(ReturnCodeParameterError)
 		}
 
 		anaMsg := &buildservice.AnalysisMessage{}
 
 		setUpServer()
 		unmarshalAnalysisRequest(args[0], anaMsg)
-		log.Printf("About to submit %v", anaMsg)
 		submitAnalysis(anaMsg)
 		tearDownServer()
 	},
@@ -37,21 +37,32 @@ func init() {
 }
 
 func submitAnalysis(anaMsg *buildservice.AnalysisMessage) {
-	buildServiceClient.Analyze(context.Background(), anaMsg)
+	resp, err := buildServiceClient.Analyze(context.Background(), anaMsg)
+	if err != nil {
+		fmt.Printf("Failed to communicate with qmstr-master server. %v\n", err)
+		os.Exit(ReturnCodeServerCommunicationError)
+	}
+	if !resp.Success {
+		fmt.Println("Server responded unsuccessful")
+		os.Exit(ReturnCodeResponseFalseError)
+	}
 }
 
 func unmarshalAnalysisRequest(yamlFile string, request *buildservice.AnalysisMessage) {
 	f, err := os.Open(yamlFile)
 	if err != nil {
-		log.Fatalf("Failed to open file %v", err)
+		fmt.Printf("Failed to open file %v", err)
+		os.Exit(ReturnCodeSysError)
 	}
 	data, err := ioutil.ReadAll(f)
 	if err != nil {
-		log.Fatalf("Failed to read from file %v", err)
+		fmt.Printf("Failed to read from file %v", err)
+		os.Exit(ReturnCodeSysError)
 	}
 
 	err = yaml.Unmarshal(data, &request)
 	if err != nil {
-		log.Fatalf("Wrong YAML file format %v", err)
+		fmt.Printf("Wrong YAML file format %v", err)
+		os.Exit(ReturnCodeFormatError)
 	}
 }
