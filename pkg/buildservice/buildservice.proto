@@ -42,8 +42,25 @@ message QuitResponse {
   bool success = 1;
 }
 
+message PathSubstitutionMessage {
+  string old = 1;
+  string new = 2;  
+}
+
+message AnalysisMessage {
+  string selector = 1;
+  string analyzer = 2;
+  repeated PathSubstitutionMessage pathSub = 4; 
+  map <string, string> config = 3;
+}
+
+message AnalysisResponse {
+  bool success = 1;
+}
+
 service BuildService {
   rpc Build(BuildMessage) returns (BuildResponse) {}
   rpc Log(LogMessage) returns (LogResponse) {}
   rpc Quit(QuitMessage) returns (QuitResponse) {}
+  rpc Analyze(AnalysisMessage) returns (AnalysisResponse) {}
 }

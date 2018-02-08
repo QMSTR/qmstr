@@ -18,6 +18,7 @@ const schema = `
 path: string @index(trigram) .
 hash: string @index(exact) .
 type: string @index(hash) .
+spdxIdentifier: string @index(hash) .
 name: string .
 `
 
@@ -38,8 +39,8 @@ type Node struct {
 }
 
 type License struct {
-	Uid  string `json:"uid,omitempty"`
-	Name string `json:"name,omitempty"`
+	Uid            string `json:"uid,omitempty"`
+	SpdxIdentifier string `json:"spdxIdentifier,omitempty"`
 }
 
 type DataBase struct {
@@ -135,6 +136,10 @@ func queueWorker(db *DataBase) {
 	}
 }
 
+func (db *DataBase) AlterNode(node *Node) (string, error) {
+	return dbInsert(db.client, node)
+}
+
 // HasNode returns the UID of the node if exists otherwise ""
 func (db *DataBase) HasNode(hash string) (string, error) {
 
@@ -147,13 +152,9 @@ func (db *DataBase) HasNode(hash string) (string, error) {
 
 	vars := map[string]string{"$Hash": hash}
 
-	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
+	err := db.queryNodes(q, vars, &ret)
 	if err != nil {
-		return "", fmt.Errorf("Could not query with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", q, vars, err)
-	}
-
-	if err = json.Unmarshal(resp.Json, &ret); err != nil {
-		return "", fmt.Errorf("Could not unmashal `hasNode` response: %v", err)
+		return "", err
 	}
 
 	// no node with such hash
@@ -180,4 +181,98 @@ func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 
 	uid := ret.Uids["blank-0"]
 	return uid, nil
+}
+
+func (db *DataBase) GetNodesByType(nodetype string) ([]Node, error) {
+
+	ret := map[string][]Node{}
+
+	q := `query NodeByType($Type: string){
+		  getNodeByType(func: eq(type, $Type)) {
+			uid
+			hash
+			path
+		  }}`
+
+	vars := map[string]string{"$Type": nodetype}
+
+	err := db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	return ret["getNodeByType"], nil
+}
+
+func (db *DataBase) queryNodes(query string, queryVars map[string]string, resultMap *map[string][]Node) error {
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
+	if err != nil {
+		return fmt.Errorf("Could not query with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
+	}
+
+	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
+		return fmt.Errorf("Could not unmashal query response: %v", err)
+	}
+	return nil
+}
+
+// Get License will return the license uid for the given spdx license identifier
+func (db *DataBase) GetLicenseUid(license string) (string, error) {
+
+	var uid string
+	ret := map[string][]License{}
+
+	err := db.queryLicense(license, &ret)
+	if err != nil {
+		return "", err
+	}
+
+	// license not found
+	if len(ret["getLicenseByName"]) == 0 {
+		uid, err = db.insertLicense(license)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		uid = ret["getLicenseByName"][0].Uid
+	}
+	return uid, nil
+}
+
+func (db *DataBase) insertLicense(license string) (string, error) {
+	var uid string
+	ret := map[string][]License{}
+	db.insertMutex.Lock()
+	err := db.queryLicense(license, &ret)
+	if err != nil {
+		return "", err
+	}
+	if len(ret["getLicenseByName"]) == 0 {
+		uid, err = dbInsert(db.client, License{SpdxIdentifier: license})
+		if err != nil {
+			return "", err
+		}
+	} else {
+		uid = ret["getLicenseByName"][0].Uid
+	}
+	db.insertMutex.Unlock()
+	return uid, nil
+}
+
+func (db *DataBase) queryLicense(license string, resultMap *map[string][]License) error {
+	q := `query LicenseByName($Name: string){
+		  getLicenseByName(func: eq(spdxIdentifier, $Name)) {
+			uid
+		  }}`
+
+	vars := map[string]string{"$Name": license}
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
+	if err != nil {
+		return fmt.Errorf("Could not query with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", q, vars, err)
+	}
+
+	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
+		return fmt.Errorf("Could not unmashal license query response: %v", err)
+	}
+	return nil
 }

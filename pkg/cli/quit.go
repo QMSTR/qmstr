@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 
 	"golang.org/x/net/context"
 
@@ -17,7 +18,6 @@ var quitCmd = &cobra.Command{
 	Short: "Quit qmstr",
 	Long:  `Run quit if you want to quit qmstr.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("quit called")
 
 		setUpServer()
 		quitServer()
@@ -31,5 +31,13 @@ func init() {
 }
 
 func quitServer() {
-	buildServiceClient.Quit(context.Background(), &pb.QuitMessage{Kill: force})
+	resp, err := buildServiceClient.Quit(context.Background(), &pb.QuitMessage{Kill: force})
+	if err != nil {
+		fmt.Printf("Failed to communicate with qmstr-master server. %v\n", err)
+		os.Exit(ReturnCodeServerCommunicationError)
+	}
+	if !resp.Success {
+		fmt.Println("Server responded unsuccessful")
+		os.Exit(ReturnCodeResponseFalseError)
+	}
 }

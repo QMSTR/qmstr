@@ -34,7 +34,7 @@ func awaitServer() {
 	go func() {
 		<-time.After(time.Second * time.Duration(timeout))
 		fmt.Printf("wait for qmstr-master timed out after %d seconds\n", timeout)
-		os.Exit(2)
+		os.Exit(ReturnCodeTimeout)
 	}()
 	for {
 		res, err := buildServiceClient.Log(context.Background(), &pb.LogMessage{Msg: []byte("Client is waiting for qmstr server to be ready")})

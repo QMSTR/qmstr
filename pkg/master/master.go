@@ -8,6 +8,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/QMSTR/qmstr/pkg/analysis"
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
 	"github.com/QMSTR/qmstr/pkg/database"
 	"google.golang.org/grpc"
@@ -16,7 +17,36 @@ import (
 var quitServer chan interface{}
 
 type server struct {
-	db *database.DataBase
+	db            *database.DataBase
+	analyzerQueue chan analysis.Analysis
+}
+
+func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.AnalysisResponse, error) {
+	log.Printf("Analysis requested: %s for %s", in.Analyzer, in.Selector)
+	nodeSelector := in.Selector
+	analyzerSelector := in.Analyzer
+
+	var analyzer analysis.Analyzer
+	switch analyzerSelector {
+	case "spdx":
+		analyzer = analysis.NewSpdxAnalyzer(in.Config, s.db)
+	default:
+		return &pb.AnalysisResponse{Success: false}, fmt.Errorf("No such analyzer %s", analyzerSelector)
+	}
+
+	nodes, err := s.db.GetNodesByType(nodeSelector)
+	if err != nil {
+		return &pb.AnalysisResponse{Success: false}, err
+	}
+
+	anaNodes := []analysis.AnalysisNode{}
+	for _, node := range nodes {
+		anaNodes = append(anaNodes, analysis.NewAnalysisNode(node, in.PathSub, s.db))
+	}
+
+	s.analyzerQueue <- analysis.Analysis{Nodes: anaNodes, Analyzer: analyzer}
+
+	return &pb.AnalysisResponse{Success: true}, nil
 }
 
 func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildResponse, error) {
@@ -94,6 +124,8 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 		return fmt.Errorf("Could not setup database: %v", err)
 	}
 
+	analyzerQueue := make(chan analysis.Analysis, 100)
+
 	// Setup buildservice
 	lis, err := net.Listen("tcp", rpcAddr)
 	if err != nil {
@@ -101,7 +133,8 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 	}
 	s := grpc.NewServer()
 	pb.RegisterBuildServiceServer(s, &server{
-		db: db,
+		db:            db,
+		analyzerQueue: analyzerQueue,
 	})
 
 	quitServer = make(chan interface{})
@@ -111,6 +144,14 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 		s.GracefulStop()
 		close(quitServer)
 		quitServer = nil
+	}()
+
+	go func() {
+		fmt.Println("Analysis queue worker started")
+		for ana := range analyzerQueue {
+			analysis.RunAnalysis(ana)
+		}
+
 	}()
 
 	log.Print("qmstr master running")
