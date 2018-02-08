@@ -67,7 +67,7 @@ var (
 		"-current_version":       struct{}{},
 	}
 
-	stringArgsRE = "\\s+\\w+={0,1}\\S*\\s"
+	stringArgsRE = "\\s+\\S+={0,1}\\S*\\s"
 
 	fixPosixArgs = map[string]struct{}{
 		"-isystem": struct{}{},
