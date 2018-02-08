@@ -18,7 +18,6 @@ var waitCmd = &cobra.Command{
 	Long: `waits until the server is ready. If 60 seconds pass 
 	then it exits with error message.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("wait called")
 		setUpServer()
 		awaitServer()
 		tearDownServer()
@@ -34,6 +33,7 @@ func init() {
 func awaitServer() {
 	go func() {
 		<-time.After(time.Second * time.Duration(timeout))
+		fmt.Printf("wait for qmstr-master timed out after %d seconds\n", timeout)
 		os.Exit(2)
 	}()
 	for {
