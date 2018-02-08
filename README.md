@@ -20,6 +20,6 @@ Install the wrapper
 `go get github.com/QMSTR/qmstr/cmd/qmstr-wrapper`
 
 Optional: install the cli
-`go get github.com/QMSTR/qmstr/cmd/qmstr-client`
+`go get github.com/QMSTR/qmstr/cmd/qmstr-cli`
 
 Or if you dare `wget -O - http://github.com/QMSTR/qmstr/raw/master/install.sh | bash`
