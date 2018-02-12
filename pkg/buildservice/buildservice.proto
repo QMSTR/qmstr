@@ -4,6 +4,7 @@ package buildservice;
 message File {
   string hash = 1;
   string path = 2;
+  bool broken = 3;
 }
 
 message BuildMessage {
