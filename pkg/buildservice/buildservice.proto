@@ -59,9 +59,21 @@ message AnalysisResponse {
   bool success = 1;
 }
 
+message ReportMessage {
+  string selector = 1;
+  string name = 2;
+  string reportType = 3;
+}
+
+message ReportResponse {
+  bool success = 1;
+  string responseMessage = 2;
+}
+
 service BuildService {
   rpc Build(BuildMessage) returns (BuildResponse) {}
   rpc Log(LogMessage) returns (LogResponse) {}
   rpc Quit(QuitMessage) returns (QuitResponse) {}
   rpc Analyze(AnalysisMessage) returns (AnalysisResponse) {}
+  rpc Report(ReportMessage) returns (ReportResponse) {}
 }
