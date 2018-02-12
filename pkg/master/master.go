@@ -21,6 +21,11 @@ type server struct {
 	analyzerQueue chan analysis.Analysis
 }
 
+func (s *server) Report(ctx context.Context, in *pb.ReportMessage) (*pb.ReportResponse, error) {
+	log.Printf("Report requested: %s for %s", in.ReportType, in.Target)
+	return &pb.ReportResponse{Success: false}, nil
+}
+
 func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.AnalysisResponse, error) {
 	log.Printf("Analysis requested: %s for %s", in.Analyzer, in.Selector)
 	nodeSelector := in.Selector
