@@ -137,7 +137,10 @@ func queueWorker(db *DataBase) {
 }
 
 func (db *DataBase) AlterNode(node *Node) (string, error) {
-	return dbInsert(db.client, node)
+	db.insertMutex.Lock()
+	uid, err := dbInsert(db.client, node)
+	db.insertMutex.Unlock()
+	return uid, err
 }
 
 // HasNode returns the UID of the node if exists otherwise ""
