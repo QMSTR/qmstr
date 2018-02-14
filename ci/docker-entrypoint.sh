@@ -2,7 +2,7 @@
 set -e
 
 function start_dgraph() {
-    dgraph zero --port_offset -2000 &
+    dgraph zero &
     dgraph server --memory_mb=2048 --zero=localhost:5080 &
 }
 
