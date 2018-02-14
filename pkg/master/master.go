@@ -35,7 +35,7 @@ func (s *server) Report(ctx context.Context, in *pb.ReportMessage) (*pb.ReportRe
 		return &pb.ReportResponse{Success: false}, fmt.Errorf("No such reporter %s", in.ReportType)
 	}
 
-	nodes, err := s.db.GetNodesByType(nodeSelector, true)
+	nodes, err := s.db.GetNodesByType(nodeSelector, true, in.Name)
 	if err != nil {
 		return &pb.ReportResponse{Success: false}, err
 	}
@@ -66,7 +66,7 @@ func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.Analy
 		return &pb.AnalysisResponse{Success: false}, fmt.Errorf("No such analyzer %s", analyzerSelector)
 	}
 
-	nodes, err := s.db.GetNodesByType(nodeSelector, false)
+	nodes, err := s.db.GetNodesByType(nodeSelector, false, "")
 	if err != nil {
 		return &pb.AnalysisResponse{Success: false}, err
 	}
