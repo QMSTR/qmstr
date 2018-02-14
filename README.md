@@ -30,5 +30,7 @@ To build qmstr in docker container from repo root run
 `docker build -f ci/Dockerfile -t qmstr --target builder .`
 
 To build and run qmstr in docker container from repo root run
-`docker build -f ci/Dockerfile -t qmstr .
-docker run -p 50051:50051 -v <build_path>:/buildroot qmstr`
+`docker build -f ci/Dockerfile -t qmstr/master . &&
+docker run -p 50051:50051 -v <build_path>:/buildroot qmstr/master`
+
+Where `build_path` is the path to the source files you are about to compile.
