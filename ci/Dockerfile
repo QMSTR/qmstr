@@ -25,6 +25,7 @@ RUN go install github.com/QMSTR/qmstr/cmd/qmstr-master && \
     go install github.com/QMSTR/qmstr/cmd/qmstr-wrapper && \
     go install github.com/QMSTR/qmstr/cmd/qmstr-cli
 
+#production image stage
 FROM ubuntu:17.10
 
 # install runtime deps
@@ -53,6 +54,8 @@ COPY --from=builder /go/bin/qmstr-master /go/bin/qmstr-master
 EXPOSE 50051
 # dgraph ratel web ui
 EXPOSE 8000
+
+VOLUME /buildroot
 
 COPY ci/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
