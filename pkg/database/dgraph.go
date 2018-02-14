@@ -1,8 +1,10 @@
 package database
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"html/template"
 	"path/filepath"
 	"sync"
 
@@ -19,7 +21,7 @@ path: string @index(trigram) .
 hash: string @index(exact) .
 type: string @index(hash) .
 spdxIdentifier: string @index(hash) .
-name: string .
+name: string @index(hash) .
 `
 
 const (
@@ -186,20 +188,12 @@ func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 	return uid, nil
 }
 
-func (db *DataBase) GetNodesByType(nodetype string, recursive bool) ([]Node, error) {
+func (db *DataBase) GetNodesByType(nodetype string, recursive bool, namefilter string) ([]Node, error) {
 
 	ret := map[string][]Node{}
 
-	q := `query NodeByType($Type: string){
-		  getNodeByType(func: eq(type, $Type)) {
-			uid
-			hash
-			path
-		  }}`
-
-	if recursive {
-		q = `query NodeByType($Type: string){
-		  getNodeByType(func: eq(type, $Type)) @recurse(loop: false) {
+	q := `query NodeByType($Type: string, $Name: string){
+		  getNodeByType(func: eq(type, $Type)) {{.Filter}} {{.Recurse}}{
 			uid
 			hash
 			path
@@ -207,11 +201,31 @@ func (db *DataBase) GetNodesByType(nodetype string, recursive bool) ([]Node, err
 			license
 			spdxIdentifier
 		  }}`
+
+	queryTmpl, err := template.New("nodesbytype").Parse(q)
+
+	type QueryParams struct {
+		Recurse string
+		Filter  string
 	}
 
-	vars := map[string]string{"$Type": nodetype}
+	qp := QueryParams{}
+	if recursive {
+		qp.Recurse = "@recurse(loop: false)"
+	}
+	if namefilter != "" {
+		qp.Filter = "@filter(eq(name, $Name))"
+	}
 
-	err := db.queryNodes(q, vars, &ret)
+	var b bytes.Buffer
+	err = queryTmpl.Execute(&b, qp)
+	if err != nil {
+		panic(err)
+	}
+
+	vars := map[string]string{"$Type": nodetype, "$Name": namefilter}
+
+	err = db.queryNodes(b.String(), vars, &ret)
 	if err != nil {
 		return nil, err
 	}
