@@ -52,7 +52,7 @@ COPY --from=builder /go/bin/qmstr-master /go/bin/qmstr-master
 
 EXPOSE 50051
 # dgraph ratel web ui
-EXPOSE 8081
+EXPOSE 8000
 
 COPY ci/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
