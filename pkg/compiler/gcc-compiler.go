@@ -87,17 +87,11 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 	switch g.Mode {
 	case Link:
 		g.logger.Printf("gcc linking")
-		linkedTarget, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[0], false))
-		if err != nil {
-			g.logger.Fatalf("Failed to collect file information: %v", err)
-		}
+		linkedTarget := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[0], false))
 		buildLinkMsg := pb.BuildMessage_Link{Target: linkedTarget}
 		dependencies := []*pb.File{}
 		for _, inFile := range g.Input {
-			inputFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile, false))
-			if err != nil {
-				g.logger.Fatalf("Failed to collect file information: %v", err)
-			}
+			inputFile := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile, false))
 			dependencies = append(dependencies, inputFile)
 
 		}
@@ -107,10 +101,7 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			g.logger.Fatalf("Failed to collect dependencies: %v", err)
 		}
 		for _, lib := range actualLibs {
-			linkLib, err := NewFile(lib)
-			if err != nil {
-				g.logger.Fatalf("Failed to collect file information for linked library: %v", err)
-			}
+			linkLib := NewFile(lib)
 			dependencies = append(dependencies, linkLib)
 		}
 
@@ -136,14 +127,8 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			if g.debug {
 				g.logger.Printf("This is the source file %s indexed %d", inFile, idx)
 			}
-			sourceFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile, false))
-			if err != nil {
-				g.logger.Fatalf("Failed to collect file information: %v", err)
-			}
-			targetFile, err := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[idx], false))
-			if err != nil {
-				g.logger.Fatalf("Failed to collect file information: %v", err)
-			}
+			sourceFile := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile, false))
+			targetFile := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[idx], false))
 			buildMsg.Compilations = append(buildMsg.Compilations, &pb.BuildMessage_Compile{Source: sourceFile, Target: targetFile})
 		}
 		return &buildMsg, nil

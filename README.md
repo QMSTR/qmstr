@@ -23,3 +23,14 @@ Optional: install the cli
 `go get github.com/QMSTR/qmstr/cmd/qmstr-cli`
 
 Or if you dare `wget -O - http://github.com/QMSTR/qmstr/raw/master/install.sh | bash`
+
+# Building and running qmstr in docker container
+
+To build qmstr in docker container from repo root run
+`docker build -f ci/Dockerfile -t qmstr --target builder .`
+
+To build and run qmstr in docker container from repo root run
+`docker build -f ci/Dockerfile -t qmstr/master . &&
+docker run -p 50051:50051 -v <build_path>:/buildroot qmstr/master`
+
+Where `build_path` is the path to the source files you are about to compile.

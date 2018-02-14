@@ -27,10 +27,10 @@ func GetCompiler(prog string, workDir string, logger *log.Logger, debug bool) Co
 	return nil
 }
 
-func NewFile(path string) (*pb.File, error) {
+func NewFile(path string) *pb.File {
 	hash, err := wrapper.Hash(path)
 	if err != nil {
-		return nil, err
+		return &pb.File{Hash: "nohash" + path, Path: path, Broken: true}
 	}
-	return &pb.File{Hash: hash, Path: path}, nil
+	return &pb.File{Hash: hash, Path: path, Broken: false}
 }
