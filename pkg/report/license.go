@@ -2,7 +2,6 @@ package report
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/QMSTR/qmstr/pkg/buildservice"
 	"github.com/QMSTR/qmstr/pkg/database"
@@ -15,11 +14,11 @@ func NewLicenseReporter() *LicenseReporter {
 	return &LicenseReporter{}
 }
 
-func (lr *LicenseReporter) Generate(nodes []ReportNode) (*buildservice.ReportResponse, error) {
+func (lr *LicenseReporter) Generate(nodes []*database.Node) (*buildservice.ReportResponse, error) {
 	licenses := map[string][]string{}
 	for _, node := range nodes {
-		for _, lic := range getLicense(&node) {
-			licenses[node.GetPath()] = append(licenses[node.GetPath()], lic.SpdxIdentifier)
+		for _, lic := range getLicense(node) {
+			licenses[node.Path] = append(licenses[node.Path], lic.SpdxIdentifier)
 		}
 	}
 
@@ -27,31 +26,19 @@ func (lr *LicenseReporter) Generate(nodes []ReportNode) (*buildservice.ReportRes
 	return &ret, nil
 }
 
-func getLicense(rnode *ReportNode) []database.License {
-	if len(rnode.actualNode.License) > 0 {
-		return rnode.actualNode.License
+func getLicense(node *database.Node) []*database.License {
+	if len(node.License) > 0 {
+		return node.License
 	}
-	licenseSet := map[string]database.License{}
+	licenseSet := map[string]*database.License{}
 
-	derivedFromNodes := rnode.actualNode.DerivedFrom
-
-	// circumvent empty DerivedFrom
-	if len(derivedFromNodes) == 0 {
-		freshNode, err := rnode.db.GetNodeByHash(rnode.actualNode.Hash, true)
-		if err != nil {
-			log.Fatalf("Not able to get Node for hash %s from DB", rnode.actualNode.Hash)
-		}
-		derivedFromNodes = freshNode.DerivedFrom
-	}
-
-	for _, node := range derivedFromNodes {
-		newRNode := NewReportNode(node, rnode.db)
-		for _, lic := range getLicense(&newRNode) {
+	for _, node := range node.DerivedFrom {
+		for _, lic := range getLicense(node) {
 			licenseSet[lic.Uid] = lic
 		}
 	}
 
-	licenses := []database.License{}
+	licenses := []*database.License{}
 	for _, license := range licenseSet {
 		licenses = append(licenses, license)
 	}

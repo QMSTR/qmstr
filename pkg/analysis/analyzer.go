@@ -46,7 +46,7 @@ func (an *AnalysisNode) SetLicense(spdxLicenseIdentifier string) error {
 	if err != nil {
 		return err
 	}
-	an.actualNode.License = []database.License{database.License{Uid: uid}}
+	an.actualNode.License = []*database.License{&database.License{Uid: uid}}
 	an.dirty = true
 	return nil
 }

@@ -31,13 +31,13 @@ const (
 )
 
 type Node struct {
-	Uid         string    `json:"uid,omitempty"`
-	Hash        string    `json:"hash,omitempty"`
-	Type        string    `json:"type,omitempty"`
-	Path        string    `json:"path,omitempty"`
-	Name        string    `json:"name,omitempty"`
-	DerivedFrom []Node    `json:"derivedFrom,omitempty"`
-	License     []License `json:"license,omitempty"`
+	Uid         string     `json:"uid,omitempty"`
+	Hash        string     `json:"hash,omitempty"`
+	Type        string     `json:"type,omitempty"`
+	Path        string     `json:"path,omitempty"`
+	Name        string     `json:"name,omitempty"`
+	DerivedFrom []*Node    `json:"derivedFrom,omitempty"`
+	License     []*License `json:"license,omitempty"`
 }
 
 type License struct {
@@ -47,7 +47,7 @@ type License struct {
 
 type DataBase struct {
 	client      *client.Dgraph
-	insertQueue chan Node
+	insertQueue chan *Node
 	insertMutex *sync.Mutex
 }
 
@@ -70,7 +70,7 @@ func Setup(dbAddr string) (*DataBase, error) {
 
 	db := &DataBase{
 		client:      client.NewDgraphClient(api.NewDgraphClient(conn)),
-		insertQueue: make(chan Node, 1000),
+		insertQueue: make(chan *Node, 1000),
 		insertMutex: &sync.Mutex{},
 	}
 
@@ -89,7 +89,7 @@ func Setup(dbAddr string) (*DataBase, error) {
 }
 
 // AddNode adds a node to the insert queue
-func (db *DataBase) AddNode(node Node) {
+func (db *DataBase) AddNode(node *Node) {
 	for _, dep := range node.DerivedFrom {
 		db.AddNode(dep)
 	}
