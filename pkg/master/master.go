@@ -11,6 +11,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/analysis"
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
 	"github.com/QMSTR/qmstr/pkg/database"
+	"github.com/QMSTR/qmstr/pkg/report"
 	"google.golang.org/grpc"
 )
 
@@ -22,8 +23,34 @@ type server struct {
 }
 
 func (s *server) Report(ctx context.Context, in *pb.ReportMessage) (*pb.ReportResponse, error) {
-	log.Printf("Report requested: %s for %s", in.ReportType, in.Target)
-	return &pb.ReportResponse{Success: false}, nil
+	nodeSelector := in.Selector
+
+	log.Printf("Report requested: %s for %s\n", in.ReportType, in.Selector)
+
+	var reporter report.Reporter
+	switch in.ReportType {
+	case "license":
+		reporter = report.NewLicenseReporter()
+	default:
+		return &pb.ReportResponse{Success: false}, fmt.Errorf("No such reporter %s", in.ReportType)
+	}
+
+	nodes, err := s.db.GetNodesByType(nodeSelector, true)
+	if err != nil {
+		return &pb.ReportResponse{Success: false}, err
+	}
+
+	repNodes := []report.ReportNode{}
+	for _, node := range nodes {
+		repNodes = append(repNodes, report.NewReportNode(node, s.db))
+	}
+
+	reportResponse, err := reporter.Generate(repNodes)
+	if err != nil {
+		return &pb.ReportResponse{Success: false}, err
+	}
+
+	return reportResponse, nil
 }
 
 func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.AnalysisResponse, error) {
@@ -39,7 +66,7 @@ func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.Analy
 		return &pb.AnalysisResponse{Success: false}, fmt.Errorf("No such analyzer %s", analyzerSelector)
 	}
 
-	nodes, err := s.db.GetNodesByType(nodeSelector)
+	nodes, err := s.db.GetNodesByType(nodeSelector, false)
 	if err != nil {
 		return &pb.AnalysisResponse{Success: false}, err
 	}
