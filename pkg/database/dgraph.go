@@ -29,13 +29,13 @@ const (
 )
 
 type Node struct {
-	Uid         string  `json:"uid,omitempty"`
-	Hash        string  `json:"hash,omitempty"`
-	Type        string  `json:"type,omitempty"`
-	Path        string  `json:"path,omitempty"`
-	Name        string  `json:"name,omitempty"`
-	DerivedFrom []Node  `json:"derivedFrom,omitempty"`
-	License     License `json:"license,omitempty"`
+	Uid         string    `json:"uid,omitempty"`
+	Hash        string    `json:"hash,omitempty"`
+	Type        string    `json:"type,omitempty"`
+	Path        string    `json:"path,omitempty"`
+	Name        string    `json:"name,omitempty"`
+	DerivedFrom []Node    `json:"derivedFrom,omitempty"`
+	License     []License `json:"license,omitempty"`
 }
 
 type License struct {
@@ -186,7 +186,7 @@ func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 	return uid, nil
 }
 
-func (db *DataBase) GetNodesByType(nodetype string) ([]Node, error) {
+func (db *DataBase) GetNodesByType(nodetype string, recursive bool) ([]Node, error) {
 
 	ret := map[string][]Node{}
 
@@ -197,6 +197,18 @@ func (db *DataBase) GetNodesByType(nodetype string) ([]Node, error) {
 			path
 		  }}`
 
+	if recursive {
+		q = `query NodeByType($Type: string){
+		  getNodeByType(func: eq(type, $Type)) @recurse(loop: false) {
+			uid
+			hash
+			path
+			derivedFrom
+			license
+			spdxIdentifier
+		  }}`
+	}
+
 	vars := map[string]string{"$Type": nodetype}
 
 	err := db.queryNodes(q, vars, &ret)
@@ -205,6 +217,39 @@ func (db *DataBase) GetNodesByType(nodetype string) ([]Node, error) {
 	}
 
 	return ret["getNodeByType"], nil
+}
+
+func (db *DataBase) GetNodeByHash(hash string, recursive bool) (Node, error) {
+
+	ret := map[string][]Node{}
+
+	q := `query NodeByHash($Hash: string){
+		  getNodeByHash(func: eq(hash, $Hash)) {
+			uid
+			hash
+			path
+		  }}`
+
+	if recursive {
+		q = `query NodeByHash($Hash: string){
+		  getNodeByHash(func: eq(hash, $Hash)) @recurse(loop: false) {
+			uid
+			hash
+			path
+			derivedFrom
+			license
+			spdxIdentifier
+		  }}`
+	}
+
+	vars := map[string]string{"$Hash": hash}
+
+	err := db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return Node{}, err
+	}
+
+	return ret["getNodeByHash"][0], nil
 }
 
 func (db *DataBase) queryNodes(query string, queryVars map[string]string, resultMap *map[string][]Node) error {
