@@ -40,12 +40,12 @@ func (s *server) Report(ctx context.Context, in *pb.ReportMessage) (*pb.ReportRe
 		return &pb.ReportResponse{Success: false}, err
 	}
 
-	repNodes := []report.ReportNode{}
+	nodeRefs := []*database.Node{}
 	for _, node := range nodes {
-		repNodes = append(repNodes, report.NewReportNode(node, s.db))
+		nodeRefs = append(nodeRefs, &node)
 	}
 
-	reportResponse, err := reporter.Generate(repNodes)
+	reportResponse, err := reporter.Generate(nodeRefs)
 	if err != nil {
 		return &pb.ReportResponse{Success: false}, err
 	}
@@ -96,10 +96,10 @@ func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildRespo
 			src := database.NewNode(compile.Source.GetPath(), compile.Source.GetHash())
 			src.Type = database.ArtifactTypeSrc
 			trgt := database.NewNode(compile.Target.GetPath(), compile.Target.GetHash())
-			trgt.DerivedFrom = []database.Node{src}
+			trgt.DerivedFrom = []*database.Node{&src}
 			trgt.Type = database.ArtifactTypeObj
 
-			s.db.AddNode(trgt)
+			s.db.AddNode(&trgt)
 		}
 	}
 
@@ -112,19 +112,19 @@ func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildRespo
 			return &pb.BuildResponse{Success: false}, err
 		}
 
-		deps := []database.Node{}
+		deps := []*database.Node{}
 		// no such node exist
 		if uidTrgt == "" {
 			for _, dep := range bin.GetInput() {
 				depNode := database.NewNode(dep.GetPath(), dep.GetHash())
 				depNode.Name = filepath.Base(dep.GetPath())
-				deps = append(deps, depNode)
+				deps = append(deps, &depNode)
 			}
 			trgt := database.NewNode(bin.Target.GetPath(), bin.Target.GetHash())
 			trgt.DerivedFrom = deps
 			trgt.Type = database.ArtifactTypeLink
 
-			s.db.AddNode(trgt)
+			s.db.AddNode(&trgt)
 		}
 	}
 	return &pb.BuildResponse{Success: true}, nil
