@@ -11,10 +11,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var anaCmd = &cobra.Command{
-	Use:   "analyze",
-	Short: "Start analysis on qmstr-master",
-	Long:  `Start analysis described in provided YAML file on the master server.`,
+var reportCmd = &cobra.Command{
+	Use:   "report",
+	Short: "Start report generation on qmstr-master",
+	Long:  `Generate report described in provided YAML file on the master server.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if len(args) != 1 {
@@ -22,21 +22,21 @@ var anaCmd = &cobra.Command{
 			os.Exit(ReturnCodeParameterError)
 		}
 
-		anaMsg := &buildservice.AnalysisMessage{}
+		repMsg := &buildservice.ReportMessage{}
 
 		setUpServer()
-		unmarshalAnalysisRequest(args[0], anaMsg)
-		submitAnalysis(anaMsg)
+		unmarshalReportRequest(args[0], repMsg)
+		submitReportRequest(repMsg)
 		tearDownServer()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(anaCmd)
+	rootCmd.AddCommand(reportCmd)
 }
 
-func submitAnalysis(anaMsg *buildservice.AnalysisMessage) {
-	resp, err := buildServiceClient.Analyze(context.Background(), anaMsg)
+func submitReportRequest(repMsg *buildservice.ReportMessage) {
+	resp, err := buildServiceClient.Report(context.Background(), repMsg)
 	if err != nil {
 		fmt.Printf("Failed to communicate with qmstr-master server. %v\n", err)
 		os.Exit(ReturnCodeServerCommunicationError)
@@ -45,9 +45,10 @@ func submitAnalysis(anaMsg *buildservice.AnalysisMessage) {
 		fmt.Println("Server responded unsuccessful")
 		os.Exit(ReturnCodeResponseFalseError)
 	}
+	fmt.Println(resp.ResponseMessage)
 }
 
-func unmarshalAnalysisRequest(yamlFile string, request *buildservice.AnalysisMessage) {
+func unmarshalReportRequest(yamlFile string, request *buildservice.ReportMessage) {
 	data, err := consumeFile(yamlFile)
 	if err != nil {
 		fmt.Println(err)
