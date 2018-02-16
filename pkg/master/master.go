@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"path/filepath"
+	"sync"
 
 	"golang.org/x/net/context"
 
@@ -18,14 +19,29 @@ import (
 var quitServer chan interface{}
 
 type server struct {
-	db            *database.DataBase
-	analyzerQueue chan analysis.Analysis
+	db                 *database.DataBase
+	analyzerQueue      chan analysis.Analysis
+	analysisClosed     chan bool
+	analysisDone       bool
+	analysisQueueMutex *sync.Mutex
+}
+
+func (s *server) drainAnalysisQueue() {
+	s.analysisQueueMutex.Lock()
+	if !s.analysisDone {
+		// wait for analysis to complete
+		close(s.analyzerQueue)
+		log.Println("Wait for analysis to finish")
+		s.analysisDone = <-s.analysisClosed
+	}
+	s.analysisQueueMutex.Unlock()
 }
 
 func (s *server) Report(ctx context.Context, in *pb.ReportMessage) (*pb.ReportResponse, error) {
 	nodeSelector := in.Selector
+	log.Printf("Report requested: %s for %s\n", in.ReportType, nodeSelector)
 
-	log.Printf("Report requested: %s for %s\n", in.ReportType, in.Selector)
+	s.drainAnalysisQueue()
 
 	var reporter report.Reporter
 	switch in.ReportType {
@@ -55,6 +71,7 @@ func (s *server) Report(ctx context.Context, in *pb.ReportMessage) (*pb.ReportRe
 
 func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.AnalysisResponse, error) {
 	log.Printf("Analysis requested: %s for %s", in.Analyzer, in.Selector)
+	s.analysisQueueMutex.Lock()
 	nodeSelector := in.Selector
 	analyzerSelector := in.Analyzer
 
@@ -77,7 +94,7 @@ func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.Analy
 	}
 
 	s.analyzerQueue <- analysis.Analysis{Nodes: anaNodes, Analyzer: analyzer}
-
+	s.analysisQueueMutex.Unlock()
 	return &pb.AnalysisResponse{Success: true}, nil
 }
 
@@ -157,6 +174,7 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 	}
 
 	analyzerQueue := make(chan analysis.Analysis, 100)
+	analysisClosed := make(chan bool)
 
 	// Setup buildservice
 	lis, err := net.Listen("tcp", rpcAddr)
@@ -165,8 +183,11 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 	}
 	s := grpc.NewServer()
 	pb.RegisterBuildServiceServer(s, &server{
-		db:            db,
-		analyzerQueue: analyzerQueue,
+		db:                 db,
+		analyzerQueue:      analyzerQueue,
+		analysisQueueMutex: &sync.Mutex{},
+		analysisClosed:     analysisClosed,
+		analysisDone:       false,
 	})
 
 	quitServer = make(chan interface{})
@@ -183,7 +204,7 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 		for ana := range analyzerQueue {
 			analysis.RunAnalysis(ana)
 		}
-
+		analysisClosed <- true
 	}()
 
 	log.Print("qmstr master running")
