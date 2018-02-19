@@ -23,6 +23,7 @@ func NewSpdxAnalyzer(config map[string]string, db *database.DataBase) *SpdxAnaly
 func (spdx *SpdxAnalyzer) Analyze(node *AnalysisNode) error {
 	license, err := detectSPDXLicense(node.GetPath())
 	if err != nil {
+		node.SetLicense("UNKNOWN")
 		return err
 	}
 
