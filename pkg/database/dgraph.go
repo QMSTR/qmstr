@@ -5,8 +5,10 @@ import (
 	"context"
 	"fmt"
 	"html/template"
+	"log"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"encoding/json"
 
@@ -62,9 +64,11 @@ func NewNode(path string, hash string) Node {
 
 // Setup connects to dgraph and returns the instance
 func Setup(dbAddr string) (*DataBase, error) {
-
-	conn, err := grpc.Dial(dbAddr, grpc.WithInsecure(), grpc.WithBlock())
+	log.Println("Setting up database connection")
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	conn, err := grpc.DialContext(ctx, dbAddr, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
+		cancel()
 		return nil, fmt.Errorf("Failed to connect to the dgraph server: %v", err)
 	}
 
@@ -74,11 +78,14 @@ func Setup(dbAddr string) (*DataBase, error) {
 		insertMutex: &sync.Mutex{},
 	}
 
-	err = db.client.Alter(context.Background(), &api.Operation{
-		Schema: schema,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("Fail to set schema and indices: %v", err)
+	for {
+		err = db.client.Alter(ctx, &api.Operation{
+			Schema: schema,
+		})
+		if err == nil {
+			cancel()
+			break
+		}
 	}
 
 	go queueWorker(db)
