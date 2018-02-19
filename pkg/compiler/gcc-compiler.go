@@ -36,7 +36,12 @@ var (
 		"-nostdinc":        struct{}{},
 		"-nostdlib":        struct{}{},
 		"-print-file-name": struct{}{},
+		"-M":               struct{}{},
+		"-MG":              struct{}{},
+		"-MM":              struct{}{},
 		"-MD":              struct{}{},
+		"-MMD":             struct{}{},
+		"-MP":              struct{}{},
 		"-m":               struct{}{},
 		"-v":               struct{}{},
 		"-g":               struct{}{},
@@ -46,16 +51,23 @@ var (
 		"-rdynamic":        struct{}{},
 		"-shared":          struct{}{},
 		"-static":          struct{}{},
+		"-dynamiclib":      struct{}{},
 		"--version":        struct{}{},
 	}
 
 	stringArgs = map[string]struct{}{
-		"-D": struct{}{},
-		"-U": struct{}{},
-		"-x": struct{}{},
+		"-D":                     struct{}{},
+		"-U":                     struct{}{},
+		"-x":                     struct{}{},
+		"-MF":                    struct{}{},
+		"-MT":                    struct{}{},
+		"-MQ":                    struct{}{},
+		"-install_name":          struct{}{},
+		"-compatibility_version": struct{}{},
+		"-current_version":       struct{}{},
 	}
 
-	stringArgsRE = "\\s+\\w+={0,1}\\S*\\s"
+	stringArgsRE = "\\s+\\S+={0,1}\\S*\\s"
 
 	fixPosixArgs = map[string]struct{}{
 		"-isystem": struct{}{},
