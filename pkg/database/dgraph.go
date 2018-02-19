@@ -1,10 +1,14 @@
 package database
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"html/template"
+	"log"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"encoding/json"
 
@@ -19,7 +23,7 @@ path: string @index(trigram) .
 hash: string @index(exact) .
 type: string @index(hash) .
 spdxIdentifier: string @index(hash) .
-name: string .
+name: string @index(hash) .
 `
 
 const (
@@ -29,13 +33,13 @@ const (
 )
 
 type Node struct {
-	Uid         string  `json:"uid,omitempty"`
-	Hash        string  `json:"hash,omitempty"`
-	Type        string  `json:"type,omitempty"`
-	Path        string  `json:"path,omitempty"`
-	Name        string  `json:"name,omitempty"`
-	DerivedFrom []Node  `json:"derivedFrom,omitempty"`
-	License     License `json:"license,omitempty"`
+	Uid         string     `json:"uid,omitempty"`
+	Hash        string     `json:"hash,omitempty"`
+	Type        string     `json:"type,omitempty"`
+	Path        string     `json:"path,omitempty"`
+	Name        string     `json:"name,omitempty"`
+	DerivedFrom []*Node    `json:"derivedFrom,omitempty"`
+	License     []*License `json:"license,omitempty"`
 }
 
 type License struct {
@@ -45,7 +49,7 @@ type License struct {
 
 type DataBase struct {
 	client      *client.Dgraph
-	insertQueue chan Node
+	insertQueue chan *Node
 	insertMutex *sync.Mutex
 }
 
@@ -60,23 +64,28 @@ func NewNode(path string, hash string) Node {
 
 // Setup connects to dgraph and returns the instance
 func Setup(dbAddr string) (*DataBase, error) {
-
-	conn, err := grpc.Dial(dbAddr, grpc.WithInsecure(), grpc.WithBlock())
+	log.Println("Setting up database connection")
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	conn, err := grpc.DialContext(ctx, dbAddr, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
+		cancel()
 		return nil, fmt.Errorf("Failed to connect to the dgraph server: %v", err)
 	}
 
 	db := &DataBase{
 		client:      client.NewDgraphClient(api.NewDgraphClient(conn)),
-		insertQueue: make(chan Node, 1000),
+		insertQueue: make(chan *Node, 1000),
 		insertMutex: &sync.Mutex{},
 	}
 
-	err = db.client.Alter(context.Background(), &api.Operation{
-		Schema: schema,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("Fail to set schema and indices: %v", err)
+	for {
+		err = db.client.Alter(ctx, &api.Operation{
+			Schema: schema,
+		})
+		if err == nil {
+			cancel()
+			break
+		}
 	}
 
 	go queueWorker(db)
@@ -87,7 +96,7 @@ func Setup(dbAddr string) (*DataBase, error) {
 }
 
 // AddNode adds a node to the insert queue
-func (db *DataBase) AddNode(node Node) {
+func (db *DataBase) AddNode(node *Node) {
 	for _, dep := range node.DerivedFrom {
 		db.AddNode(dep)
 	}
@@ -186,25 +195,82 @@ func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 	return uid, nil
 }
 
-func (db *DataBase) GetNodesByType(nodetype string) ([]Node, error) {
+func (db *DataBase) GetNodesByType(nodetype string, recursive bool, namefilter string) ([]Node, error) {
 
 	ret := map[string][]Node{}
 
-	q := `query NodeByType($Type: string){
-		  getNodeByType(func: eq(type, $Type)) {
+	q := `query NodeByType($Type: string, $Name: string){
+		  getNodeByType(func: eq(type, $Type)) {{.Filter}} {{.Recurse}}{
 			uid
 			hash
 			path
+			derivedFrom
+			license
+			spdxIdentifier
 		  }}`
 
-	vars := map[string]string{"$Type": nodetype}
+	queryTmpl, err := template.New("nodesbytype").Parse(q)
 
-	err := db.queryNodes(q, vars, &ret)
+	type QueryParams struct {
+		Recurse string
+		Filter  string
+	}
+
+	qp := QueryParams{}
+	if recursive {
+		qp.Recurse = "@recurse(loop: false)"
+	}
+	if namefilter != "" {
+		qp.Filter = "@filter(eq(name, $Name))"
+	}
+
+	var b bytes.Buffer
+	err = queryTmpl.Execute(&b, qp)
+	if err != nil {
+		panic(err)
+	}
+
+	vars := map[string]string{"$Type": nodetype, "$Name": namefilter}
+
+	err = db.queryNodes(b.String(), vars, &ret)
 	if err != nil {
 		return nil, err
 	}
 
 	return ret["getNodeByType"], nil
+}
+
+func (db *DataBase) GetNodeByHash(hash string, recursive bool) (Node, error) {
+
+	ret := map[string][]Node{}
+
+	q := `query NodeByHash($Hash: string){
+		  getNodeByHash(func: eq(hash, $Hash)) {
+			uid
+			hash
+			path
+		  }}`
+
+	if recursive {
+		q = `query NodeByHash($Hash: string){
+		  getNodeByHash(func: eq(hash, $Hash)) @recurse(loop: false) {
+			uid
+			hash
+			path
+			derivedFrom
+			license
+			spdxIdentifier
+		  }}`
+	}
+
+	vars := map[string]string{"$Hash": hash}
+
+	err := db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return Node{}, err
+	}
+
+	return ret["getNodeByHash"][0], nil
 }
 
 func (db *DataBase) queryNodes(query string, queryVars map[string]string, resultMap *map[string][]Node) error {
