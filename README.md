@@ -4,6 +4,8 @@ Quartermaster is a suite of command line tools and build system plugins that ins
 FLOSS compliance documentation and support compliance decision making. It executes as part of a software build process
 to generate reports about the analysed product.
 
+[![Build Status](https://ci.endocode.com/buildStatus/icon?job=QMSTR/build_and_unit_test_master)](https://ci.endocode.com/job/QMSTR/build_and_unit_test_master)
+
 # Compile and Install
 
 Install protobuf from your package manager
