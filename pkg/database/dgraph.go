@@ -8,6 +8,7 @@ import (
 	"log"
 	"path/filepath"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"encoding/json"
@@ -51,6 +52,7 @@ type DataBase struct {
 	client      *client.Dgraph
 	insertQueue chan *Node
 	insertMutex *sync.Mutex
+	pending     uint64
 }
 
 func NewNode(path string, hash string) Node {
@@ -63,7 +65,7 @@ func NewNode(path string, hash string) Node {
 }
 
 // Setup connects to dgraph and returns the instance
-func Setup(dbAddr string) (*DataBase, error) {
+func Setup(dbAddr string, queueWorkers int) (*DataBase, error) {
 	log.Println("Setting up database connection")
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	conn, err := grpc.DialContext(ctx, dbAddr, grpc.WithInsecure(), grpc.WithBlock())
@@ -88,15 +90,29 @@ func Setup(dbAddr string) (*DataBase, error) {
 		}
 	}
 
-	go queueWorker(db)
-	go queueWorker(db)
-	go queueWorker(db)
+	for i := 0; i < queueWorkers; i++ {
+		go queueWorker(db)
+	}
 
 	return db, nil
 }
 
+func (db *DataBase) AwaitBuildComplete() {
+	// TODO replace busy waiting with proper signaling
+	log.Println("Waiting for inserts")
+	for {
+		pendingInserts := atomic.LoadUint64(&db.pending)
+		if pendingInserts == 0 {
+			break
+		}
+		fmt.Printf("Pending inserts %d", pendingInserts)
+		time.Sleep(2 * time.Second)
+	}
+}
+
 // AddNode adds a node to the insert queue
 func (db *DataBase) AddNode(node *Node) {
+	atomic.AddUint64(&db.pending, 1)
 	for _, dep := range node.DerivedFrom {
 		db.AddNode(dep)
 	}
@@ -141,6 +157,7 @@ func queueWorker(db *DataBase) {
 		if err != nil {
 			panic(err)
 		}
+		atomic.AddUint64(&db.pending, ^uint64(0))
 		db.insertMutex.Unlock()
 	}
 }

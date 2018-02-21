@@ -22,7 +22,12 @@ func (lr *LicenseReporter) Generate(nodes []*database.Node) (*buildservice.Repor
 		}
 	}
 
-	ret := buildservice.ReportResponse{Success: true, ResponseMessage: fmt.Sprintf("Found licenses: %v", licenses)}
+	result := ""
+	for artifact, licenses := range licenses {
+		result = fmt.Sprintf("%s\n%s\t%s", result, artifact, licenses)
+	}
+
+	ret := buildservice.ReportResponse{Success: true, ResponseMessage: result}
 	return &ret, nil
 }
 

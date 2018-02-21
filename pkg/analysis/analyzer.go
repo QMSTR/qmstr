@@ -4,7 +4,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/QMSTR/qmstr/pkg/buildservice"
+	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
 )
 
@@ -20,12 +20,12 @@ type Analysis struct {
 
 type AnalysisNode struct {
 	actualNode database.Node
-	pathSub    []*buildservice.PathSubstitutionMessage
+	pathSub    []*config.PathSubstitution
 	db         *database.DataBase
 	dirty      bool
 }
 
-func NewAnalysisNode(actualNode database.Node, pathSub []*buildservice.PathSubstitutionMessage, db *database.DataBase) AnalysisNode {
+func NewAnalysisNode(actualNode database.Node, pathSub []*config.PathSubstitution, db *database.DataBase) AnalysisNode {
 	return AnalysisNode{actualNode: actualNode, pathSub: pathSub, db: db, dirty: false}
 }
 
