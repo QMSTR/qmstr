@@ -17,7 +17,4 @@ go install github.com/QMSTR/qmstr/cmd/qmstr-master
 start_dgraph
 start_dgraph_web
 
-# Give dgraph some time to come up
-sleep 15
-
 exec /go/bin/qmstr-master
