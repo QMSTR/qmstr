@@ -11,6 +11,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/analysis"
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
+	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
 	"github.com/QMSTR/qmstr/pkg/report"
 	"google.golang.org/grpc"
@@ -167,10 +168,14 @@ func (s *server) Quit(ctx context.Context, in *pb.QuitMessage) (*pb.QuitResponse
 	return &pb.QuitResponse{Success: true}, nil
 }
 
-func ListenAndServe(rpcAddr string, dbAddr string) error {
+func ListenAndServe(configfile string) error {
+	masterConfig, err := config.ReadConfigFromFile(configfile)
+	if err != nil {
+		return err
+	}
 
 	// Connect to backend database (dgraph)
-	db, err := database.Setup(dbAddr)
+	db, err := database.Setup(masterConfig.Server.DBAddress, masterConfig.Server.DBWorkers)
 	if err != nil {
 		return fmt.Errorf("Could not setup database: %v", err)
 	}
@@ -179,7 +184,7 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 	analysisClosed := make(chan bool)
 
 	// Setup buildservice
-	lis, err := net.Listen("tcp", rpcAddr)
+	lis, err := net.Listen("tcp", masterConfig.Server.RPCAddress)
 	if err != nil {
 		return fmt.Errorf("Failed to setup socket and listen: %v", err)
 	}
@@ -195,21 +200,13 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 	quitServer = make(chan interface{})
 	go func() {
 		<-quitServer
-		log.Println("qmstr terminated by client")
+		log.Println("qmstr-master terminated by client")
 		s.GracefulStop()
 		close(quitServer)
 		quitServer = nil
 	}()
 
-	go func() {
-		fmt.Println("Analysis queue worker started")
-		for ana := range analyzerQueue {
-			analysis.RunAnalysis(ana)
-		}
-		analysisClosed <- true
-	}()
-
-	log.Print("qmstr master running")
+	log.Printf("qmstr-master listening on %s\n", masterConfig.Server.RPCAddress)
 	if err := s.Serve(lis); err != nil {
 		return fmt.Errorf("Failed to start rpc service %v", err)
 	}

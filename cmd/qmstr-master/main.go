@@ -11,12 +11,10 @@ import (
 
 func main() {
 
-	rpcAddr := flag.String("rpcAddr", ":50051", "Set the address and port to bind to.")
-	dbAddr := flag.String("dbAddr", "localhost:9080", "Set the address and port of the backing database.")
-
+	configFile := flag.String("config", "qmstr.yaml", "Set the qmstr configuration file.")
 	flag.Parse()
 
-	if err := master.ListenAndServe(*rpcAddr, *dbAddr); err != nil {
+	if err := master.ListenAndServe(*configFile); err != nil {
 		log.Fatalf("Cannot start QMSTR Server: %v\n", err)
 	}
 }
