@@ -31,7 +31,7 @@ func scancode(workdir string, jobs int) interface{} {
 		cmdlineargs = append(cmdlineargs, "--processes", fmt.Sprintf("%d", jobs))
 	}
 	cmd := exec.Command("scancode", append(cmdlineargs, workdir)...)
-	fmt.Printf("Calling %s", cmd.Args)
+	log.Printf("Calling %s", cmd.Args)
 	scanResult, err := cmd.Output()
 	if err != nil {
 		log.Printf("Scandir failed %s", err)
@@ -48,6 +48,7 @@ func scancode(workdir string, jobs int) interface{} {
 }
 
 func (scan *ScancodeAnalyzer) Analyze(node *AnalysisNode) error {
+	log.Printf("Analyze %s", node.GetPath())
 	licenses, err := scan.detectLicenses(node.GetPath())
 	if err != nil {
 		node.SetLicense("UNKNOWN")
@@ -67,7 +68,7 @@ func (scan *ScancodeAnalyzer) detectLicenses(srcFilePath string) ([]string, erro
 	for _, file := range scanDatamap["files"].([]interface{}) {
 		fileData := file.(map[string]interface{})
 		if fileData["path"] == srcFilePath {
-			fmt.Printf("Found %s", srcFilePath)
+			log.Printf("Found %s", srcFilePath)
 			for _, license := range fileData["licenses"].([]interface{}) {
 				licenses = append(licenses, license.(map[string]interface{})["spdx_license_key"].(string))
 			}

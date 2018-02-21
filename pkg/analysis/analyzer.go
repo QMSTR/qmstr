@@ -73,4 +73,5 @@ func RunAnalysis(analysis Analysis) {
 			log.Printf("Storing failed: %v\n", err)
 		}
 	}
+	log.Printf("Analysis finished")
 }

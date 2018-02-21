@@ -114,6 +114,7 @@ func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.Analy
 	close(s.analyzerQueue)
 	log.Println("Waiting for analysis to finish")
 	s.analysisDone = <-s.analysisClosed
+	log.Println("Analysis finished")
 
 	s.serverMutex.Unlock()
 	return &pb.AnalysisResponse{Success: true}, nil
