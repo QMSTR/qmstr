@@ -89,11 +89,17 @@ func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.Analy
 		analyzerSelector := currentAnalysis.Analyzer
 
 		var analyzer analysis.Analyzer
+		var err error
 		switch analyzerSelector {
 		case "spdx":
 			analyzer = analysis.NewSpdxAnalyzer(currentAnalysis.Config, s.db)
 		case "ninka":
 			analyzer = analysis.NewNinkaAnalyzer(currentAnalysis.Config, s.db)
+		case "scancode":
+			analyzer, err = analysis.NewScancodeAnalyzer(currentAnalysis.Config, s.db)
+			if err != nil {
+				return &pb.AnalysisResponse{Success: false}, err
+			}
 		default:
 			return &pb.AnalysisResponse{Success: false}, fmt.Errorf("No such analyzer %s", analyzerSelector)
 		}
@@ -108,7 +114,7 @@ func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.Analy
 			anaNodes = append(anaNodes, analysis.NewAnalysisNode(node, currentAnalysis.PathSub, s.db))
 		}
 
-		s.analyzerQueue <- analysis.Analysis{Nodes: anaNodes, Analyzer: analyzer}
+		s.analyzerQueue <- analysis.Analysis{Name: analyzerSelector, Nodes: anaNodes, Analyzer: analyzer}
 	}
 	// wait for analysis to finish
 	close(s.analyzerQueue)

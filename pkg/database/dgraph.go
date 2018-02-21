@@ -331,11 +331,13 @@ func (db *DataBase) insertLicense(license string) (string, error) {
 	db.insertMutex.Lock()
 	err := db.queryLicense(license, &ret)
 	if err != nil {
+		db.insertMutex.Unlock()
 		return "", err
 	}
 	if len(ret["getLicenseByName"]) == 0 {
 		uid, err = dbInsert(db.client, License{SpdxIdentifier: license})
 		if err != nil {
+			db.insertMutex.Unlock()
 			return "", err
 		}
 	} else {
