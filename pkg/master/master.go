@@ -79,6 +79,8 @@ func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.Analy
 	switch analyzerSelector {
 	case "spdx":
 		analyzer = analysis.NewSpdxAnalyzer(in.Config, s.db)
+	case "ninka":
+		analyzer = analysis.NewNinkaAnalyzer(in.Config, s.db)
 	default:
 		return &pb.AnalysisResponse{Success: false}, fmt.Errorf("No such analyzer %s", analyzerSelector)
 	}
