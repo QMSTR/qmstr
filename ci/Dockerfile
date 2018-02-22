@@ -25,7 +25,7 @@ RUN go install github.com/QMSTR/qmstr/cmd/qmstr-master && \
     go install github.com/QMSTR/qmstr/cmd/qmstr-cli
 
 # separate stage just to run the master unit tests:
-FROM builder as naster_unit_tests
+FROM builder as master_unit_tests
 CMD cd $GOPATH/src/github.com/QMSTR/qmstr && go test ./...
 
 # the runtime stage contains all the elements needed to run the master and the analysis tools:
