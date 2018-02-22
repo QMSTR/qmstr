@@ -41,12 +41,13 @@ func (an *AnalysisNode) GetName() string {
 	return an.actualNode.Name
 }
 
-func (an *AnalysisNode) SetLicense(spdxLicenseIdentifier string) error {
-	uid, err := an.db.GetLicenseUid(spdxLicenseIdentifier)
+func (an *AnalysisNode) SetLicense(license *database.License) error {
+	uid, err := an.db.GetLicenseUid(license)
 	if err != nil {
 		return err
 	}
-	an.actualNode.License = []*database.License{&database.License{Uid: uid}}
+	license.Uid = uid
+	an.actualNode.License = []*database.License{license}
 	an.dirty = true
 	return nil
 }
@@ -67,10 +68,12 @@ func RunAnalysis(analysis Analysis) {
 		err := analysis.Analyzer.Analyze(&node)
 		if err != nil {
 			log.Printf("Analysis of %s failed: %v\n", node.GetPath(), err)
+			panic("Analysis corrupt")
 		}
 		err = node.Store()
 		if err != nil {
 			log.Printf("Storing failed: %v\n", err)
+			panic("Analysis corrupt")
 		}
 	}
 	log.Printf("Analysis finished")

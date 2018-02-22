@@ -49,30 +49,36 @@ func scancode(workdir string, jobs int) interface{} {
 
 func (scan *ScancodeAnalyzer) Analyze(node *AnalysisNode) error {
 	log.Printf("Analyze %s", node.GetPath())
-	licenses, err := scan.detectLicenses(node.GetPath())
-	if err != nil {
-		node.SetLicense("UNKNOWN")
-		return err
-	}
+	licenses := scan.detectLicenses(node.GetPath())
 
 	// TODO merge with currently set licenses
 	for _, license := range licenses {
-		node.SetLicense(license)
+		err := node.SetLicense(license)
+		if err != nil {
+			return fmt.Errorf("failed to set license %v: %v", license, err)
+		}
 	}
 	return nil
 }
 
-func (scan *ScancodeAnalyzer) detectLicenses(srcFilePath string) ([]string, error) {
-	licenses := []string{}
+func (scan *ScancodeAnalyzer) detectLicenses(srcFilePath string) []*database.License {
+	licenses := []*database.License{}
 	scanDatamap := scan.ScanData.(map[string]interface{})
 	for _, file := range scanDatamap["files"].([]interface{}) {
 		fileData := file.(map[string]interface{})
 		if fileData["path"] == srcFilePath {
 			log.Printf("Found %s", srcFilePath)
-			for _, license := range fileData["licenses"].([]interface{}) {
-				licenses = append(licenses, license.(map[string]interface{})["spdx_license_key"].(string))
+			for _, licenseData := range fileData["licenses"].([]interface{}) {
+				license := licenseData.(map[string]interface{})
+				licenses = append(licenses, &database.License{
+					Key:            license["key"].(string),
+					SpdxIdentifier: license["spdx_license_key"].(string),
+				})
 			}
 		}
 	}
-	return licenses, nil
+	if len(licenses) == 0 {
+		licenses = []*database.License{&database.License{Key: "UNKNOWN"}}
+	}
+	return licenses
 }

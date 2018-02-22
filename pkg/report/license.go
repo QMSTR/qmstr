@@ -18,7 +18,7 @@ func (lr *LicenseReporter) Generate(nodes []*database.Node) (*buildservice.Repor
 	licenses := map[string][]string{}
 	for _, node := range nodes {
 		for _, lic := range getLicense(node) {
-			licenses[node.Path] = append(licenses[node.Path], lic.SpdxIdentifier)
+			licenses[node.Path] = append(licenses[node.Path], lic.Key)
 		}
 	}
 
