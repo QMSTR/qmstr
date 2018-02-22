@@ -69,3 +69,5 @@ The development container is a combination of the runtime environment with a sou
 docker run -it -p 50051:50051 -v $HOME/Go/src:/go/src <build_path>:/buildroot qmstr/dev`
 
 ...where `build_path` is the path to the source files you are about to compile.
+
+TEST
