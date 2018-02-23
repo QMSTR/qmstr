@@ -17,4 +17,4 @@ go install github.com/QMSTR/qmstr/cmd/qmstr-master
 start_dgraph
 start_dgraph_web
 
-exec /go/bin/qmstr-master
+exec /go/bin/qmstr-master --config /buildroot/qmstr.yaml
