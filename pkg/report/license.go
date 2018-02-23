@@ -18,11 +18,16 @@ func (lr *LicenseReporter) Generate(nodes []*database.Node) (*buildservice.Repor
 	licenses := map[string][]string{}
 	for _, node := range nodes {
 		for _, lic := range getLicense(node) {
-			licenses[node.Path] = append(licenses[node.Path], lic.SpdxIdentifier)
+			licenses[node.Path] = append(licenses[node.Path], lic.Key)
 		}
 	}
 
-	ret := buildservice.ReportResponse{Success: true, ResponseMessage: fmt.Sprintf("Found licenses: %v", licenses)}
+	result := ""
+	for artifact, licenses := range licenses {
+		result = fmt.Sprintf("%s\n%s\t%s", result, artifact, licenses)
+	}
+
+	ret := buildservice.ReportResponse{Success: true, ResponseMessage: result}
 	return &ret, nil
 }
 

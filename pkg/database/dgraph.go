@@ -8,6 +8,7 @@ import (
 	"log"
 	"path/filepath"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"encoding/json"
@@ -24,6 +25,7 @@ hash: string @index(exact) .
 type: string @index(hash) .
 spdxIdentifier: string @index(hash) .
 name: string @index(hash) .
+licenseKey: string @index(hash) .
 `
 
 const (
@@ -44,13 +46,18 @@ type Node struct {
 
 type License struct {
 	Uid            string `json:"uid,omitempty"`
+	Key            string `json:"licenseKey"`
+	Name           string `json:"name,omitempty"`
 	SpdxIdentifier string `json:"spdxIdentifier,omitempty"`
 }
+
+var UnknownLicense *License = &License{Key: "UNKNOWN"}
 
 type DataBase struct {
 	client      *client.Dgraph
 	insertQueue chan *Node
 	insertMutex *sync.Mutex
+	pending     uint64
 }
 
 func NewNode(path string, hash string) Node {
@@ -63,7 +70,7 @@ func NewNode(path string, hash string) Node {
 }
 
 // Setup connects to dgraph and returns the instance
-func Setup(dbAddr string) (*DataBase, error) {
+func Setup(dbAddr string, queueWorkers int) (*DataBase, error) {
 	log.Println("Setting up database connection")
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	conn, err := grpc.DialContext(ctx, dbAddr, grpc.WithInsecure(), grpc.WithBlock())
@@ -88,15 +95,31 @@ func Setup(dbAddr string) (*DataBase, error) {
 		}
 	}
 
-	go queueWorker(db)
-	go queueWorker(db)
-	go queueWorker(db)
+	db.insertLicense(UnknownLicense)
+
+	for i := 0; i < queueWorkers; i++ {
+		go queueWorker(db)
+	}
 
 	return db, nil
 }
 
+func (db *DataBase) AwaitBuildComplete() {
+	// TODO replace busy waiting with proper signaling
+	log.Println("Waiting for inserts")
+	for {
+		pendingInserts := atomic.LoadUint64(&db.pending)
+		if pendingInserts == 0 {
+			break
+		}
+		fmt.Printf("Pending inserts %d", pendingInserts)
+		time.Sleep(2 * time.Second)
+	}
+}
+
 // AddNode adds a node to the insert queue
 func (db *DataBase) AddNode(node *Node) {
+	atomic.AddUint64(&db.pending, 1)
 	for _, dep := range node.DerivedFrom {
 		db.AddNode(dep)
 	}
@@ -141,6 +164,7 @@ func queueWorker(db *DataBase) {
 		if err != nil {
 			panic(err)
 		}
+		atomic.AddUint64(&db.pending, ^uint64(0))
 		db.insertMutex.Unlock()
 	}
 }
@@ -207,6 +231,7 @@ func (db *DataBase) GetNodesByType(nodetype string, recursive bool, namefilter s
 			derivedFrom
 			license
 			spdxIdentifier
+			licenseKey
 		  }}`
 
 	queryTmpl, err := template.New("nodesbytype").Parse(q)
@@ -285,56 +310,60 @@ func (db *DataBase) queryNodes(query string, queryVars map[string]string, result
 	return nil
 }
 
-// Get License will return the license uid for the given spdx license identifier
-func (db *DataBase) GetLicenseUid(license string) (string, error) {
-
+// Get License will return the license uid for the given license key
+func (db *DataBase) GetLicenseUid(license *License) (string, error) {
 	var uid string
 	ret := map[string][]License{}
 
-	err := db.queryLicense(license, &ret)
+	err := db.queryLicense(license.Key, &ret)
 	if err != nil {
 		return "", err
 	}
 
 	// license not found
-	if len(ret["getLicenseByName"]) == 0 {
+	if len(ret["getLicenseByKey"]) == 0 {
 		uid, err = db.insertLicense(license)
 		if err != nil {
 			return "", err
 		}
 	} else {
-		uid = ret["getLicenseByName"][0].Uid
+		uid = ret["getLicenseByKey"][0].Uid
+		license.Uid = uid
 	}
 	return uid, nil
 }
 
-func (db *DataBase) insertLicense(license string) (string, error) {
+func (db *DataBase) insertLicense(license *License) (string, error) {
 	var uid string
 	ret := map[string][]License{}
 	db.insertMutex.Lock()
-	err := db.queryLicense(license, &ret)
+	err := db.queryLicense(license.Key, &ret)
 	if err != nil {
+		db.insertMutex.Unlock()
 		return "", err
 	}
-	if len(ret["getLicenseByName"]) == 0 {
-		uid, err = dbInsert(db.client, License{SpdxIdentifier: license})
+	if len(ret["getLicenseByKey"]) == 0 {
+		uid, err = dbInsert(db.client, license)
+		license.Uid = uid
 		if err != nil {
+			db.insertMutex.Unlock()
 			return "", err
 		}
 	} else {
-		uid = ret["getLicenseByName"][0].Uid
+		uid = ret["getLicenseByKey"][0].Uid
+		license.Uid = uid
 	}
 	db.insertMutex.Unlock()
 	return uid, nil
 }
 
-func (db *DataBase) queryLicense(license string, resultMap *map[string][]License) error {
-	q := `query LicenseByName($Name: string){
-		  getLicenseByName(func: eq(spdxIdentifier, $Name)) {
+func (db *DataBase) queryLicense(licenseKey string, resultMap *map[string][]License) error {
+	q := `query LicenseByKey($Key: string){
+		  getLicenseByKey(func: eq(licenseKey, $Key)) {
 			uid
 		  }}`
 
-	vars := map[string]string{"$Name": license}
+	vars := map[string]string{"$Key": licenseKey}
 	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
 	if err != nil {
 		return fmt.Errorf("Could not query with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", q, vars, err)

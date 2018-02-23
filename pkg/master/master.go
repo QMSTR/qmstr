@@ -11,6 +11,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/analysis"
 	pb "github.com/QMSTR/qmstr/pkg/buildservice"
+	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
 	"github.com/QMSTR/qmstr/pkg/report"
 	"google.golang.org/grpc"
@@ -19,84 +20,109 @@ import (
 var quitServer chan interface{}
 
 type server struct {
-	db                 *database.DataBase
-	analyzerQueue      chan analysis.Analysis
-	analysisClosed     chan bool
-	analysisDone       bool
-	analysisQueueMutex *sync.Mutex
+	db             *database.DataBase
+	analyzerQueue  chan analysis.Analysis
+	analysisClosed chan bool
+	serverMutex    *sync.Mutex
+	analysisDone   bool
+	analysis       []config.Analysis
+	reporting      []config.Reporting
 }
 
-func (s *server) drainAnalysisQueue() {
-	s.analysisQueueMutex.Lock()
-	if !s.analysisDone {
-		// wait for analysis to complete
-		close(s.analyzerQueue)
-		log.Println("Wait for analysis to finish")
-		s.analysisDone = <-s.analysisClosed
+func (s *server) Report(in *pb.ReportMessage, streamServer pb.BuildService_ReportServer) error {
+	log.Println("Report requested")
+
+	s.serverMutex.Lock()
+
+	for _, currentReport := range s.reporting {
+		nodeSelector := currentReport.Selector
+
+		var reporter report.Reporter
+		switch currentReport.ReportType {
+		case "license":
+			reporter = report.NewLicenseReporter()
+		default:
+			streamServer.Send(&pb.ReportResponse{Success: false, ResponseMessage: fmt.Sprintf("No such reporter %s", currentReport.ReportType)})
+		}
+
+		nodes, err := s.db.GetNodesByType(nodeSelector, true, currentReport.Name)
+		if err != nil {
+			streamServer.Send(&pb.ReportResponse{Success: false, ResponseMessage: err.Error()})
+		}
+
+		nodeRefs := []*database.Node{}
+		for _, node := range nodes {
+			nodeRefs = append(nodeRefs, &node)
+		}
+
+		reportResponse, err := reporter.Generate(nodeRefs)
+		reportResponse.Reporter = currentReport.ReportType
+		if err != nil {
+			streamServer.Send(&pb.ReportResponse{Success: false, ResponseMessage: err.Error()})
+		}
+		streamServer.Send(reportResponse)
 	}
-	s.analysisQueueMutex.Unlock()
-}
-
-func (s *server) Report(ctx context.Context, in *pb.ReportMessage) (*pb.ReportResponse, error) {
-	nodeSelector := in.Selector
-	log.Printf("Report requested: %s for %s\n", in.ReportType, nodeSelector)
-
-	s.drainAnalysisQueue()
-
-	var reporter report.Reporter
-	switch in.ReportType {
-	case "license":
-		reporter = report.NewLicenseReporter()
-	default:
-		return &pb.ReportResponse{Success: false}, fmt.Errorf("No such reporter %s", in.ReportType)
-	}
-
-	nodes, err := s.db.GetNodesByType(nodeSelector, true, in.Name)
-	if err != nil {
-		return &pb.ReportResponse{Success: false}, err
-	}
-
-	nodeRefs := []*database.Node{}
-	for _, node := range nodes {
-		nodeRefs = append(nodeRefs, &node)
-	}
-
-	reportResponse, err := reporter.Generate(nodeRefs)
-	if err != nil {
-		return &pb.ReportResponse{Success: false}, err
-	}
-
-	return reportResponse, nil
+	return nil
 }
 
 func (s *server) Analyze(ctx context.Context, in *pb.AnalysisMessage) (*pb.AnalysisResponse, error) {
-	log.Printf("Analysis requested: %s for %s", in.Analyzer, in.Selector)
-	s.analysisQueueMutex.Lock()
-	nodeSelector := in.Selector
-	analyzerSelector := in.Analyzer
+	log.Println("Analysis requested")
 
-	var analyzer analysis.Analyzer
-	switch analyzerSelector {
-	case "spdx":
-		analyzer = analysis.NewSpdxAnalyzer(in.Config, s.db)
-	case "ninka":
-		analyzer = analysis.NewNinkaAnalyzer(in.Config, s.db)
-	default:
-		return &pb.AnalysisResponse{Success: false}, fmt.Errorf("No such analyzer %s", analyzerSelector)
+	s.serverMutex.Lock()
+	if s.analysisDone {
+		s.serverMutex.Unlock()
+		return &pb.AnalysisResponse{Success: false}, fmt.Errorf("Analysis already done")
 	}
 
-	nodes, err := s.db.GetNodesByType(nodeSelector, false, "")
-	if err != nil {
-		return &pb.AnalysisResponse{Success: false}, err
-	}
+	s.db.AwaitBuildComplete()
 
-	anaNodes := []analysis.AnalysisNode{}
-	for _, node := range nodes {
-		anaNodes = append(anaNodes, analysis.NewAnalysisNode(node, in.PathSub, s.db))
-	}
+	go func() {
+		log.Println("Analysis queue worker started")
+		for ana := range s.analyzerQueue {
+			analysis.RunAnalysis(ana)
+		}
+		s.analysisClosed <- true
+	}()
 
-	s.analyzerQueue <- analysis.Analysis{Nodes: anaNodes, Analyzer: analyzer}
-	s.analysisQueueMutex.Unlock()
+	for _, currentAnalysis := range s.analysis {
+		nodeSelector := currentAnalysis.Selector
+		analyzerSelector := currentAnalysis.Analyzer
+
+		var analyzer analysis.Analyzer
+		var err error
+		switch analyzerSelector {
+		case "spdx":
+			analyzer = analysis.NewSpdxAnalyzer(currentAnalysis.Config, s.db)
+		case "ninka":
+			analyzer = analysis.NewNinkaAnalyzer(currentAnalysis.Config, s.db)
+		case "scancode":
+			analyzer, err = analysis.NewScancodeAnalyzer(currentAnalysis.Config, s.db)
+			if err != nil {
+				return &pb.AnalysisResponse{Success: false}, err
+			}
+		default:
+			return &pb.AnalysisResponse{Success: false}, fmt.Errorf("No such analyzer %s", analyzerSelector)
+		}
+
+		nodes, err := s.db.GetNodesByType(nodeSelector, false, "")
+		if err != nil {
+			return &pb.AnalysisResponse{Success: false}, err
+		}
+
+		anaNodes := []analysis.AnalysisNode{}
+		for _, node := range nodes {
+			anaNodes = append(anaNodes, analysis.NewAnalysisNode(node, currentAnalysis.PathSub, s.db))
+		}
+
+		s.analyzerQueue <- analysis.Analysis{Name: analyzerSelector, Nodes: anaNodes, Analyzer: analyzer}
+	}
+	// wait for analysis to finish
+	close(s.analyzerQueue)
+	log.Println("Waiting for analyzers to finish")
+	s.analysisDone = <-s.analysisClosed
+	log.Println("All analyzers finished")
+
+	s.serverMutex.Unlock()
 	return &pb.AnalysisResponse{Success: true}, nil
 }
 
@@ -167,10 +193,14 @@ func (s *server) Quit(ctx context.Context, in *pb.QuitMessage) (*pb.QuitResponse
 	return &pb.QuitResponse{Success: true}, nil
 }
 
-func ListenAndServe(rpcAddr string, dbAddr string) error {
+func ListenAndServe(configfile string) error {
+	masterConfig, err := config.ReadConfigFromFile(configfile)
+	if err != nil {
+		return err
+	}
 
 	// Connect to backend database (dgraph)
-	db, err := database.Setup(dbAddr)
+	db, err := database.Setup(masterConfig.Server.DBAddress, masterConfig.Server.DBWorkers)
 	if err != nil {
 		return fmt.Errorf("Could not setup database: %v", err)
 	}
@@ -179,37 +209,31 @@ func ListenAndServe(rpcAddr string, dbAddr string) error {
 	analysisClosed := make(chan bool)
 
 	// Setup buildservice
-	lis, err := net.Listen("tcp", rpcAddr)
+	lis, err := net.Listen("tcp", masterConfig.Server.RPCAddress)
 	if err != nil {
 		return fmt.Errorf("Failed to setup socket and listen: %v", err)
 	}
 	s := grpc.NewServer()
 	pb.RegisterBuildServiceServer(s, &server{
-		db:                 db,
-		analyzerQueue:      analyzerQueue,
-		analysisQueueMutex: &sync.Mutex{},
-		analysisClosed:     analysisClosed,
-		analysisDone:       false,
+		db:             db,
+		analyzerQueue:  analyzerQueue,
+		serverMutex:    &sync.Mutex{},
+		analysisClosed: analysisClosed,
+		analysisDone:   false,
+		analysis:       masterConfig.Analysis,
+		reporting:      masterConfig.Reporting,
 	})
 
 	quitServer = make(chan interface{})
 	go func() {
 		<-quitServer
-		log.Println("qmstr terminated by client")
+		log.Println("qmstr-master terminated by client")
 		s.GracefulStop()
 		close(quitServer)
 		quitServer = nil
 	}()
 
-	go func() {
-		fmt.Println("Analysis queue worker started")
-		for ana := range analyzerQueue {
-			analysis.RunAnalysis(ana)
-		}
-		analysisClosed <- true
-	}()
-
-	log.Print("qmstr master running")
+	log.Printf("qmstr-master listening on %s\n", masterConfig.Server.RPCAddress)
 	if err := s.Serve(lis); err != nil {
 		return fmt.Errorf("Failed to start rpc service %v", err)
 	}

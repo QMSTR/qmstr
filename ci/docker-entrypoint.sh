@@ -8,7 +8,4 @@ function start_dgraph() {
 
 start_dgraph
 
-# Give dgraph some time to come up
-sleep 15
-
-exec /go/bin/qmstr-master
+exec /go/bin/qmstr-master --config /buildroot/qmstr.yaml

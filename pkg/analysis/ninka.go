@@ -21,12 +21,7 @@ func NewNinkaAnalyzer(config map[string]string, db *database.DataBase) *NinkaAna
 }
 
 func (ninka *NinkaAnalyzer) Analyze(node *AnalysisNode) error {
-	licenses, err := ninka.detectLicenses(node.GetPath())
-	if err != nil {
-		node.SetLicense("UNKNOWN")
-		return err
-	}
-
+	licenses := ninka.detectLicenses(node.GetPath())
 	// TODO merge with currently set licenses
 	for _, license := range licenses {
 		node.SetLicense(license)
@@ -34,8 +29,8 @@ func (ninka *NinkaAnalyzer) Analyze(node *AnalysisNode) error {
 	return nil
 }
 
-func (ninka *NinkaAnalyzer) detectLicenses(srcFilePath string) ([]string, error) {
-	licenses := []string{}
+func (ninka *NinkaAnalyzer) detectLicenses(srcFilePath string) []*database.License {
+	var licenses []*database.License
 	cmd := exec.Command(ninka.cmd, append(ninka.cmdargs, srcFilePath)...)
 	err := cmd.Start()
 	if err != nil {
@@ -47,19 +42,22 @@ func (ninka *NinkaAnalyzer) detectLicenses(srcFilePath string) ([]string, error)
 
 	licenseFile, err := os.Open(srcFilePath + ".license")
 	if err != nil {
-		return []string{}, err
+		log.Println(err)
 	}
 	r := csv.NewReader(licenseFile)
 	r.Comma = ';'
 	records, err := r.ReadAll()
 	if err != nil {
-		return []string{}, err
+		log.Println(err)
 	}
 
 	for _, fields := range records {
 		if len(fields) > 0 {
-			licenses = append(licenses, fields[0])
+			licenses = append(licenses, &database.License{Key: fields[0]})
 		}
 	}
-	return licenses, nil
+	if len(licenses) == 0 {
+		licenses = []*database.License{database.UnknownLicense}
+	}
+	return licenses
 }
