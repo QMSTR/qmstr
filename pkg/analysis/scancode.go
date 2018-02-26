@@ -50,12 +50,20 @@ func scancode(workdir string, jobs int) interface{} {
 func (scan *ScancodeAnalyzer) Analyze(node *AnalysisNode) error {
 	log.Printf("Analyze %s", node.GetPath())
 	licenses := scan.detectLicenses(node.GetPath())
+	copyrightHolders := scan.detectCopyrightHolders(node.GetPath())
 
 	// TODO merge with currently set licenses
 	for _, license := range licenses {
 		err := node.SetLicense(license)
 		if err != nil {
 			return fmt.Errorf("failed to set license %v: %v", license, err)
+		}
+	}
+
+	for _, copyrightHolder := range copyrightHolders {
+		err := node.SetCopyrightHolder(copyrightHolder)
+		if err != nil {
+			return fmt.Errorf("failed to set copyright holder %v: %v", copyrightHolder, err)
 		}
 	}
 	return nil
@@ -81,4 +89,22 @@ func (scan *ScancodeAnalyzer) detectLicenses(srcFilePath string) []*database.Lic
 		licenses = []*database.License{&database.License{Key: "UNKNOWN"}}
 	}
 	return licenses
+}
+
+func (scan *ScancodeAnalyzer) detectCopyrightHolders(srcFilePath string) []*database.CopyrightHolder {
+	copyrightHolders := []*database.CopyrightHolder{}
+	scanDatamap := scan.ScanData.(map[string]interface{})
+	for _, file := range scanDatamap["files"].([]interface{}) {
+		fileData := file.(map[string]interface{})
+		if fileData["path"] == srcFilePath {
+			for _, copyright := range fileData["copyrights"].([]interface{}) {
+				copyrightData := copyright.(map[string]interface{})
+				for _, copyrightHolder := range copyrightData["holders"].([]interface{}) {
+					log.Printf("Found copyright holder %s", copyrightHolder)
+					copyrightHolders = append(copyrightHolders, &database.CopyrightHolder{Name: copyrightHolder.(string)})
+				}
+			}
+		}
+	}
+	return copyrightHolders
 }

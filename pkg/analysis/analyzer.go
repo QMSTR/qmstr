@@ -52,6 +52,17 @@ func (an *AnalysisNode) SetLicense(license *database.License) error {
 	return nil
 }
 
+func (an *AnalysisNode) SetCopyrightHolder(copyrightHolder *database.CopyrightHolder) error {
+	uid, err := an.db.GetCopyrightHolderUid(copyrightHolder)
+	if err != nil {
+		return err
+	}
+	copyrightHolder.Uid = uid
+	an.actualNode.CopyrightHolder = append(an.actualNode.CopyrightHolder, copyrightHolder)
+	an.dirty = true
+	return nil
+}
+
 func (an *AnalysisNode) Store() error {
 	if an.dirty {
 		_, err := an.db.AlterNode(&an.actualNode)
