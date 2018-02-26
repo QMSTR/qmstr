@@ -79,10 +79,13 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y curl golang-1.9-go autoconf git libio-captureoutput-perl python python-pip protobuf-compiler
 
+EXPOSE 2345
+
 VOLUME /go/src
 # install go deps
 RUN go get -u github.com/golang/protobuf/protoc-gen-go && \
     go get github.com/dgraph-io/dgraph/client && \
+    go get -u github.com/derekparker/delve/cmd/dlv && \
     go get github.com/spf13/pflag
 
 COPY ci/dev-entrypoint.sh /dev-entrypoint.sh
