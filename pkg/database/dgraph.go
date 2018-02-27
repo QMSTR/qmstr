@@ -119,7 +119,7 @@ func (db *DataBase) AwaitBuildComplete() {
 		if pendingInserts == 0 {
 			break
 		}
-		fmt.Printf("Pending inserts %d", pendingInserts)
+		log.Printf("Pending inserts %d", pendingInserts)
 		time.Sleep(2 * time.Second)
 	}
 }
