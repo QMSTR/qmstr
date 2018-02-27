@@ -3,6 +3,7 @@ package analysis
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 
@@ -23,8 +24,12 @@ func NewSpdxAnalyzer(config map[string]string, db *database.DataBase) *SpdxAnaly
 func (spdx *SpdxAnalyzer) Analyze(node *AnalysisNode) error {
 	license, err := detectSPDXLicense(node.GetPath())
 	if err != nil {
-		node.SetLicense(database.UnknownLicense)
-		return err
+		log.Printf("Error detecting license %v", err)
+		err2 := node.SetLicense(database.UnknownLicense)
+		if err2 != nil {
+			return fmt.Errorf("failed to set license %v: %v", license, err2)
+		}
+		return nil
 	}
 
 	// TODO merge with currently set licenses
