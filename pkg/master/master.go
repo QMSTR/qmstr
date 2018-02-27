@@ -41,6 +41,8 @@ func (s *server) Report(in *pb.ReportMessage, streamServer pb.BuildService_Repor
 		switch currentReport.ReportType {
 		case "license":
 			reporter = report.NewLicenseReporter()
+		case "copyrightHolder":
+			reporter = report.NewCopyrightHolderReporter()
 		default:
 			streamServer.Send(&pb.ReportResponse{Success: false, ResponseMessage: fmt.Sprintf("No such reporter %s", currentReport.ReportType)})
 		}
