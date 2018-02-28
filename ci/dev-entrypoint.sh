@@ -17,8 +17,9 @@ go install github.com/QMSTR/qmstr/cmd/qmstr-master
 start_dgraph
 start_dgraph_web
 
-if [ -z "$QMSTR_DEV" ]; then
+if [ -z "$QMSTR_DEV_DEBUG" ]; then
     exec /go/bin/qmstr-master --config /buildroot/qmstr.yaml
 else
+    echo "Running master in remote-debug mode."
     exec dlv debug github.com/QMSTR/qmstr/cmd/qmstr-master -l 0.0.0.0:2345 --headless=true --log=true -- --config /buildroot/qmstr.yaml
 fi
