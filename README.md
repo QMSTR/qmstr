@@ -74,3 +74,12 @@ The development container is a combination of the runtime environment with a sou
 	> docker run -it -p 50051:50051 -v $HOME/Go/src:/go/src <build_path>:/buildroot qmstr/dev
 
 ...where `build_path` is the path to the source files you are about to compile.
+
+### Debug in development container 
+
+You can use the development container to debug qmstr-master.
+
+    > export QMSTR_DEV="<debugger_port>"
+    > docker run -p 50051:50051 -p $QMSTR_DEV:2345 -eQMSTR_DEV=$QMSTR_DEV --security-opt seccomp=unconfined -v $HOME/Go/src:/go/src <build_path>:/buildroot qmstr/dev
+
+Now you can connect your debugger. 
