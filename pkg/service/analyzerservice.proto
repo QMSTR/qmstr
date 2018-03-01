@@ -1,0 +1,26 @@
+syntax = "proto3";
+package service;
+
+import weak "datamodel.proto";
+
+message AnalysisMessage {
+    bool async = 1;
+  }
+  
+message AnalysisResponse {
+    bool success = 1;
+}
+
+message NodeRequest {
+    string type = 1;
+    string name = 2;
+}
+
+message NodeResponse {
+    repeated FileNode fileNodes = 1;
+}
+
+service AnalysisService {
+    rpc GetNodes(NodeRequest) returns (NodeResponse) {}
+    rpc SendNodes(AnalysisMessage) returns (AnalysisResponse) {}
+}
