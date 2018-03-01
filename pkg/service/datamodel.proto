@@ -1,0 +1,26 @@
+syntax = "proto3";
+package service;
+
+message FileNode {
+    string hash = 1;
+    string type = 2;
+    string path = 3;
+    bool broken = 6;
+    repeated FileNode derivedFrom = 4;
+    repeated InfoNode additionalInfo = 5;
+}
+
+message InfoNode {
+    string type = 1;
+    Analyzer analyzer = 2;
+
+    message DataNode {
+        string type = 1;
+        bytes data = 2;
+    }
+    repeated DataNode data = 3;
+}
+
+message Analyzer {
+    string name = 1;
+}

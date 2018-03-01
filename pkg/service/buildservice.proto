@@ -1,26 +1,10 @@
 syntax = "proto3";
-package buildservice;
+package service;
 
-message File {
-  string hash = 1;
-  string path = 2;
-  bool broken = 3;
-}
+import weak "datamodel.proto";
 
 message BuildMessage {
-  message Compile {
-    File source = 1;
-    File target = 2;
-  }
-  message Link {
-    File target = 1;
-    repeated File input = 2;
-    repeated string linkLibs = 3;
-    repeated string libDirs = 4;
-  }
-  repeated Compile compilations = 1;
-  // can be zero
-  repeated Link binary = 2;
+  repeated FileNode fileNodes = 1;
 }
 
 message BuildResponse {
@@ -43,13 +27,6 @@ message QuitResponse {
   bool success = 1;
 }
 
-message AnalysisMessage {
-  bool async = 1;
-}
-
-message AnalysisResponse {
-  bool success = 1;
-}
 
 message ReportMessage {
   bool async = 1;
@@ -65,6 +42,5 @@ service BuildService {
   rpc Build(BuildMessage) returns (BuildResponse) {}
   rpc Log(LogMessage) returns (LogResponse) {}
   rpc Quit(QuitMessage) returns (QuitResponse) {}
-  rpc Analyze(AnalysisMessage) returns (AnalysisResponse) {}
   rpc Report(ReportMessage) returns (stream ReportResponse) {}
 }
