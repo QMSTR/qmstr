@@ -1,0 +1,18 @@
+syntax = "proto3";
+package service;
+
+import weak "datamodel.proto";
+
+message ReportRequest {
+  string type = 1;
+  string name = 2;
+}
+
+message ReportResponse {
+  bool success = 1;
+  repeated FileNode fileNodes = 2;
+}
+
+service ReportService {
+  rpc Report(ReportRequest) returns (stream ReportResponse) {}
+}

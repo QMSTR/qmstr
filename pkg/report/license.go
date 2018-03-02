@@ -3,8 +3,8 @@ package report
 import (
 	"fmt"
 
-	"github.com/QMSTR/qmstr/pkg/buildservice"
 	"github.com/QMSTR/qmstr/pkg/database"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 type LicenseReporter struct {
@@ -14,7 +14,7 @@ func NewLicenseReporter() *LicenseReporter {
 	return &LicenseReporter{}
 }
 
-func (lr *LicenseReporter) Generate(nodes []*database.Node) (*buildservice.ReportResponse, error) {
+func (lr *LicenseReporter) Generate(nodes []*database.Node) (*service.ReportResponse, error) {
 	licenses := map[string][]string{}
 	for _, node := range nodes {
 		for _, lic := range getLicense(node) {
@@ -27,7 +27,7 @@ func (lr *LicenseReporter) Generate(nodes []*database.Node) (*buildservice.Repor
 		result = fmt.Sprintf("%s\n%s\t%s", result, artifact, licenses)
 	}
 
-	ret := buildservice.ReportResponse{Success: true, ResponseMessage: result}
+	ret := service.ReportResponse{Success: true, FileNodes: nil}
 	return &ret, nil
 }
 

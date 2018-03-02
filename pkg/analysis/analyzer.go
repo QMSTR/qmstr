@@ -6,6 +6,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 type Analyzer interface {
@@ -19,13 +20,13 @@ type Analysis struct {
 }
 
 type AnalysisNode struct {
-	actualNode database.Node
+	actualNode service.FileNode
 	pathSub    []*config.PathSubstitution
 	db         *database.DataBase
 	dirty      bool
 }
 
-func NewAnalysisNode(actualNode database.Node, pathSub []*config.PathSubstitution, db *database.DataBase) AnalysisNode {
+func NewAnalysisNode(actualNode service.FileNode, pathSub []*config.PathSubstitution, db *database.DataBase) AnalysisNode {
 	return AnalysisNode{actualNode: actualNode, pathSub: pathSub, db: db, dirty: false}
 }
 
@@ -39,28 +40,6 @@ func (an *AnalysisNode) GetPath() string {
 
 func (an *AnalysisNode) GetName() string {
 	return an.actualNode.Name
-}
-
-func (an *AnalysisNode) SetLicense(license *database.License) error {
-	uid, err := an.db.GetLicenseUid(license)
-	if err != nil {
-		return err
-	}
-	license.Uid = uid
-	an.actualNode.License = []*database.License{license}
-	an.dirty = true
-	return nil
-}
-
-func (an *AnalysisNode) SetCopyrightHolder(copyrightHolder *database.CopyrightHolder) error {
-	uid, err := an.db.GetCopyrightHolderUid(copyrightHolder)
-	if err != nil {
-		return err
-	}
-	copyrightHolder.Uid = uid
-	an.actualNode.CopyrightHolder = append(an.actualNode.CopyrightHolder, copyrightHolder)
-	an.dirty = true
-	return nil
 }
 
 func (an *AnalysisNode) Store() error {

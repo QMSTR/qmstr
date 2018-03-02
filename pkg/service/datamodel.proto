@@ -2,25 +2,29 @@ syntax = "proto3";
 package service;
 
 message FileNode {
-    string hash = 1;
+    string uid = 1;
     string type = 2;
     string path = 3;
+    string name = 4;
+    string hash = 5;
     bool broken = 6;
-    repeated FileNode derivedFrom = 4;
-    repeated InfoNode additionalInfo = 5;
+    repeated FileNode derivedFrom = 7;
+    repeated InfoNode additionalInfo = 8;
 }
 
 message InfoNode {
-    string type = 1;
-    Analyzer analyzer = 2;
+    string uid = 1;
+    string type = 2;
+    Analyzer analyzer = 3;
 
     message DataNode {
         string type = 1;
         bytes data = 2;
     }
-    repeated DataNode data = 3;
+    repeated DataNode data = 4;
 }
 
 message Analyzer {
-    string name = 1;
+    string uid = 1;
+    string name = 2;
 }

@@ -11,36 +11,6 @@ message BuildResponse {
   bool success = 1;
 }
 
-message LogMessage {
-  bytes msg = 1;
-}
-
-message LogResponse {
-  bool success = 1;
-}
-
-message QuitMessage {
-  bool kill = 1;
-}
-
-message QuitResponse {
-  bool success = 1;
-}
-
-
-message ReportMessage {
-  bool async = 1;
-}
-
-message ReportResponse {
-  bool success = 1;
-  string reporter = 2;
-  string responseMessage = 3;
-}
-
 service BuildService {
   rpc Build(BuildMessage) returns (BuildResponse) {}
-  rpc Log(LogMessage) returns (LogResponse) {}
-  rpc Quit(QuitMessage) returns (QuitResponse) {}
-  rpc Report(ReportMessage) returns (stream ReportResponse) {}
 }
