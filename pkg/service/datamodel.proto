@@ -3,28 +3,32 @@ package service;
 
 message FileNode {
     string uid = 1;
-    string type = 2;
-    string path = 3;
-    string name = 4;
-    string hash = 5;
-    bool broken = 6;
-    repeated FileNode derivedFrom = 7;
-    repeated InfoNode additionalInfo = 8;
+    int32 nodeType =2;
+    string type = 3;
+    string path = 4;
+    string name = 5;
+    string hash = 6;
+    bool broken = 7;
+    repeated FileNode derivedFrom = 8;
+    repeated InfoNode additionalInfo = 9;
 }
 
 message InfoNode {
     string uid = 1;
-    string type = 2;
-    Analyzer analyzer = 3;
+    int32 nodeType = 2;
+    string type = 3;
+    Analyzer analyzer = 4;
 
     message DataNode {
-        string type = 1;
-        bytes data = 2;
+        int32 nodeType = 1;
+        string type = 2;
+        bytes data = 3;
     }
-    repeated DataNode data = 4;
+    repeated DataNode data = 5;
 }
 
 message Analyzer {
     string uid = 1;
     string name = 2;
+    int32 nodeType = 3;
 }
