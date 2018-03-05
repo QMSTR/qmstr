@@ -1,6 +1,7 @@
 package master
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -10,21 +11,25 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
-	pb "github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 	"google.golang.org/grpc"
 )
 
 var quitServer chan interface{}
+var phaseMap map[int32]serverPhase
 
 type serverPhase interface {
-	Build(*pb.BuildMessage) (*pb.BuildResponse, error)
-	GetNodes(*pb.NodeRequest) (*pb.NodeResponse, error)
-	SendNodes(*pb.AnalysisMessage) (*pb.AnalysisResponse, error)
-	Report(*pb.ReportRequest, pb.ReportService_ReportServer) error
+	GetPhaseId() int32
+	Activate() bool
+	Build(*service.BuildMessage) (*service.BuildResponse, error)
+	GetNodes(*service.NodeRequest) (*service.NodeResponse, error)
+	SendNodes(*service.AnalysisMessage) (*service.AnalysisResponse, error)
+	Report(*service.ReportRequest, service.ReportService_ReportServer) error
 }
 
 type genericServerPhase struct {
-	Name string
+	Name    string
+	phaseId int32
 }
 
 type server struct {
@@ -37,28 +42,44 @@ type server struct {
 	currentPhase   serverPhase
 }
 
-func (s *server) Build(ctx context.Context, in *pb.BuildMessage) (*pb.BuildResponse, error) {
+func (s *server) Build(ctx context.Context, in *service.BuildMessage) (*service.BuildResponse, error) {
 	return s.currentPhase.Build(in)
 }
 
-func (s *server) GetNodes(ctx context.Context, in *pb.NodeRequest) (*pb.NodeResponse, error) {
+func (s *server) GetNodes(ctx context.Context, in *service.NodeRequest) (*service.NodeResponse, error) {
 	return s.currentPhase.GetNodes(in)
 }
 
-func (s *server) SendNodes(ctx context.Context, in *pb.AnalysisMessage) (*pb.AnalysisResponse, error) {
+func (s *server) SendNodes(ctx context.Context, in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
 	return s.currentPhase.SendNodes(in)
 }
 
-func (s *server) Report(in *pb.ReportRequest, streamServer pb.ReportService_ReportServer) error {
+func (s *server) Report(in *service.ReportRequest, streamServer service.ReportService_ReportServer) error {
 	return s.currentPhase.Report(in, streamServer)
 }
 
-func (s *server) Log(ctx context.Context, in *pb.LogMessage) (*pb.LogResponse, error) {
-	log.Printf("REMOTE: %s", string(in.Msg))
-	return &pb.LogResponse{Success: true}, nil
+func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage) (*service.SwitchPhaseResponse, error) {
+	requestedPhase := in.Phase
+	if requestedPhase <= s.currentPhase.GetPhaseId() {
+		errMsg := fmt.Sprintf("Illegal phase transition %d->%d requested", s.currentPhase.GetPhaseId(), requestedPhase)
+		log.Println(errMsg)
+		return &service.SwitchPhaseResponse{Success: false}, errors.New(errMsg)
+	}
+	if phase, ok := phaseMap[requestedPhase]; ok {
+		log.Printf("Switching to %d phase", requestedPhase)
+		s.currentPhase = phase
+		s.currentPhase.Activate()
+		return &service.SwitchPhaseResponse{Success: true}, nil
+	}
+	return &service.SwitchPhaseResponse{Success: false}, fmt.Errorf("Invalid phase requested %d", requestedPhase)
 }
 
-func (s *server) Quit(ctx context.Context, in *pb.QuitMessage) (*pb.QuitResponse, error) {
+func (s *server) Log(ctx context.Context, in *service.LogMessage) (*service.LogResponse, error) {
+	log.Printf("REMOTE: %s", string(in.Msg))
+	return &service.LogResponse{Success: true}, nil
+}
+
+func (s *server) Quit(ctx context.Context, in *service.QuitMessage) (*service.QuitResponse, error) {
 	if in.Kill {
 		log.Fatalf("qmstr was killed hard by client")
 	}
@@ -68,13 +89,19 @@ func (s *server) Quit(ctx context.Context, in *pb.QuitMessage) (*pb.QuitResponse
 	// Schedule shutdown
 	quitServer <- nil
 
-	return &pb.QuitResponse{Success: true}, nil
+	return &service.QuitResponse{Success: true}, nil
 }
 
-func ListenAndServe(configfile string) error {
+func InitAndRun(configfile string) error {
 	masterConfig, err := config.ReadConfigFromFile(configfile)
 	if err != nil {
 		return err
+	}
+
+	phaseMap = map[int32]serverPhase{
+		1: &serverPhaseBuild{genericServerPhase{Name: "Build phase", phaseId: 1}},
+		2: &serverPhaseAnalysis{genericServerPhase{Name: "Analysis phase", phaseId: 2}},
+		3: &serverPhaseReport{genericServerPhase{Name: "Reporting phase", phaseId: 3}},
 	}
 
 	// Connect to backend database (dgraph)
@@ -82,8 +109,6 @@ func ListenAndServe(configfile string) error {
 	if err != nil {
 		return fmt.Errorf("Could not setup database: %v", err)
 	}
-
-	analysisClosed := make(chan bool)
 
 	// Setup buildservice
 	lis, err := net.Listen("tcp", masterConfig.Server.RPCAddress)
@@ -94,15 +119,15 @@ func ListenAndServe(configfile string) error {
 	serverImpl := &server{
 		db:             db,
 		serverMutex:    &sync.Mutex{},
-		analysisClosed: analysisClosed,
+		analysisClosed: make(chan bool),
 		analysisDone:   false,
 		analysis:       masterConfig.Analysis,
 		reporting:      masterConfig.Reporting,
 	}
-	pb.RegisterBuildServiceServer(s, serverImpl)
-	pb.RegisterAnalysisServiceServer(s, serverImpl)
-	pb.RegisterReportServiceServer(s, serverImpl)
-	pb.RegisterControlServiceServer(s, serverImpl)
+	service.RegisterBuildServiceServer(s, serverImpl)
+	service.RegisterAnalysisServiceServer(s, serverImpl)
+	service.RegisterReportServiceServer(s, serverImpl)
+	service.RegisterControlServiceServer(s, serverImpl)
 
 	quitServer = make(chan interface{})
 	go func() {

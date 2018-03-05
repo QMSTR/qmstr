@@ -4,29 +4,37 @@ import (
 	"errors"
 	"log"
 
-	pb "github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 type serverPhaseAnalysis struct {
 	genericServerPhase
 }
 
-func (phase *serverPhaseAnalysis) Build(in *pb.BuildMessage) (*pb.BuildResponse, error) {
+func (phase *serverPhaseAnalysis) Activate() bool {
+	return false
+}
+
+func (phase *serverPhaseAnalysis) GetPhaseId() int32 {
+	return phase.phaseId
+}
+
+func (phase *serverPhaseAnalysis) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
 	return nil, errors.New("Get  off")
 }
 
-func (s *serverPhaseAnalysis) GetNodes(in *pb.NodeRequest) (*pb.NodeResponse, error) {
+func (s *serverPhaseAnalysis) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
 	log.Println("Nodes requested")
 
-	return &pb.NodeResponse{FileNodes: nil}, nil
+	return &service.NodeResponse{FileNodes: nil}, nil
 }
 
-func (s *serverPhaseAnalysis) SendNodes(in *pb.AnalysisMessage) (*pb.AnalysisResponse, error) {
+func (s *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
 	log.Println("Nodes received")
 
-	return &pb.AnalysisResponse{Success: true}, nil
+	return &service.AnalysisResponse{Success: true}, nil
 }
 
-func (phase *serverPhaseAnalysis) Report(in *pb.ReportRequest, streamServer pb.ReportService_ReportServer) error {
+func (phase *serverPhaseAnalysis) Report(in *service.ReportRequest, streamServer service.ReportService_ReportServer) error {
 	return errors.New("Get  off")
 }
