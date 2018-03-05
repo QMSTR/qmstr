@@ -4,15 +4,15 @@ import (
 	"context"
 	"errors"
 
-	pb "github.com/QMSTR/qmstr/pkg/buildservice"
+	pb "github.com/QMSTR/qmstr/pkg/service"
 )
 
 // RemoteLogWriter can be used as logger sink that sends the log messages to the server
 type RemoteLogWriter struct {
-	bsc pb.BuildServiceClient
+	bsc pb.ControlServiceClient
 }
 
-func NewRemoteLogWriter(bsc pb.BuildServiceClient) *RemoteLogWriter {
+func NewRemoteLogWriter(bsc pb.ControlServiceClient) *RemoteLogWriter {
 	return &RemoteLogWriter{bsc: bsc}
 }
 

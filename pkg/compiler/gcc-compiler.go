@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	pb "github.com/QMSTR/qmstr/pkg/buildservice"
+	pb "github.com/QMSTR/qmstr/pkg/service"
 	"github.com/QMSTR/qmstr/pkg/wrapper"
 	"github.com/spf13/pflag"
 )
@@ -24,6 +24,12 @@ const (
 	PrintOnly
 )
 const undef = "undef"
+const (
+	linkedTrg = "linkedtarget"
+	obj       = "objectfile"
+	src       = "sourcefile"
+	lib       = "library"
+)
 
 var (
 	boolArgs = map[string]struct{}{
@@ -99,13 +105,21 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 	switch g.Mode {
 	case Link:
 		g.logger.Printf("gcc linking")
-		linkedTarget := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[0], false))
-		buildLinkMsg := pb.BuildMessage_Link{Target: linkedTarget}
-		dependencies := []*pb.File{}
+		linkedTarget := NewFileNode(wrapper.BuildCleanPath(g.WorkDir, g.Output[0], false), linkedTrg)
+		fileNodes := []*pb.FileNode{linkedTarget}
+		dependencies := []*pb.FileNode{}
 		for _, inFile := range g.Input {
-			inputFile := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile, false))
-			dependencies = append(dependencies, inputFile)
-
+			inputFileNode := &pb.FileNode{}
+			ext := filepath.Ext(inFile)
+			if ext == ".o" {
+				inputFileNode = NewFileNodeDerivedFrom(wrapper.BuildCleanPath(g.WorkDir, inFile, false), obj, fileNodes)
+			} else if ext == ".c" {
+				inputFileNode = NewFileNodeDerivedFrom(wrapper.BuildCleanPath(g.WorkDir, inFile, false), src, fileNodes)
+			} else {
+				inputFileNode = NewFileNodeDerivedFrom(wrapper.BuildCleanPath(g.WorkDir, inFile, false), lib, fileNodes)
+			}
+			dependencies = append(dependencies, inputFileNode)
+			fileNodes = append(fileNodes, inputFileNode)
 		}
 
 		actualLibs, err := wrapper.FindActualLibraries(g.LinkLibs, g.LibPath)
@@ -113,24 +127,14 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			g.logger.Fatalf("Failed to collect dependencies: %v", err)
 		}
 		for _, lib := range actualLibs {
-			linkLib := NewFile(lib)
+			linkLib := NewFileNodeDerivedFrom(lib, lib, dependencies)
 			dependencies = append(dependencies, linkLib)
+			fileNodes = append(fileNodes, linkLib)
 		}
-
-		buildLinkMsg.Input = dependencies
-
-		buildLinkMsg.LinkLibs = g.LinkLibs
-		buildLinkMsg.LibDirs = g.LibPath
-
-		buildMsg := pb.BuildMessage{}
-		buildMsg.Binary = []*pb.BuildMessage_Link{&buildLinkMsg}
-
-		return &buildMsg, nil
+		return &pb.BuildMessage{fileNodes}, nil
 	case Assemble:
 		g.logger.Printf("gcc assembling - skipping link")
-		buildMsg := pb.BuildMessage{}
-		buildMsg.Compilations = []*pb.BuildMessage_Compile{}
-
+		fileNodes := []*pb.FileNode{}
 		if g.debug {
 			g.logger.Printf("This is our input %v", g.Input)
 			g.logger.Printf("This is our output %v", g.Output)
@@ -139,11 +143,12 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			if g.debug {
 				g.logger.Printf("This is the source file %s indexed %d", inFile, idx)
 			}
-			sourceFile := NewFile(wrapper.BuildCleanPath(g.WorkDir, inFile, false))
-			targetFile := NewFile(wrapper.BuildCleanPath(g.WorkDir, g.Output[idx], false))
-			buildMsg.Compilations = append(buildMsg.Compilations, &pb.BuildMessage_Compile{Source: sourceFile, Target: targetFile})
+			targetFile := NewFileNode(wrapper.BuildCleanPath(g.WorkDir, g.Output[idx], false), obj)
+			fileNodes = append(fileNodes, targetFile)
+			sourceFile := NewFileNodeDerivedFrom(wrapper.BuildCleanPath(g.WorkDir, inFile, false), src, fileNodes)
+			fileNodes = append(fileNodes, sourceFile)
 		}
-		return &buildMsg, nil
+		return &pb.BuildMessage{fileNodes}, nil
 	default:
 		return nil, errors.New("Mode not implemented")
 	}

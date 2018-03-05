@@ -20,15 +20,16 @@ const (
 )
 
 var (
-	buildServiceClient pb.BuildServiceClient
-	logger             *log.Logger
-	conn               *grpc.ClientConn
-	debug              bool
+	buildServiceClient   pb.BuildServiceClient
+	controlServiceClient pb.ControlServiceClient
+	logger               *log.Logger
+	conn                 *grpc.ClientConn
+	debug                bool
 )
 
 func initLogging() {
 	var infoWriter io.Writer
-	infoWriter = wrapper.NewRemoteLogWriter(buildServiceClient)
+	infoWriter = wrapper.NewRemoteLogWriter(controlServiceClient)
 	logger = log.New(infoWriter, "", log.Ldate|log.Ltime)
 }
 
@@ -41,6 +42,7 @@ func main() {
 	}
 	defer conn.Close()
 	buildServiceClient = pb.NewBuildServiceClient(conn)
+	controlServiceClient = pb.NewControlServiceClient(conn)
 
 	initLogging()
 
