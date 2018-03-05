@@ -30,6 +30,7 @@ type serverPhase interface {
 type genericServerPhase struct {
 	Name    string
 	phaseId int32
+	db      *database.DataBase
 }
 
 type server struct {
@@ -98,12 +99,6 @@ func InitAndRun(configfile string) error {
 		return err
 	}
 
-	phaseMap = map[int32]serverPhase{
-		1: &serverPhaseBuild{genericServerPhase{Name: "Build phase", phaseId: 1}},
-		2: &serverPhaseAnalysis{genericServerPhase{Name: "Analysis phase", phaseId: 2}},
-		3: &serverPhaseReport{genericServerPhase{Name: "Reporting phase", phaseId: 3}},
-	}
-
 	// Connect to backend database (dgraph)
 	db, err := database.Setup(masterConfig.Server.DBAddress, masterConfig.Server.DBWorkers)
 	if err != nil {
@@ -115,6 +110,13 @@ func InitAndRun(configfile string) error {
 	if err != nil {
 		return fmt.Errorf("Failed to setup socket and listen: %v", err)
 	}
+
+	phaseMap = map[int32]serverPhase{
+		1: &serverPhaseBuild{genericServerPhase{Name: "Build phase", phaseId: 1, db: db}},
+		2: &serverPhaseAnalysis{genericServerPhase{Name: "Analysis phase", phaseId: 2, db: db}},
+		3: &serverPhaseReport{genericServerPhase{Name: "Reporting phase", phaseId: 3, db: db}},
+	}
+
 	s := grpc.NewServer()
 	serverImpl := &server{
 		db:             db,
@@ -123,6 +125,7 @@ func InitAndRun(configfile string) error {
 		analysisDone:   false,
 		analysis:       masterConfig.Analysis,
 		reporting:      masterConfig.Reporting,
+		currentPhase:   phaseMap[1],
 	}
 	service.RegisterBuildServiceServer(s, serverImpl)
 	service.RegisterAnalysisServiceServer(s, serverImpl)

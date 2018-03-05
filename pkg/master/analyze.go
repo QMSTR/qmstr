@@ -25,12 +25,23 @@ func (phase *serverPhaseAnalysis) Build(in *service.BuildMessage) (*service.Buil
 
 func (s *serverPhaseAnalysis) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
 	log.Println("Nodes requested")
-
-	return &service.NodeResponse{FileNodes: nil}, nil
+	nodes, err := s.db.GetFileNodesByType(in.Type, true)
+	if err != nil {
+		return nil, err
+	}
+	resp := &service.NodeResponse{FileNodes: nodes}
+	return resp, nil
 }
 
 func (s *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
 	log.Println("Nodes received")
+
+	nodes := in.FileNodes
+
+	for _, node := range nodes {
+		// TODO remove everything but InfoNodes and UID
+		s.db.AlterNode(node)
+	}
 
 	return &service.AnalysisResponse{Success: true}, nil
 }

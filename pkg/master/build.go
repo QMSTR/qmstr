@@ -2,6 +2,7 @@ package master
 
 import (
 	"errors"
+	"log"
 
 	"github.com/QMSTR/qmstr/pkg/service"
 )
@@ -19,6 +20,10 @@ func (phase *serverPhaseBuild) GetPhaseId() int32 {
 }
 
 func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
+	for _, node := range in.FileNodes {
+		log.Printf("Adding file node %v", node)
+		phase.db.AddNode(node)
+	}
 	return &service.BuildResponse{Success: true}, nil
 }
 

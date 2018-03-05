@@ -23,10 +23,8 @@ const schema = `
 path: string @index(trigram) .
 hash: string @index(exact) .
 type: string @index(hash) .
-spdxIdentifier: string @index(hash) .
 name: string @index(hash) .
-licenseKey: string @index(hash) .
-copyrightHolderName: string @index(hash) .
+nodeType: int @index(int) .
 `
 
 const (
@@ -150,7 +148,7 @@ func (db *DataBase) AlterNode(node *service.FileNode) (string, error) {
 // HasNode returns the UID of the node if exists otherwise ""
 func (db *DataBase) HasNode(hash string) (string, error) {
 
-	ret := map[string][]service.FileNode{}
+	ret := map[string][]*service.FileNode{}
 
 	q := `query Node($Hash: string){
 		  hasNode(func: eq(hash, $Hash)) {
@@ -190,9 +188,51 @@ func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 	return uid, nil
 }
 
-func (db *DataBase) GetNodesByType(nodetype string, recursive bool, namefilter string) ([]service.FileNode, error) {
+func (db *DataBase) GetFileNodesByType(filetype string, recursive bool) ([]*service.FileNode, error) {
+	ret := map[string][]*service.FileNode{}
 
-	ret := map[string][]service.FileNode{}
+	q := `query FileNodeByType($FileType: string){
+		  getFileNodeByType(func: eq(nodeType, 1)) {{.Filter}} {{.Recurse}}{
+			uid
+			hash
+			path
+			derivedFrom
+		  }}`
+
+	queryTmpl, err := template.New("nodesbytype").Parse(q)
+
+	type QueryParams struct {
+		Recurse string
+		Filter  string
+	}
+
+	qp := QueryParams{}
+	if recursive {
+		qp.Recurse = "@recurse(loop: false)"
+	}
+	if filetype != "" {
+		qp.Filter = "@filter(eq(type, $FileType))"
+	}
+
+	var b bytes.Buffer
+	err = queryTmpl.Execute(&b, qp)
+	if err != nil {
+		panic(err)
+	}
+
+	vars := map[string]string{"$FileType": filetype}
+
+	err = db.queryNodes(b.String(), vars, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	return ret["getFileNodeByType"], nil
+}
+
+func (db *DataBase) GetNodesByType(valuetype string, recursive bool, namefilter string) ([]*service.FileNode, error) {
+
+	ret := map[string][]*service.FileNode{}
 
 	q := `query NodeByType($Type: string, $Name: string){
 		  getNodeByType(func: eq(type, $Type)) {{.Filter}} {{.Recurse}}{
@@ -200,11 +240,6 @@ func (db *DataBase) GetNodesByType(nodetype string, recursive bool, namefilter s
 			hash
 			path
 			derivedFrom
-			license
-			spdxIdentifier
-			licenseKey
-			copyrightHolder
-			copyrightHolderName
 		  }}`
 
 	queryTmpl, err := template.New("nodesbytype").Parse(q)
@@ -228,7 +263,7 @@ func (db *DataBase) GetNodesByType(nodetype string, recursive bool, namefilter s
 		panic(err)
 	}
 
-	vars := map[string]string{"$Type": nodetype, "$Name": namefilter}
+	vars := map[string]string{"$Type": valuetype, "$Name": namefilter}
 
 	err = db.queryNodes(b.String(), vars, &ret)
 	if err != nil {
@@ -238,9 +273,9 @@ func (db *DataBase) GetNodesByType(nodetype string, recursive bool, namefilter s
 	return ret["getNodeByType"], nil
 }
 
-func (db *DataBase) GetNodeByHash(hash string, recursive bool) (service.FileNode, error) {
+func (db *DataBase) GetNodeByHash(hash string, recursive bool) (*service.FileNode, error) {
 
-	ret := map[string][]service.FileNode{}
+	ret := map[string][]*service.FileNode{}
 
 	q := `query NodeByHash($Hash: string){
 		  getNodeByHash(func: eq(hash, $Hash)) {
@@ -256,10 +291,6 @@ func (db *DataBase) GetNodeByHash(hash string, recursive bool) (service.FileNode
 			hash
 			path
 			derivedFrom
-			license
-			spdxIdentifier
-			copyrightHolder
-			copyrightHolderName
 		  }}`
 	}
 
@@ -267,13 +298,13 @@ func (db *DataBase) GetNodeByHash(hash string, recursive bool) (service.FileNode
 
 	err := db.queryNodes(q, vars, &ret)
 	if err != nil {
-		return service.FileNode{}, err
+		return nil, err
 	}
 
 	return ret["getNodeByHash"][0], nil
 }
 
-func (db *DataBase) queryNodes(query string, queryVars map[string]string, resultMap *map[string][]service.FileNode) error {
+func (db *DataBase) queryNodes(query string, queryVars map[string]string, resultMap *map[string][]*service.FileNode) error {
 	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
 	if err != nil {
 		return fmt.Errorf("Could not query with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
