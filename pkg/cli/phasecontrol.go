@@ -6,28 +6,41 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/QMSTR/qmstr/pkg/buildservice"
+	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spf13/cobra"
 )
 
 var anaCmd = &cobra.Command{
 	Use:   "analyze",
 	Short: "Start analysis on qmstr-master",
-	Long:  `Start analysis described in provided YAML file on the master server.`,
+	Long:  `Start analysis phase on the master server.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		setUpServer()
-		startAnalysis()
+		startPhase(2)
+		tearDownServer()
+	},
+}
+
+var reportCmd = &cobra.Command{
+	Use:   "report",
+	Short: "Start report on qmstr-master",
+	Long:  `Start report phase on the master server.`,
+	Run: func(cmd *cobra.Command, args []string) {
+
+		setUpServer()
+		startPhase(3)
 		tearDownServer()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(anaCmd)
+	rootCmd.AddCommand(reportCmd)
 }
 
-func startAnalysis() {
-	resp, err := buildServiceClient.Analyze(context.Background(), &buildservice.AnalysisMessage{Async: false})
+func startPhase(phase int32) {
+	resp, err := controlServiceClient.SwitchPhase(context.Background(), &service.SwitchPhaseMessage{Phase: phase})
 	if err != nil {
 		fmt.Printf("Failed to communicate with qmstr-master server. %v\n", err)
 		os.Exit(ReturnCodeServerCommunicationError)

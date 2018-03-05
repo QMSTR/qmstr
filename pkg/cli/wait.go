@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	pb "github.com/QMSTR/qmstr/pkg/buildservice"
+	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )
@@ -37,7 +37,7 @@ func awaitServer() {
 		os.Exit(ReturnCodeTimeout)
 	}()
 	for {
-		res, err := buildServiceClient.Log(context.Background(), &pb.LogMessage{Msg: []byte("Client is waiting for qmstr server to be ready")})
+		res, err := controlServiceClient.Log(context.Background(), &service.LogMessage{Msg: []byte("Client is waiting for qmstr server to be ready")})
 		if err != nil {
 			continue
 		}

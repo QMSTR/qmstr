@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	pb "github.com/QMSTR/qmstr/pkg/buildservice"
+	pb "github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +31,7 @@ func init() {
 }
 
 func quitServer() {
-	resp, err := buildServiceClient.Quit(context.Background(), &pb.QuitMessage{Kill: force})
+	resp, err := controlServiceClient.Quit(context.Background(), &pb.QuitMessage{Kill: force})
 	if err != nil {
 		fmt.Printf("Failed to communicate with qmstr-master server. %v\n", err)
 		os.Exit(ReturnCodeServerCommunicationError)

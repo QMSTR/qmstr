@@ -5,13 +5,13 @@ import (
 	"log"
 	"os"
 
-	pb "github.com/QMSTR/qmstr/pkg/buildservice"
+	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
 
 var conn *grpc.ClientConn
-var buildServiceClient pb.BuildServiceClient
+var controlServiceClient service.ControlServiceClient
 
 const (
 	address = "localhost:50051"
@@ -42,7 +42,7 @@ func setUpServer() {
 	if err != nil {
 		log.Fatalf("Failed to connect to master: %v", err)
 	}
-	buildServiceClient = pb.NewBuildServiceClient(conn)
+	controlServiceClient = service.NewControlServiceClient(conn)
 }
 
 func tearDownServer() {
