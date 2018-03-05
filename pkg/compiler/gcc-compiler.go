@@ -105,33 +105,32 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 	switch g.Mode {
 	case Link:
 		g.logger.Printf("gcc linking")
+		fileNodes := []*pb.FileNode{}
 		linkedTarget := NewFileNode(wrapper.BuildCleanPath(g.WorkDir, g.Output[0], false), linkedTrg)
-		fileNodes := []*pb.FileNode{linkedTarget}
 		dependencies := []*pb.FileNode{}
 		for _, inFile := range g.Input {
 			inputFileNode := &pb.FileNode{}
 			ext := filepath.Ext(inFile)
 			if ext == ".o" {
-				inputFileNode = NewFileNodeDerivedFrom(wrapper.BuildCleanPath(g.WorkDir, inFile, false), obj, fileNodes)
+				inputFileNode = NewFileNode(wrapper.BuildCleanPath(g.WorkDir, inFile, false), obj)
 			} else if ext == ".c" {
-				inputFileNode = NewFileNodeDerivedFrom(wrapper.BuildCleanPath(g.WorkDir, inFile, false), src, fileNodes)
+				inputFileNode = NewFileNode(wrapper.BuildCleanPath(g.WorkDir, inFile, false), src)
 			} else {
-				inputFileNode = NewFileNodeDerivedFrom(wrapper.BuildCleanPath(g.WorkDir, inFile, false), lib, fileNodes)
+				inputFileNode = NewFileNode(wrapper.BuildCleanPath(g.WorkDir, inFile, false), lib)
 			}
 			dependencies = append(dependencies, inputFileNode)
-			fileNodes = append(fileNodes, inputFileNode)
 		}
-
 		actualLibs, err := wrapper.FindActualLibraries(g.LinkLibs, g.LibPath)
 		if err != nil {
 			g.logger.Fatalf("Failed to collect dependencies: %v", err)
 		}
-		for _, lib := range actualLibs {
-			linkLib := NewFileNodeDerivedFrom(lib, lib, dependencies)
+		for _, actualLib := range actualLibs {
+			linkLib := NewFileNode(actualLib, lib)
 			dependencies = append(dependencies, linkLib)
-			fileNodes = append(fileNodes, linkLib)
 		}
-		return &pb.BuildMessage{fileNodes}, nil
+		linkedTarget.DerivedFrom = dependencies
+		fileNodes = append(fileNodes, linkedTarget)
+		return &pb.BuildMessage{FileNodes: fileNodes}, nil
 	case Assemble:
 		g.logger.Printf("gcc assembling - skipping link")
 		fileNodes := []*pb.FileNode{}
@@ -143,12 +142,12 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			if g.debug {
 				g.logger.Printf("This is the source file %s indexed %d", inFile, idx)
 			}
+			sourceFile := NewFileNode(wrapper.BuildCleanPath(g.WorkDir, inFile, false), src)
 			targetFile := NewFileNode(wrapper.BuildCleanPath(g.WorkDir, g.Output[idx], false), obj)
+			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
 			fileNodes = append(fileNodes, targetFile)
-			sourceFile := NewFileNodeDerivedFrom(wrapper.BuildCleanPath(g.WorkDir, inFile, false), src, fileNodes)
-			fileNodes = append(fileNodes, sourceFile)
 		}
-		return &pb.BuildMessage{fileNodes}, nil
+		return &pb.BuildMessage{FileNodes: fileNodes}, nil
 	default:
 		return nil, errors.New("Mode not implemented")
 	}

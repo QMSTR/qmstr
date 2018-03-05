@@ -4,8 +4,8 @@ package service;
 import weak "datamodel.proto";
 
 message AnalysisMessage {
-    bool async = 1;
-  }
+    repeated FileNode fileNodes = 1;
+}
   
 message AnalysisResponse {
     bool success = 1;

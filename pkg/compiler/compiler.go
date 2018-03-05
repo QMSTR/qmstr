@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"log"
+	"path/filepath"
 
 	pb "github.com/QMSTR/qmstr/pkg/service"
 	"github.com/QMSTR/qmstr/pkg/wrapper"
@@ -28,17 +29,12 @@ func GetCompiler(prog string, workDir string, logger *log.Logger, debug bool) Co
 }
 
 func NewFileNode(path string, fileType string) *pb.FileNode {
+	filename := filepath.Base(path)
 	hash, err := wrapper.Hash(path)
+	broken := false
 	if err != nil {
-		return &pb.FileNode{Path: path, Hash: "nohash" + path, Broken: true}
+		hash = "nohash" + path
+		broken = true
 	}
-	return &pb.FileNode{Type: fileType, Path: path, Hash: hash, Broken: false}
-}
-
-func NewFileNodeDerivedFrom(path string, fileType string, derivedNode []*pb.FileNode) *pb.FileNode {
-	hash, err := wrapper.Hash(path)
-	if err != nil {
-		return &pb.FileNode{Path: path, Hash: "nohash" + path, Broken: true, DerivedFrom: derivedNode}
-	}
-	return &pb.FileNode{Type: fileType, Path: path, Hash: hash, Broken: false, DerivedFrom: derivedNode}
+	return &pb.FileNode{NodeType: 1, Name: filename, Type: fileType, Path: path, Hash: hash, Broken: broken}
 }

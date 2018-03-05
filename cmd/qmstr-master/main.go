@@ -14,7 +14,7 @@ func main() {
 	configFile := flag.String("config", "qmstr.yaml", "Set the qmstr configuration file.")
 	flag.Parse()
 
-	if err := master.ListenAndServe(*configFile); err != nil {
+	if err := master.InitAndRun(*configFile); err != nil {
 		log.Fatalf("Cannot start QMSTR Server: %v\n", err)
 	}
 }
