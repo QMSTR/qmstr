@@ -10,6 +10,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"encoding/base64"
 	"encoding/json"
 
 	"github.com/QMSTR/qmstr/pkg/service"
@@ -25,13 +26,9 @@ hash: string @index(exact) .
 type: string @index(hash) .
 name: string @index(hash) .
 nodeType: int @index(int) .
+dataNodes: uid @reverse .
+data: string @index(hash) .
 `
-
-const (
-	ArtifactTypeLink string = "linkedtarget"
-	ArtifactTypeSrc  string = "sourcecode"
-	ArtifactTypeObj  string = "object"
-)
 
 type DataBase struct {
 	client      *client.Dgraph
@@ -188,6 +185,84 @@ func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 	return uid, nil
 }
 
+func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*service.InfoNode_DataNode) (*service.InfoNode, error) {
+
+	var retInfoNode *service.InfoNode
+
+	for idx, datanode := range datanodes {
+
+		// enforce data node type
+		datanodes[idx].NodeType = 3
+
+		ret := map[string][]*service.InfoNode{}
+
+		data := base64.StdEncoding.EncodeToString(datanode.Data)
+
+		q := `query InfoNodeByDataNode($InfoType: string, $DataType: string, $Data: string) {
+				A as var(func:eq(nodeType, 3)) {{.Filter}} {}
+		
+				getInfoByData(func:eq(nodeType, 2)) @filter(eq(type, $InfoType)) {
+					uid
+					type
+					~dataNodes @filter(uid(A))
+				}
+	  		}`
+
+		queryTmpl, err := template.New("infobydata").Parse(q)
+
+		type QueryParams struct {
+			Filter string
+		}
+
+		qp := QueryParams{}
+		if len(data) > 0 {
+			qp.Filter = "@filter(eq(type, $DataType) AND eq(data, $Data))"
+		} else {
+			qp.Filter = "@filter(eq(type, $DataType))"
+		}
+
+		var b bytes.Buffer
+		err = queryTmpl.Execute(&b, qp)
+		if err != nil {
+			panic(err)
+		}
+
+		vars := map[string]string{"$InfoType": infonodetype, "$DataType": datanode.Type, "$Data": data}
+
+		err = db.queryInfoNodes(b.String(), vars, &ret)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(ret["getInfoByData"]) > 0 {
+			// first iteration
+			if retInfoNode == nil {
+				retInfoNode = ret["getInfoByData"][0]
+			}
+			// still the same info node?
+			if retInfoNode.Uid != ret["getInfoByData"][0].Uid {
+				// not the same info node
+				retInfoNode = nil
+				break
+			}
+		}
+
+	}
+
+	if retInfoNode == nil {
+		infoNode := &service.InfoNode{Type: infonodetype, NodeType: 2}
+		infoNode.DataNodes = datanodes
+		uid, err := dbInsert(db.client, infoNode)
+		if err != nil {
+			return nil, err
+		}
+		infoNode.Uid = uid
+		retInfoNode = infoNode
+	}
+
+	return retInfoNode, nil
+}
+
 func (db *DataBase) GetFileNodesByType(filetype string, recursive bool) ([]*service.FileNode, error) {
 	ret := map[string][]*service.FileNode{}
 
@@ -199,7 +274,7 @@ func (db *DataBase) GetFileNodesByType(filetype string, recursive bool) ([]*serv
 			derivedFrom
 		  }}`
 
-	queryTmpl, err := template.New("nodesbytype").Parse(q)
+	queryTmpl, err := template.New("filenodesbytype").Parse(q)
 
 	type QueryParams struct {
 		Recurse string
@@ -228,6 +303,38 @@ func (db *DataBase) GetFileNodesByType(filetype string, recursive bool) ([]*serv
 	}
 
 	return ret["getFileNodeByType"], nil
+}
+
+func (db *DataBase) GetAnalyzerByName(name string) (*service.Analyzer, error) {
+	ret := map[string][]*service.Analyzer{}
+
+	q := `query AnalyzerByName($AnaName: string){
+		  getAnalyzerByType(func: eq(nodeType, 4)) @filter(eq(name, $AnaName)) {
+			uid
+			hash
+			path
+			derivedFrom
+		  }}`
+
+	vars := map[string]string{"$AnaName": name}
+
+	err := db.queryAnalyzer(q, vars, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(ret["getAnalyzerByName"]) < 1 {
+		// No such analyzer
+		analyzer := &service.Analyzer{Name: name, NodeType: 4}
+		uid, err := dbInsert(db.client, analyzer)
+		if err != nil {
+			return nil, err
+		}
+		analyzer.Uid = uid
+		return analyzer, nil
+	}
+
+	return ret["getAnalyzerByName"][0], nil
 }
 
 func (db *DataBase) GetNodesByType(valuetype string, recursive bool, namefilter string) ([]*service.FileNode, error) {
@@ -307,7 +414,30 @@ func (db *DataBase) GetNodeByHash(hash string, recursive bool) (*service.FileNod
 func (db *DataBase) queryNodes(query string, queryVars map[string]string, resultMap *map[string][]*service.FileNode) error {
 	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
 	if err != nil {
-		return fmt.Errorf("Could not query with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
+		return fmt.Errorf("Could not query for filenode with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
+	}
+
+	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
+		return fmt.Errorf("Could not unmashal query response: %v", err)
+	}
+	return nil
+}
+
+func (db *DataBase) queryAnalyzer(query string, queryVars map[string]string, resultMap *map[string][]*service.Analyzer) error {
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
+	if err != nil {
+		return fmt.Errorf("Could not query for analyzer with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
+	}
+
+	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
+		return fmt.Errorf("Could not unmashal query response: %v", err)
+	}
+	return nil
+}
+func (db *DataBase) queryInfoNodes(query string, queryVars map[string]string, resultMap *map[string][]*service.InfoNode) error {
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
+	if err != nil {
+		return fmt.Errorf("Could not query for info node with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
 	}
 
 	if err = json.Unmarshal(resp.Json, resultMap); err != nil {

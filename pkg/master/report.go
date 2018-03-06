@@ -4,15 +4,21 @@ import (
 	"errors"
 	"log"
 
+	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 type serverPhaseReport struct {
 	genericServerPhase
+	config []config.Reporting
 }
 
-func (phase *serverPhaseReport) Activate() bool {
-	return false
+func (phase *serverPhaseReport) Activate() error {
+	return nil
+}
+
+func (phase *serverPhaseReport) Shutdown() error {
+	return nil
 }
 
 func (phase *serverPhaseReport) GetPhaseId() int32 {
@@ -20,6 +26,10 @@ func (phase *serverPhaseReport) GetPhaseId() int32 {
 }
 
 func (phase *serverPhaseReport) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
+	return nil, errors.New("Get  off")
+}
+
+func (phase *serverPhaseReport) GetConfig(in *service.ConfigRequest) (*service.ConfigResponse, error) {
 	return nil, errors.New("Get  off")
 }
 

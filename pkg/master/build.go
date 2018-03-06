@@ -11,8 +11,13 @@ type serverPhaseBuild struct {
 	genericServerPhase
 }
 
-func (phase *serverPhaseBuild) Activate() bool {
-	return false
+func (phase *serverPhaseBuild) Activate() error {
+	return nil
+}
+
+func (phase *serverPhaseBuild) Shutdown() error {
+	phase.db.AwaitBuildComplete()
+	return nil
 }
 
 func (phase *serverPhaseBuild) GetPhaseId() int32 {
@@ -25,6 +30,10 @@ func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildRe
 		phase.db.AddNode(node)
 	}
 	return &service.BuildResponse{Success: true}, nil
+}
+
+func (phase *serverPhaseBuild) GetConfig(in *service.ConfigRequest) (*service.ConfigResponse, error) {
+	return nil, errors.New("Get  off")
 }
 
 func (phase *serverPhaseBuild) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {

@@ -2,69 +2,82 @@ package analysis
 
 import (
 	"log"
+	"os"
 	"strings"
 
-	"github.com/QMSTR/qmstr/pkg/config"
-	"github.com/QMSTR/qmstr/pkg/database"
+	"golang.org/x/net/context"
+
 	"github.com/QMSTR/qmstr/pkg/service"
+	flag "github.com/spf13/pflag"
+	"google.golang.org/grpc"
 )
 
-type Analyzer interface {
-	Analyze(node *AnalysisNode) error
+type Analyzer struct {
+	analysisService service.AnalysisServiceClient
+	plugin          AnalyzerPlugin
+	id              int32
 }
 
-type Analysis struct {
-	Name     string
-	Nodes    []AnalysisNode
-	Analyzer Analyzer
+type AnalyzerPlugin interface {
+	Configure(configMap map[string]string) error
+	Analyze(node *service.FileNode) (*service.InfoNodeSlice, error)
 }
 
-type AnalysisNode struct {
-	actualNode service.FileNode
-	pathSub    []*config.PathSubstitution
-	db         *database.DataBase
-	dirty      bool
-}
+func NewAnalyzer(plugin AnalyzerPlugin) *Analyzer {
+	var serviceAddress string
+	var anaID int32
+	flag.StringVar(&serviceAddress, "aserv", "localhost:50051", "Analyzer service address")
+	flag.Int32Var(&anaID, "aid", -1, "unique analyzer id")
+	flag.Parse()
 
-func NewAnalysisNode(actualNode service.FileNode, pathSub []*config.PathSubstitution, db *database.DataBase) AnalysisNode {
-	return AnalysisNode{actualNode: actualNode, pathSub: pathSub, db: db, dirty: false}
-}
-
-func (an *AnalysisNode) GetPath() string {
-	actualPath := an.actualNode.Path
-	for _, pathsubmsg := range an.pathSub {
-		actualPath = strings.Replace(actualPath, pathsubmsg.Old, pathsubmsg.New, 1)
+	conn, err := grpc.Dial(serviceAddress, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Failed to connect to master: %v", err)
 	}
-	return actualPath
+	anaServiceClient := service.NewAnalysisServiceClient(conn)
+
+	return &Analyzer{id: anaID, plugin: plugin, analysisService: anaServiceClient}
 }
 
-func (an *AnalysisNode) GetName() string {
-	return an.actualNode.Name
-}
-
-func (an *AnalysisNode) Store() error {
-	if an.dirty {
-		_, err := an.db.AlterNode(&an.actualNode)
-		if err != nil {
-			return err
-		}
+func (a *Analyzer) RunPlugin() {
+	configResp, err := a.analysisService.GetConfig(context.Background(), &service.ConfigRequest{AnalyzerID: a.id})
+	if err != nil {
+		log.Printf("Could not get configuration %v\n", err)
+		os.Exit(666)
 	}
-	return nil
-}
 
-func RunAnalysis(analysis Analysis) {
-	log.Printf("Starting analysis: %s", analysis.Name)
-	for _, node := range analysis.Nodes {
-		err := analysis.Analyzer.Analyze(&node)
-		if err != nil {
-			log.Printf("Analysis of %s failed: %v\n", node.GetPath(), err)
-			panic("Analysis corrupt")
-		}
-		err = node.Store()
-		if err != nil {
-			log.Printf("Storing failed: %v\n", err)
-			panic("Analysis corrupt")
-		}
+	a.plugin.Configure(configResp.ConfigMap)
+
+	nodeResp, err := a.analysisService.GetNodes(context.Background(), &service.NodeRequest{Type: configResp.TypeSelector})
+	if err != nil {
+		log.Printf("Could not get nodes %v\n", err)
+		os.Exit(667)
 	}
-	log.Printf("Analysis finished")
+
+	resultMap := map[string]*service.InfoNodeSlice{}
+
+	for _, node := range nodeResp.FileNodes {
+		for _, substitution := range configResp.PathSub {
+			node.Path = strings.Replace(node.Path, substitution.Old, substitution.New, 1)
+		}
+
+		infoNodeSlice, err := a.plugin.Analyze(node)
+		if err != nil {
+			log.Printf("Analysis failed %v\n", err)
+			os.Exit(670)
+		}
+
+		resultMap[node.Hash] = infoNodeSlice
+	}
+
+	anaresp, err := a.analysisService.SendNodes(context.Background(), &service.AnalysisMessage{ResultMap: resultMap, Token: configResp.Token})
+	if err != nil {
+		log.Printf("Failed to send nodes %v\n", err)
+		os.Exit(668)
+	}
+	if !anaresp.Success {
+		log.Println("Server could not process nodes")
+		os.Exit(669)
+	}
+
 }

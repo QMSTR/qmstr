@@ -5,18 +5,14 @@ import (
 	"log"
 	"os"
 
+	"github.com/QMSTR/qmstr/pkg/service"
 	yaml "gopkg.in/yaml.v2"
 )
-
-type PathSubstitution struct {
-	Old string
-	New string
-}
 
 type Analysis struct {
 	Selector string
 	Analyzer string
-	PathSub  []*PathSubstitution
+	PathSub  []*service.PathSubstitution
 	Config   map[string]string
 }
 

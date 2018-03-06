@@ -27,7 +27,7 @@ const undef = "undef"
 const (
 	linkedTrg = "linkedtarget"
 	obj       = "objectfile"
-	src       = "sourcefile"
+	src       = "sourcecode"
 	lib       = "library"
 )
 

@@ -17,18 +17,23 @@ message InfoNode {
     string uid = 1;
     int32 nodeType = 2;
     string type = 3;
-    Analyzer analyzer = 4;
+    repeated Analyzer analyzer = 4;
 
     message DataNode {
         int32 nodeType = 1;
         string type = 2;
         bytes data = 3;
     }
-    repeated DataNode data = 5;
+    repeated DataNode dataNodes = 5;
 }
 
 message Analyzer {
     string uid = 1;
     string name = 2;
     int32 nodeType = 3;
+}
+
+message PathSubstitution {
+    string old = 1;
+    string new = 2;
 }
