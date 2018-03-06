@@ -20,17 +20,20 @@ var phaseMap map[int32]serverPhase
 
 type serverPhase interface {
 	GetPhaseId() int32
-	Activate() bool
+	Activate() error
+	Shutdown() error
 	Build(*service.BuildMessage) (*service.BuildResponse, error)
+	GetConfig(*service.ConfigRequest) (*service.ConfigResponse, error)
 	GetNodes(*service.NodeRequest) (*service.NodeResponse, error)
 	SendNodes(*service.AnalysisMessage) (*service.AnalysisResponse, error)
 	Report(*service.ReportRequest, service.ReportService_ReportServer) error
 }
 
 type genericServerPhase struct {
-	Name    string
-	phaseId int32
-	db      *database.DataBase
+	Name       string
+	phaseId    int32
+	db         *database.DataBase
+	rpcAddress string
 }
 
 type server struct {
@@ -38,13 +41,15 @@ type server struct {
 	analysisClosed chan bool
 	serverMutex    *sync.Mutex
 	analysisDone   bool
-	analysis       []config.Analysis
-	reporting      []config.Reporting
 	currentPhase   serverPhase
 }
 
 func (s *server) Build(ctx context.Context, in *service.BuildMessage) (*service.BuildResponse, error) {
 	return s.currentPhase.Build(in)
+}
+
+func (s *server) GetConfig(ctx context.Context, in *service.ConfigRequest) (*service.ConfigResponse, error) {
+	return s.currentPhase.GetConfig(in)
 }
 
 func (s *server) GetNodes(ctx context.Context, in *service.NodeRequest) (*service.NodeResponse, error) {
@@ -67,9 +72,13 @@ func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage
 		return &service.SwitchPhaseResponse{Success: false}, errors.New(errMsg)
 	}
 	if phase, ok := phaseMap[requestedPhase]; ok {
-		log.Printf("Switching to %d phase", requestedPhase)
+		log.Printf("Switching to phase %d", requestedPhase)
+		s.currentPhase.Shutdown()
 		s.currentPhase = phase
-		s.currentPhase.Activate()
+		err := s.currentPhase.Activate()
+		if err != nil {
+			return &service.SwitchPhaseResponse{Success: false}, err
+		}
 		return &service.SwitchPhaseResponse{Success: true}, nil
 	}
 	return &service.SwitchPhaseResponse{Success: false}, fmt.Errorf("Invalid phase requested %d", requestedPhase)
@@ -113,8 +122,9 @@ func InitAndRun(configfile string) error {
 
 	phaseMap = map[int32]serverPhase{
 		1: &serverPhaseBuild{genericServerPhase{Name: "Build phase", phaseId: 1, db: db}},
-		2: &serverPhaseAnalysis{genericServerPhase{Name: "Analysis phase", phaseId: 2, db: db}},
-		3: &serverPhaseReport{genericServerPhase{Name: "Reporting phase", phaseId: 3, db: db}},
+		2: newAnalysisPhase(genericServerPhase{Name: "Analysis phase", phaseId: 2, db: db, rpcAddress: masterConfig.Server.RPCAddress},
+			masterConfig.Analysis),
+		3: &serverPhaseReport{genericServerPhase{Name: "Reporting phase", phaseId: 3, db: db, rpcAddress: masterConfig.Server.RPCAddress}, masterConfig.Reporting},
 	}
 
 	s := grpc.NewServer()
@@ -123,8 +133,6 @@ func InitAndRun(configfile string) error {
 		serverMutex:    &sync.Mutex{},
 		analysisClosed: make(chan bool),
 		analysisDone:   false,
-		analysis:       masterConfig.Analysis,
-		reporting:      masterConfig.Reporting,
 		currentPhase:   phaseMap[1],
 	}
 	service.RegisterBuildServiceServer(s, serverImpl)

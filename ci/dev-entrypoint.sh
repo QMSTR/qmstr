@@ -13,6 +13,7 @@ function start_dgraph_web {
 # Generate and build
 go generate github.com/QMSTR/qmstr/cmd/qmstr-master
 go install github.com/QMSTR/qmstr/cmd/qmstr-master
+go install github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer
 
 start_dgraph
 start_dgraph_web
