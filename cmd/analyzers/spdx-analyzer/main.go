@@ -32,7 +32,15 @@ func (spdxalizer *SpdxAnalyzer) Analyze(node *service.FileNode) (*service.InfoNo
 		return &service.InfoNodeSlice{Inodes: []*service.InfoNode{}}, nil
 	}
 
-	licenseNode := service.InfoNode{Type: "license", DataNodes: []*service.InfoNode_DataNode{&service.InfoNode_DataNode{Type: "spdxIdentifier", Data: []byte(spdxIdent)}}}
+	licenseNode := service.InfoNode{
+		Type: "license",
+		DataNodes: []*service.InfoNode_DataNode{
+			&service.InfoNode_DataNode{
+				Type: "spdxIdentifier",
+				Data: spdxIdent,
+			},
+		},
+	}
 	return &service.InfoNodeSlice{Inodes: []*service.InfoNode{&licenseNode}}, nil
 }
 
