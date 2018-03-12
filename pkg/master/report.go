@@ -26,19 +26,19 @@ func (phase *serverPhaseReport) GetPhaseId() int32 {
 }
 
 func (phase *serverPhaseReport) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
-	return nil, errors.New("Get  off")
+	return nil, errors.New("Wrong phase")
 }
 
 func (phase *serverPhaseReport) GetConfig(in *service.ConfigRequest) (*service.ConfigResponse, error) {
-	return nil, errors.New("Get  off")
+	return nil, errors.New("Wrong phase")
 }
 
 func (phase *serverPhaseReport) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
-	return nil, errors.New("Get  off")
+	return nil, errors.New("Wrong phase")
 }
 
 func (phase *serverPhaseReport) SendNodes(in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
-	return nil, errors.New("Get  off")
+	return nil, errors.New("Wrong phase")
 }
 
 func (s *serverPhaseReport) Report(in *service.ReportRequest, streamServer service.ReportService_ReportServer) error {

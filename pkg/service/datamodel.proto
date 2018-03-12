@@ -22,7 +22,7 @@ message InfoNode {
     message DataNode {
         int32 nodeType = 1;
         string type = 2;
-        bytes data = 3;
+        string data = 3;
     }
     repeated DataNode dataNodes = 5;
 }

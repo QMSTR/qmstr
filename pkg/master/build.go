@@ -33,17 +33,17 @@ func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildRe
 }
 
 func (phase *serverPhaseBuild) GetConfig(in *service.ConfigRequest) (*service.ConfigResponse, error) {
-	return nil, errors.New("Get  off")
+	return nil, errors.New("Wrong phase")
 }
 
 func (phase *serverPhaseBuild) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
-	return nil, errors.New("Get  off")
+	return nil, errors.New("Wrong phase")
 }
 
 func (phase *serverPhaseBuild) SendNodes(in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
-	return nil, errors.New("Get  off")
+	return nil, errors.New("Wrong phase")
 }
 
 func (phase *serverPhaseBuild) Report(in *service.ReportRequest, streamServer service.ReportService_ReportServer) error {
-	return errors.New("Get  off")
+	return errors.New("Wrong phase")
 }

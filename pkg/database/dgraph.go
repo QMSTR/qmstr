@@ -10,7 +10,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"encoding/base64"
 	"encoding/json"
 
 	"github.com/QMSTR/qmstr/pkg/service"
@@ -189,64 +188,50 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 
 	var retInfoNode *service.InfoNode
 
+	runeDataNodeMap := map[string]*service.InfoNode_DataNode{}
+
 	for idx, datanode := range datanodes {
-
-		// enforce data node type
 		datanodes[idx].NodeType = 3
+		runeDataNodeMap[string(rune(65+idx))] = datanode
+	}
 
-		ret := map[string][]*service.InfoNode{}
+	ret := map[string][]*service.InfoNode{}
 
-		data := base64.StdEncoding.EncodeToString(datanode.Data)
-
-		q := `query InfoNodeByDataNode($InfoType: string, $DataType: string, $Data: string) {
-				A as var(func:eq(nodeType, 3)) {{.Filter}} {}
+	q := `query InfoNodeByDataNode($InfoType: string) {
+				{{range $var, $data := .}}
+				var(func:eq(nodeType, 3)) @filter(eq(type, "{{$data.Type}}") AND eq(data, "{{$data.Data}}")) {
+					{{$var}} as ~dataNodes
+				}
+				{{end}}
 		
-				getInfoByData(func:eq(nodeType, 2)) @filter(eq(type, $InfoType)) {
+				getInfoByData(func:eq(nodeType, 2)) @filter(eq(type, $InfoType) {{range $var, $data := .}} AND uid({{$var}}) {{end}}) {
 					uid
 					type
-					~dataNodes @filter(uid(A))
+					dataNodes {
+						type
+						data
+					}
 				}
 	  		}`
 
-		queryTmpl, err := template.New("infobydata").Parse(q)
+	queryTmpl, err := template.New("infobydata").Parse(q)
 
-		type QueryParams struct {
-			Filter string
-		}
+	var b bytes.Buffer
+	err = queryTmpl.Execute(&b, runeDataNodeMap)
+	if err != nil {
+		panic(err)
+	}
 
-		qp := QueryParams{}
-		if len(data) > 0 {
-			qp.Filter = "@filter(eq(type, $DataType) AND eq(data, $Data))"
-		} else {
-			qp.Filter = "@filter(eq(type, $DataType))"
-		}
+	queryString := b.String()
+	vars := map[string]string{"$InfoType": infonodetype}
 
-		var b bytes.Buffer
-		err = queryTmpl.Execute(&b, qp)
-		if err != nil {
-			panic(err)
-		}
+	err = db.queryInfoNodes(queryString, vars, &ret)
+	if err != nil {
+		return nil, err
+	}
 
-		vars := map[string]string{"$InfoType": infonodetype, "$DataType": datanode.Type, "$Data": data}
-
-		err = db.queryInfoNodes(b.String(), vars, &ret)
-		if err != nil {
-			return nil, err
-		}
-
-		if len(ret["getInfoByData"]) > 0 {
-			// first iteration
-			if retInfoNode == nil {
-				retInfoNode = ret["getInfoByData"][0]
-			}
-			// still the same info node?
-			if retInfoNode.Uid != ret["getInfoByData"][0].Uid {
-				// not the same info node
-				retInfoNode = nil
-				break
-			}
-		}
-
+	if len(ret["getInfoByData"]) > 0 {
+		retInfoNode = ret["getInfoByData"][0]
 	}
 
 	if retInfoNode == nil {

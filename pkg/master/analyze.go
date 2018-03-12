@@ -58,7 +58,7 @@ func (phase *serverPhaseAnalysis) GetPhaseId() int32 {
 }
 
 func (phase *serverPhaseAnalysis) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
-	return nil, errors.New("Get  off")
+	return nil, errors.New("Wrong phase")
 }
 
 func (phase *serverPhaseAnalysis) GetConfig(in *service.ConfigRequest) (*service.ConfigResponse, error) {
@@ -112,5 +112,5 @@ func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*servi
 }
 
 func (phase *serverPhaseAnalysis) Report(in *service.ReportRequest, streamServer service.ReportService_ReportServer) error {
-	return errors.New("Get  off")
+	return errors.New("Wrong phase")
 }
