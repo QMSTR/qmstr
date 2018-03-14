@@ -84,7 +84,7 @@ EXPOSE 2345
 VOLUME /go/src
 # install go deps
 RUN go get -u github.com/golang/protobuf/protoc-gen-go && \
-    go get github.com/dgraph-io/dgraph/client && \
+    go get github.com/dgraph-io/dgo && \
     go get -u github.com/derekparker/delve/cmd/dlv && \
     go get github.com/spf13/pflag
 
