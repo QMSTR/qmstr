@@ -2,14 +2,14 @@
 
 
 [[projects]]
-  name = "github.com/dgraph-io/dgraph"
+  branch = "master"
+  name = "github.com/dgraph-io/dgo"
   packages = [
-    "client",
+    ".",
     "protos/api",
     "y"
   ]
-  revision = "fb2d3d3f97d19dfc08d016162f718fe4972ca946"
-  version = "v1.0.2"
+  revision = "939c270eac93a70e63162abd53f78dbc9e928ff6"
 
 [[projects]]
   name = "github.com/gogo/protobuf"
@@ -132,6 +132,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d792b455347485e3e9c6f441967331d66dadf080c0075869623a7dbb4fd2d35d"
+  inputs-digest = "2d9b18f6feca2a07c8d254f0ae572132a646deb6c1b59b3e58ba7e5ec9307a35"
   solver-name = "gps-cdcl"
   solver-version = 1
