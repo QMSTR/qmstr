@@ -13,8 +13,8 @@ import (
 	"encoding/json"
 
 	"github.com/QMSTR/qmstr/pkg/service"
-	"github.com/dgraph-io/dgraph/client"
-	"github.com/dgraph-io/dgraph/protos/api"
+	client "github.com/dgraph-io/dgo"
+	"github.com/dgraph-io/dgo/protos/api"
 
 	"google.golang.org/grpc"
 )
@@ -184,6 +184,16 @@ func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 	return uid, nil
 }
 
+func getVarName(index int) string {
+	var result string
+	for index > 25 {
+		result = result + string(rune(65))
+		index = index - 26
+	}
+	result = result + string(rune(65+index))
+	return result
+}
+
 func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*service.InfoNode_DataNode) (*service.InfoNode, error) {
 
 	var retInfoNode *service.InfoNode
@@ -192,7 +202,7 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 
 	for idx, datanode := range datanodes {
 		datanodes[idx].NodeType = 3
-		runeDataNodeMap[string(rune(65+idx))] = datanode
+		runeDataNodeMap[getVarName(idx)] = datanode
 	}
 
 	ret := map[string][]*service.InfoNode{}
