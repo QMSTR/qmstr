@@ -89,7 +89,7 @@ func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*servi
 	}
 
 	for hash, inodes := range in.ResultMap {
-		log.Printf("Processing node %s: %v\n", hash, inodes)
+		log.Printf("Processing node %s with %d info nodes\n", hash, len(inodes.Inodes))
 		fileNode, err := phase.db.GetNodeByHash(hash, true)
 		if err != nil {
 			return &service.AnalysisResponse{Success: false}, err
