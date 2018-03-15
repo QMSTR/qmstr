@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"regexp"
 	"strings"
 
@@ -110,5 +111,21 @@ func CreateHugoWorkingDirectory() (string, error) {
 		return "", fmt.Errorf("error generating site template: %v", err)
 	}
 	log.Printf("Generated Hugo site template in %v", tmpWorkDir)
+	// Link the theme directory (see themeDirectory) into the working directory:
+	cmd = exec.Command("ln", "-s", themeDirectory, "themes/qmstr-theme")
+	cmd.Dir = tmpWorkDir
+	if output, err := cmd.CombinedOutput(); err != nil {
+		log.Printf("NOTE - output:\n%v", string(output[:]))
+		return "", fmt.Errorf("error linking theme into site template: %v", err)
+	}
+	// Copy the exampleSite page skeleton:
+	// ... The syntax of the copy command is "particular": It copies the *content* of the exampleSite directory.
+	// ... Unfortunately, path.Join() strips a trailing dot.
+	cmd = exec.Command("cp", "-Rfp", path.Join(themeDirectory, "exampleSite")+"/.", "./.")
+	cmd.Dir = tmpWorkDir
+	if output, err := cmd.CombinedOutput(); err != nil {
+		log.Printf("NOTE - output:\n%v", string(output[:]))
+		return "", fmt.Errorf("error populating site skeleton: %v", err)
+	}
 	return tmpWorkDir, nil
 }
