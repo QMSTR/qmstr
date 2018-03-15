@@ -2,6 +2,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -10,6 +11,7 @@ import (
 	"path"
 	"regexp"
 	"strings"
+	"text/template"
 
 	version "github.com/hashicorp/go-version"
 )
@@ -110,7 +112,7 @@ func CreateHugoWorkingDirectory() (string, error) {
 		log.Printf("NOTE - output:\n%v", string(output[:]))
 		return "", fmt.Errorf("error generating site template: %v", err)
 	}
-	log.Printf("Generated Hugo site template in %v", tmpWorkDir)
+	log.Printf("generated Hugo site template in %v", tmpWorkDir)
 	// Link the theme directory (see themeDirectory) into the working directory:
 	cmd = exec.Command("ln", "-s", themeDirectory, "themes/qmstr-theme")
 	cmd.Dir = tmpWorkDir
@@ -127,5 +129,36 @@ func CreateHugoWorkingDirectory() (string, error) {
 		log.Printf("NOTE - output:\n%v", string(output[:]))
 		return "", fmt.Errorf("error populating site skeleton: %v", err)
 	}
+	log.Printf("populated site with default content in %v", tmpWorkDir)
+	// Generate the configuration file:
+	// TODO: Export this type, populate the structure from the reporter configuration:
+	type Configuration struct {
+		Title, TitleEn, BaseURL string
+	}
+	configuration := Configuration{
+		"Quartermaster Compliance Report",
+		"Quartermaster Compliance Report",
+		"localhost:1313/",
+	}
+	configTomlInPath := path.Join(themeDirectory, "config.toml.in")
+	configTomlIn, err := ioutil.ReadFile(configTomlInPath)
+	if err != nil {
+		return "", fmt.Errorf("unable to read configuration template file \"%s\"", configTomlInPath)
+	}
+	t := template.Must(template.New("site configuration file").Parse(string(configTomlIn)))
+
+	configFilePath := path.Join(tmpWorkDir, "config.toml")
+	configFile, err := os.Create(configFilePath)
+	if err != nil {
+		return "", fmt.Errorf("unable to create configuration file \"%s\v\"", configFilePath)
+	}
+	defer configFile.Close()
+	writer := bufio.NewWriter(configFile)
+
+	if err := t.Execute(writer, configuration); err != nil {
+		return "", fmt.Errorf("error applying variables to site configuration: %v", err)
+	}
+	writer.Flush()
+	log.Printf("generated configuration file %v", configFilePath)
 	return tmpWorkDir, nil
 }
