@@ -54,6 +54,7 @@ var (
 		"-pg":              struct{}{},
 		"-P":               struct{}{},
 		"-pipe":            struct{}{},
+		"-pedantic":        struct{}{},
 		"-rdynamic":        struct{}{},
 		"-shared":          struct{}{},
 		"-static":          struct{}{},
