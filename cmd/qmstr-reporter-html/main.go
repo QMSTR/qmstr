@@ -99,8 +99,16 @@ func CheckMinimumRequiredVersion(versionstring string) error {
 func CreateHugoWorkingDirectory() (string, error) {
 	tmpWorkDir, err := ioutil.TempDir("", "qmstr-")
 	if err != nil {
-		return tmpWorkDir, fmt.Errorf("error crrating temporary Hugo working directory: %v", err)
+		return tmpWorkDir, fmt.Errorf("error creating temporary Hugo working directory: %v", err)
 	}
-	//TODO populate working directory with a site template and the theme
+	// populate working directory with a site template and the theme
+	// TODO: add "incremental mode": use an existing, previously generated site and extend it
+	cmd := exec.Command("hugo", "new", "site", tmpWorkDir)
+	cmd.Dir = tmpWorkDir
+	if output, err := cmd.CombinedOutput(); err != nil {
+		log.Printf("NOTE - output:\n%v", string(output[:]))
+		return "", fmt.Errorf("error generating site template: %v", err)
+	}
+	log.Printf("Generated Hugo site template in %v", tmpWorkDir)
 	return tmpWorkDir, nil
 }
