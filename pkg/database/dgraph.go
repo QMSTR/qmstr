@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"html/template"
 	"log"
 	"sync"
 	"sync/atomic"
+	"text/template"
 	"time"
 
 	"encoding/json"
@@ -233,6 +233,7 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 	}
 
 	queryString := b.String()
+
 	vars := map[string]string{"$InfoType": infonodetype}
 
 	err = db.queryInfoNodes(queryString, vars, &ret)
