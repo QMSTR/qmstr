@@ -183,32 +183,30 @@ func CreateHugoWorkingDirectory(sharedDataDir string) (string, error) {
 	}
 	themeDirectory := path.Join(sharedDataDir, themeDirectoryName)
 	// populate working directory with a site template and the theme
-	// TODO: add "incremental mode": use an existing, previously generated site and extend it
-	cmd := exec.Command("hugo", "new", "site", tmpWorkDir)
-	cmd.Dir = tmpWorkDir
-	if output, err := cmd.CombinedOutput(); err != nil {
-		log.Printf("NOTE - output:\n%v", string(output[:]))
-		return "", fmt.Errorf("error generating site template: %v", err)
+	sharedDataDir := "/usr/share/qmstr/reporter-html"
+	skeletonDir := "skeleton"
+	templateDir := "templates"
+	linksfromTo := make(map[string]string)
+
+	for _, folder := range []string{"themes", "content", "data"} {
+		if err := os.MkdirAll(path.Join(tmpWorkDir, folder), 0700); err != nil {
+			return "", fmt.Errorf("error creating folder in site skeleton: %v", err)
+		}
+	}
+	linksfromTo[path.Join(sharedDataDir, skeletonDir, "archetypes")] = "archetypes"
+	linksfromTo[path.Join(sharedDataDir, skeletonDir, "layouts")] = "layouts"
+	linksfromTo[path.Join(sharedDataDir, skeletonDir, "static")] = "static"
+	linksfromTo[themeDirectory] = "themes/qmstr-theme"
+
+	for from, to := range linksfromTo {
+		cmd := exec.Command("ln", "-s", from, to)
+		cmd.Dir = tmpWorkDir
+		if output, err := cmd.CombinedOutput(); err != nil {
+			log.Printf("NOTE - output:\n%v", string(output[:]))
+			return "", fmt.Errorf("error generating links to site skeleton and theme: %v", err)
+		}
 	}
 	log.Printf("generated Hugo site template in %v", tmpWorkDir)
-	// Link the theme directory (see themeDirectory) into the working directory:
-	cmd = exec.Command("ln", "-s", themeDirectory, "themes/qmstr-theme")
-	cmd.Dir = tmpWorkDir
-	if output, err := cmd.CombinedOutput(); err != nil {
-		log.Printf("NOTE - output:\n%v", string(output[:]))
-		return "", fmt.Errorf("error linking theme into site template: %v", err)
-	}
-	// Copy the exampleSite page skeleton:
-	// ... The syntax of the copy command is "particular": It copies the *content* of the exampleSite directory.
-	// ... Unfortunately, path.Join() strips a trailing dot.
-	cmd = exec.Command("cp", "-Rfp", path.Join(themeDirectory, "qmstrSkeleton")+"/.", "./.")
-	cmd.Dir = tmpWorkDir
-	if output, err := cmd.CombinedOutput(); err != nil {
-		log.Printf("NOTE - output:\n%v", string(output[:]))
-		return "", fmt.Errorf("error populating site skeleton: %v", err)
-	}
-	log.Printf("populated site with default content in %v", tmpWorkDir)
-	// Generate the configuration file:
 	// TODO: Export this type, populate the structure from the reporter configuration:
 	type Configuration struct {
 		Title, TitleEn, BaseURL string
@@ -218,7 +216,7 @@ func CreateHugoWorkingDirectory(sharedDataDir string) (string, error) {
 		"Quartermaster Compliance Report",
 		"file:///var/lib/qmstr/reports",
 	}
-	configTomlInPath := path.Join(themeDirectory, "config.toml.in")
+	configTomlInPath := path.Join(sharedDataDir, templateDir, "config.toml.in")
 	configTomlIn, err := ioutil.ReadFile(configTomlInPath)
 	if err != nil {
 		return "", fmt.Errorf("unable to read configuration template file \"%s\"", configTomlInPath)
