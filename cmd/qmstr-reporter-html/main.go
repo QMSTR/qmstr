@@ -201,7 +201,7 @@ func CreateHugoWorkingDirectory(sharedDataDir string) (string, error) {
 	// Copy the exampleSite page skeleton:
 	// ... The syntax of the copy command is "particular": It copies the *content* of the exampleSite directory.
 	// ... Unfortunately, path.Join() strips a trailing dot.
-	cmd = exec.Command("cp", "-Rfp", path.Join(themeDirectory, "exampleSite")+"/.", "./.")
+	cmd = exec.Command("cp", "-Rfp", path.Join(themeDirectory, "qmstrSkeleton")+"/.", "./.")
 	cmd.Dir = tmpWorkDir
 	if output, err := cmd.CombinedOutput(); err != nil {
 		log.Printf("NOTE - output:\n%v", string(output[:]))
@@ -216,7 +216,7 @@ func CreateHugoWorkingDirectory(sharedDataDir string) (string, error) {
 	configuration := Configuration{
 		"Quartermaster Compliance Report",
 		"Quartermaster Compliance Report",
-		"localhost:1313/",
+		"file:///var/lib/qmstr/reports",
 	}
 	configTomlInPath := path.Join(themeDirectory, "config.toml.in")
 	configTomlIn, err := ioutil.ReadFile(configTomlInPath)
@@ -242,24 +242,25 @@ func CreateHugoWorkingDirectory(sharedDataDir string) (string, error) {
 }
 
 // CreateStaticHTML executes Hugo to generate the static HTML page with the QMSTR reports.
-// It returns the path to the generated content and/or an error.
-func CreateStaticHTML(contentDir string) (string, error) {
-	outputDir := path.Join(contentDir, "qmstr-reports")
-	cmd := exec.Command("hugo", "-v", "-d", outputDir)
-	cmd.Dir = contentDir
+// It returns the directory with the generated content (relative to contentDir) and/or an error.
+func CreateStaticHTML(workingdir string) (string, error) {
+	outputDir := "reports"
+	outputPath := path.Join(workingdir, outputDir)
+	cmd := exec.Command("hugo", "-v", "-d", outputPath)
+	cmd.Dir = workingdir
 	if output, err := cmd.CombinedOutput(); err != nil {
 		log.Printf("NOTE - output:\n%v", string(output[:]))
 		return "", fmt.Errorf("error generating static HTML reports: %v", err)
 	}
-	log.Printf("generated static HTML reports in %v", outputDir)
+	log.Printf("generated static HTML reports in %v", outputPath)
 	return outputDir, nil
 }
 
 // CreateReportsPackage creates a tarball of the static HTML reports in the packagePath directory.
-func CreateReportsPackage(contentDir string, staticHTMLContentDir string, packagePath string) error {
+func CreateReportsPackage(workingDir string, contentDir string, packagePath string) error {
 	outputFile := path.Join(packagePath, "qmstr-reports.tar.bz2")
-	cmd := exec.Command("tar", "cfj", outputFile, staticHTMLContentDir)
-	cmd.Dir = contentDir
+	cmd := exec.Command("tar", "cfj", outputFile, "-C", workingDir, contentDir)
+	cmd.Dir = workingDir
 	if output, err := cmd.CombinedOutput(); err != nil {
 		log.Printf("NOTE - output:\n%v", string(output[:]))
 		return fmt.Errorf("error creating package of QMSTR reports: %v", err)
