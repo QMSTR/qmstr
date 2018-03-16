@@ -8,9 +8,9 @@ metaDataFormat = "yaml"
 defaultContentLanguageInSubdir= true
 
 [params]
-  editURL = "https://github.com/matcornic/hugo-theme-learn/edit/master/exampleSite/content/"
-  description = "Documentation for Hugo Learn Theme"
-  author = "Mathieu Cornic"
+  editURL = "https://github.com/QMSTR/qmstr"
+  description = "Quartermaster Report"
+  author = "The Quartermaster Dev Team"
   showVisitedLinks = true
 
 [outputs]
@@ -33,4 +33,3 @@ name = "<i class='fa fa-fw fa-github'></i> Quartermaster on Github"
 identifier = "qmstrgithub"
 url = "https://github.com/QMSTR"
 weight = 20
-
