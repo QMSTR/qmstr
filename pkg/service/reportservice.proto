@@ -10,9 +10,19 @@ message ReportRequest {
 
 message ReportResponse {
   bool success = 1;
-  repeated FileNode fileNodes = 2;
+  FileNode fileNode = 2;
+}
+
+message ReporterConfigRequest {
+  int32 reporterID = 1;
+}
+
+message ReporterConfigResponse {
+  string typeSelector = 1;
+  map<string, string> configMap = 2;
 }
 
 service ReportService {
-  rpc Report(ReportRequest) returns (stream ReportResponse) {}
+  rpc GetReportNodes(ReportRequest) returns (stream ReportResponse) {}
+  rpc GetReporterConfig(ReporterConfigRequest) returns (ReporterConfigResponse) {}
 }

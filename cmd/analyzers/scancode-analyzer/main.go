@@ -19,7 +19,7 @@ type ScancodeAnalyzer struct {
 
 func main() {
 	analyzer := analysis.NewAnalyzer(&ScancodeAnalyzer{})
-	analyzer.RunPlugin()
+	analyzer.RunAnalyzerPlugin()
 }
 
 func (scanalyzer *ScancodeAnalyzer) Configure(configMap map[string]string) error {

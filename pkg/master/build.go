@@ -32,7 +32,11 @@ func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildRe
 	return &service.BuildResponse{Success: true}, nil
 }
 
-func (phase *serverPhaseBuild) GetConfig(in *service.ConfigRequest) (*service.ConfigResponse, error) {
+func (phase *serverPhaseBuild) GetReporterConfig(in *service.ReporterConfigRequest) (*service.ReporterConfigResponse, error) {
+	return nil, errors.New("Wrong phase")
+}
+
+func (phase *serverPhaseBuild) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
 	return nil, errors.New("Wrong phase")
 }
 
@@ -44,6 +48,6 @@ func (phase *serverPhaseBuild) SendNodes(in *service.AnalysisMessage) (*service.
 	return nil, errors.New("Wrong phase")
 }
 
-func (phase *serverPhaseBuild) Report(in *service.ReportRequest, streamServer service.ReportService_ReportServer) error {
+func (phase *serverPhaseBuild) GetReportNodes(in *service.ReportRequest, streamServer service.ReportService_GetReportNodesServer) error {
 	return errors.New("Wrong phase")
 }
