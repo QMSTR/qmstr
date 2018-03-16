@@ -8,10 +8,11 @@ metaDataFormat = "yaml"
 defaultContentLanguageInSubdir= true
 
 [params]
-  editURL = "https://github.com/QMSTR/qmstr"
+  editURL = ""
   description = "Quartermaster Report"
   author = "The Quartermaster Dev Team"
   showVisitedLinks = true
+  themeVariant = "green"
 
 [outputs]
 home = [ "HTML", "RSS", "JSON"]
