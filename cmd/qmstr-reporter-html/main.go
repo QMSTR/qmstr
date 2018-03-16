@@ -42,7 +42,14 @@ func main() {
 		}
 	}()
 	// generate the content data (markdown and JSON) from the master data model
-	// execute Hugo to generate documentation into the specified output directory
+	// TODO
+
+	staticHTMLContentDir, err := CreateStaticHTML(wd)
+	if err != nil {
+		log.Fatalf("error generating reports: %v", err)
+	}
+	log.Printf("QMSTR reports generated in %v", staticHTMLContentDir)
+
 	// defer htmlreporter.DisconnectFromMaster()
 }
 
@@ -161,4 +168,19 @@ func CreateHugoWorkingDirectory() (string, error) {
 	writer.Flush()
 	log.Printf("generated configuration file %v", configFilePath)
 	return tmpWorkDir, nil
+}
+
+// CreateStaticHTML executes Hugo to generate the static HTML page with the QMSTR reports.
+// It returns the path to the generated content and/or an error.
+func CreateStaticHTML(contentDir string) (string, error) {
+	outputDir := path.Join(contentDir, "qmstr-reports")
+	cmd := exec.Command("hugo", "-v", "-d", outputDir)
+	cmd.Dir = contentDir
+	if output, err := cmd.CombinedOutput(); err != nil {
+		log.Printf("NOTE - output:\n%v", string(output[:]))
+		return "", fmt.Errorf("error generating static HTML reports: %v", err)
+	}
+	log.Printf("generated static HTML reports in %v", outputDir)
+	return outputDir, nil
+
 }
