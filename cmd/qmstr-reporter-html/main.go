@@ -50,6 +50,14 @@ func main() {
 	}
 	log.Printf("QMSTR reports generated in %v", staticHTMLContentDir)
 
+	// Create the reports package (for publishing, etc).
+	// ... TODO: configure default target directory for every reporter (uses CWD at the moment)
+	packagePath, _ := os.Getwd()
+	if err := CreateReportsPackage(wd, staticHTMLContentDir, packagePath); err != nil {
+		log.Fatalf("error packaging report to %v: %v", packagePath, err)
+	}
+	log.Printf("QMSTR reports package generated in %v", packagePath)
+
 	// defer htmlreporter.DisconnectFromMaster()
 }
 
@@ -182,5 +190,17 @@ func CreateStaticHTML(contentDir string) (string, error) {
 	}
 	log.Printf("generated static HTML reports in %v", outputDir)
 	return outputDir, nil
+}
 
+// CreateReportsPackage creates a tarball of the static HTML reports in the packagePath directory.
+func CreateReportsPackage(contentDir string, staticHTMLContentDir string, packagePath string) error {
+	outputFile := path.Join(packagePath, "qmstr-reports.tar.bz2")
+	cmd := exec.Command("tar", "cfj", outputFile, staticHTMLContentDir)
+	cmd.Dir = contentDir
+	if output, err := cmd.CombinedOutput(); err != nil {
+		log.Printf("NOTE - output:\n%v", string(output[:]))
+		return fmt.Errorf("error creating package of QMSTR reports: %v", err)
+	}
+	log.Printf("generated package of QMSTR reports at %v", outputFile)
+	return nil
 }
