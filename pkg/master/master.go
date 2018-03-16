@@ -23,10 +23,11 @@ type serverPhase interface {
 	Activate() error
 	Shutdown() error
 	Build(*service.BuildMessage) (*service.BuildResponse, error)
-	GetConfig(*service.ConfigRequest) (*service.ConfigResponse, error)
+	GetAnalyzerConfig(*service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error)
+	GetReporterConfig(*service.ReporterConfigRequest) (*service.ReporterConfigResponse, error)
 	GetNodes(*service.NodeRequest) (*service.NodeResponse, error)
 	SendNodes(*service.AnalysisMessage) (*service.AnalysisResponse, error)
-	Report(*service.ReportRequest, service.ReportService_ReportServer) error
+	GetReportNodes(*service.ReportRequest, service.ReportService_GetReportNodesServer) error
 }
 
 type genericServerPhase struct {
@@ -48,8 +49,12 @@ func (s *server) Build(ctx context.Context, in *service.BuildMessage) (*service.
 	return s.currentPhase.Build(in)
 }
 
-func (s *server) GetConfig(ctx context.Context, in *service.ConfigRequest) (*service.ConfigResponse, error) {
-	return s.currentPhase.GetConfig(in)
+func (s *server) GetAnalyzerConfig(ctx context.Context, in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
+	return s.currentPhase.GetAnalyzerConfig(in)
+}
+
+func (s *server) GetReporterConfig(ctx context.Context, in *service.ReporterConfigRequest) (*service.ReporterConfigResponse, error) {
+	return s.currentPhase.GetReporterConfig(in)
 }
 
 func (s *server) GetNodes(ctx context.Context, in *service.NodeRequest) (*service.NodeResponse, error) {
@@ -60,8 +65,8 @@ func (s *server) SendNodes(ctx context.Context, in *service.AnalysisMessage) (*s
 	return s.currentPhase.SendNodes(in)
 }
 
-func (s *server) Report(in *service.ReportRequest, streamServer service.ReportService_ReportServer) error {
-	return s.currentPhase.Report(in, streamServer)
+func (s *server) GetReportNodes(in *service.ReportRequest, streamServer service.ReportService_GetReportNodesServer) error {
+	return s.currentPhase.GetReportNodes(in, streamServer)
 }
 
 func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage) (*service.SwitchPhaseResponse, error) {

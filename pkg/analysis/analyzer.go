@@ -39,8 +39,8 @@ func NewAnalyzer(plugin AnalyzerPlugin) *Analyzer {
 	return &Analyzer{id: anaID, plugin: plugin, analysisService: anaServiceClient}
 }
 
-func (a *Analyzer) RunPlugin() {
-	configResp, err := a.analysisService.GetConfig(context.Background(), &service.ConfigRequest{AnalyzerID: a.id})
+func (a *Analyzer) RunAnalyzerPlugin() {
+	configResp, err := a.analysisService.GetAnalyzerConfig(context.Background(), &service.AnalyzerConfigRequest{AnalyzerID: a.id})
 	if err != nil {
 		log.Printf("Could not get configuration %v\n", err)
 		os.Exit(666)

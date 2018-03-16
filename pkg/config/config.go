@@ -17,9 +17,9 @@ type Analysis struct {
 }
 
 type Reporting struct {
-	Selector   string
-	Name       string
-	ReportType string
+	Selector string
+	Reporter string
+	Config   map[string]string
 }
 
 type ServerConfig struct {

@@ -25,11 +25,11 @@ message NodeResponse {
     repeated FileNode fileNodes = 1;
 }
 
-message ConfigRequest {
+message AnalyzerConfigRequest {
     int32 analyzerID = 1;
 }
 
-message ConfigResponse {
+message AnalyzerConfigResponse {
     string typeSelector = 1;
     map<string, string> configMap = 2;
     repeated PathSubstitution pathSub = 3;
@@ -39,5 +39,5 @@ message ConfigResponse {
 service AnalysisService {
     rpc GetNodes(NodeRequest) returns (NodeResponse) {}
     rpc SendNodes(AnalysisMessage) returns (AnalysisResponse) {}
-    rpc GetConfig(ConfigRequest) returns (ConfigResponse) {}
+    rpc GetAnalyzerConfig(AnalyzerConfigRequest) returns (AnalyzerConfigResponse) {}
 }

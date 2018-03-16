@@ -17,12 +17,13 @@ type serverPhaseAnalysis struct {
 	config          []config.Analysis
 	currentAnalyzer *service.Analyzer
 	currentToken    int64
+	finished        chan interface{}
 }
 
 var src = rand.NewSource(time.Now().UnixNano())
 
 func newAnalysisPhase(genericPhase genericServerPhase, anaConfig []config.Analysis) *serverPhaseAnalysis {
-	return &serverPhaseAnalysis{genericPhase, anaConfig, nil, src.Int63()}
+	return &serverPhaseAnalysis{genericPhase, anaConfig, nil, src.Int63(), make(chan interface{})}
 }
 
 func (phase *serverPhaseAnalysis) Activate() error {
@@ -46,10 +47,12 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		}
 		log.Printf("Analyzer %s finished successfully: %s\n", analyzerName, out)
 	}
+	phase.finished <- nil
 	return nil
 }
 
 func (phase *serverPhaseAnalysis) Shutdown() error {
+	<-phase.finished
 	return nil
 }
 
@@ -61,13 +64,17 @@ func (phase *serverPhaseAnalysis) Build(in *service.BuildMessage) (*service.Buil
 	return nil, errors.New("Wrong phase")
 }
 
-func (phase *serverPhaseAnalysis) GetConfig(in *service.ConfigRequest) (*service.ConfigResponse, error) {
+func (phase *serverPhaseAnalysis) GetReporterConfig(in *service.ReporterConfigRequest) (*service.ReporterConfigResponse, error) {
+	return nil, errors.New("Wrong phase")
+}
+
+func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
 	idx := in.AnalyzerID
 	if idx < 0 || idx >= int32(len(phase.config)) {
 		return nil, fmt.Errorf("Invalid analyzer id %d", idx)
 	}
 	config := phase.config[idx]
-	return &service.ConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub, Token: phase.currentToken}, nil
+	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub, Token: phase.currentToken}, nil
 }
 
 func (phase *serverPhaseAnalysis) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
@@ -111,6 +118,6 @@ func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*servi
 	return &service.AnalysisResponse{Success: true}, nil
 }
 
-func (phase *serverPhaseAnalysis) Report(in *service.ReportRequest, streamServer service.ReportService_ReportServer) error {
+func (phase *serverPhaseAnalysis) GetReportNodes(in *service.ReportRequest, streamServer service.ReportService_GetReportNodesServer) error {
 	return errors.New("Wrong phase")
 }
