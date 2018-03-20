@@ -96,9 +96,13 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	}
 	const wrapper = "qmstr-wrapper"
 	wrapperPath := path.Join(ownPath, wrapper)
-	// TODO use exec.LookPath and use the wrapper wherever it is found
 	if _, err := os.Stat(wrapperPath); err != nil {
-		Log.Fatalf("cannot find %s at %s: %v", wrapper, wrapperPath, err)
+		Debug.Printf("cannot find %s at %s: %v", wrapper, wrapperPath, err)
+		// optionally, search the path and use a qmstr-wrapper if found there
+		wrapperPath, err = exec.LookPath(wrapper)
+		if err != nil {
+			Log.Fatalf("%v not found next in %v or in the PATH", wrapper, executable)
+		}
 	}
 
 	// create a "bin" directory in the temporary directory
