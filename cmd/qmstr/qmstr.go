@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
+	golog "log"
 	"os"
 	"os/exec"
 	"path"
@@ -20,7 +20,13 @@ type Options struct {
 	verbose            bool   //Enable trace log output
 }
 
-var options Options
+var (
+	options Options
+	//Debug receives log messages in verbose mode
+	Debug *golog.Logger
+	//Log is the standard logger
+	Log *golog.Logger
+)
 
 func main() {
 	options.progName = os.Args[0]
@@ -28,6 +34,7 @@ func main() {
 	flag.BoolVar(&options.verbose, "verbose", false, "Enable diagnostic log output.")
 	flag.Parse()
 	arguments := flag.Args()
+	setupLogging()
 	if len(arguments) == 0 && !options.keepTmpDirectories {
 		usage("No command specified!")
 	}
@@ -43,20 +50,29 @@ func usage(format string, a ...interface{}) {
 	os.Exit(1)
 }
 
+func setupLogging() {
+	if options.verbose {
+		Debug = golog.New(os.Stderr, "DEBUG: ", golog.Ldate|golog.Ltime)
+	} else {
+		Debug = golog.New(ioutil.Discard, "DEBUG: ", golog.Ldate|golog.Ltime)
+	}
+	Log = golog.New(os.Stderr, "", golog.Ldate|golog.Ltime)
+}
+
 // Run does everything
 // It also makes sure that even though os.Exit() is called later, all defered functions are properly called.
 func Run(payloadCmd []string) int {
 	tmpWorkDir, err := ioutil.TempDir("", "qmstr-bin-")
 	if err != nil {
-		log.Fatalf("error creating temporary Hugo working directory: %v", err)
+		Log.Fatalf("error creating temporary Hugo working directory: %v", err)
 	}
 	defer func() {
 		if options.keepTmpDirectories {
-			log.Printf("keeping temporary temporary at %v", tmpWorkDir)
+			Debug.Printf("keeping temporary temporary at %v", tmpWorkDir)
 		} else {
-			log.Printf("deleting temporary temporary instrumentation bin directory in %v", tmpWorkDir)
+			Debug.Printf("deleting temporary temporary instrumentation bin directory in %v", tmpWorkDir)
 			if err := os.RemoveAll(tmpWorkDir); err != nil {
-				log.Printf("warning - error deleting temporary instrumentation bin directory in %v: %v", tmpWorkDir, err)
+				Log.Printf("warning - error deleting temporary instrumentation bin directory in %v: %v", tmpWorkDir, err)
 			}
 		}
 	}()
@@ -64,7 +80,7 @@ func Run(payloadCmd []string) int {
 	if len(payloadCmd) > 0 {
 		exitCode, err := RunPayloadCommand(payloadCmd[0], payloadCmd[1:]...)
 		if err != nil {
-			log.Printf("payload command exited with non-zero exit code: %v", exitCode)
+			Debug.Printf("payload command exited with non-zero exit code: %v", exitCode)
 		}
 		return exitCode
 	}
@@ -75,23 +91,23 @@ func Run(payloadCmd []string) int {
 func SetupCompilerInstrumentation(tmpWorkDir string) {
 	executable, err := os.Executable()
 	if err != nil {
-		log.Fatalf("")
+		Log.Fatalf("unable to find myself: %v", err)
 	}
 	ownPath, err := filepath.Abs(filepath.Dir(executable))
 	if err != nil {
-		log.Fatalf("unable to determine path to executable: %v", err)
+		Log.Fatalf("unable to determine path to executable: %v", err)
 	}
 	const wrapper = "qmstr-wrapper"
 	wrapperPath := path.Join(ownPath, wrapper)
 	//TODO use exec.LookPath and use the wrapper wherever it is found
 	if _, err := os.Stat(wrapperPath); err != nil {
-		log.Fatalf("cannot find %s at %s: %v", wrapper, wrapperPath, err)
+		Log.Fatalf("cannot find %s at %s: %v", wrapper, wrapperPath, err)
 	}
 
 	// create a "bin" directory in the temporary directory
 	binDir := strings.TrimSpace(path.Join(tmpWorkDir, "bin"))
 	if err := os.Mkdir(binDir, 0700); err != nil {
-		log.Fatalf("unable to create %v: %v", binDir, err)
+		Log.Fatalf("unable to create %v: %v", binDir, err)
 	}
 	//create the symlinks to qmstr-wrapper in there
 
@@ -100,7 +116,7 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	paths = append([]string{binDir}, paths...)
 	separator := string(os.PathListSeparator)
 	newPath := strings.Join(paths, separator)
-	fmt.Printf("PATH is now %v\n", newPath)
+	Debug.Printf("PATH is now %v\n", newPath)
 }
 
 // RunPayloadCommand performs the payload command and returns it's exit code and/or an error
