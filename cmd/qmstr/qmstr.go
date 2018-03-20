@@ -33,12 +33,13 @@ func main() {
 	flag.BoolVar(&options.keepTmpDirectories, "keep", false, "Keep the created directories instead of cleaning up.")
 	flag.BoolVar(&options.verbose, "verbose", false, "Enable diagnostic log output.")
 	flag.Parse()
-	arguments := flag.Args()
-	setupLogging()
-	if len(arguments) == 0 && !options.keepTmpDirectories {
-		usage("No command specified!")
+	if options.verbose {
+		Debug = golog.New(os.Stderr, "DEBUG: ", golog.Ldate|golog.Ltime)
+	} else {
+		Debug = golog.New(ioutil.Discard, "DEBUG: ", golog.Ldate|golog.Ltime)
 	}
-	exitCode := Run(arguments)
+	Log = golog.New(os.Stderr, "", golog.Ldate|golog.Ltime)
+	exitCode := Run(flag.Args())
 	os.Exit(exitCode)
 }
 
@@ -50,18 +51,12 @@ func usage(format string, a ...interface{}) {
 	os.Exit(1)
 }
 
-func setupLogging() {
-	if options.verbose {
-		Debug = golog.New(os.Stderr, "DEBUG: ", golog.Ldate|golog.Ltime)
-	} else {
-		Debug = golog.New(ioutil.Discard, "DEBUG: ", golog.Ldate|golog.Ltime)
-	}
-	Log = golog.New(os.Stderr, "", golog.Ldate|golog.Ltime)
-}
-
 // Run does everything
 // It also makes sure that even though os.Exit() is called later, all defered functions are properly called.
 func Run(payloadCmd []string) int {
+	if len(payloadCmd) == 0 && !options.keepTmpDirectories {
+		usage("No command specified!")
+	}
 	tmpWorkDir, err := ioutil.TempDir("", "qmstr-bin-")
 	if err != nil {
 		Log.Fatalf("error creating temporary Hugo working directory: %v", err)
@@ -116,7 +111,11 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	paths = append([]string{binDir}, paths...)
 	separator := string(os.PathListSeparator)
 	newPath := strings.Join(paths, separator)
-	Debug.Printf("PATH is now %v\n", newPath)
+	os.Setenv("PATH", newPath)
+	Debug.Printf("PATH is now %v\n", os.Getenv("PATH"))
+	if options.keepTmpDirectories {
+		fmt.Printf("export PATH=%v\n", os.Getenv("PATH"))
+	}
 }
 
 // RunPayloadCommand performs the payload command and returns it's exit code and/or an error
