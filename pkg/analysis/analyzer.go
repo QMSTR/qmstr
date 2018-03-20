@@ -7,6 +7,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/service"
 	flag "github.com/spf13/pflag"
 	"google.golang.org/grpc"
@@ -43,7 +44,7 @@ func (a *Analyzer) RunAnalyzerPlugin() {
 	configResp, err := a.analysisService.GetAnalyzerConfig(context.Background(), &service.AnalyzerConfigRequest{AnalyzerID: a.id})
 	if err != nil {
 		log.Printf("Could not get configuration %v\n", err)
-		os.Exit(666)
+		os.Exit(master.ReturnAnalysisServiceCommFailed)
 	}
 
 	a.plugin.Configure(configResp.ConfigMap)
@@ -51,7 +52,7 @@ func (a *Analyzer) RunAnalyzerPlugin() {
 	nodeResp, err := a.analysisService.GetNodes(context.Background(), &service.NodeRequest{Type: configResp.TypeSelector})
 	if err != nil {
 		log.Printf("Could not get nodes %v\n", err)
-		os.Exit(667)
+		os.Exit(master.ReturnAnalysisServiceCommFailed)
 	}
 
 	resultMap := map[string]*service.InfoNodeSlice{}
@@ -64,7 +65,7 @@ func (a *Analyzer) RunAnalyzerPlugin() {
 		infoNodeSlice, err := a.plugin.Analyze(node)
 		if err != nil {
 			log.Printf("Analysis failed %v\n", err)
-			os.Exit(670)
+			os.Exit(master.ReturnAnalyzerFailed)
 		}
 
 		resultMap[node.Hash] = infoNodeSlice
@@ -73,11 +74,11 @@ func (a *Analyzer) RunAnalyzerPlugin() {
 	anaresp, err := a.analysisService.SendNodes(context.Background(), &service.AnalysisMessage{ResultMap: resultMap, Token: configResp.Token})
 	if err != nil {
 		log.Printf("Failed to send nodes %v\n", err)
-		os.Exit(668)
+		os.Exit(master.ReturnAnalysisServiceCommFailed)
 	}
 	if !anaresp.Success {
 		log.Println("Server could not process nodes")
-		os.Exit(669)
+		os.Exit(master.ReturnAnalysisServiceFailed)
 	}
 
 }

@@ -23,7 +23,7 @@ type serverPhaseAnalysis struct {
 var src = rand.NewSource(time.Now().UnixNano())
 
 func newAnalysisPhase(genericPhase genericServerPhase, anaConfig []config.Analysis) *serverPhaseAnalysis {
-	return &serverPhaseAnalysis{genericPhase, anaConfig, nil, src.Int63(), make(chan interface{})}
+	return &serverPhaseAnalysis{genericPhase, anaConfig, nil, src.Int63(), make(chan interface{}, 1)}
 }
 
 func (phase *serverPhaseAnalysis) Activate() error {
@@ -39,6 +39,7 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		src.Seed(phase.currentToken)
 		phase.currentToken = src.Int63()
 
+		log.Printf("Running analyzer %s ..\n", analyzerName)
 		cmd := exec.Command(analyzerName, "--aserv", phase.rpcAddress, "--aid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
@@ -47,11 +48,14 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		}
 		log.Printf("Analyzer %s finished successfully: %s\n", analyzerName, out)
 	}
+
 	phase.finished <- nil
+	log.Println("Analysis phase finished")
 	return nil
 }
 
 func (phase *serverPhaseAnalysis) Shutdown() error {
+	log.Println("Waiting for analysis to be finished")
 	<-phase.finished
 	return nil
 }

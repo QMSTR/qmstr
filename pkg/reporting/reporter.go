@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/QMSTR/qmstr/pkg/master"
+
 	"golang.org/x/net/context"
 
 	"github.com/QMSTR/qmstr/pkg/service"
@@ -16,11 +18,13 @@ type Reporter struct {
 	reportingService service.ReportServiceClient
 	plugin           ReporterPlugin
 	id               int32
+	name             string
 }
 
 type ReporterPlugin interface {
 	Configure(configMap map[string]string) error
 	Report(node *service.FileNode) error
+	PostReport() error
 }
 
 func NewReporter(plugin ReporterPlugin) *Reporter {
@@ -43,15 +47,15 @@ func (r *Reporter) RunReporterPlugin() {
 	configResp, err := r.reportingService.GetReporterConfig(context.Background(), &service.ReporterConfigRequest{ReporterID: r.id})
 	if err != nil {
 		log.Printf("Could not get configuration %v\n", err)
-		os.Exit(666)
+		os.Exit(master.ReturnReportServiceCommFailed)
 	}
 
 	r.plugin.Configure(configResp.ConfigMap)
 
-	respStream, err := r.reportingService.Report(context.Background(), &service.ReportRequest{Type: configResp.TypeSelector})
+	respStream, err := r.reportingService.GetReportNodes(context.Background(), &service.ReportRequest{Type: configResp.TypeSelector})
 	if err != nil {
 		log.Printf("Could not get nodes %v\n", err)
-		os.Exit(667)
+		os.Exit(master.ReturnReportServiceCommFailed)
 	}
 
 	for {
@@ -60,11 +64,14 @@ func (r *Reporter) RunReporterPlugin() {
 			break
 		}
 		if err != nil {
-			log.Printf("Report #%d failed %v", r.id, err)
+			log.Printf("Reporter %s failed %v\n", r.name, err)
+			os.Exit(master.ReturnReporterFailed)
 
 		}
-		for _, node := range resp.FileNodes {
-			r.plugin.Report(node)
+		err = r.plugin.Report(resp.FileNode)
+		if err != nil {
+			log.Printf("Reporter %s failed %v\n", r.name, err)
+			os.Exit(master.ReturnReporterFailed)
 		}
 	}
 
