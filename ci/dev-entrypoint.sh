@@ -15,6 +15,7 @@ go generate github.com/QMSTR/qmstr/cmd/qmstr-master
 go install github.com/QMSTR/qmstr/cmd/qmstr-master
 go install github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer
 go install github.com/QMSTR/qmstr/cmd/analyzers/scancode-analyzer
+go install github.com/QMSTR/qmstr/cmd/qmstr-reporter-html
 
 start_dgraph
 start_dgraph_web

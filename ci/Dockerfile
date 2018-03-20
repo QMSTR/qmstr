@@ -53,7 +53,7 @@ RUN curl https://get.dgraph.io -sSf | bash
 # copy qmstr installation from previous stage
 RUN mkdir -p /go/bin
 COPY --from=builder /go/bin/qmstr-master /go/bin/qmstr-master
-
+ 
 EXPOSE 50051
 # dgraph ratel web ui
 EXPOSE 8000
@@ -81,12 +81,17 @@ RUN apt-get update && \
 
 EXPOSE 2345
 
-VOLUME /go/src
 # install go deps
-RUN go get -u github.com/golang/protobuf/protoc-gen-go && \
-    go get github.com/dgraph-io/dgo && \
-    go get -u github.com/derekparker/delve/cmd/dlv && \
-    go get github.com/spf13/pflag
+RUN go get -u -v github.com/golang/protobuf/protoc-gen-go && \
+    go get -v github.com/dgraph-io/dgo && \
+    go get -u -v github.com/derekparker/delve/cmd/dlv && \
+    go get -v github.com/spf13/pflag
+
+RUN go get -v github.com/magefile/mage
+RUN go get -d -v github.com/gohugoio/hugo
+RUN (cd $GOPATH/src/github.com/gohugoio/hugo && mage vendor && mage install)
+
+VOLUME /go/src
 
 COPY ci/dev-entrypoint.sh /dev-entrypoint.sh
 RUN chmod +x /dev-entrypoint.sh

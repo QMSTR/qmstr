@@ -1,4 +1,3 @@
-//go:generate protoc -I ../../pkg/buildservice --go_out=plugins=grpc:../../pkg/buildservice ../../pkg/buildservice/buildservice.proto
 package main
 
 import (
@@ -13,52 +12,75 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/QMSTR/qmstr/pkg/reporting"
+	"github.com/QMSTR/qmstr/pkg/service"
+
 	version "github.com/hashicorp/go-version"
 )
-
-//"github.com/endocode/qmstr/pkg/reporter/htmlreporter"
 
 const minimumHugoVersion = "0.32"
 const themeDirectory = "/usr/share/qmstr/reporter-html/theme"
 
+type HTMLReporter struct {
+	workingDir string
+	keep       bool
+}
+
 func main() {
+	reporter := reporting.NewReporter(&HTMLReporter{keep: false})
+	reporter.RunReporterPlugin()
+}
+
+func (r *HTMLReporter) Configure(config map[string]string) error {
+	if val, ok := config["keep"]; ok && val == "true" {
+		r.keep = true
+	}
+
 	detectedVersion, err := DetectHugoAndVerifyVersion()
 	if err != nil {
-		log.Fatalf("error generating HTML reports: %v", err)
+		return fmt.Errorf("error generating HTML reports: %v", err)
 	}
 	log.Printf("detected beautiful Hugo version %v", detectedVersion)
 
-	// htmlreporter.ConnectToMaster()
-	wd, err := CreateHugoWorkingDirectory()
+	r.workingDir, err = CreateHugoWorkingDirectory()
 	if err != nil {
-		log.Fatalf("error preparing temporary Hugo working directory: %v", err)
+		return fmt.Errorf("error preparing temporary Hugo working directory: %v", err)
 	}
-	log.Printf("created temporary Hugo working directory in %v", wd)
-	defer func() {
-		//TODO is there a --keep option or environment variable to keep temporary files?
-		log.Printf("deleting temporary Hugo working directory in %v", wd)
-		if err := os.RemoveAll(wd); err != nil {
-			log.Printf("warning - error deleting temporary Hugo working directory in %v: %v", wd, err)
-		}
-	}()
-	// generate the content data (markdown and JSON) from the master data model
-	// TODO
+	log.Printf("created temporary Hugo working directory in %v", r.workingDir)
 
-	staticHTMLContentDir, err := CreateStaticHTML(wd)
+	return nil
+}
+
+func (r *HTMLReporter) Report(filenode *service.FileNode) error {
+	return nil
+}
+
+func (r *HTMLReporter) cleanup() {
+	log.Printf("deleting temporary Hugo working directory in %v", r.workingDir)
+	if err := os.RemoveAll(r.workingDir); err != nil {
+		log.Printf("warning - error deleting temporary Hugo working directory in %v: %v", r.workingDir, err)
+	}
+}
+
+func (r *HTMLReporter) PostReport() error {
+	if !r.keep {
+		defer r.cleanup()
+	}
+
+	staticHTMLContentDir, err := CreateStaticHTML(r.workingDir)
 	if err != nil {
-		log.Fatalf("error generating reports: %v", err)
+		return fmt.Errorf("error generating reports: %v", err)
 	}
 	log.Printf("QMSTR reports generated in %v", staticHTMLContentDir)
 
 	// Create the reports package (for publishing, etc).
 	// ... TODO: configure default target directory for every reporter (uses CWD at the moment)
 	packagePath, _ := os.Getwd()
-	if err := CreateReportsPackage(wd, staticHTMLContentDir, packagePath); err != nil {
-		log.Fatalf("error packaging report to %v: %v", packagePath, err)
+	if err := CreateReportsPackage(r.workingDir, staticHTMLContentDir, packagePath); err != nil {
+		return fmt.Errorf("error packaging report to %v: %v", packagePath, err)
 	}
 	log.Printf("QMSTR reports package generated in %v", packagePath)
-
-	// defer htmlreporter.DisconnectFromMaster()
+	return nil
 }
 
 // DetectHugoAndVerifyVersion runs Hugo to get the version string.
@@ -84,7 +106,6 @@ func ParseVersion(output []byte) (string, error) {
 	match := re.FindSubmatch(output)
 	if match != nil {
 		version := strings.TrimSpace(string(match[1][:]))
-		// tag := strings.TrimSpace(string(match[2][:]))
 		return version, nil
 	}
 
