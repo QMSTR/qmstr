@@ -15,16 +15,17 @@ import (
 
 // Options contains the context of a program invocation
 type Options struct {
-	progName           string //The name the program is called as
-	keepTmpDirectories bool   //Keep intermediate files
-	verbose            bool   //Enable trace log output
+	progName           string // The name the program is called as
+	keepTmpDirectories bool   // Keep intermediate files
+	verbose            bool   // Enable trace log output
 }
 
+// global variables
 var (
 	options Options
-	//Debug receives log messages in verbose mode
+	// Debug receives log messages in verbose mode
 	Debug *golog.Logger
-	//Log is the standard logger
+	// Log is the standard logger
 	Log *golog.Logger
 )
 
@@ -36,7 +37,7 @@ func main() {
 	if options.verbose {
 		Debug = golog.New(os.Stderr, "DEBUG: ", golog.Ldate|golog.Ltime)
 	} else {
-		Debug = golog.New(ioutil.Discard, "DEBUG: ", golog.Ldate|golog.Ltime)
+		Debug = golog.New(ioutil.Discard, "", golog.Ldate|golog.Ltime)
 	}
 	Log = golog.New(os.Stderr, "", golog.Ldate|golog.Ltime)
 	exitCode := Run(flag.Args())
@@ -67,6 +68,7 @@ func Run(payloadCmd []string) int {
 		} else {
 			Debug.Printf("deleting temporary temporary instrumentation bin directory in %v", tmpWorkDir)
 			if err := os.RemoveAll(tmpWorkDir); err != nil {
+				// it is a warning because the program is exiting and we cannot recover anymore
 				Log.Printf("warning - error deleting temporary instrumentation bin directory in %v: %v", tmpWorkDir, err)
 			}
 		}
@@ -94,7 +96,7 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	}
 	const wrapper = "qmstr-wrapper"
 	wrapperPath := path.Join(ownPath, wrapper)
-	//TODO use exec.LookPath and use the wrapper wherever it is found
+	// TODO use exec.LookPath and use the wrapper wherever it is found
 	if _, err := os.Stat(wrapperPath); err != nil {
 		Log.Fatalf("cannot find %s at %s: %v", wrapper, wrapperPath, err)
 	}
@@ -104,9 +106,15 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	if err := os.Mkdir(binDir, 0700); err != nil {
 		Log.Fatalf("unable to create %v: %v", binDir, err)
 	}
-	//create the symlinks to qmstr-wrapper in there
-
-	//extend the PATH variable to include the created bin/ directory
+	// create the symlinks to qmstr-wrapper in there
+	symlinks := make(map[string]string)
+	symlinks[path.Join(binDir, "gcc")] = wrapperPath
+	for from, to := range symlinks {
+		if err := os.Symlink(to, from); err != nil {
+			Log.Fatalf("cannot symlink %s to %s: %v", from, to, err)
+		}
+	}
+	// extend the PATH variable to include the created bin/ directory
 	paths := filepath.SplitList(os.Getenv("PATH"))
 	paths = append([]string{binDir}, paths...)
 	separator := string(os.PathListSeparator)
