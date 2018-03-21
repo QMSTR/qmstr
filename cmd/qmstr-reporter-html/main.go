@@ -19,7 +19,8 @@ import (
 )
 
 const minimumHugoVersion = "0.32"
-const themeDirectory = "/usr/share/qmstr/reporter-html/theme"
+const moduleName = "html-reporter"
+const themeDirectoryName = "theme"
 
 type HTMLReporter struct {
 	workingDir string
@@ -42,7 +43,12 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 	}
 	log.Printf("detected beautiful Hugo version %v", detectedVersion)
 
-	r.workingDir, err = CreateHugoWorkingDirectory()
+	// htmlreporter.ConnectToMaster()
+	sharedDataDir, err := DetectSharedDataDirectory()
+	if err != nil {
+		log.Fatalf("cannot identify QMSTR shared data directory: %v", err)
+	}
+	r.workingDir, err = CreateHugoWorkingDirectory(sharedDataDir)
 	if err != nil {
 		return fmt.Errorf("error preparing temporary Hugo working directory: %v", err)
 	}
@@ -99,6 +105,24 @@ func DetectHugoAndVerifyVersion() (string, error) {
 	return version, CheckMinimumRequiredVersion(version)
 }
 
+// DetectSharedDataDirectory detects the directory where QMSTR's shared data is stored.
+// It looks for /usr/share/qmstr, /usr/local/share/qmstr and /opt/share/qmstr, in that order.
+func DetectSharedDataDirectory() (string, error) {
+	var sharedDataLocations = []string{"/usr/share/qmstr", "/usr/local/share/qmstr", "/opt/share/qmstr"}
+	for _, location := range sharedDataLocations {
+		fileInfo, err := os.Stat(location)
+		if err != nil {
+			continue
+		}
+		if fileInfo.IsDir() {
+			log.Printf("shared data directory identified at %v", location)
+			return location, nil
+		}
+		return "", fmt.Errorf("shared data directory exists at %v, but is not a directory, strange", location)
+	}
+	return "", fmt.Errorf("no suitable QMSTR shared data location found (candidates are %s)", strings.Join(sharedDataLocations, ", "))
+}
+
 // ParseVersion returns the version for both released and self-compiled versions
 func ParseVersion(output []byte) (string, error) {
 	// is this a version built from a repository?
@@ -135,11 +159,12 @@ func CheckMinimumRequiredVersion(versionstring string) error {
 }
 
 //CreateHugoWorkingDirectory creates a temporary directory with the directory structure required to run Hugo
-func CreateHugoWorkingDirectory() (string, error) {
+func CreateHugoWorkingDirectory(sharedDataDir string) (string, error) {
 	tmpWorkDir, err := ioutil.TempDir("", "qmstr-")
 	if err != nil {
 		return tmpWorkDir, fmt.Errorf("error creating temporary Hugo working directory: %v", err)
 	}
+	themeDirectory := path.Join(sharedDataDir, themeDirectoryName)
 	// populate working directory with a site template and the theme
 	// TODO: add "incremental mode": use an existing, previously generated site and extend it
 	cmd := exec.Command("hugo", "new", "site", tmpWorkDir)
