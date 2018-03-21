@@ -12,10 +12,7 @@ import (
 
 var conn *grpc.ClientConn
 var controlServiceClient service.ControlServiceClient
-
-const (
-	address = "localhost:50051"
-)
+var address string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -26,6 +23,10 @@ var rootCmd = &cobra.Command{
 	and prints the version of qmstr-cli.`,
 	Run: func(cmd *cobra.Command, args []string) {
 	},
+}
+
+func init() {
+	rootCmd.PersistentFlags().StringVar(&address, "cserv", "localhost:50051", "connect to control service")
 }
 
 func Execute() {
@@ -39,6 +40,7 @@ func setUpServer() {
 	// Set up server connection
 	var err error
 	conn, err = grpc.Dial(address, grpc.WithInsecure())
+	fmt.Printf("Connecting to address: %v\n", address)
 	if err != nil {
 		log.Fatalf("Failed to connect to master: %v", err)
 	}

@@ -27,7 +27,6 @@ var waitCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(waitCmd)
 	waitCmd.Flags().IntVarP(&timeout, "timeout", "t", 60, "time is up")
-
 }
 
 func awaitServer() {
