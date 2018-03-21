@@ -38,11 +38,10 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(node *service.FileNode) (*service.In
 	if err == nil {
 		retVal.Inodes = append(retVal.Inodes, licenseInfo...)
 	}
-	copyrightHolders, err := scanalyzer.detectCopyrightHolders(node.GetPath())
+	copyrights, err := scanalyzer.detectCopyrights(node.GetPath())
 	if err == nil {
-		retVal.Inodes = append(retVal.Inodes, copyrightHolders)
+		retVal.Inodes = append(retVal.Inodes, copyrights)
 	}
-
 	return retVal, nil
 }
 
@@ -106,8 +105,8 @@ func (scanalyzer *ScancodeAnalyzer) detectLicenses(srcFilePath string) ([]*servi
 	return nil, fmt.Errorf("No license found for %s", srcFilePath)
 }
 
-func (scanalyzer *ScancodeAnalyzer) detectCopyrightHolders(srcFilePath string) (*service.InfoNode, error) {
-	copyrightHolders := []*service.InfoNode_DataNode{}
+func (scanalyzer *ScancodeAnalyzer) detectCopyrights(srcFilePath string) (*service.InfoNode, error) {
+	copyrights := []*service.InfoNode_DataNode{}
 	scanDatamap := scanalyzer.scanData.(map[string]interface{})
 	for _, file := range scanDatamap["files"].([]interface{}) {
 		fileData := file.(map[string]interface{})
@@ -116,17 +115,24 @@ func (scanalyzer *ScancodeAnalyzer) detectCopyrightHolders(srcFilePath string) (
 				copyrightData := copyright.(map[string]interface{})
 				for _, copyrightHolder := range copyrightData["holders"].([]interface{}) {
 					log.Printf("Found copyright holder %s", copyrightHolder)
-					copyrightHolders = append(copyrightHolders, &service.InfoNode_DataNode{
+					copyrights = append(copyrights, &service.InfoNode_DataNode{
 						Type: "copyrightHolder",
 						Data: copyrightHolder.(string),
 					})
 				}
+				for _, author := range copyrightData["authors"].([]interface{}) {
+					log.Printf("Found author %s", author)
+					copyrights = append(copyrights, &service.InfoNode_DataNode{
+						Type: "author",
+						Data: author.(string),
+					})
+				}
 			}
-			copyHolderInfoNode := &service.InfoNode{
+			copyrightInfoNode := &service.InfoNode{
 				Type:      "copyright",
-				DataNodes: copyrightHolders,
+				DataNodes: copyrights,
 			}
-			return copyHolderInfoNode, nil
+			return copyrightInfoNode, nil
 		}
 	}
 	return nil, fmt.Errorf("No copyright info found for %s", srcFilePath)
