@@ -105,9 +105,14 @@ func DetectHugoAndVerifyVersion() (string, error) {
 	return version, CheckMinimumRequiredVersion(version)
 }
 
+<<<<<<< HEAD
 // DetectSharedDataDirectory detects the shared data directory for all of QMSTR.
 // It looks for /usr/share/qmstr, /usr/local/share/qmstr and /opt/share/qmstr, in that order.
 // TODO this function should be refactored to be used across all modules
+=======
+// DetectSharedDataDirectory detects the directory where QMSTR's shared data is stored.
+// It looks for /usr/share/qmstr, /usr/local/share/qmstr and /opt/share/qmstr, in that order.
+>>>>>>> Implement lookup of the shared data dir in the default locations.
 func DetectSharedDataDirectory() (string, error) {
 	var sharedDataLocations = []string{"/usr/share/qmstr", "/usr/local/share/qmstr", "/opt/share/qmstr"}
 	for _, location := range sharedDataLocations {
@@ -115,15 +120,24 @@ func DetectSharedDataDirectory() (string, error) {
 		if err != nil {
 			continue
 		}
+<<<<<<< HEAD
 		if !fileInfo.IsDir() {
 			return "", fmt.Errorf("shared data directory exists at %v, but is not a directory, strange", location)
 		}
 		log.Printf("shared data directory identified at %v", location) // Debug...
 		return location, nil
+=======
+		if fileInfo.IsDir() {
+			log.Printf("shared data directory identified at %v", location)
+			return location, nil
+		}
+		return "", fmt.Errorf("shared data directory exists at %v, but is not a directory, strange", location)
+>>>>>>> Implement lookup of the shared data dir in the default locations.
 	}
 	return "", fmt.Errorf("no suitable QMSTR shared data location found (candidates are %s)", strings.Join(sharedDataLocations, ", "))
 }
 
+<<<<<<< HEAD
 // DetectModuleSharedDataDirectory detects the directory where QMSTR's shared data is stored.
 // TODO this function should be refactored to be used across all modules
 func DetectModuleSharedDataDirectory(moduleName string) (string, error) {
@@ -140,6 +154,8 @@ func DetectModuleSharedDataDirectory(moduleName string) (string, error) {
 	return moduleDataLocation, nil
 }
 
+=======
+>>>>>>> Implement lookup of the shared data dir in the default locations.
 // ParseVersion returns the version for both released and self-compiled versions
 func ParseVersion(output []byte) (string, error) {
 	// is this a version built from a repository?
