@@ -1,0 +1,33 @@
+syntax = "proto3";
+package service;
+option java_package = "org.qmstr.grpc.service";
+
+message LogMessage {
+  bytes msg = 1;
+}
+
+message LogResponse {
+  bool success = 1;
+}
+
+message QuitMessage {
+  bool kill = 1;
+}
+
+message QuitResponse {
+  bool success = 1;
+}
+
+message SwitchPhaseMessage {
+  int32 phase = 1;
+}
+
+message SwitchPhaseResponse {
+  bool success = 1;
+}
+
+service ControlService {
+  rpc Log(LogMessage) returns (LogResponse) {}
+  rpc Quit(QuitMessage) returns (QuitResponse) {}
+  rpc SwitchPhase(SwitchPhaseMessage) returns (SwitchPhaseResponse) {}
+}

@@ -1,0 +1,72 @@
+apply plugin: 'com.google.protobuf'
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'idea'
+
+buildscript {
+  repositories {
+    mavenLocal()
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    // ASSUMES GRADLE 2.12 OR HIGHER. Use plugin version 0.7.5 with earlier
+    // gradle versions
+    classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.3'
+  }
+}
+
+repositories {
+  maven {
+      // The google mirror is less flaky than mavenCentral()
+    url "https://maven-central.storage-download.googleapis.com/repos/central/data/"
+  }
+}
+
+def grpcVersion = '1.10.0'
+def nettyTcNativeVersion = '2.0.7.Final'
+
+dependencies {
+  compile gradleApi()
+  compile localGroovy()
+  compile "com.google.api.grpc:proto-google-common-protos:1.0.0"
+  compile "io.grpc:grpc-netty:${grpcVersion}"
+  compile "io.grpc:grpc-protobuf:${grpcVersion}"
+  compile "io.grpc:grpc-stub:${grpcVersion}"
+
+  testCompile "io.grpc:grpc-testing:${grpcVersion}"
+  testCompile "junit:junit:4.12"
+  testCompile "org.mockito:mockito-core:1.9.5"
+}
+
+protobuf {
+  protoc {
+    artifact = 'com.google.protobuf:protoc:3.5.1-1'
+  }
+  plugins {
+    grpc {
+      artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+    }
+  }
+  generateProtoTasks {
+    all()*.plugins {
+      grpc {}
+    }
+  }
+}
+
+// Inform IDEs like IntelliJ IDEA, Eclipse or NetBeans about the generated code.
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc'
+            srcDirs 'build/generated/source/proto/main/java'
+        }
+    }
+}
+
+apply plugin: "maven"
+
+group = "org.qmstr"
+version = "1.0"

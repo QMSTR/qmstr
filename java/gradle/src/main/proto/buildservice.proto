@@ -1,0 +1,17 @@
+syntax = "proto3";
+package service;
+option java_package = "org.qmstr.grpc.service";
+
+import weak "datamodel.proto";
+
+message BuildMessage {
+  repeated FileNode fileNodes = 1;
+}
+
+message BuildResponse {
+  bool success = 1;
+}
+
+service BuildService {
+  rpc Build(BuildMessage) returns (BuildResponse) {}
+}

@@ -1,0 +1,40 @@
+syntax = "proto3";
+package service;
+option java_package = "org.qmstr.grpc.service";
+
+message FileNode {
+    string uid = 1;
+    int32 nodeType =2;
+    string type = 3;
+    string path = 4;
+    string name = 5;
+    string hash = 6;
+    bool broken = 7;
+    repeated FileNode derivedFrom = 8;
+    repeated InfoNode additionalInfo = 9;
+}
+
+message InfoNode {
+    string uid = 1;
+    int32 nodeType = 2;
+    string type = 3;
+    repeated Analyzer analyzer = 4;
+
+    message DataNode {
+        int32 nodeType = 1;
+        string type = 2;
+        string data = 3;
+    }
+    repeated DataNode dataNodes = 5;
+}
+
+message Analyzer {
+    string uid = 1;
+    string name = 2;
+    int32 nodeType = 3;
+}
+
+message PathSubstitution {
+    string old = 1;
+    string new = 2;
+}
