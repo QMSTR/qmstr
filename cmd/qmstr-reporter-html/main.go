@@ -44,7 +44,7 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 	log.Printf("detected beautiful Hugo version %v", detectedVersion)
 
 	// htmlreporter.ConnectToMaster()
-	sharedDataDir, err := DetectSharedDataDirectory()
+	sharedDataDir, err := DetectModuleSharedDataDirectory(moduleName)
 	if err != nil {
 		log.Fatalf("cannot identify QMSTR shared data directory: %v", err)
 	}
@@ -105,20 +105,27 @@ func DetectHugoAndVerifyVersion() (string, error) {
 	return version, CheckMinimumRequiredVersion(version)
 }
 
-// DetectSharedDataDirectory detects the directory where QMSTR's shared data is stored.
+// DetectModuleSharedDataDirectory detects the directory where QMSTR's shared data is stored.
 // It looks for /usr/share/qmstr, /usr/local/share/qmstr and /opt/share/qmstr, in that order.
-func DetectSharedDataDirectory() (string, error) {
+// TODO this function should be refactored to be used across all modules
+func DetectModuleSharedDataDirectory(moduleName string) (string, error) {
 	var sharedDataLocations = []string{"/usr/share/qmstr", "/usr/local/share/qmstr", "/opt/share/qmstr"}
 	for _, location := range sharedDataLocations {
 		fileInfo, err := os.Stat(location)
 		if err != nil {
 			continue
 		}
-		if fileInfo.IsDir() {
-			log.Printf("shared data directory identified at %v", location)
-			return location, nil
+		if !fileInfo.IsDir() {
+			return "", fmt.Errorf("shared data directory exists at %v, but is not a directory, strange", location)
 		}
-		return "", fmt.Errorf("shared data directory exists at %v, but is not a directory, strange", location)
+		log.Printf("shared data directory identified at %v", location) // Debug...
+		moduleDataLocation := path.Join(location, moduleName)
+		fileInfo, err = os.Stat(moduleDataLocation)
+		if !fileInfo.IsDir() {
+			return "", fmt.Errorf("module shared data directory %v not found in shared data directory at %v", moduleDataLocation, location)
+		}
+		log.Printf("module shared data directory identified at %v", moduleDataLocation)
+		return moduleDataLocation, nil
 	}
 	return "", fmt.Errorf("no suitable QMSTR shared data location found (candidates are %s)", strings.Join(sharedDataLocations, ", "))
 }
