@@ -6,7 +6,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath "org.qmstr:qmstr-gradle:1.0"
+        classpath "org.qmstr.gradle:qmstr-plugin:0.1"
     }
 }
 
@@ -15,4 +15,4 @@ jar {
         attributes 'Main-Class': 'org.qmstr.example.HelloWorld'
     }
 }
-apply plugin: org.qmstr.gradle.QmstrPlugin
+apply plugin: 'qmstr'
