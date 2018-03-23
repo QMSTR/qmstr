@@ -1,0 +1,18 @@
+apply plugin: 'java'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.qmstr:qmstr-gradle:1.0"
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.qmstr.example.HelloWorld'
+    }
+}
+apply plugin: org.qmstr.gradle.QmstrPlugin
