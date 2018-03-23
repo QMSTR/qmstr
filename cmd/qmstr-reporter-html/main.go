@@ -105,10 +105,10 @@ func DetectHugoAndVerifyVersion() (string, error) {
 	return version, CheckMinimumRequiredVersion(version)
 }
 
-// DetectModuleSharedDataDirectory detects the directory where QMSTR's shared data is stored.
+// DetectSharedDataDirectory detects the shared data directory for all of QMSTR.
 // It looks for /usr/share/qmstr, /usr/local/share/qmstr and /opt/share/qmstr, in that order.
 // TODO this function should be refactored to be used across all modules
-func DetectModuleSharedDataDirectory(moduleName string) (string, error) {
+func DetectSharedDataDirectory() (string, error) {
 	var sharedDataLocations = []string{"/usr/share/qmstr", "/usr/local/share/qmstr", "/opt/share/qmstr"}
 	for _, location := range sharedDataLocations {
 		fileInfo, err := os.Stat(location)
@@ -119,15 +119,25 @@ func DetectModuleSharedDataDirectory(moduleName string) (string, error) {
 			return "", fmt.Errorf("shared data directory exists at %v, but is not a directory, strange", location)
 		}
 		log.Printf("shared data directory identified at %v", location) // Debug...
-		moduleDataLocation := path.Join(location, moduleName)
-		fileInfo, err = os.Stat(moduleDataLocation)
-		if !fileInfo.IsDir() {
-			return "", fmt.Errorf("module shared data directory %v not found in shared data directory at %v", moduleDataLocation, location)
-		}
-		log.Printf("module shared data directory identified at %v", moduleDataLocation)
-		return moduleDataLocation, nil
+		return location, nil
 	}
 	return "", fmt.Errorf("no suitable QMSTR shared data location found (candidates are %s)", strings.Join(sharedDataLocations, ", "))
+}
+
+// DetectModuleSharedDataDirectory detects the directory where QMSTR's shared data is stored.
+// TODO this function should be refactored to be used across all modules
+func DetectModuleSharedDataDirectory(moduleName string) (string, error) {
+	sharedDataLocation, err := DetectSharedDataDirectory()
+	if err != nil {
+		return "", err
+	}
+	moduleDataLocation := path.Join(sharedDataLocation, moduleName)
+	fileInfo, _ := os.Stat(moduleDataLocation)
+	if !fileInfo.IsDir() {
+		return "", fmt.Errorf("module shared data directory %v not found in shared data directory at %v", moduleDataLocation, sharedDataLocation)
+	}
+	log.Printf("module shared data directory identified at %v", moduleDataLocation)
+	return moduleDataLocation, nil
 }
 
 // ParseVersion returns the version for both released and self-compiled versions
