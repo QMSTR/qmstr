@@ -4,12 +4,14 @@ import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.qmstr.grpc.service.*;
+import org.qmstr.util.Hash;
+
+import java.nio.file.Path;
 
 public class BuildServiceClient {
 
     private final ManagedChannel channel;
     private final BuildServiceGrpc.BuildServiceBlockingStub blockingBuildStub;
-    private final BuildServiceGrpc.BuildServiceStub asyncBuildStub;
     private final ControlServiceGrpc.ControlServiceBlockingStub blockingControlStub;
 
     public BuildServiceClient(String host, int port) {
@@ -19,12 +21,15 @@ public class BuildServiceClient {
     public BuildServiceClient(ManagedChannelBuilder<?> channelBuilder) {
         channel = channelBuilder.build();
         blockingBuildStub = BuildServiceGrpc.newBlockingStub(channel);
-        asyncBuildStub = BuildServiceGrpc.newStub(channel);
         blockingControlStub = ControlServiceGrpc.newBlockingStub(channel);
     }
 
+
+
     public void SendBuildMessage(Datamodel.FileNode fileNode) {
-        Buildservice.BuildMessage bm = Buildservice.BuildMessage.newBuilder().setFileNodes(0, fileNode).build();
+        Buildservice.BuildMessage bm = Buildservice.BuildMessage.newBuilder()
+                .addFileNodes(fileNode)
+                .build();
 
         this.blockingBuildStub.build(bm);
     }
