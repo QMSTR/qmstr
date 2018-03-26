@@ -199,7 +199,6 @@ func CreateHugoWorkingDirectory(sharedDataDir string) (string, error) {
 	}
 	themeDirectory := path.Join(sharedDataDir, themeDirectoryName)
 	// populate working directory with a site template and the theme
-	sharedDataDir := "/usr/share/qmstr/reporter-html"
 	skeletonDir := "skeleton"
 	templateDir := "templates"
 	linksfromTo := make(map[string]string)
