@@ -30,6 +30,8 @@ public class QmstrTask extends DefaultTask {
         bsc.SendLogMessage("This is gradle!");
         this.sourceSets.forEach(set -> {
             bsc.SendLogMessage("Found sourceset: " + set.getName());
+            set.getOutput().forEach(s -> bsc.SendLogMessage("Found output : " + s.getAbsolutePath()));
+            set.getAllSource().forEach(s -> bsc.SendLogMessage("Found source file: " + s.getAbsolutePath()));
         });
 
     }
