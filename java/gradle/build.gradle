@@ -2,18 +2,18 @@ apply plugin: 'com.google.protobuf'
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'idea'
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 buildscript {
   repositories {
     mavenLocal()
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
+    mavenCentral()
   }
   dependencies {
     // ASSUMES GRADLE 2.12 OR HIGHER. Use plugin version 0.7.5 with earlier
     // gradle versions
     classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.3'
+    classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.0'
   }
 }
 
@@ -36,8 +36,9 @@ dependencies {
   compile "io.grpc:grpc-stub:${grpcVersion}"
 
   testCompile "io.grpc:grpc-testing:${grpcVersion}"
-  testCompile "junit:junit:4.12"
-  testCompile "org.mockito:mockito-core:1.9.5"
+
+  testCompile("org.junit.jupiter:junit-jupiter-api:5.1.0")
+  testRuntime("org.junit.jupiter:junit-jupiter-engine:5.1.0")
 }
 
 protobuf {
