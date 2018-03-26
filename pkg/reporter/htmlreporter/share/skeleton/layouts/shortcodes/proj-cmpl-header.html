@@ -8,11 +8,3 @@
   <li>FOSS Liaison: {{ $metadata.openchainfossliaison }}</li>
   <li>FOSS Compliance Contact: {{ $metadata.openchaincompliancecontact }}</li>
 </ul>
-
-<p></p>
-<h2>Authors</h2>
-<ul>
-  {{ range .Site.Data.linux.ABCDEF12.authors }}
-  <li>{{ .name }}</li>
-  {{ end }}
-</ul>
