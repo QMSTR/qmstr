@@ -27,6 +27,9 @@ public class BuildServiceClient {
 
 
     public void SendBuildMessage(Datamodel.FileNode fileNode) {
+        if (fileNode == null) {
+            return;
+        }
         Buildservice.BuildMessage bm = Buildservice.BuildMessage.newBuilder()
                 .addFileNodes(fileNode)
                 .build();

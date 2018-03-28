@@ -25,11 +25,11 @@ public class QmstrPlugin implements Plugin<Project> {
                 .forEach(pro -> pro.getPluginManager().apply(QmstrPlugin.class));
 
 
-
         project.getTasks().create("qmstr", QmstrTask.class, (task) -> {
             task.setBuildServiceAddress("localhost:50051");
             task.setSourceSets(getJavaSourceSets(project));
             task.setDependsOn(jarTask);
+            task.setProjectConfig(project.getConfigurations());
         });
     }
 

@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 
 public class FilenodeUtils {
 
-    public static Datamodel.FileNode getFileNode(Path filepath) {
-        String checksum = Hash.getChecksum(filepath.toFile());
 
+    public static Datamodel.FileNode getFileNode(String path, String checksum) {
+        Path filepath = Paths.get(path);
 
         return Datamodel.FileNode.newBuilder()
                 .setName(filepath.getFileName().toString())
@@ -27,6 +27,14 @@ public class FilenodeUtils {
                 .setHash(checksum != null ? checksum : "nohash"+filepath.toString())
                 .setBroken(checksum == null)
                 .build();
+
+    }
+
+    public static Datamodel.FileNode getFileNode(Path filepath) {
+        String checksum = Hash.getChecksum(filepath.toFile());
+        String path = filepath.toString();
+
+        return getFileNode(path, checksum);
     }
 
     public static Datamodel.FileNode processSourceFile(File sourcefile, FileCollection sourceDirs, FileCollection outDirs) {
