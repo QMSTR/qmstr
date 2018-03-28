@@ -17,12 +17,19 @@ public class QmstrPlugin implements Plugin<Project> {
         project.getPluginManager().apply(JavaPlugin.class);
         project.getPluginManager().apply(DistributionPlugin.class);
 
-        Set<Task> jartask = project.getTasksByName("jar", false);
+        Set<Task> jarTask = project.getTasksByName("jar", false);
+
+        // Apply plugin for all java subprojects
+        project.getAllprojects().stream()
+                .filter(pro -> pro.getPlugins().hasPlugin(JavaPlugin.class))
+                .forEach(pro -> pro.getPluginManager().apply(QmstrPlugin.class));
+
+
 
         project.getTasks().create("qmstr", QmstrTask.class, (task) -> {
             task.setBuildServiceAddress("localhost:50051");
             task.setSourceSets(getJavaSourceSets(project));
-            task.setDependsOn(jartask);
+            task.setDependsOn(jarTask);
         });
     }
 
