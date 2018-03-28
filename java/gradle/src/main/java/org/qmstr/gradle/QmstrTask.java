@@ -62,7 +62,8 @@ public class QmstrTask extends DefaultTask {
             set.getAllJava().forEach(js -> {
                     sourceDirs.forEach(sd -> bsc.SendLogMessage("Source dir " + sd.toString()));
                     bsc.SendLogMessage("Sending " + js);
-                    bsc.SendBuildMessage(FilenodeUtils.processSourceFile(js, sourceDirs, outDirs));
+                    Set<Datamodel.FileNode> nodes = FilenodeUtils.processSourceFile(js, sourceDirs, outDirs);
+                    nodes.forEach(node -> bsc.SendBuildMessage(node));
             });
         });
 
@@ -82,10 +83,10 @@ public class QmstrTask extends DefaultTask {
             jar.stream().filter(je -> je.getName().endsWith(".class"))
                     .forEach(je -> {
                         String hash = getHash(jar, je);
-                        classes.add(FilenodeUtils.getFileNode(je.getName(), hash));
+                        classes.add(FilenodeUtils.getFileNode(je.getName(), hash, "classfile"));
                         bsc.SendLogMessage(String.format("Found class %s with sha256 %s", je.getName(), hash));
                     });
-            Datamodel.FileNode rootNode = FilenodeUtils.getFileNode(artifact.getFile().toPath());
+            Datamodel.FileNode rootNode = FilenodeUtils.getFileNode(artifact.getFile().toPath(), "jarfile");
             Datamodel.FileNode.Builder rootNodeBuilder = rootNode.toBuilder();
             classes.forEach(c -> rootNodeBuilder.addDerivedFrom(c));
             rootNode = rootNodeBuilder.build();
