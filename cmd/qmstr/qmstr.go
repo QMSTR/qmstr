@@ -143,6 +143,7 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 // RunPayloadCommand performs the payload command and returns it's exit code and/or an error
 func RunPayloadCommand(command string, arguments ...string) (int, error) {
 	cmd := exec.Command(command, arguments...)
+	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
