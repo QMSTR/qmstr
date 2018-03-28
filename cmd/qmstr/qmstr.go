@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"syscall"
 )
@@ -121,6 +122,14 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	}
 	// extend the PATH variable to include the created bin/ directory
 	paths := filepath.SplitList(os.Getenv("PATH"))
+
+	hasWhiteSpace, _ := regexp.Compile("\\s+")
+	for index, value := range paths {
+		if hasWhiteSpace.MatchString(value) {
+			Debug.Printf("NOTE - your PATH contains a element with whitespace in it: %v", value)
+			paths[index] = fmt.Sprintf("\"%s\"", value)
+		}
+	}
 	paths = append([]string{binDir}, paths...)
 	separator := string(os.PathListSeparator)
 	newPath := strings.Join(paths, separator)
