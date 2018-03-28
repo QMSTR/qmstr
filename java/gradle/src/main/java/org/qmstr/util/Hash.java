@@ -12,10 +12,19 @@ public class Hash {
     static final String hashAlgo = "SHA-256";
     static final String HEXES = "0123456789abcdef";
 
-    public static String getChecksum(File inputFile) {
 
-        try {
-            BufferedInputStream bs = new BufferedInputStream(new FileInputStream(inputFile));
+    public static String getChecksum(File inputFile) {
+        try (InputStream is = new FileInputStream(inputFile)) {
+            return getChecksum(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getChecksum(InputStream is) {
+
+        try (BufferedInputStream bs = new BufferedInputStream(is)) {
             MessageDigest digest = MessageDigest.getInstance(hashAlgo);
             byte[] buffer = new byte[hashByteBuffer];
             int read;
