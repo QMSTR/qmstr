@@ -66,9 +66,9 @@ func Run(payloadCmd []string) int {
 	}
 	defer func() {
 		if options.keepTmpDirectories {
-			Debug.Printf("keeping temporary temporary at %v", tmpWorkDir)
+			Debug.Printf("keeping temporary directory at %v", tmpWorkDir)
 		} else {
-			Debug.Printf("deleting temporary temporary instrumentation bin directory in %v", tmpWorkDir)
+			Debug.Printf("deleting temporary instrumentation bin directory in %v", tmpWorkDir)
 			if err := os.RemoveAll(tmpWorkDir); err != nil {
 				// it is a warning because the program is exiting and we cannot recover anymore
 				Log.Printf("warning - error deleting temporary instrumentation bin directory in %v: %v", tmpWorkDir, err)
