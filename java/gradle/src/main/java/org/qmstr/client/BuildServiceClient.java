@@ -24,8 +24,6 @@ public class BuildServiceClient {
         blockingControlStub = ControlServiceGrpc.newBlockingStub(channel);
     }
 
-
-
     public void SendBuildMessage(Datamodel.FileNode fileNode) {
         if (fileNode == null) {
             return;
