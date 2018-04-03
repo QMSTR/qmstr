@@ -22,7 +22,6 @@ public class QmstrPackTask extends QmstrTask {
     void pack() {
         bsc = new BuildServiceClient(buildServiceAddress, buildServicePort);
 
-        bsc.SendLogMessage("This is qmstr-gradle-plugin!");
         Set<PublishArtifact> arts = new HashSet<>();
         this.config.forEach(c -> c.getAllArtifacts().forEach(art -> arts.add(art)));
         arts.stream()
