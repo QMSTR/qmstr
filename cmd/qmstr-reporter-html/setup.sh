@@ -53,11 +53,10 @@ else
 fi
 
 for DIR in skeleton templates; do
-    cp -Rfp $REPODIR/pkg/reporter/htmlreporter/share/$DIR . || {
+    cp -Rfp $REPO_DIR/pkg/reporter/htmlreporter/share/$DIR . || {
 	echo "Error copying the $DIR directory into the module shared data directory."
 	exit 1
     }
 done
 
-ls
-
+echo "HTML reporter shared data directory set up at $MODULE_DIR."
