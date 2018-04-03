@@ -1,25 +1,27 @@
 package org.qmstr.util;
 
-import groovy.ui.SystemOutputInterceptor;
-import org.gradle.api.Project;
+import org.gradle.api.artifacts.PublishArtifact;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.tasks.SourceSetOutput;
 import org.qmstr.grpc.service.Datamodel;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 public class FilenodeUtils {
 
+    private static final String[] SUPPORTEDFILES = new String[]{"java", "class", "jar"};
 
     public static Datamodel.FileNode getFileNode(String path, String checksum, String type) {
         Path filepath = Paths.get(path);
@@ -44,7 +46,7 @@ public class FilenodeUtils {
 
     public static Set<Datamodel.FileNode> processSourceFile(File sourcefile, FileCollection sourceDirs, FileCollection outDirs) {
 
-        Datamodel.FileNode sourceNode = getFileNode(sourcefile.toPath(), "sourcecode");
+        Datamodel.FileNode sourceNode = getFileNode(sourcefile.toPath(), getTypeByFile(sourcefile.getName()));
 
         Optional<File> actualSourceDir = sourceDirs.filter(sd -> isActualSourceDir(sd, sourcefile)).getFiles().stream().findFirst();
 
@@ -63,7 +65,7 @@ public class FilenodeUtils {
                             Set<Path> nested = getNestedClasses(outdir.toPath().resolve(packageDirs), filename[filename.length - 2]);
                             nested.add(classesPath);
                             return nested.stream()
-                                    .map(p -> getFileNode(p, "classfile"))
+                                    .map(p -> getFileNode(p, getTypeByFile(p.getFileName().toString())))
                                     .map(node -> node.toBuilder().addDerivedFrom(sourceNode).build())
                                     .collect(Collectors.toSet());
                         }).flatMap(sets -> sets.stream())
@@ -101,5 +103,60 @@ public class FilenodeUtils {
         boolean clazz = filename.endsWith(".class");
         boolean starts = filename.startsWith(outerClass + "$");
         return file && clazz && starts;
+    }
+
+    public static Optional<Datamodel.FileNode> processArtifact(PublishArtifact artifact) {
+        if (artifact.getExtension().equals("jar")) {
+            try {
+                Set<Datamodel.FileNode> classes = new HashSet<>();
+                JarFile jar = new JarFile(artifact.getFile());
+                jar.stream()
+                        .filter(je -> isSupportedFile(je.getName()))
+                        .forEach(je -> {
+                            String hash = getHash(jar, je);
+                            classes.add(FilenodeUtils.getFileNode(je.getName(), hash, getTypeByFile(je.getName())));
+                        });
+                Datamodel.FileNode rootNode = FilenodeUtils.getFileNode(artifact.getFile().toPath(), getTypeByFile(artifact.getFile().getName()));
+                Datamodel.FileNode.Builder rootNodeBuilder = rootNode.toBuilder();
+                classes.forEach(c -> rootNodeBuilder.addDerivedFrom(c));
+                rootNode = rootNodeBuilder.build();
+                return Optional.ofNullable(rootNode);
+
+            } catch (IOException ioe) {
+                //TODO
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static boolean isSupportedFile(String filename) {
+        String[] filenameArr = filename.split("\\.");
+        int idx = filenameArr.length > 0 ? filenameArr.length-1 : 0;
+        return Arrays.stream(SUPPORTEDFILES).anyMatch(sf -> sf.equals(filenameArr[idx]));
+    }
+
+    private static String getTypeByFile(String filename) {
+        String[] filenameArr = filename.split("\\.");
+        String ext = filenameArr[filenameArr.length-1];
+        if (ext.equals("class")) {
+            return "classfile";
+        }
+        if (ext.equals("java")) {
+            return "sourcecode";
+        }
+        if (ext.equals("jar")) {
+            return "jarfile";
+        }
+        return "";
+    }
+
+    private static String getHash(JarFile jarfile, JarEntry jarEntry) {
+        try {
+            InputStream is = jarfile.getInputStream(jarEntry);
+            return Hash.getChecksum(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

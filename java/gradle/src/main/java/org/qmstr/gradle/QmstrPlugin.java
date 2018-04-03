@@ -9,15 +9,13 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 public class QmstrPlugin implements Plugin<Project> {
+
     public void apply(Project project) {
         project.getPluginManager().apply(JavaPlugin.class);
         project.getPluginManager().apply(DistributionPlugin.class);
-
-        Set<Task> jarTask = project.getTasksByName("jar", false);
 
         // Apply plugin for all java subprojects
         project.getAllprojects().stream()
@@ -25,10 +23,18 @@ public class QmstrPlugin implements Plugin<Project> {
                 .forEach(pro -> pro.getPluginManager().apply(QmstrPlugin.class));
 
 
-        project.getTasks().create("qmstr", QmstrTask.class, (task) -> {
+        Set<Task> jarTask = project.getTasksByName("jar", false);
+        Set<Task> classes = project.getTasksByName("classes", false);
+
+        Task qmstrCompile = project.getTasks().create("qmstrbuild", QmstrCompileTask.class, (task) -> {
             task.setBuildServiceAddress("localhost:50051");
             task.setSourceSets(getJavaSourceSets(project));
-            task.setDependsOn(jarTask);
+            task.dependsOn(classes);
+        });
+
+        project.getTasks().create("qmstr", QmstrPackTask.class, (task) -> {
+            task.dependsOn(qmstrCompile, jarTask);
+            task.setBuildServiceAddress("localhost:50051");
             task.setProjectConfig(project.getConfigurations());
         });
     }
