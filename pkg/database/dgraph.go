@@ -112,7 +112,7 @@ func queueWorker(db *DataBase) {
 
 		if !ready {
 			// put node back to queue
-			db.insertQueue <- node
+			go func() { db.insertQueue <- node }()
 			continue
 		}
 
