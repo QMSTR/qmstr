@@ -22,15 +22,11 @@ public class QmstrCompileTask extends QmstrTask {
     @TaskAction
     void build() {
         bsc = new BuildServiceClient(buildServiceAddress, buildServicePort);
-        bsc.SendLogMessage("This is qmstr-gradle-plugin!");
 
         this.sourceSets.forEach(set -> {
             FileCollection sourceDirs = set.getAllJava().getSourceDirectories();
             SourceSetOutput outDirs = set.getOutput();
-            bsc.SendLogMessage("Found sourceset: " + set.getName());
             set.getAllJava().forEach(js -> {
-                    sourceDirs.forEach(sd -> bsc.SendLogMessage("Source dir " + sd.toString()));
-                    bsc.SendLogMessage("Sending " + js);
                     Set<Datamodel.FileNode> nodes = FilenodeUtils.processSourceFile(js, sourceDirs, outDirs);
                     nodes.forEach(node -> bsc.SendBuildMessage(node));
             });
