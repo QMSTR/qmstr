@@ -7,12 +7,27 @@
 # * the path to the html-reporter-theme repository.
 # If the theme repository is not specified, it will be checked out from Github.
 #
-# directory. It is usually located in /usr/share/qmstr. Other options
-# are /usr/loca/share/qmstr or /opt/share/qmstr.
+# The data directory is usually located in /usr/share/qmstr. Other
+# options are /usr/loca/share/qmstr or /opt/share/qmstr.
 #
-# Example: ./setup.sh /usr/share/qmstr
+# Examples:
+# > ./setup.sh /usr/share/qmstr ~/Go/src/github.com/MYFORK/qmstr
+#    (this will create a shallow clone of the theme directory from Github and
+#    copy the skeleton and template from the local fork)
+# > ./setup.sh /opt/share/qmstr ~/Go/src/github.com/MYFORK/qmstr ~/Go/src/github.com/QMSTR/html-reporter-theme
+#    (this will copy the skeleton and template from the local fork and symlink the theme repository)
+# > ./setup.sh -l /opt/share/qmstr ~/Go/src/github.com/MYFORK/qmstr ~/Go/src/github.com/QMSTR/html-reporter-theme
+#    (this will create the directory, and symlink all components - useful for developers)
 
-# echo $@ $#
+CREATE_LINKS_TO_REPO=0
+while getopts l OPTION; do
+    case $OPTION in
+	l)
+	    CREATE_LINKS_TO_REPO=1
+	    ;;
+    esac
+    shift $((OPTIND -1))
+done
 
 if [ $# -lt "2" ]; then
     echo "Please specify the setup target directory (/usr/share/qmstr) and the path to the qmstr repository!"
@@ -53,10 +68,20 @@ else
 fi
 
 for DIR in skeleton templates; do
-    cp -Rfp $REPO_DIR/pkg/reporter/htmlreporter/share/$DIR . || {
-	echo "Error copying the $DIR directory into the module shared data directory."
-	exit 1
-    }
+    SOURCE_DIR=$REPO_DIR/pkg/reporter/htmlreporter/share/$DIR
+    if [ "$CREATE_LINKS_TO_REPO" -eq "1" ]; then
+	echo CREATE LINKS
+	ln -s $REPO_DIR/pkg/reporter/htmlreporter/share/$DIR || {
+	    echo "Error creating symbolic link to $DIR in the module shared data directory."
+	    exit 1
+	}
+    else
+	echo COPY DATA
+	cp -Rfp $REPO_DIR/pkg/reporter/htmlreporter/share/$DIR . || {
+	    echo "Error copying the $DIR directory into the module shared data directory."
+	    exit 1
+	}
+    fi
 done
 
 echo "HTML reporter shared data directory set up at $MODULE_DIR."
