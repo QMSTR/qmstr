@@ -44,11 +44,23 @@ public class FilenodeUtils {
         return getFileNode(path, checksum, type);
     }
 
+    public static Optional<Datamodel.FileNode> getFileNode(Path filepath) {
+        if (isSupportedFile(filepath.toString())) {
+            return Optional.of(getFileNode(filepath, getTypeByFile(filepath.toString())));
+        }
+        return Optional.empty();
+    }
+
+
     public static Set<Datamodel.FileNode> processSourceFile(File sourcefile, FileCollection sourceDirs, FileCollection outDirs) {
 
         Datamodel.FileNode sourceNode = getFileNode(sourcefile.toPath(), getTypeByFile(sourcefile.getName()));
 
-        Optional<File> actualSourceDir = sourceDirs.filter(sd -> isActualSourceDir(sd, sourcefile)).getFiles().stream().findFirst();
+        Optional<File> actualSourceDir = sourceDirs
+                .filter(sd -> isActualSourceDir(sd, sourcefile))
+                .getFiles()
+                .stream()
+                .findFirst();
 
         try {
             Path relSrcPath = actualSourceDir.orElseThrow(FileNotFoundException::new).toPath().relativize(sourcefile.toPath());
@@ -105,7 +117,7 @@ public class FilenodeUtils {
         return file && clazz && starts;
     }
 
-    public static Optional<Datamodel.FileNode> processArtifact(PublishArtifact artifact) {
+    public static Optional<Datamodel.FileNode> processArtifact(PublishArtifact artifact, Set<File> dependencySet) {
         if (artifact.getExtension().equals("jar")) {
             try {
                 Set<Datamodel.FileNode> classes = new HashSet<>();
@@ -119,6 +131,13 @@ public class FilenodeUtils {
                 Datamodel.FileNode rootNode = FilenodeUtils.getFileNode(artifact.getFile().toPath(), getTypeByFile(artifact.getFile().getName()));
                 Datamodel.FileNode.Builder rootNodeBuilder = rootNode.toBuilder();
                 classes.forEach(c -> rootNodeBuilder.addDerivedFrom(c));
+
+                dependencySet.stream()
+                        .map(f -> FilenodeUtils.getFileNode(f.toPath()))
+                        .filter(o -> o.isPresent())
+                        .map(o -> o.get())
+                        .forEach(depNode -> rootNodeBuilder.addDerivedFrom(depNode));
+
                 rootNode = rootNodeBuilder.build();
                 return Optional.ofNullable(rootNode);
 
