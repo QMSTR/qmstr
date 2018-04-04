@@ -8,7 +8,7 @@
 # If the theme repository is not specified, it will be checked out from Github.
 #
 # The data directory is usually located in /usr/share/qmstr. Other
-# options are /usr/loca/share/qmstr or /opt/share/qmstr.
+# options are /usr/local/share/qmstr or /opt/share/qmstr.
 #
 # Examples:
 # > ./setup.sh /usr/share/qmstr ~/Go/src/github.com/MYFORK/qmstr
