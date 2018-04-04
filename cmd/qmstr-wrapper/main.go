@@ -1,4 +1,4 @@
-//go:generate protoc -I ../../pkg/service --go_out=plugins=grpc:../../pkg/service ../../pkg/service/datamodel.proto ../../pkg/service/buildservice.proto ../../pkg/service/controlservice.proto
+//go:generate protoc -I ../../pkg/service --go_out=plugins=grpc:../../pkg/service ../../pkg/service/datamodel.proto ../../pkg/service/analyzerservice.proto ../../pkg/service/buildservice.proto ../../pkg/service/controlservice.proto  ../../pkg/service/reportservice.proto
 package main
 
 import (
@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	address  = "localhost:50051"
+	addrEnv  = "QMSTR_ADDRESS"
 	debugEnv = "QMSTR_DEBUG"
 )
 
@@ -27,6 +27,8 @@ var (
 	debug                bool
 )
 
+var address = "localhost:50051"
+
 func initLogging() {
 	var infoWriter io.Writer
 	infoWriter = wrapper.NewRemoteLogWriter(controlServiceClient)
@@ -35,6 +37,11 @@ func initLogging() {
 
 func main() {
 	_, debug = os.LookupEnv(debugEnv)
+	_, difAddress := os.LookupEnv(addrEnv)
+
+	if difAddress {
+		address = os.Getenv(addrEnv)
+	}
 	// Set up server connection
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
