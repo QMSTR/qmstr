@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"regexp"
 	"runtime"
 	"strconv"
+	"syscall"
 
 	"github.com/QMSTR/qmstr/pkg/analysis"
 	"github.com/QMSTR/qmstr/pkg/service"
@@ -51,17 +53,25 @@ func scancode(workdir string, jobs int) interface{} {
 		cmdlineargs = append(cmdlineargs, "--processes", fmt.Sprintf("%d", jobs))
 	}
 	cmd := exec.Command("scancode", append(cmdlineargs, workdir)...)
-	log.Printf("Calling %s", cmd.Args)
+	cmd.Stderr = os.Stderr
+	log.Printf("Calling %s\n", cmd.Args)
 	scanResult, err := cmd.Output()
 	if err != nil {
-		log.Printf("scancode failed %s", err)
+		log.Printf("Scancode failed %s\n", err)
+		if exiterr, ok := err.(*exec.ExitError); ok {
+			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
+				// preserve non-zero return code
+				os.Exit(status.ExitStatus())
+			}
+		}
+		os.Exit(1)
 	}
 	re := regexp.MustCompile("{.+")
 	jsonScanResult := re.Find(scanResult)
 	var scanData interface{}
 	err = json.Unmarshal(jsonScanResult, &scanData)
 	if err != nil {
-		log.Printf("parsing scan data failed %s", err)
+		log.Printf("parsing scan data failed %s\n", err)
 	}
 	return scanData
 }

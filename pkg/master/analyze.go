@@ -1,11 +1,14 @@
 package master
 
 import (
+	"bufio"
+	"bytes"
 	"errors"
 	"fmt"
 	"log"
 	"math/rand"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/QMSTR/qmstr/pkg/config"
@@ -39,11 +42,17 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		src.Seed(phase.currentToken)
 		phase.currentToken = src.Int63()
 
-		log.Printf("Running analyzer %s ..\n", analyzerName)
+		log.Printf("Running analyzer %s ...\n", analyzerName)
 		cmd := exec.Command(analyzerName, "--aserv", phase.rpcAddress, "--aid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
-			log.Printf("Analyzer %s failed with: %s\n", analyzerName, out)
+			var buffer bytes.Buffer
+			buffer.WriteString(fmt.Sprintf("Analyzer %s failed with:\n", analyzerName))
+			s := bufio.NewScanner(strings.NewReader(string(out)))
+			for s.Scan() {
+				buffer.WriteString(fmt.Sprintf("\t--> %s\n", s.Text()))
+			}
+			log.Println(buffer.String())
 			return err
 		}
 		log.Printf("Analyzer %s finished successfully: %s\n", analyzerName, out)
