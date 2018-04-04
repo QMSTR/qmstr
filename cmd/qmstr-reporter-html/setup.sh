@@ -70,13 +70,11 @@ fi
 for DIR in skeleton templates; do
     SOURCE_DIR=$REPO_DIR/pkg/reporter/htmlreporter/share/$DIR
     if [ "$CREATE_LINKS_TO_REPO" -eq "1" ]; then
-	echo CREATE LINKS
 	ln -s $REPO_DIR/pkg/reporter/htmlreporter/share/$DIR || {
 	    echo "Error creating symbolic link to $DIR in the module shared data directory."
 	    exit 1
 	}
     else
-	echo COPY DATA
 	cp -Rfp $REPO_DIR/pkg/reporter/htmlreporter/share/$DIR . || {
 	    echo "Error copying the $DIR directory into the module shared data directory."
 	    exit 1
