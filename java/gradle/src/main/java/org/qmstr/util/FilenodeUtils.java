@@ -122,7 +122,7 @@ public class FilenodeUtils {
             try {
                 Set<Datamodel.FileNode> classes = new HashSet<>();
                 JarFile jar = new JarFile(artifact.getFile());
-                jar.stream()
+                jar.stream().parallel()
                         .filter(je -> isSupportedFile(je.getName()))
                         .forEach(je -> {
                             String hash = getHash(jar, je);
@@ -132,7 +132,7 @@ public class FilenodeUtils {
                 Datamodel.FileNode.Builder rootNodeBuilder = rootNode.toBuilder();
                 classes.forEach(c -> rootNodeBuilder.addDerivedFrom(c));
 
-                dependencySet.stream()
+                dependencySet.parallelStream()
                         .map(f -> FilenodeUtils.getFileNode(f.toPath()))
                         .filter(o -> o.isPresent())
                         .map(o -> o.get())
