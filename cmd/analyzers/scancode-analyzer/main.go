@@ -48,7 +48,7 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(node *service.FileNode) (*service.In
 }
 
 func scancode(workdir string, jobs int) interface{} {
-	cmdlineargs := []string{"--quiet", "--full-root"}
+	cmdlineargs := []string{"--quiet", "--full-root", "-l", "-c", "--json", "-"}
 	if jobs > 1 {
 		cmdlineargs = append(cmdlineargs, "--processes", fmt.Sprintf("%d", jobs))
 	}
