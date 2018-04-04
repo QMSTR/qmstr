@@ -68,7 +68,9 @@ func (a *Analyzer) RunAnalyzerPlugin() {
 			os.Exit(master.ReturnAnalyzerFailed)
 		}
 
-		resultMap[node.Hash] = infoNodeSlice
+		if len(infoNodeSlice.Inodes) > 0 {
+			resultMap[node.Hash] = infoNodeSlice
+		}
 	}
 
 	anaresp, err := a.analysisService.SendNodes(context.Background(), &service.AnalysisMessage{ResultMap: resultMap, Token: configResp.Token})
