@@ -45,7 +45,9 @@ RUN mkdir /ninka && \
     rm -fr /ninka
 
 # install scancode
-RUN pip install scancode-toolkit
+COPY ci/scancode.requirements /tmp/scancode.requirements
+RUN pip install -r /tmp/requirements
+RUN rm /tmp/scancode.requirements
 
 # install dgraph
 RUN curl https://get.dgraph.io -sSf | bash
@@ -53,7 +55,7 @@ RUN curl https://get.dgraph.io -sSf | bash
 # copy qmstr installation from previous stage
 RUN mkdir -p /go/bin
 COPY --from=builder /go/bin/qmstr-master /go/bin/qmstr-master
- 
+
 EXPOSE 50051
 # dgraph ratel web ui
 EXPOSE 8000
