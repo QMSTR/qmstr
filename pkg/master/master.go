@@ -1,10 +1,13 @@
 package master
 
 import (
+	"bufio"
+	"bytes"
 	"errors"
 	"fmt"
 	"log"
 	"net"
+	"strings"
 	"sync"
 
 	"golang.org/x/net/context"
@@ -159,4 +162,14 @@ func InitAndRun(configfile string) error {
 		return fmt.Errorf("Failed to start rpc service %v", err)
 	}
 	return nil
+}
+
+func logPluginError(pluginName string, output []byte) {
+	var buffer bytes.Buffer
+	buffer.WriteString(fmt.Sprintf("%s failed with:\n", pluginName))
+	s := bufio.NewScanner(strings.NewReader(string(output)))
+	for s.Scan() {
+		buffer.WriteString(fmt.Sprintf("\t--> %s\n", s.Text()))
+	}
+	log.Println(buffer.String())
 }
