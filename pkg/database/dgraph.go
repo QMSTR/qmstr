@@ -91,6 +91,7 @@ func (db *DataBase) AddNode(node *service.FileNode) {
 	db.insertQueue <- node
 }
 
+// the queueWorker runs in a go routine and inserts the nodes from the insert queue into the database
 func queueWorker(db *DataBase) {
 	for node := range db.insertQueue {
 		ready := true
