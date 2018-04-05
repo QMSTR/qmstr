@@ -22,7 +22,12 @@ RUN cd $GOPATH/src/github.com/QMSTR/qmstr && \
 RUN go generate github.com/QMSTR/qmstr/cmd/qmstr-master
 RUN go install github.com/QMSTR/qmstr/cmd/qmstr-master && \
     go install github.com/QMSTR/qmstr/cmd/qmstr-wrapper && \
-    go install github.com/QMSTR/qmstr/cmd/qmstr-cli
+    go install github.com/QMSTR/qmstr/cmd/qmstr-cli && \
+    go install github.com/QMSTR/qmstr/cmd/qmstr
+
+RUN go install github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer && \
+    go install github.com/QMSTR/qmstr/cmd/analyzers/scancode-analyzer && \
+    go install github.com/QMSTR/qmstr/cmd/qmstr-reporter-html
 
 # separate stage just to run the master unit tests:
 FROM builder as master_unit_tests
@@ -64,6 +69,11 @@ VOLUME /buildroot
 
 # release master container, based on the runtime stage:
 FROM runtime as master
+
+COPY --from=builder /go/bin/spdx-analyzer /go/bin/spdx-analyzer
+COPY --from=builder /go/bin/scancode-analyzer /go/bin/scancode-analyzer
+COPY --from=builder /go/bin/qmstr-reporter-html /go/bin/qmstr-reporter-html
+
 COPY ci/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
