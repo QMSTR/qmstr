@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -14,6 +15,8 @@ import (
 	"github.com/QMSTR/qmstr/pkg/analysis"
 	"github.com/QMSTR/qmstr/pkg/service"
 )
+
+const scancodeErrorCount = "Errors count:\\s*(\\d+)"
 
 type ScancodeAnalyzer struct {
 	scanData interface{}
@@ -47,15 +50,17 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(node *service.FileNode) (*service.In
 	return retVal, nil
 }
 
-func scancode(workdir string, jobs int) interface{} {
-	cmdlineargs := []string{"--quiet", "--full-root", "-l", "-c", "--json", "-"}
-	if jobs > 1 {
-		cmdlineargs = append(cmdlineargs, "--processes", fmt.Sprintf("%d", jobs))
+func scancodeExitHandler(err error, output []byte) {
+	// print to stdout so master server can log it
+	fmt.Print(output)
+	if output != nil {
+		// scancode might have failed, let's see ...
+		re := regexp.MustCompile(scancodeErrorCount)
+		errors := re.FindSubmatch(output)
+		if len(errors) > 1 && string(errors[1]) == "0" {
+			return
+		}
 	}
-	cmd := exec.Command("scancode", append(cmdlineargs, workdir)...)
-	cmd.Stderr = os.Stderr
-	log.Printf("Calling %s\n", cmd.Args)
-	scanResult, err := cmd.Output()
 	if err != nil {
 		log.Printf("Scancode failed %s\n", err)
 		if exiterr, ok := err.(*exec.ExitError); ok {
@@ -64,14 +69,37 @@ func scancode(workdir string, jobs int) interface{} {
 				os.Exit(status.ExitStatus())
 			}
 		}
-		os.Exit(1)
+		log.Fatalln("scancode return code was not found. Something went seriously wrong.")
 	}
+}
+
+func scancode(workdir string, jobs int) interface{} {
+	tmpfile, err := ioutil.TempFile("", "scancode")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.Remove(tmpfile.Name())
+
+	cmdlineargs := []string{"--full-root", "-l", "-c", "--json", tmpfile.Name()}
+	if jobs > 1 {
+		cmdlineargs = append(cmdlineargs, "--processes", fmt.Sprintf("%d", jobs))
+	}
+	cmd := exec.Command("scancode", append(cmdlineargs, workdir)...)
+	log.Printf("Calling %s\n", cmd.Args)
+
+	output, err := cmd.CombinedOutput()
+	scancodeExitHandler(err, output)
+
 	re := regexp.MustCompile("{.+")
+	scanResult, err := ioutil.ReadFile(tmpfile.Name())
+	if err != nil {
+		log.Fatalf("Could not read from result file %v", err)
+	}
 	jsonScanResult := re.Find(scanResult)
 	var scanData interface{}
 	err = json.Unmarshal(jsonScanResult, &scanData)
 	if err != nil {
-		log.Printf("parsing scan data failed %s\n", err)
+		log.Fatalf("parsing scan data failed %s\n", err)
 	}
 	return scanData
 }
