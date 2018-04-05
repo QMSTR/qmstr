@@ -28,10 +28,34 @@ func main() {
 }
 
 func (scanalyzer *ScancodeAnalyzer) Configure(configMap map[string]string) error {
-	if workdir, ok := configMap["workdir"]; ok {
-		scanalyzer.scanData = scancode(workdir, runtime.NumCPU())
+	cached := false
+	if usecache, ok := configMap["cached"]; ok && usecache == "true" {
+		cached = true
 	}
-	return nil
+
+	resultfile := ""
+	if rf, ok := configMap["resultfile"]; ok {
+		resultfile = rf
+	}
+
+	var err error
+	if cached && resultfile != "" {
+		scanalyzer.scanData, err = readScancodeFile(resultfile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return nil
+	}
+
+	if workdir, ok := configMap["workdir"]; ok {
+		scanalyzer.scanData, err = scancode(workdir, runtime.NumCPU(), resultfile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return nil
+	}
+
+	return fmt.Errorf("Misconfigured scancode analyzer")
 }
 
 func (scanalyzer *ScancodeAnalyzer) Analyze(node *service.FileNode) (*service.InfoNodeSlice, error) {
@@ -73,14 +97,32 @@ func scancodeExitHandler(err error, output []byte) {
 	}
 }
 
-func scancode(workdir string, jobs int) interface{} {
-	tmpfile, err := ioutil.TempFile("", "scancode")
+func readScancodeFile(resultfile string) (interface{}, error) {
+	re := regexp.MustCompile("{.+")
+	scanResult, err := ioutil.ReadFile(resultfile)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	defer os.Remove(tmpfile.Name())
+	jsonScanResult := re.Find(scanResult)
+	var scanData interface{}
+	err = json.Unmarshal(jsonScanResult, &scanData)
+	if err != nil {
+		return nil, err
+	}
+	return scanData, nil
+}
 
-	cmdlineargs := []string{"--full-root", "-l", "-c", "--json", tmpfile.Name()}
+func scancode(workdir string, jobs int, resultfilepath string) (interface{}, error) {
+	if resultfilepath == "" {
+		tmpfile, err := ioutil.TempFile("", "qmstr-scancode")
+		resultfilepath = tmpfile.Name()
+		if err != nil {
+			return nil, err
+		}
+		defer os.Remove(tmpfile.Name())
+	}
+
+	cmdlineargs := []string{"--full-root", "-l", "-c", "--json", resultfilepath}
 	if jobs > 1 {
 		cmdlineargs = append(cmdlineargs, "--processes", fmt.Sprintf("%d", jobs))
 	}
@@ -90,18 +132,7 @@ func scancode(workdir string, jobs int) interface{} {
 	output, err := cmd.CombinedOutput()
 	scancodeExitHandler(err, output)
 
-	re := regexp.MustCompile("{.+")
-	scanResult, err := ioutil.ReadFile(tmpfile.Name())
-	if err != nil {
-		log.Fatalf("Could not read from result file %v", err)
-	}
-	jsonScanResult := re.Find(scanResult)
-	var scanData interface{}
-	err = json.Unmarshal(jsonScanResult, &scanData)
-	if err != nil {
-		log.Fatalf("parsing scan data failed %s\n", err)
-	}
-	return scanData
+	return readScancodeFile(resultfilepath)
 }
 
 func (scanalyzer *ScancodeAnalyzer) detectLicenses(srcFilePath string) ([]*service.InfoNode, error) {
@@ -113,6 +144,7 @@ func (scanalyzer *ScancodeAnalyzer) detectLicenses(srcFilePath string) ([]*servi
 			log.Printf("Found %s", srcFilePath)
 			for _, licenseData := range fileData["licenses"].([]interface{}) {
 				license := licenseData.(map[string]interface{})
+				log.Println("Found license information")
 				tempDataNodes := []*service.InfoNode_DataNode{&service.InfoNode_DataNode{
 					Type: "key",
 					Data: license["key"].(string),
