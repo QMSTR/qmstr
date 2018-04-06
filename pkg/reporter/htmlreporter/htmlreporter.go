@@ -282,34 +282,51 @@ func CreateReportsPackage(workingDir string, contentDir string, packagePath stri
 	return nil
 }
 
-// PackageLevelData is the package metadata that the report will visualize.
+// PackageData is the package metadata that the report will visualize.
+// PackageData is expected to stay more or less constant across versions of the package.
 // oc... refers to OpenChain related fields
-type PackageLevelData struct {
+type PackageData struct {
 	PackageName         string // the package name, e.g. "CURL" or "Linux"
-	VersionIdentifier   string // usually a Git hash, but any string can be used
 	Vendor              string // Name of the entity distributing this package
 	OcFossLiaison       string // Name of the FOSS liaison function
 	OcComplianceContact string // Email address acting as the general FOSS compliance contact for the vendor
 }
 
+// RevisionData contains metadata about a specific revision.
+type RevisionData struct {
+	VersionIdentifier string // usually a Git hash, but any string can be used
+	ChangeDateTime    string // the channge timestamp
+	Author            string // the author of the change
+}
+
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(filenode *service.FileNode) error {
 	// TODO @hemarkus: Give me that data.
-	data := PackageLevelData{"CURL", "a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com"}
+	packageData := PackageData{"CURL", "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com"}
+	revisionData := RevisionData{"a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "2017-11-06 14:35", "Jonas Oberg"}
 
-	json, err := json.Marshal(data)
+	dataDirectory := path.Join(r.workingDir, "data")
+	packageDirectory := path.Join(dataDirectory, packageData.PackageName)
+	versionDirectory := path.Join(packageDirectory, revisionData.VersionIdentifier)
+	if err := os.MkdirAll(versionDirectory, os.ModePerm); err != nil {
+		return fmt.Errorf("error creating package metadata directory: %v", err)
+	}
+	packageJSON, err := json.Marshal(packageData)
 	if err != nil {
 		return fmt.Errorf("error generating JSON representation of package metadata: %v", err)
 	}
-	dataDirectory := path.Join(r.workingDir, "data")
-	outputDirectory := path.Join(dataDirectory, data.PackageName, data.VersionIdentifier, "metadata.json")
-	if err := os.MkdirAll(outputDirectory, os.ModePerm); err != nil {
-		return fmt.Errorf("error creating package metadata directory: %v", err)
-	}
-	outputMetaDataFile := path.Join(outputDirectory, "metadata.json")
-	if err := ioutil.WriteFile(outputMetaDataFile, json, 0644); err != nil {
+	packageDataFile := path.Join(packageDirectory, "data.json")
+	if err := ioutil.WriteFile(packageDataFile, packageJSON, 0644); err != nil {
 		return fmt.Errorf("error creating JSON package metadata file: %v", err)
 	}
-	fmt.Println(outputMetaDataFile, string(json))
+
+	revisionJSON, err := json.Marshal(revisionData)
+	if err != nil {
+		return fmt.Errorf("error generating JSON representation of revision metadata: %v", err)
+	}
+	versionDataFile := path.Join(versionDirectory, "data.json")
+	if err := ioutil.WriteFile(versionDataFile, revisionJSON, 0644); err != nil {
+		return fmt.Errorf("error creating JSON version data file: %v", err)
+	}
 	return nil
 }
