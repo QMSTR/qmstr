@@ -1,4 +1,4 @@
-{{ $data := .Site.Data.CURL.data }}
+{{ $data := index .Site.Data .Page.Params.title "data" }}
 <h1>{{ .Page.Params.title }}</h1>
 
 <h2>Vendor Information</h2>
@@ -8,4 +8,3 @@
   <li>FOSS Liaison: {{ $data.OcFossLiaison }}</li>
   <li>FOSS Compliance Contact: {{ $data.OcComplianceContact }}</li>
 </ul>
-

@@ -292,25 +292,27 @@ type SiteData struct {
 // PackageData is expected to stay more or less constant across versions of the package.
 // oc... refers to OpenChain related fields
 type PackageData struct {
-	PackageName         string // the package name, e.g. "CURL" or "Linux"
-	Vendor              string // Name of the entity distributing this package
-	OcFossLiaison       string // Name of the FOSS liaison function
-	OcComplianceContact string // Email address acting as the general FOSS compliance contact for the vendor
+	PackageName         string   // The package name, e.g. "CURL" or "Linux"
+	Vendor              string   // Name of the entity distributing this package
+	OcFossLiaison       string   // Name of the FOSS liaison function
+	OcComplianceContact string   // Email address acting as the general FOSS compliance contact for the vendor
+	Site                SiteData // The site this page is associated with
 }
 
 // RevisionData contains metadata about a specific revision.
 type RevisionData struct {
-	VersionIdentifier string // usually a Git hash, but any string can be used
-	ChangeDateTime    string // the channge timestamp
-	Author            string // the author of the change
+	VersionIdentifier string      // Usually a Git hash, but any string can be used
+	ChangeDateTime    string      // The channge timestamp
+	Author            string      // The author of the change
+	Package           PackageData // The package this version is associated with.
 }
 
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(filenode *service.FileNode) error {
 	// TODO @hemarkus: Give me that data.
 	siteData := SiteData{"Endocode AG"}
-	packageData := PackageData{"CURL", "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com"}
-	revisionData := RevisionData{"a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "2017-11-06 14:35", "Jonas Oberg"}
+	packageData := PackageData{"CURL", "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com", siteData}
+	revisionData := RevisionData{"a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "2017-11-06 14:35", "Jonas Oberg", packageData}
 
 	dataDirectory := path.Join(r.workingDir, "data")
 	contentDirectory := path.Join(r.workingDir, "content")

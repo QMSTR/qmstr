@@ -2,7 +2,6 @@
 
 <ul>
   {{ range .Page.Sections }}
-  <li><a href="{{ .URL }}">{{ substr .Params.title 0 8 | upper }} ({{ .Params.author }})</a><p></p></li>
+  <li><a href="{{ .URL }}">{{ substr .Params.title 0 8 | upper }} ({{ .Params.author }})</a></li>
   {{ end }}
 </ul>
-

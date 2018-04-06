@@ -1,4 +1,5 @@
-<p></p>
+{{ $data := index .Site.Data .Page.Params.package .Page.Params.versionid "data" }}
+<!-- <h2>{{ substr .Page.Params.versionid 0 8 | upper }} ({{ .Page.Params.author }})</h2> -->
 <h3>Authors</h3>
 <!-- <p>{{ .Page.Params.versionid }}</p>  -->
 <ul>
@@ -6,3 +7,5 @@
   <li>{{ .name }}</li>
   {{ end }}
 </ul>
+
+<p>{{ $data | jsonify }}</p>
