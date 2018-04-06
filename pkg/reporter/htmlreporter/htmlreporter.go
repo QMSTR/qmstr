@@ -329,12 +329,21 @@ func (r *HTMLReporter) CreatePackageLevelReports(filenode *service.FileNode) err
 		return fmt.Errorf("error creating content directories: %v", err)
 	}
 	// generate content/<package>/_index.md
-	templatePath := path.Join(r.sharedDataDir, "templates", "package-index.md")
-	outputPath := path.Join(packageContentDirectory, "_index.md")
-	if err := applyTemplate(templatePath, packageData, outputPath); err != nil {
-		return fmt.Errorf("error creating package content: %v", err)
+	{
+		templatePath := path.Join(r.sharedDataDir, "templates", "package-index.md")
+		outputPath := path.Join(packageContentDirectory, "_index.md")
+		if err := applyTemplate(templatePath, packageData, outputPath); err != nil {
+			return fmt.Errorf("error creating package content: %v", err)
+		}
 	}
-
+	// generate content/<package>/<version>/_index.md
+	{
+		templatePath := path.Join(r.sharedDataDir, "templates", "version-index.md")
+		outputPath := path.Join(versionContentDirectory, "_index.md")
+		if err := applyTemplate(templatePath, revisionData, outputPath); err != nil {
+			return fmt.Errorf("error creating version index page: %v", err)
+		}
+	}
 	revisionJSON, err := json.Marshal(revisionData)
 	if err != nil {
 		return fmt.Errorf("error generating JSON representation of revision metadata: %v", err)
