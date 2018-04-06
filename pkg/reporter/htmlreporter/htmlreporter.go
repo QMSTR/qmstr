@@ -283,6 +283,11 @@ func CreateReportsPackage(workingDir string, contentDir string, packagePath stri
 	return nil
 }
 
+// SiteData contains information about this Quartermaster site.
+type SiteData struct {
+	Provider string // the responsible entity running the site
+}
+
 // PackageData is the package metadata that the report will visualize.
 // PackageData is expected to stay more or less constant across versions of the package.
 // oc... refers to OpenChain related fields
@@ -303,6 +308,7 @@ type RevisionData struct {
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(filenode *service.FileNode) error {
 	// TODO @hemarkus: Give me that data.
+	siteData := SiteData{"Endocode AG"}
 	packageData := PackageData{"CURL", "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com"}
 	revisionData := RevisionData{"a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "2017-11-06 14:35", "Jonas Oberg"}
 
@@ -327,6 +333,14 @@ func (r *HTMLReporter) CreatePackageLevelReports(filenode *service.FileNode) err
 	// create content directories for package and version:
 	if err := os.MkdirAll(versionContentDirectory, os.ModePerm); err != nil {
 		return fmt.Errorf("error creating content directories: %v", err)
+	}
+	// generate top-level site data:
+	{
+		templatePath := path.Join(r.sharedDataDir, "templates", "site-index.md")
+		outputPath := path.Join(contentDirectory, "_index.md")
+		if err := applyTemplate(templatePath, siteData, outputPath); err != nil {
+			return fmt.Errorf("error creating site index: %v", err)
+		}
 	}
 	// generate content/<package>/_index.md
 	{
