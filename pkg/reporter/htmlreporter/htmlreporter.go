@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
@@ -12,6 +11,7 @@ import (
 	"path"
 	"regexp"
 	"strings"
+	"text/template"
 
 	"github.com/QMSTR/qmstr/pkg/service"
 	version "github.com/hashicorp/go-version"
@@ -26,8 +26,9 @@ const (
 
 // HTMLReporter is the context of the HTML reporter plugin
 type HTMLReporter struct {
-	workingDir string
-	Keep       bool
+	workingDir    string
+	sharedDataDir string
+	Keep          bool
 }
 
 // Configure sets up the working directory for this reporting run.
@@ -43,11 +44,11 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 	}
 	log.Printf("detected beautiful Hugo version %v", detectedVersion)
 
-	sharedDataDir, err := DetectModuleSharedDataDirectory(ModuleName)
+	r.sharedDataDir, err = DetectModuleSharedDataDirectory(ModuleName)
 	if err != nil {
 		log.Fatalf("cannot identify QMSTR shared data directory: %v", err)
 	}
-	r.workingDir, err = CreateHugoWorkingDirectory(sharedDataDir)
+	r.workingDir, err = CreateHugoWorkingDirectory(r.sharedDataDir)
 	if err != nil {
 		return fmt.Errorf("error preparing temporary Hugo working directory: %v", err)
 	}
@@ -306,6 +307,9 @@ func (r *HTMLReporter) CreatePackageLevelReports(filenode *service.FileNode) err
 	revisionData := RevisionData{"a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "2017-11-06 14:35", "Jonas Oberg"}
 
 	dataDirectory := path.Join(r.workingDir, "data")
+	contentDirectory := path.Join(r.workingDir, "content")
+	packageContentDirectory := path.Join(contentDirectory, packageData.PackageName)
+	versionContentDirectory := path.Join(packageContentDirectory, revisionData.VersionIdentifier)
 	packageDirectory := path.Join(dataDirectory, packageData.PackageName)
 	versionDirectory := path.Join(packageDirectory, revisionData.VersionIdentifier)
 	if err := os.MkdirAll(versionDirectory, os.ModePerm); err != nil {
@@ -320,6 +324,17 @@ func (r *HTMLReporter) CreatePackageLevelReports(filenode *service.FileNode) err
 		return fmt.Errorf("error creating JSON package metadata file: %v", err)
 	}
 
+	// create content directories for package and version:
+	if err := os.MkdirAll(versionContentDirectory, os.ModePerm); err != nil {
+		return fmt.Errorf("error creating content directories: %v", err)
+	}
+	// generate content/<package>/_index.md
+	templatePath := path.Join(r.sharedDataDir, "templates", "package-index.md")
+	outputPath := path.Join(packageContentDirectory, "_index.md")
+	if err := applyTemplate(templatePath, packageData, outputPath); err != nil {
+		return fmt.Errorf("error creating package content: %v", err)
+	}
+
 	revisionJSON, err := json.Marshal(revisionData)
 	if err != nil {
 		return fmt.Errorf("error generating JSON representation of revision metadata: %v", err)
@@ -328,5 +343,29 @@ func (r *HTMLReporter) CreatePackageLevelReports(filenode *service.FileNode) err
 	if err := ioutil.WriteFile(versionDataFile, revisionJSON, 0644); err != nil {
 		return fmt.Errorf("error creating JSON version data file: %v", err)
 	}
+	return nil
+}
+
+func applyTemplate(templatePath string, data interface{}, target string) error {
+
+	templateData, err := ioutil.ReadFile(templatePath)
+	if err != nil {
+		return fmt.Errorf("unable to read template file \"%s\"", templatePath)
+	}
+	t := template.Must(template.New(templatePath).Delims("{{{", "}}}").Parse(string(templateData)))
+
+	targetFile, err := os.Create(target)
+	if err != nil {
+		return fmt.Errorf("unable to create target file \"%s\v\"", target)
+	}
+	defer targetFile.Close()
+	writer := bufio.NewWriter(targetFile)
+
+	if err := t.Execute(writer, data); err != nil {
+		return fmt.Errorf("error applying data to template: %v", err)
+	}
+	writer.Flush()
+	log.Printf("generated configuration file %v", target)
+
 	return nil
 }

@@ -1,10 +1,11 @@
-{{ $metadata := .Site.Data.linux.metadata }}
-<h1>{{ $metadata.name }}</h1>
+{{ $data := .Site.Data.CURL.data }}
+<h1>{{ .Page.Params.title }}</h1>
 
 <h2>Vendor Information</h2>
 
 <ul>
-  <li>Vendor: {{ $metadata.vendor }}</li>
-  <li>FOSS Liaison: {{ $metadata.openchainfossliaison }}</li>
-  <li>FOSS Compliance Contact: {{ $metadata.openchaincompliancecontact }}</li>
+  <li>Vendor: {{ $data.Vendor }}</li>
+  <li>FOSS Liaison: {{ $data.OcFossLiaison }}</li>
+  <li>FOSS Compliance Contact: {{ $data.OcComplianceContact }}</li>
 </ul>
+
