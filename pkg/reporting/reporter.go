@@ -1,11 +1,9 @@
 package reporting
 
 import (
+	"fmt"
 	"io"
 	"log"
-	"os"
-
-	"github.com/QMSTR/qmstr/pkg/master"
 
 	"golang.org/x/net/context"
 
@@ -43,19 +41,18 @@ func NewReporter(plugin ReporterPlugin) *Reporter {
 	return &Reporter{id: anaID, plugin: plugin, reportingService: reportingServiceClient}
 }
 
-func (r *Reporter) RunReporterPlugin() {
+// RunReporterPlugin is the main driver function for each reporter.
+func (r *Reporter) RunReporterPlugin() error {
 	configResp, err := r.reportingService.GetReporterConfig(context.Background(), &service.ReporterConfigRequest{ReporterID: r.id})
 	if err != nil {
-		log.Printf("Could not get configuration %v\n", err)
-		os.Exit(master.ReturnReportServiceCommFailed)
+		return fmt.Errorf("could not get configuration %v", err)
 	}
 
 	r.plugin.Configure(configResp.ConfigMap)
 
 	respStream, err := r.reportingService.GetReportNodes(context.Background(), &service.ReportRequest{Type: configResp.TypeSelector})
 	if err != nil {
-		log.Printf("Could not get nodes %v\n", err)
-		os.Exit(master.ReturnReportServiceCommFailed)
+		return fmt.Errorf("could not get nodes %v", err)
 	}
 
 	for {
@@ -64,15 +61,18 @@ func (r *Reporter) RunReporterPlugin() {
 			break
 		}
 		if err != nil {
-			log.Printf("Reporter %s failed %v\n", r.name, err)
-			os.Exit(master.ReturnReporterFailed)
+			return fmt.Errorf("reporter %s failed %v", r.name, err)
 
 		}
 		err = r.plugin.Report(resp.FileNode)
 		if err != nil {
-			log.Printf("Reporter %s failed %v\n", r.name, err)
-			os.Exit(master.ReturnReporterFailed)
+			return fmt.Errorf("reporter %s failed %v", r.name, err)
 		}
 	}
 
+	if err := r.plugin.PostReport(); err != nil {
+		return fmt.Errorf("reporter %s failed inn PostReport: %v", r.name, err)
+	}
+
+	return nil
 }
