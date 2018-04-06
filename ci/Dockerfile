@@ -46,7 +46,7 @@ RUN mkdir /ninka && \
 
 # install scancode
 COPY ci/scancode.requirements /tmp/scancode.requirements
-RUN pip install -r /tmp/requirements
+RUN pip install -r /tmp/scancode.requirements
 RUN rm /tmp/scancode.requirements
 
 # install dgraph
