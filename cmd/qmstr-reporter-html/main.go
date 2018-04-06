@@ -12,6 +12,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/reporting"
 	"github.com/QMSTR/qmstr/pkg/service"
 
@@ -32,8 +33,11 @@ type HTMLReporter struct {
 
 func main() {
 	reporter := reporting.NewReporter(&HTMLReporter{keep: false})
-	reporter.RunReporterPlugin()
-	log.Printf("%v: done", moduleName)
+	if err := reporter.RunReporterPlugin(); err != nil {
+		log.Printf("%v failed: %v\n", moduleName, err)
+		os.Exit(master.ReturnReportServiceCommFailed)
+	}
+	log.Printf("%v completed successfully\n", moduleName)
 }
 
 // Configure sets up the working directory for this reporting run.
