@@ -56,9 +56,18 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 	return nil
 }
 
+// TEMP: until Report is called with the Package node:
+var once = false
+
 // Report generates the actual reports.
 // It is part of the ReporterPlugin interface.
 func (r *HTMLReporter) Report(filenode *service.FileNode) error {
+	if !once {
+		once = true
+		if err := r.CreatePackageLevelReports(filenode); err != nil {
+			return fmt.Errorf("error generating package level report: %v", err)
+		}
+	}
 	log.Printf("(r *HTMLReporter) Report: %v", filenode.GetPath())
 	return nil
 }
@@ -91,15 +100,6 @@ func (r *HTMLReporter) cleanup() {
 	if err := os.RemoveAll(r.workingDir); err != nil {
 		log.Printf("warning - error deleting temporary Hugo working directory in %v: %v", r.workingDir, err)
 	}
-}
-
-// PackageLevelData is the package metadata that the report will visualize.
-// oc... refers to OpenChain related fields
-type PackageLevelData struct {
-	packageName         string
-	vendor              string // Name of the entity distributing this package
-	ocFossLiaison       string // Name of the FOSS liaison function
-	ocComplianceContact string // Email address acting as the general FOSS compliance contact for the vendor
 }
 
 // DetectHugoAndVerifyVersion runs Hugo to get the version string.
@@ -282,15 +282,34 @@ func CreateReportsPackage(workingDir string, contentDir string, packagePath stri
 	return nil
 }
 
+// PackageLevelData is the package metadata that the report will visualize.
+// oc... refers to OpenChain related fields
+type PackageLevelData struct {
+	PackageName         string // the package name, e.g. "CURL" or "Linux"
+	VersionIdentifier   string // usually a Git hash, but any string can be used
+	Vendor              string // Name of the entity distributing this package
+	OcFossLiaison       string // Name of the FOSS liaison function
+	OcComplianceContact string // Email address acting as the general FOSS compliance contact for the vendor
+}
+
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(filenode *service.FileNode) error {
 	// TODO @hemarkus: Give me that data.
-	data := PackageLevelData{"CURL", "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com"}
+	data := PackageLevelData{"CURL", "a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com"}
 
 	json, err := json.Marshal(data)
 	if err != nil {
-		return fmt.Errorf("error generating JSONN representation of package metadata: %v", err)
+		return fmt.Errorf("error generating JSON representation of package metadata: %v", err)
 	}
-	fmt.Println(json)
+	dataDirectory := path.Join(r.workingDir, "data")
+	outputDirectory := path.Join(dataDirectory, data.PackageName, data.VersionIdentifier, "metadata.json")
+	if err := os.MkdirAll(outputDirectory, os.ModePerm); err != nil {
+		return fmt.Errorf("error creating package metadata directory: %v", err)
+	}
+	outputMetaDataFile := path.Join(outputDirectory, "metadata.json")
+	if err := ioutil.WriteFile(outputMetaDataFile, json, 0644); err != nil {
+		return fmt.Errorf("error creating JSON package metadata file: %v", err)
+	}
+	fmt.Println(outputMetaDataFile, string(json))
 	return nil
 }
