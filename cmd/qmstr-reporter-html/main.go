@@ -18,10 +18,13 @@ import (
 	version "github.com/hashicorp/go-version"
 )
 
-const minimumHugoVersion = "0.32"
-const moduleName = "html-reporter"
-const themeDirectoryName = "theme"
+const (
+	minimumHugoVersion = "0.32"
+	moduleName         = "reporter-html"
+	themeDirectoryName = "theme"
+)
 
+// HTMLReporter is the context of the HTML reporter plugin
 type HTMLReporter struct {
 	workingDir string
 	keep       bool
@@ -30,8 +33,11 @@ type HTMLReporter struct {
 func main() {
 	reporter := reporting.NewReporter(&HTMLReporter{keep: false})
 	reporter.RunReporterPlugin()
+	log.Printf("%v: done", moduleName)
 }
 
+// Configure sets up the working directory for this reporting run.
+// It is part of the ReporterPlugin interface.
 func (r *HTMLReporter) Configure(config map[string]string) error {
 	if val, ok := config["keep"]; ok && val == "true" {
 		r.keep = true
@@ -43,7 +49,6 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 	}
 	log.Printf("detected beautiful Hugo version %v", detectedVersion)
 
-	// htmlreporter.ConnectToMaster()
 	sharedDataDir, err := DetectModuleSharedDataDirectory(moduleName)
 	if err != nil {
 		log.Fatalf("cannot identify QMSTR shared data directory: %v", err)
@@ -57,7 +62,10 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 	return nil
 }
 
+// Report generates the actual reports.
+// It is part of the ReporterPlugin interface.
 func (r *HTMLReporter) Report(filenode *service.FileNode) error {
+	log.Printf("(r *HTMLReporter) Report: %v", filenode.GetPath())
 	return nil
 }
 
@@ -68,6 +76,8 @@ func (r *HTMLReporter) cleanup() {
 	}
 }
 
+// PostReport is called after the report has bee generated.
+// It is part of the ReporterPlugin interface.
 func (r *HTMLReporter) PostReport() error {
 	if !r.keep {
 		defer r.cleanup()
@@ -132,7 +142,10 @@ func DetectModuleSharedDataDirectory(moduleName string) (string, error) {
 		return "", err
 	}
 	moduleDataLocation := path.Join(sharedDataLocation, moduleName)
-	fileInfo, _ := os.Stat(moduleDataLocation)
+	fileInfo, err := os.Stat(moduleDataLocation)
+	if err != nil {
+		return "", fmt.Errorf("module shared data directory %v not accessible: %v", moduleDataLocation, err)
+	}
 	if !fileInfo.IsDir() {
 		return "", fmt.Errorf("module shared data directory %v not found in shared data directory at %v", moduleDataLocation, sharedDataLocation)
 	}
