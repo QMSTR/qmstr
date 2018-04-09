@@ -71,7 +71,7 @@ func (r *Reporter) RunReporterModule() error {
 	}
 
 	if err := r.module.PostReport(); err != nil {
-		return fmt.Errorf("reporter %s failed inn PostReport: %v", r.name, err)
+		return fmt.Errorf("reporter %s failed in PostReport: %v", r.name, err)
 	}
 
 	return nil

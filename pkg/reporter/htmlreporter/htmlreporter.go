@@ -302,7 +302,7 @@ type PackageData struct {
 // RevisionData contains metadata about a specific revision.
 type RevisionData struct {
 	VersionIdentifier string      // Usually a Git hash, but any string can be used
-	ChangeDateTime    string      // The channge timestamp
+	ChangeDateTime    string      // The change timestamp
 	Author            string      // The author of the change
 	Package           PackageData // The package this version is associated with.
 }
