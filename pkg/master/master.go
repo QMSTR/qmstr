@@ -157,11 +157,22 @@ func InitAndRun(configfile string) error {
 		quitServer = nil
 	}()
 
+	initPackage(masterConfig)
+
 	log.Printf("qmstr-master listening on %s\n", masterConfig.Server.RPCAddress)
 	if err := s.Serve(lis); err != nil {
 		return fmt.Errorf("Failed to start rpc service %v", err)
 	}
 	return nil
+}
+
+func initPackage(masterConfig *config.MasterConfig) {
+	rootPackageNode := &service.PackageNode{Name: masterConfig.Name}
+	tmpInfoNode := &service.InfoNode{Type: "metadata", NodeType: 2}
+	for key, val := range masterConfig.MetaData {
+		tmpInfoNode.DataNodes = append(tmpInfoNode.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val, NodeType: 3})
+	}
+	rootPackageNode.AdditionalInfo = []*service.InfoNode{tmpInfoNode}
 }
 
 func logModuleError(moduleName string, output []byte) {
