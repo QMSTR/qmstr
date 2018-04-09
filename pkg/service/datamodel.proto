@@ -37,3 +37,9 @@ message PathSubstitution {
     string old = 1;
     string new = 2;
 }
+
+message PackageNode {
+    string name = 1;
+    repeated FileNode targets = 2;
+    repeated InfoNode additionalInfo = 3;
+}
