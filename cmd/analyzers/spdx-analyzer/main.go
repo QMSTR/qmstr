@@ -16,7 +16,7 @@ var spdxPattern = regexp.MustCompile(`SPDX-License-Identifier: (.+)\s*`)
 type SpdxAnalyzer struct{}
 
 func main() {
-	analyzer := analysis.NewAnalyzer(&SpdxAnalyzer{})
+	analyzer := analysis.NewAnalyzer("SPDX Analyzer", &SpdxAnalyzer{})
 	analyzer.RunAnalyzerModule()
 }
 
