@@ -1,6 +1,8 @@
 package analysis
 
 import (
+	"errors"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -45,7 +47,7 @@ func (a *Analyzer) GetModuleName() string {
 	return a.name
 }
 
-func (a *Analyzer) RunAnalyzerModule() {
+func (a *Analyzer) RunAnalyzerModule() error {
 	configResp, err := a.analysisService.GetAnalyzerConfig(context.Background(), &service.AnalyzerConfigRequest{AnalyzerID: a.id})
 	if err != nil {
 		log.Printf("Could not get configuration %v\n", err)
@@ -56,8 +58,7 @@ func (a *Analyzer) RunAnalyzerModule() {
 
 	nodeResp, err := a.analysisService.GetNodes(context.Background(), &service.NodeRequest{Type: configResp.TypeSelector})
 	if err != nil {
-		log.Printf("Could not get nodes %v\n", err)
-		os.Exit(master.ReturnAnalysisServiceCommFailed)
+		return fmt.Errorf("could not get nodes %v", err)
 	}
 
 	resultMap := map[string]*service.InfoNodeSlice{}
@@ -69,8 +70,7 @@ func (a *Analyzer) RunAnalyzerModule() {
 
 		infoNodeSlice, err := a.module.Analyze(node)
 		if err != nil {
-			log.Printf("Analysis failed %v\n", err)
-			os.Exit(master.ReturnAnalyzerFailed)
+			return fmt.Errorf("analyzer %s failed %v", a.name, err)
 		}
 
 		if len(infoNodeSlice.Inodes) > 0 {
@@ -80,12 +80,11 @@ func (a *Analyzer) RunAnalyzerModule() {
 
 	anaresp, err := a.analysisService.SendNodes(context.Background(), &service.AnalysisMessage{ResultMap: resultMap, Token: configResp.Token})
 	if err != nil {
-		log.Printf("Failed to send nodes %v\n", err)
-		os.Exit(master.ReturnAnalysisServiceCommFailed)
+		return fmt.Errorf("failed to send nodes %v", err)
 	}
 	if !anaresp.Success {
-		log.Println("Server could not process nodes")
-		os.Exit(master.ReturnAnalysisServiceFailed)
+		return errors.New("Server could not process nodes")
 	}
 
+	return nil
 }
