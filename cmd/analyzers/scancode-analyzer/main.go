@@ -23,7 +23,7 @@ type ScancodeAnalyzer struct {
 }
 
 func main() {
-	analyzer := analysis.NewAnalyzer(&ScancodeAnalyzer{})
+	analyzer := analysis.NewAnalyzer("Scancode Analyzer", &ScancodeAnalyzer{})
 	analyzer.RunAnalyzerModule()
 }
 

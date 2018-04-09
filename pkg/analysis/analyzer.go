@@ -17,6 +17,7 @@ type Analyzer struct {
 	analysisService service.AnalysisServiceClient
 	module          AnalyzerModule
 	id              int32
+	name            string
 }
 
 type AnalyzerModule interface {
@@ -24,7 +25,7 @@ type AnalyzerModule interface {
 	Analyze(node *service.FileNode) (*service.InfoNodeSlice, error)
 }
 
-func NewAnalyzer(module AnalyzerModule) *Analyzer {
+func NewAnalyzer(name string, module AnalyzerModule) *Analyzer {
 	var serviceAddress string
 	var anaID int32
 	flag.StringVar(&serviceAddress, "aserv", "localhost:50051", "Analyzer service address")
@@ -37,7 +38,11 @@ func NewAnalyzer(module AnalyzerModule) *Analyzer {
 	}
 	anaServiceClient := service.NewAnalysisServiceClient(conn)
 
-	return &Analyzer{id: anaID, module: module, analysisService: anaServiceClient}
+	return &Analyzer{id: anaID, module: module, analysisService: anaServiceClient, name: name}
+}
+
+func (a *Analyzer) GetModuleName() string {
+	return a.name
 }
 
 func (a *Analyzer) RunAnalyzerModule() {

@@ -25,7 +25,7 @@ type ReporterModule interface {
 	PostReport() error
 }
 
-func NewReporter(module ReporterModule) *Reporter {
+func NewReporter(name string, module ReporterModule) *Reporter {
 	var serviceAddress string
 	var anaID int32
 	flag.StringVar(&serviceAddress, "rserv", "localhost:50051", "Reporting service address")
@@ -38,7 +38,11 @@ func NewReporter(module ReporterModule) *Reporter {
 	}
 	reportingServiceClient := service.NewReportServiceClient(conn)
 
-	return &Reporter{id: anaID, module: module, reportingService: reportingServiceClient}
+	return &Reporter{id: anaID, module: module, reportingService: reportingServiceClient, name: name}
+}
+
+func (r *Reporter) GetModuleName() string {
+	return r.name
 }
 
 // RunReporterModule is the main driver function for each reporter.
