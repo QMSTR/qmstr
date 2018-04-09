@@ -13,6 +13,7 @@ import (
 	"syscall"
 
 	"github.com/QMSTR/qmstr/pkg/analysis"
+	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
@@ -24,7 +25,10 @@ type ScancodeAnalyzer struct {
 
 func main() {
 	analyzer := analysis.NewAnalyzer("Scancode Analyzer", &ScancodeAnalyzer{})
-	analyzer.RunAnalyzerModule()
+	if err := analyzer.RunAnalyzerModule(); err != nil {
+		log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
+		os.Exit(master.ReturnAnalyzerFailed)
+	}
 }
 
 func (scanalyzer *ScancodeAnalyzer) Configure(configMap map[string]string) error {
