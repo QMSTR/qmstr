@@ -17,7 +17,7 @@ type SpdxAnalyzer struct{}
 
 func main() {
 	analyzer := analysis.NewAnalyzer(&SpdxAnalyzer{})
-	analyzer.RunAnalyzerPlugin()
+	analyzer.RunAnalyzerModule()
 }
 
 func (spdxalizer *SpdxAnalyzer) Configure(configMap map[string]string) error {

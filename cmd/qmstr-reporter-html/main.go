@@ -11,7 +11,7 @@ import (
 
 func main() {
 	reporter := reporting.NewReporter(&htmlreporter.HTMLReporter{Keep: false})
-	if err := reporter.RunReporterPlugin(); err != nil {
+	if err := reporter.RunReporterModule(); err != nil {
 		log.Printf("%v failed: %v\n", htmlreporter.ModuleName, err)
 		os.Exit(master.ReturnReportServiceCommFailed)
 	}

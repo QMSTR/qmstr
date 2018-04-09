@@ -15,16 +15,16 @@ import (
 
 type Analyzer struct {
 	analysisService service.AnalysisServiceClient
-	plugin          AnalyzerPlugin
+	module          AnalyzerModule
 	id              int32
 }
 
-type AnalyzerPlugin interface {
+type AnalyzerModule interface {
 	Configure(configMap map[string]string) error
 	Analyze(node *service.FileNode) (*service.InfoNodeSlice, error)
 }
 
-func NewAnalyzer(plugin AnalyzerPlugin) *Analyzer {
+func NewAnalyzer(module AnalyzerModule) *Analyzer {
 	var serviceAddress string
 	var anaID int32
 	flag.StringVar(&serviceAddress, "aserv", "localhost:50051", "Analyzer service address")
@@ -37,17 +37,17 @@ func NewAnalyzer(plugin AnalyzerPlugin) *Analyzer {
 	}
 	anaServiceClient := service.NewAnalysisServiceClient(conn)
 
-	return &Analyzer{id: anaID, plugin: plugin, analysisService: anaServiceClient}
+	return &Analyzer{id: anaID, module: module, analysisService: anaServiceClient}
 }
 
-func (a *Analyzer) RunAnalyzerPlugin() {
+func (a *Analyzer) RunAnalyzerModule() {
 	configResp, err := a.analysisService.GetAnalyzerConfig(context.Background(), &service.AnalyzerConfigRequest{AnalyzerID: a.id})
 	if err != nil {
 		log.Printf("Could not get configuration %v\n", err)
 		os.Exit(master.ReturnAnalysisServiceCommFailed)
 	}
 
-	a.plugin.Configure(configResp.ConfigMap)
+	a.module.Configure(configResp.ConfigMap)
 
 	nodeResp, err := a.analysisService.GetNodes(context.Background(), &service.NodeRequest{Type: configResp.TypeSelector})
 	if err != nil {
@@ -62,7 +62,7 @@ func (a *Analyzer) RunAnalyzerPlugin() {
 			node.Path = strings.Replace(node.Path, substitution.Old, substitution.New, 1)
 		}
 
-		infoNodeSlice, err := a.plugin.Analyze(node)
+		infoNodeSlice, err := a.module.Analyze(node)
 		if err != nil {
 			log.Printf("Analysis failed %v\n", err)
 			os.Exit(master.ReturnAnalyzerFailed)
