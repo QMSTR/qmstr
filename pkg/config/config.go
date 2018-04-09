@@ -29,14 +29,22 @@ type ServerConfig struct {
 }
 
 type MasterConfig struct {
+	Name      string
+	MetaData  map[string]string
 	Server    *ServerConfig
 	Analysis  []Analysis
 	Reporting []Reporting
 }
 
-func getDefaultConfig() *MasterConfig {
-	return &MasterConfig{
-		Server: &ServerConfig{DBWorkers: 2, RPCAddress: ":50051", DBAddress: "localhost:9080"},
+type QmstrConfig struct {
+	Package *MasterConfig
+}
+
+func getDefaultConfig() *QmstrConfig {
+	return &QmstrConfig{
+		Package: &MasterConfig{
+			Server: &ServerConfig{DBWorkers: 2, RPCAddress: ":50051", DBAddress: "localhost:9080"},
+		},
 	}
 }
 
@@ -54,7 +62,7 @@ func ReadConfigFromFile(configfile string) (*MasterConfig, error) {
 		return nil, err
 	}
 
-	return configuration, nil
+	return configuration.Package, nil
 }
 
 func ConsumeFile(filename string) ([]byte, error) {
