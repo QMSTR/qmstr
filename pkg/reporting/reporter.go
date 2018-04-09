@@ -14,18 +14,18 @@ import (
 
 type Reporter struct {
 	reportingService service.ReportServiceClient
-	plugin           ReporterPlugin
+	module           ReporterModule
 	id               int32
 	name             string
 }
 
-type ReporterPlugin interface {
+type ReporterModule interface {
 	Configure(configMap map[string]string) error
 	Report(node *service.FileNode) error
 	PostReport() error
 }
 
-func NewReporter(plugin ReporterPlugin) *Reporter {
+func NewReporter(module ReporterModule) *Reporter {
 	var serviceAddress string
 	var anaID int32
 	flag.StringVar(&serviceAddress, "rserv", "localhost:50051", "Reporting service address")
@@ -38,17 +38,17 @@ func NewReporter(plugin ReporterPlugin) *Reporter {
 	}
 	reportingServiceClient := service.NewReportServiceClient(conn)
 
-	return &Reporter{id: anaID, plugin: plugin, reportingService: reportingServiceClient}
+	return &Reporter{id: anaID, module: module, reportingService: reportingServiceClient}
 }
 
-// RunReporterPlugin is the main driver function for each reporter.
-func (r *Reporter) RunReporterPlugin() error {
+// RunReporterModule is the main driver function for each reporter.
+func (r *Reporter) RunReporterModule() error {
 	configResp, err := r.reportingService.GetReporterConfig(context.Background(), &service.ReporterConfigRequest{ReporterID: r.id})
 	if err != nil {
 		return fmt.Errorf("could not get configuration %v", err)
 	}
 
-	r.plugin.Configure(configResp.ConfigMap)
+	r.module.Configure(configResp.ConfigMap)
 
 	respStream, err := r.reportingService.GetReportNodes(context.Background(), &service.ReportRequest{Type: configResp.TypeSelector})
 	if err != nil {
@@ -64,13 +64,13 @@ func (r *Reporter) RunReporterPlugin() error {
 			return fmt.Errorf("reporter %s failed %v", r.name, err)
 
 		}
-		err = r.plugin.Report(resp.FileNode)
+		err = r.module.Report(resp.FileNode)
 		if err != nil {
 			return fmt.Errorf("reporter %s failed %v", r.name, err)
 		}
 	}
 
-	if err := r.plugin.PostReport(); err != nil {
+	if err := r.module.PostReport(); err != nil {
 		return fmt.Errorf("reporter %s failed inn PostReport: %v", r.name, err)
 	}
 

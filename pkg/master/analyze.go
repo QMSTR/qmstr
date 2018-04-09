@@ -43,7 +43,7 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		cmd := exec.Command(analyzerName, "--aserv", phase.rpcAddress, "--aid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
-			logPluginError(analyzerName, out)
+			logModuleError(analyzerName, out)
 			return err
 		}
 		log.Printf("Analyzer %s finished successfully: %s\n", analyzerName, out)

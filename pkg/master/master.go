@@ -164,9 +164,9 @@ func InitAndRun(configfile string) error {
 	return nil
 }
 
-func logPluginError(pluginName string, output []byte) {
+func logModuleError(moduleName string, output []byte) {
 	var buffer bytes.Buffer
-	buffer.WriteString(fmt.Sprintf("%s failed with:\n", pluginName))
+	buffer.WriteString(fmt.Sprintf("%s failed with:\n", moduleName))
 	s := bufio.NewScanner(strings.NewReader(string(output)))
 	for s.Scan() {
 		buffer.WriteString(fmt.Sprintf("\t--> %s\n", s.Text()))

@@ -23,7 +23,7 @@ func (phase *serverPhaseReport) Activate() error {
 		cmd := exec.Command(reporterName, "--rserv", phase.rpcAddress, "--rid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
-			logPluginError(reporterName, out)
+			logModuleError(reporterName, out)
 			return err
 		}
 		log.Printf("Reporter %s finished successfully: %s\n", reporterName, out)

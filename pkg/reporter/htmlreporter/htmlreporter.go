@@ -24,7 +24,7 @@ const (
 	themeDirectoryName = "theme"
 )
 
-// HTMLReporter is the context of the HTML reporter plugin
+// HTMLReporter is the context of the HTML reporter module
 type HTMLReporter struct {
 	workingDir    string
 	sharedDataDir string
@@ -32,7 +32,7 @@ type HTMLReporter struct {
 }
 
 // Configure sets up the working directory for this reporting run.
-// It is part of the ReporterPlugin interface.
+// It is part of the ReporterModule interface.
 func (r *HTMLReporter) Configure(config map[string]string) error {
 	if val, ok := config["keep"]; ok && val == "true" {
 		r.Keep = true
@@ -61,7 +61,7 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 var once = false
 
 // Report generates the actual reports.
-// It is part of the ReporterPlugin interface.
+// It is part of the ReporterModule interface.
 func (r *HTMLReporter) Report(filenode *service.FileNode) error {
 	if !once {
 		once = true
@@ -74,7 +74,7 @@ func (r *HTMLReporter) Report(filenode *service.FileNode) error {
 }
 
 // PostReport is called after the report has bee generated.
-// It is part of the ReporterPlugin interface.
+// It is part of the ReporterModule interface.
 func (r *HTMLReporter) PostReport() error {
 	if !r.Keep {
 		defer r.cleanup()
