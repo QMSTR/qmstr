@@ -38,7 +38,7 @@ FROM ubuntu:17.10 as runtime
 
 # install runtime deps
 RUN apt-get update && \
-    apt-get install -y software-properties-common curl autoconf git libio-captureoutput-perl python python-pip protobuf-compiler && \
+    apt-get install -y software-properties-common curl autoconf git libio-captureoutput-perl python python-pip protobuf-compiler hugo && \
     rm -rf /var/lib/apt/lists/*
 
 # install ninka
