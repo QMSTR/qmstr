@@ -29,6 +29,19 @@ RUN go install github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer && \
     go install github.com/QMSTR/qmstr/cmd/analyzers/scancode-analyzer && \
     go install github.com/QMSTR/qmstr/cmd/qmstr-reporter-html
 
+FROM openjdk as javabuilder
+
+RUN apt-get update && \
+    apt-get install -y git && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/QMSTR/qmstr-gradle-plugin.git
+
+RUN mkdir -p .gradle/$(grep zipStorePath /qmstr-gradle-plugin/gradle/wrapper/gradle-wrapper.properties | cut -d "=" -f2)
+RUN cd .gradle/$(grep zipStorePath /qmstr-gradle-plugin/gradle/wrapper/gradle-wrapper.properties | cut -d "=" -f2) && wget $(grep distributionUrl /qmstr-gradle-plugin/gradle/wrapper/gradle-wrapper.properties | cut -d "=" -f2 |sed -e 's#\\##')
+
+RUN cd qmstr-gradle-plugin && ./gradlew install
+
 # separate stage just to run the master unit tests:
 FROM builder as master_unit_tests
 CMD cd $GOPATH/src/github.com/QMSTR/qmstr && go test ./...
