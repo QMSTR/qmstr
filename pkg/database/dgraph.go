@@ -166,6 +166,10 @@ func (db *DataBase) HasNode(hash string) (string, error) {
 	return ret["hasNode"][0].Uid, nil
 }
 
+func (db *DataBase) AddPackageNode(pNode *service.PackageNode) {
+	dbInsert(db.client, pNode)
+}
+
 // the data should be JSON marshalable
 func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 	txn := c.NewTxn()
