@@ -29,6 +29,7 @@ type HTMLReporter struct {
 	workingDir    string
 	sharedDataDir string
 	Keep          bool
+	baseURL       string
 }
 
 // Configure sets up the working directory for this reporting run.
@@ -36,6 +37,12 @@ type HTMLReporter struct {
 func (r *HTMLReporter) Configure(config map[string]string) error {
 	if val, ok := config["keep"]; ok && val == "true" {
 		r.Keep = true
+	}
+
+	if val, ok := config["baseurl"]; ok {
+		r.baseURL = val
+	} else {
+		r.baseURL = "file:///var/lib/qmstr/reports"
 	}
 
 	detectedVersion, err := DetectHugoAndVerifyVersion()
@@ -48,7 +55,7 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 	if err != nil {
 		log.Fatalf("cannot identify QMSTR shared data directory: %v", err)
 	}
-	r.workingDir, err = CreateHugoWorkingDirectory(r.sharedDataDir)
+	r.workingDir, err = CreateHugoWorkingDirectory(r.sharedDataDir, r.baseURL)
 	if err != nil {
 		return fmt.Errorf("error preparing temporary Hugo working directory: %v", err)
 	}
@@ -193,7 +200,7 @@ func CheckMinimumRequiredVersion(versionstring string) error {
 }
 
 //CreateHugoWorkingDirectory creates a temporary directory with the directory structure required to run Hugo
-func CreateHugoWorkingDirectory(sharedDataDir string) (string, error) {
+func CreateHugoWorkingDirectory(sharedDataDir string, baseURL string) (string, error) {
 	tmpWorkDir, err := ioutil.TempDir("", "qmstr-")
 	if err != nil {
 		return tmpWorkDir, fmt.Errorf("error creating temporary Hugo working directory: %v", err)
@@ -230,7 +237,7 @@ func CreateHugoWorkingDirectory(sharedDataDir string) (string, error) {
 	configuration := Configuration{
 		"Quartermaster Compliance Report",
 		"Quartermaster Compliance Report",
-		"file:///var/lib/qmstr/reports",
+		baseURL,
 	}
 	configTomlInPath := path.Join(sharedDataDir, templateDir, "config.toml.in")
 	configTomlIn, err := ioutil.ReadFile(configTomlInPath)
