@@ -36,5 +36,5 @@ func NewFileNode(path string, fileType string) *pb.FileNode {
 		hash = "nohash" + path
 		broken = true
 	}
-	return &pb.FileNode{NodeType: 1, Name: filename, Type: fileType, Path: path, Hash: hash, Broken: broken}
+	return &pb.FileNode{NodeType: pb.NodeTypeFileNode, Name: filename, Type: fileType, Path: path, Hash: hash, Broken: broken}
 }

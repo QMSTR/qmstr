@@ -168,9 +168,9 @@ func InitAndRun(configfile string) error {
 
 func initPackage(masterConfig *config.MasterConfig, db *database.DataBase) {
 	rootPackageNode := &service.PackageNode{Name: masterConfig.Name}
-	tmpInfoNode := &service.InfoNode{Type: "metadata", NodeType: 2}
+	tmpInfoNode := &service.InfoNode{Type: "metadata", NodeType: service.NodeTypeInfoNode}
 	for key, val := range masterConfig.MetaData {
-		tmpInfoNode.DataNodes = append(tmpInfoNode.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val, NodeType: 3})
+		tmpInfoNode.DataNodes = append(tmpInfoNode.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val, NodeType: service.NodeTypeDataNode})
 	}
 
 	if len(tmpInfoNode.DataNodes) > 0 {

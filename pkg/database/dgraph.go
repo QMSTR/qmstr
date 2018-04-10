@@ -167,6 +167,7 @@ func (db *DataBase) HasNode(hash string) (string, error) {
 }
 
 func (db *DataBase) AddPackageNode(pNode *service.PackageNode) {
+	pNode.NodeType = service.NodeTypePackageNode
 	dbInsert(db.client, pNode)
 }
 
@@ -206,7 +207,7 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 	runeDataNodeMap := map[string]*service.InfoNode_DataNode{}
 
 	for idx, datanode := range datanodes {
-		datanodes[idx].NodeType = 3
+		datanodes[idx].NodeType = service.NodeTypeDataNode
 		runeDataNodeMap[getVarName(idx)] = datanode
 	}
 
@@ -251,7 +252,7 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 	}
 
 	if retInfoNode == nil {
-		infoNode := &service.InfoNode{Type: infonodetype, NodeType: 2}
+		infoNode := &service.InfoNode{Type: infonodetype, NodeType: service.NodeTypeInfoNode}
 		infoNode.DataNodes = datanodes
 		uid, err := dbInsert(db.client, infoNode)
 		if err != nil {
@@ -326,7 +327,7 @@ func (db *DataBase) GetAnalyzerByName(name string) (*service.Analyzer, error) {
 
 	if len(ret["getAnalyzerByName"]) < 1 {
 		// No such analyzer
-		analyzer := &service.Analyzer{Name: name, NodeType: 4}
+		analyzer := &service.Analyzer{Name: name, NodeType: service.NodeTypeAnalyzerNode}
 		uid, err := dbInsert(db.client, analyzer)
 		if err != nil {
 			return nil, err

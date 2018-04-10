@@ -40,6 +40,7 @@ message PathSubstitution {
 
 message PackageNode {
     string name = 1;
-    repeated FileNode targets = 2;
-    repeated InfoNode additionalInfo = 3;
+    int32 nodeType =2;
+    repeated FileNode targets = 3;
+    repeated InfoNode additionalInfo = 4;
 }
