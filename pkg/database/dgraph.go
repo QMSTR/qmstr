@@ -41,7 +41,12 @@ type DataBase struct {
 func Setup(dbAddr string, queueWorkers int) (*DataBase, error) {
 	log.Println("Setting up database connection")
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	conn, err := grpc.DialContext(ctx, dbAddr, grpc.WithInsecure(), grpc.WithBlock())
+
+	conn, err := grpc.DialContext(ctx, dbAddr,
+		grpc.WithInsecure(),
+		grpc.WithBlock(),
+		grpc.WithDefaultCallOptions(grpc.MaxCallSendMsgSize(100<<20),
+			grpc.MaxCallRecvMsgSize(100<<20)))
 	if err != nil {
 		cancel()
 		return nil, fmt.Errorf("Failed to connect to the dgraph server: %v", err)
