@@ -22,7 +22,12 @@ RUN cd $GOPATH/src/github.com/QMSTR/qmstr && \
 RUN go generate github.com/QMSTR/qmstr/cmd/qmstr-master
 RUN go install github.com/QMSTR/qmstr/cmd/qmstr-master && \
     go install github.com/QMSTR/qmstr/cmd/qmstr-wrapper && \
-    go install github.com/QMSTR/qmstr/cmd/qmstr-cli
+    go install github.com/QMSTR/qmstr/cmd/qmstr-cli && \
+    go install github.com/QMSTR/qmstr/cmd/qmstr
+
+RUN go install github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer && \
+    go install github.com/QMSTR/qmstr/cmd/analyzers/scancode-analyzer && \
+    go install github.com/QMSTR/qmstr/cmd/qmstr-reporter-html
 
 # separate stage just to run the master unit tests:
 FROM builder as master_unit_tests
@@ -33,7 +38,7 @@ FROM ubuntu:17.10 as runtime
 
 # install runtime deps
 RUN apt-get update && \
-    apt-get install -y software-properties-common curl autoconf git libio-captureoutput-perl python python-pip protobuf-compiler && \
+    apt-get install -y software-properties-common curl autoconf git libio-captureoutput-perl python python-pip protobuf-compiler hugo && \
     rm -rf /var/lib/apt/lists/*
 
 # install ninka
@@ -55,7 +60,9 @@ RUN curl https://get.dgraph.io -sSf | bash
 # copy qmstr installation from previous stage
 RUN mkdir -p /go/bin
 COPY --from=builder /go/bin/qmstr-master /go/bin/qmstr-master
-
+COPY --from=builder /go/bin/spdx-analyzer /go/bin/spdx-analyzer
+COPY --from=builder /go/bin/scancode-analyzer /go/bin/scancode-analyzer
+COPY --from=builder /go/bin/qmstr-reporter-html /go/bin/qmstr-reporter-html
 EXPOSE 50051
 # dgraph ratel web ui
 EXPOSE 8000
@@ -64,6 +71,10 @@ VOLUME /buildroot
 
 # release master container, based on the runtime stage:
 FROM runtime as master
+
+ENV GOPATH /go
+ENV PATH ${GOPATH}/bin:$PATH
+
 COPY ci/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
