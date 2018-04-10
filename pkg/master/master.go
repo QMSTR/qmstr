@@ -157,7 +157,7 @@ func InitAndRun(configfile string) error {
 		quitServer = nil
 	}()
 
-	initPackage(masterConfig)
+	initPackage(masterConfig, db)
 
 	log.Printf("qmstr-master listening on %s\n", masterConfig.Server.RPCAddress)
 	if err := s.Serve(lis); err != nil {
@@ -166,13 +166,18 @@ func InitAndRun(configfile string) error {
 	return nil
 }
 
-func initPackage(masterConfig *config.MasterConfig) {
+func initPackage(masterConfig *config.MasterConfig, db *database.DataBase) {
 	rootPackageNode := &service.PackageNode{Name: masterConfig.Name}
 	tmpInfoNode := &service.InfoNode{Type: "metadata", NodeType: 2}
 	for key, val := range masterConfig.MetaData {
 		tmpInfoNode.DataNodes = append(tmpInfoNode.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val, NodeType: 3})
 	}
-	rootPackageNode.AdditionalInfo = []*service.InfoNode{tmpInfoNode}
+
+	if len(tmpInfoNode.DataNodes) > 0 {
+		rootPackageNode.AdditionalInfo = []*service.InfoNode{tmpInfoNode}
+	}
+
+	db.AddPackageNode(rootPackageNode)
 }
 
 func logModuleError(moduleName string, output []byte) {
