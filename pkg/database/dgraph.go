@@ -80,6 +80,7 @@ func (db *DataBase) AwaitBuildComplete() {
 		log.Printf("Pending inserts %d", pendingInserts)
 		time.Sleep(2 * time.Second)
 	}
+	close(db.insertQueue)
 }
 
 // AddFileNode adds a node to the insert queue
@@ -93,7 +94,11 @@ func (db *DataBase) AddFileNode(node *service.FileNode) {
 
 // the queueWorker runs in a go routine and inserts the nodes from the insert queue into the database
 func queueWorker(db *DataBase) {
-	for node := range db.insertQueue {
+	for {
+		node := <-db.insertQueue
+		if node == nil {
+			return
+		}
 		ready := true
 		for idx, dep := range node.DerivedFrom {
 			if dep.Uid == "" {
