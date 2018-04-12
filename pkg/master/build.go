@@ -27,7 +27,7 @@ func (phase *serverPhaseBuild) GetPhaseId() int32 {
 func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
 	for _, node := range in.FileNodes {
 		log.Printf("Adding file node %s", node.Path)
-		phase.db.AddNode(node)
+		phase.db.AddFileNode(node)
 	}
 	return &service.BuildResponse{Success: true}, nil
 }

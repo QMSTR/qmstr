@@ -116,7 +116,7 @@ func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*servi
 			inodes.Inodes[idx] = infoNode
 		}
 		fileNode.AdditionalInfo = append(fileNode.AdditionalInfo, inodes.Inodes...)
-		phase.db.AlterNode(fileNode)
+		phase.db.AlterFileNode(fileNode)
 	}
 
 	return &service.AnalysisResponse{Success: true}, nil

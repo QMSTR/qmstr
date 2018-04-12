@@ -82,11 +82,11 @@ func (db *DataBase) AwaitBuildComplete() {
 	}
 }
 
-// AddNode adds a node to the insert queue
-func (db *DataBase) AddNode(node *service.FileNode) {
+// AddFileNode adds a node to the insert queue
+func (db *DataBase) AddFileNode(node *service.FileNode) {
 	atomic.AddUint64(&db.pending, 1)
 	for _, dep := range node.DerivedFrom {
-		db.AddNode(dep)
+		db.AddFileNode(dep)
 	}
 	db.insertQueue <- node
 }
@@ -100,7 +100,7 @@ func queueWorker(db *DataBase) {
 				// missing dep
 				ready = false
 				// look up dep in db
-				uid, err := db.HasNode(dep.Hash)
+				uid, err := db.GetFileNodeUid(dep.Hash)
 				if err != nil {
 					panic(err)
 				}
@@ -119,13 +119,14 @@ func queueWorker(db *DataBase) {
 
 		// we are ready to insert the node
 		db.insertMutex.Lock()
-		uid, err := db.HasNode(node.Hash)
+		uid, err := db.GetFileNodeUid(node.Hash)
 		if err != nil {
 			panic(err)
 		}
 		if uid != "" {
 			node.Uid = uid
 		}
+		service.SanitizeFileNode(node)
 		uid, err = dbInsert(db.client, node)
 		if err != nil {
 			panic(err)
@@ -135,15 +136,16 @@ func queueWorker(db *DataBase) {
 	}
 }
 
-func (db *DataBase) AlterNode(node *service.FileNode) (string, error) {
+func (db *DataBase) AlterFileNode(node *service.FileNode) (string, error) {
 	db.insertMutex.Lock()
+	service.SanitizeFileNode(node)
 	uid, err := dbInsert(db.client, node)
 	db.insertMutex.Unlock()
 	return uid, err
 }
 
-// HasNode returns the UID of the node if exists otherwise ""
-func (db *DataBase) HasNode(hash string) (string, error) {
+// GetFileNodeUid returns the UID of the node if exists otherwise ""
+func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 
 	ret := map[string][]*service.FileNode{}
 
@@ -207,7 +209,7 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 	runeDataNodeMap := map[string]*service.InfoNode_DataNode{}
 
 	for idx, datanode := range datanodes {
-		datanodes[idx].NodeType = service.NodeTypeDataNode
+		service.SanitizeDataNode(datanodes[idx])
 		runeDataNodeMap[getVarName(idx)] = datanode
 	}
 
