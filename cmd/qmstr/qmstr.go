@@ -135,8 +135,11 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	newPath := strings.Join(paths, separator)
 	os.Setenv("PATH", newPath)
 	Debug.Printf("PATH is now %v\n", os.Getenv("PATH"))
+	os.Setenv("QMSTR_INSTRUMENTATION_HOME", tmpWorkDir)
+	Debug.Printf("QMSTR_INSTRUMENTATION_HOME is now %v\n", os.Getenv("QMSTR_INSTRUMENTATION_HOME"))
 	if options.keepTmpDirectories {
 		fmt.Printf("export PATH=%v\n", os.Getenv("PATH"))
+		fmt.Printf("export QMSTR_INSTRUMENTATION_HOME=%v\n", os.Getenv("QMSTR_INSTRUMENTATION_HOME"))
 	}
 }
 
