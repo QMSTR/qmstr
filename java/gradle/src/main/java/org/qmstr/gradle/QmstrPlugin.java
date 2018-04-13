@@ -12,8 +12,13 @@ import java.util.Collections;
 import java.util.Set;
 
 public class QmstrPlugin implements Plugin<Project> {
+    String address = "localhost:50051";
 
     public void apply(Project project) {
+        String difAddress = System.getenv("QMSTR_ADDRESS");
+        if (difAddress != null && !difAddress.trim().isEmpty()){
+            address = difAddress;
+        }
         project.getPluginManager().apply(JavaPlugin.class);
         project.getPluginManager().apply(DistributionPlugin.class);
 
@@ -27,14 +32,14 @@ public class QmstrPlugin implements Plugin<Project> {
         Set<Task> classes = project.getTasksByName("classes", false);
 
         Task qmstrCompile = project.getTasks().create("qmstrbuild", QmstrCompileTask.class, (task) -> {
-            task.setBuildServiceAddress("localhost:50051");
+            task.setBuildServiceAddress(address);
             task.setSourceSets(getJavaSourceSets(project));
             task.dependsOn(classes);
         });
 
         project.getTasks().create("qmstr", QmstrPackTask.class, (task) -> {
             task.dependsOn(qmstrCompile, jarTask);
-            task.setBuildServiceAddress("localhost:50051");
+            task.setBuildServiceAddress(address);
             task.setProjectConfig(project.getConfigurations());
         });
     }
