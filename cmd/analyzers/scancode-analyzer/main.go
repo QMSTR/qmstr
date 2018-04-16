@@ -80,7 +80,7 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(node *service.FileNode) (*service.In
 
 func scancodeExitHandler(err error, output []byte) {
 	// print to stdout so master server can log it
-	fmt.Print(output)
+	fmt.Print(string(output))
 	if output != nil {
 		// scancode might have failed, let's see ...
 		re := regexp.MustCompile(scancodeErrorCount)
