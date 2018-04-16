@@ -22,6 +22,6 @@ message ReporterConfigResponse {
 }
 
 service ReportService {
-  rpc GetReportNodes(ReportRequest) returns (stream ReportResponse) {}
+  rpc GetPackageNode(ReportRequest) returns (ReportResponse) {}
   rpc GetReporterConfig(ReporterConfigRequest) returns (ReporterConfigResponse) {}
 }
