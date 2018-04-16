@@ -49,7 +49,7 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 		return nil, fmt.Errorf("Invalid reporter id %d", idx)
 	}
 	config := phase.config[idx]
-	return &service.ReporterConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector}, nil
+	return &service.ReporterConfigResponse{ConfigMap: config.Config, Session: phase.session}, nil
 }
 
 func (phase *serverPhaseReport) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
@@ -65,16 +65,13 @@ func (phase *serverPhaseReport) SendNodes(in *service.AnalysisMessage) (*service
 }
 
 func (phase *serverPhaseReport) GetReportNodes(in *service.ReportRequest, streamServer service.ReportService_GetReportNodesServer) error {
-	log.Println("Nodes requested")
-	nodes, err := phase.db.GetFileNodesByType(in.Type, true)
+	node, err := phase.db.GetPackageNode(in.Session)
 	if err != nil {
 		return err
 	}
-	for _, node := range nodes {
-		err = streamServer.Send(&service.ReportResponse{FileNode: node})
-		if err != nil {
-			return err
-		}
+	err = streamServer.Send(&service.ReportResponse{PackageNode: node})
+	if err != nil {
+		return err
 	}
 	return nil
 }
