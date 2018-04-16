@@ -3,6 +3,7 @@ package database
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"sync"
@@ -272,6 +273,33 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 	return retInfoNode, nil
 }
 
+func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error) {
+	ret := map[string][]*service.PackageNode{}
+
+	q := `query PackageNode($Session: string) {
+		getPackageNode(func: eq(nodeType, 5)) {
+			uid
+			hash
+			name
+			path
+			derivedFrom
+		  }}`
+
+	vars := map[string]string{"$Session": session}
+
+	err := db.queryPackage(q, vars, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(ret["getPackageNode"]) < 1 {
+		return nil, errors.New("No package node found")
+	}
+
+	return ret["getPackageNode"][0], nil
+
+}
+
 func (db *DataBase) GetFileNodesByType(filetype string, recursive bool) ([]*service.FileNode, error) {
 	ret := map[string][]*service.FileNode{}
 
@@ -418,6 +446,18 @@ func (db *DataBase) GetNodeByHash(hash string, recursive bool) (*service.FileNod
 	}
 
 	return ret["getNodeByHash"][0], nil
+}
+
+func (db *DataBase) queryPackage(query string, queryVars map[string]string, resultMap *map[string][]*service.PackageNode) error {
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
+	if err != nil {
+		return fmt.Errorf("Could not query for package node with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
+	}
+
+	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
+		return fmt.Errorf("Could not unmashal query response: %v", err)
+	}
+	return nil
 }
 
 func (db *DataBase) queryNodes(query string, queryVars map[string]string, resultMap *map[string][]*service.FileNode) error {

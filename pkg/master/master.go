@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"strings"
 	"sync"
@@ -38,6 +39,7 @@ type genericServerPhase struct {
 	phaseId    int32
 	db         *database.DataBase
 	rpcAddress string
+	session    string
 }
 
 type server struct {
@@ -128,11 +130,15 @@ func InitAndRun(configfile string) error {
 		return fmt.Errorf("Failed to setup socket and listen: %v", err)
 	}
 
+	sessionBytes := make([]byte, 32)
+	rand.Read(sessionBytes)
+	session := fmt.Sprintf("%x", sessionBytes)
+
 	phaseMap = map[int32]serverPhase{
-		1: &serverPhaseBuild{genericServerPhase{Name: "Build phase", phaseId: 1, db: db}},
-		2: newAnalysisPhase(genericServerPhase{Name: "Analysis phase", phaseId: 2, db: db, rpcAddress: masterConfig.Server.RPCAddress},
+		1: &serverPhaseBuild{genericServerPhase{Name: "Build phase", phaseId: 1, db: db, session: session}},
+		2: newAnalysisPhase(genericServerPhase{Name: "Analysis phase", phaseId: 2, db: db, rpcAddress: masterConfig.Server.RPCAddress, session: session},
 			masterConfig.Analysis),
-		3: &serverPhaseReport{genericServerPhase{Name: "Reporting phase", phaseId: 3, db: db, rpcAddress: masterConfig.Server.RPCAddress}, masterConfig.Reporting},
+		3: &serverPhaseReport{genericServerPhase{Name: "Reporting phase", phaseId: 3, db: db, rpcAddress: masterConfig.Server.RPCAddress, session: session}, masterConfig.Reporting},
 	}
 
 	s := grpc.NewServer()
@@ -157,7 +163,7 @@ func InitAndRun(configfile string) error {
 		quitServer = nil
 	}()
 
-	initPackage(masterConfig, db)
+	initPackage(masterConfig, db, session)
 
 	log.Printf("qmstr-master listening on %s\n", masterConfig.Server.RPCAddress)
 	if err := s.Serve(lis); err != nil {
@@ -166,7 +172,7 @@ func InitAndRun(configfile string) error {
 	return nil
 }
 
-func initPackage(masterConfig *config.MasterConfig, db *database.DataBase) {
+func initPackage(masterConfig *config.MasterConfig, db *database.DataBase, session string) {
 	rootPackageNode := &service.PackageNode{Name: masterConfig.Name}
 	tmpInfoNode := &service.InfoNode{Type: "metadata", NodeType: service.NodeTypeInfoNode}
 	for key, val := range masterConfig.MetaData {
@@ -177,6 +183,7 @@ func initPackage(masterConfig *config.MasterConfig, db *database.DataBase) {
 		rootPackageNode.AdditionalInfo = []*service.InfoNode{tmpInfoNode}
 	}
 
+	rootPackageNode.Session = session
 	db.AddPackageNode(rootPackageNode)
 }
 

@@ -54,7 +54,7 @@ func (r *Reporter) RunReporterModule() error {
 
 	r.module.Configure(configResp.ConfigMap)
 
-	respStream, err := r.reportingService.GetReportNodes(context.Background(), &service.ReportRequest{Type: configResp.TypeSelector})
+	respStream, err := r.reportingService.GetReportNodes(context.Background(), &service.ReportRequest{Session: configResp.Session})
 	if err != nil {
 		return fmt.Errorf("could not get nodes %v", err)
 	}

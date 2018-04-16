@@ -17,7 +17,6 @@ type Analysis struct {
 }
 
 type Reporting struct {
-	Selector string
 	Reporter string
 	Config   map[string]string
 }
