@@ -10,7 +10,7 @@ message ReportRequest {
 
 message ReportResponse {
   bool success = 1;
-  FileNode fileNode = 2;
+  PackageNode packageNode = 2;
 }
 
 message ReporterConfigRequest {
