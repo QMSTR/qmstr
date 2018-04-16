@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"reflect"
 	"regexp"
 	"strings"
 	"text/template"
@@ -323,8 +324,21 @@ type RevisionData struct {
 
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode) error {
+	packageData := PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", r.siteData}
+	ps := reflect.ValueOf(&packageData)
+	s := ps.Elem()
+	for _, inode := range packageNode.AdditionalInfo {
+		if inode.Type == "metadata" {
+			for _, dnode := range inode.DataNodes {
+				f := s.FieldByName(dnode.Type)
+				if f.IsValid() && f.CanSet() && f.Kind() == reflect.String {
+					f.SetString(dnode.Data)
+				}
+			}
+			break
+		}
+	}
 	// TODO @hemarkus: Give me that data.
-	packageData := PackageData{packageNode.Name, "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com", r.siteData}
 	revisionData := RevisionData{"a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "2017-11-06 14:35", "Jonas Oberg", packageData}
 
 	dataDirectory := path.Join(r.workingDir, "data")
