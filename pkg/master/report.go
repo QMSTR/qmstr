@@ -64,14 +64,10 @@ func (phase *serverPhaseReport) SendNodes(in *service.AnalysisMessage) (*service
 	return nil, errors.New("Wrong phase")
 }
 
-func (phase *serverPhaseReport) GetReportNodes(in *service.ReportRequest, streamServer service.ReportService_GetReportNodesServer) error {
+func (phase *serverPhaseReport) GetPackageNode(in *service.ReportRequest) (*service.ReportResponse, error) {
 	node, err := phase.db.GetPackageNode(in.Session)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	err = streamServer.Send(&service.ReportResponse{PackageNode: node})
-	if err != nil {
-		return err
-	}
-	return nil
+	return &service.ReportResponse{PackageNode: node}, nil
 }

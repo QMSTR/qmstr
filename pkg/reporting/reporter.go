@@ -2,7 +2,6 @@ package reporting
 
 import (
 	"fmt"
-	"io"
 	"log"
 
 	"golang.org/x/net/context"
@@ -54,24 +53,14 @@ func (r *Reporter) RunReporterModule() error {
 
 	r.module.Configure(configResp.ConfigMap)
 
-	respStream, err := r.reportingService.GetReportNodes(context.Background(), &service.ReportRequest{Session: configResp.Session})
+	resp, err := r.reportingService.GetPackageNode(context.Background(), &service.ReportRequest{Session: configResp.Session})
 	if err != nil {
-		return fmt.Errorf("could not get nodes %v", err)
+		return fmt.Errorf("could not get package node %v", err)
 	}
 
-	for {
-		resp, err := respStream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return fmt.Errorf("reporter %s failed %v", r.name, err)
-
-		}
-		err = r.module.Report(resp.PackageNode)
-		if err != nil {
-			return fmt.Errorf("reporter %s failed %v", r.name, err)
-		}
+	err = r.module.Report(resp.PackageNode)
+	if err != nil {
+		return fmt.Errorf("reporter %s failed %v", r.name, err)
 	}
 
 	if err := r.module.PostReport(); err != nil {

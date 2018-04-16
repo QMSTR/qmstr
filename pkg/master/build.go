@@ -48,6 +48,6 @@ func (phase *serverPhaseBuild) SendNodes(in *service.AnalysisMessage) (*service.
 	return nil, errors.New("Wrong phase")
 }
 
-func (phase *serverPhaseBuild) GetReportNodes(in *service.ReportRequest, streamServer service.ReportService_GetReportNodesServer) error {
-	return errors.New("Wrong phase")
+func (phase *serverPhaseBuild) GetPackageNode(in *service.ReportRequest) (*service.ReportResponse, error) {
+	return nil, errors.New("Wrong phase")
 }
