@@ -30,6 +30,7 @@ type HTMLReporter struct {
 	sharedDataDir string
 	Keep          bool
 	baseURL       string
+	siteData      SiteData
 }
 
 // Configure sets up the working directory for this reporting run.
@@ -43,6 +44,12 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 		r.baseURL = val
 	} else {
 		r.baseURL = "file:///var/lib/qmstr/reports"
+	}
+
+	if sitePro, ok := config["siteprovider"]; ok {
+		r.siteData = SiteData{Provider: sitePro}
+	} else {
+		r.siteData = SiteData{Provider: "The Site Provider"}
 	}
 
 	detectedVersion, err := DetectHugoAndVerifyVersion()
@@ -317,8 +324,7 @@ type RevisionData struct {
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode) error {
 	// TODO @hemarkus: Give me that data.
-	siteData := SiteData{"Endocode AG"}
-	packageData := PackageData{packageNode.Name, "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com", siteData}
+	packageData := PackageData{packageNode.Name, "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com", r.siteData}
 	revisionData := RevisionData{"a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "2017-11-06 14:35", "Jonas Oberg", packageData}
 
 	dataDirectory := path.Join(r.workingDir, "data")
@@ -347,7 +353,7 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 	{
 		templatePath := path.Join(r.sharedDataDir, "templates", "site-index.md")
 		outputPath := path.Join(contentDirectory, "_index.md")
-		if err := applyTemplate(templatePath, siteData, outputPath); err != nil {
+		if err := applyTemplate(templatePath, r.siteData, outputPath); err != nil {
 			return fmt.Errorf("error creating site index: %v", err)
 		}
 	}
