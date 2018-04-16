@@ -277,12 +277,16 @@ func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error)
 	ret := map[string][]*service.PackageNode{}
 
 	q := `query PackageNode($Session: string) {
-		getPackageNode(func: eq(nodeType, 5)) {
+		getPackageNode(func: eq(nodeType, 5)) @recurse(loop: false) {
 			uid
 			hash
 			name
-			path
+			type
 			derivedFrom
+			path
+			additionalInfo
+			dataNodes
+			data
 		  }}`
 
 	vars := map[string]string{"$Session": session}
