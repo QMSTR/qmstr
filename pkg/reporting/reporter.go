@@ -21,7 +21,7 @@ type Reporter struct {
 
 type ReporterModule interface {
 	Configure(configMap map[string]string) error
-	Report(node *service.FileNode) error
+	Report(node *service.PackageNode) error
 	PostReport() error
 }
 
@@ -68,7 +68,7 @@ func (r *Reporter) RunReporterModule() error {
 			return fmt.Errorf("reporter %s failed %v", r.name, err)
 
 		}
-		err = r.module.Report(resp.FileNode)
+		err = r.module.Report(resp.PackageNode)
 		if err != nil {
 			return fmt.Errorf("reporter %s failed %v", r.name, err)
 		}

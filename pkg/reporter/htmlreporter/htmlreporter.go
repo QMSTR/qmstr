@@ -69,14 +69,14 @@ var once = false
 
 // Report generates the actual reports.
 // It is part of the ReporterModule interface.
-func (r *HTMLReporter) Report(filenode *service.FileNode) error {
+func (r *HTMLReporter) Report(packageNode *service.PackageNode) error {
 	if !once {
 		once = true
-		if err := r.CreatePackageLevelReports(filenode); err != nil {
+		if err := r.CreatePackageLevelReports(packageNode); err != nil {
 			return fmt.Errorf("error generating package level report: %v", err)
 		}
 	}
-	log.Printf("(r *HTMLReporter) Report: %v", filenode.GetPath())
+	log.Printf("(r *HTMLReporter) Report: %v", packageNode.Name)
 	return nil
 }
 
@@ -315,10 +315,10 @@ type RevisionData struct {
 }
 
 // CreatePackageLevelReports creates the top level report about the package.
-func (r *HTMLReporter) CreatePackageLevelReports(filenode *service.FileNode) error {
+func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode) error {
 	// TODO @hemarkus: Give me that data.
 	siteData := SiteData{"Endocode AG"}
-	packageData := PackageData{"CURL", "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com", siteData}
+	packageData := PackageData{packageNode.Name, "Endocode AG", "Mirko Boehm", "fosscompliance@endocode.com", siteData}
 	revisionData := RevisionData{"a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "2017-11-06 14:35", "Jonas Oberg", packageData}
 
 	dataDirectory := path.Join(r.workingDir, "data")
