@@ -21,6 +21,11 @@ public class QmstrPackTask extends QmstrTask {
 
     @TaskAction
     void pack() {
+        QmstrPluginExtension extension = (QmstrPluginExtension) getProject()
+                .getExtensions().findByName("qmstr");
+
+        this.setBuildServiceAddress(extension.qmstrAddress);
+
         bsc = new BuildServiceClient(buildServiceAddress, buildServicePort);
 
         HashMap<PublishArtifact, Set<File>> arts = new HashMap<>();

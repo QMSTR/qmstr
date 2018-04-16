@@ -21,6 +21,11 @@ public class QmstrCompileTask extends QmstrTask {
 
     @TaskAction
     void build() {
+        QmstrPluginExtension extension = (QmstrPluginExtension) getProject()
+                .getExtensions().findByName("qmstr");
+
+        this.setBuildServiceAddress(extension.qmstrAddress);
+
         bsc = new BuildServiceClient(buildServiceAddress, buildServicePort);
 
         this.sourceSets.forEach(set -> {
