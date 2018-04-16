@@ -41,6 +41,11 @@ RUN apt-get update && \
     apt-get install -y software-properties-common curl autoconf git libio-captureoutput-perl python python-pip protobuf-compiler hugo && \
     rm -rf /var/lib/apt/lists/*
 
+# init html reporter data
+COPY --from=builder /go/src/github.com/QMSTR/qmstr /tmp/qmstr
+RUN /tmp/qmstr/cmd/qmstr-reporter-html/setup.sh /usr/share/qmstr /tmp/qmstr
+RUN rm -fr /tmp/qmstr
+
 # install ninka
 RUN mkdir /ninka && \
     git clone https://github.com/dmgerman/ninka.git /ninka && \
