@@ -61,7 +61,7 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 
 	r.sharedDataDir, err = DetectModuleSharedDataDirectory(ModuleName)
 	if err != nil {
-		log.Fatalf("cannot identify QMSTR shared data directory: %v", err)
+		return fmt.Errorf("cannot identify QMSTR shared data directory: %v", err)
 	}
 	r.workingDir, err = CreateHugoWorkingDirectory(r.sharedDataDir, r.baseURL)
 	if err != nil {
