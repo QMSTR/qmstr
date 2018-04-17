@@ -36,10 +36,15 @@ CMD cd $GOPATH/src/github.com/QMSTR/qmstr && go test ./...
 # the runtime stage contains all the elements needed to run the master and the analysis tools:
 FROM ubuntu:17.10 as runtime
 
+ENV HUGO_VERSION 0.39
+
 # install runtime deps
 RUN apt-get update && \
-    apt-get install -y software-properties-common curl autoconf git libio-captureoutput-perl python python-pip protobuf-compiler hugo && \
+    apt-get install -y software-properties-common curl autoconf git libio-captureoutput-perl python python-pip protobuf-compiler && \
     rm -rf /var/lib/apt/lists/*
+
+RUN curl -L --output /tmp/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.deb
+RUN dpkg -i /tmp/hugo.deb
 
 # init html reporter data
 COPY --from=builder /go/src/github.com/QMSTR/qmstr /tmp/qmstr
