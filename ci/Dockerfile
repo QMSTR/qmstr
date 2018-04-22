@@ -88,8 +88,6 @@ ENV PATH ${GOPATH}/bin:$PATH
 COPY ci/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
-WORKDIR /buildroot
-
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
 # development container for the master and other tools, based in the runtime stage:
