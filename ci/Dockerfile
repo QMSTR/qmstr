@@ -1,3 +1,8 @@
+# Versioning
+ARG DGRAPH_VERSION=1.0.5
+ARG HUGO_VERSION=0.39
+ARG SCANCODE_VERSION=2.9.1
+
 # Create a container that only builds the software to be installed into the master container:
 FROM golang:1.9 as builder
 
@@ -36,13 +41,12 @@ CMD cd $GOPATH/src/github.com/QMSTR/qmstr && go test ./...
 # the runtime stage contains all the elements needed to run the master and the analysis tools:
 FROM ubuntu:17.10 as runtime
 
-ENV HUGO_VERSION 0.39
-
 # install runtime deps
 RUN apt-get update && \
     apt-get install -y software-properties-common curl autoconf git libio-captureoutput-perl python python-pip protobuf-compiler && \
     rm -rf /var/lib/apt/lists/*
 
+ARG HUGO_VERSION
 RUN curl -L --output /tmp/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.deb
 RUN dpkg -i /tmp/hugo.deb
 
@@ -60,12 +64,18 @@ RUN mkdir /ninka && \
     rm -fr /ninka
 
 # install scancode
-COPY ci/scancode.requirements /tmp/scancode.requirements
-RUN pip install -U -r /tmp/scancode.requirements
-RUN rm /tmp/scancode.requirements
+ARG SCANCODE_VERSION
+RUN pip install -U scancode-toolkit==${SCANCODE_VERSION}
 
 # install dgraph
-RUN curl https://get.dgraph.io -sSf | bash
+ARG DGRAPH_VERSION
+RUN curl -L --output /tmp/dgraph.sha256 https://github.com/dgraph-io/dgraph/releases/download/v"${DGRAPH_VERSION}"/dgraph-checksum-linux-amd64.sha256
+RUN curl -L --output /tmp/dgraph.tar.gz https://github.com/dgraph-io/dgraph/releases/download/v"${DGRAPH_VERSION}"/dgraph-linux-amd64.tar.gz
+RUN temp_dir=$(mktemp -d 2>/dev/null) && \
+    tar -C $temp_dir -xzf /tmp/dgraph.tar.gz && \
+    sed -e s#/usr/local/bin#${temp_dir}# /tmp/dgraph.sha256 | sha256sum -c - && \
+    mv ${temp_dir}/* /usr/local/bin/ && \
+    rmdir ${temp_dir}
 
 # copy qmstr installation from previous stage
 RUN mkdir -p /go/bin
