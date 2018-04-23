@@ -3,7 +3,7 @@ set -e
 
 function start_dgraph() {
     dgraph zero &
-    dgraph server --memory_mb=2048 --zero=localhost:5080 &
+    dgraph server --lru_mb=2048 --zero=localhost:5080 &
 }
 
 function start_dgraph_web {
