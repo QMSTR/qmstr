@@ -49,6 +49,7 @@ RUN apt-get update && \
 ARG HUGO_VERSION
 RUN curl -L --output /tmp/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.deb
 RUN dpkg -i /tmp/hugo.deb
+RUN rm /tmp/hugo.deb
 
 # init html reporter data
 COPY --from=builder /go/src/github.com/QMSTR/qmstr /tmp/qmstr
@@ -76,6 +77,7 @@ RUN temp_dir=$(mktemp -d 2>/dev/null) && \
     sed -e s#/usr/local/bin#${temp_dir}# /tmp/dgraph.sha256 | sha256sum -c - && \
     mv ${temp_dir}/* /usr/local/bin/ && \
     rmdir ${temp_dir}
+RUN rm /tmp/dgraph*
 
 # copy qmstr installation from previous stage
 RUN mkdir -p /go/bin
