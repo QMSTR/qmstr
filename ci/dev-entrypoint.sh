@@ -2,6 +2,7 @@
 set -e
 
 function start_dgraph() {
+    dgraph version
     dgraph zero &
     dgraph server --lru_mb=2048 --zero=localhost:5080 &
 }
