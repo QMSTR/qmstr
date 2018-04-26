@@ -90,16 +90,19 @@ func validateConfig(configuration *MasterConfig) error {
 		return fmt.Errorf("empty configuration -- check indentation")
 	}
 
+	uniqueFields := map[string]map[string]struct{}{}
+	uniqueFields["Name"] = map[string]struct{}{}
+
 	// Validate analyzers
 	for idx, analyzer := range configuration.Analysis {
-		err := validateFields(analyzer, "Name", "Analyzer")
+		err := validateFields(analyzer, uniqueFields, "Name", "Analyzer")
 		if err != nil {
 			return fmt.Errorf("%d. analyzer misconfigured %v", idx+1, err)
 		}
 	}
 	// Validate reporters
 	for idx, reporter := range configuration.Reporting {
-		err := validateFields(reporter, "Name", "Reporter")
+		err := validateFields(reporter, uniqueFields, "Name", "Reporter")
 		if err != nil {
 			return fmt.Errorf("%d. reporter misconfigured %v", idx+1, err)
 		}
@@ -107,13 +110,22 @@ func validateConfig(configuration *MasterConfig) error {
 	return nil
 }
 
-func validateFields(structure interface{}, fields ...string) error {
+func validateFields(structure interface{}, uniqueFields map[string]map[string]struct{}, fields ...string) error {
 	v := reflect.ValueOf(structure)
 	for _, field := range fields {
+		trackSet := map[string]struct{}{}
+		if val, ok := uniqueFields[field]; ok {
+			trackSet = val
+		}
 		f := v.FieldByName(field)
 		if !f.IsValid() || f.Kind() != reflect.String || f.String() == "" {
 			return fmt.Errorf("%s invalid", field)
 		}
+		if _, ok := trackSet[f.String()]; ok {
+			return fmt.Errorf("duplicate value of %s in %s", f.String(), field)
+		}
+		trackSet[f.String()] = struct{}{}
+
 	}
 	return nil
 }
