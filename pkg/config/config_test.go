@@ -85,7 +85,8 @@ package:
         tester: "Endocode"
 `
 	_, err := readConfig([]byte(config))
-	if err == nil {
+	if err == nil || err.Error() != "1. reporter misconfigured Name invalid" {
+		t.Log(err)
 		t.Fail()
 	}
 }
@@ -127,7 +128,8 @@ package:
         tester: "Endocode"
 `
 	_, err := readConfig([]byte(config))
-	if err == nil {
+	if err == nil || err.Error() != "2. analyzer misconfigured duplicate value of The Testalyzer in Name" {
+		t.Log(err)
 		t.Fail()
 	}
 }
