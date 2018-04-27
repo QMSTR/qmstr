@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"os/exec"
+	"path/filepath"
 	"time"
 
 	"github.com/QMSTR/qmstr/pkg/config"
@@ -40,7 +41,7 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		phase.currentToken = src.Int63()
 
 		log.Printf("Running analyzer %s ...\n", analyzerName)
-		cmd := exec.Command(analyzerName, "--aserv", phase.rpcAddress, "--aid", fmt.Sprintf("%d", idx))
+		cmd := exec.Command(analyzerName, "--aserv", phase.serverConfig.RPCAddress, "--aid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			logModuleError(analyzerName, out)
@@ -78,7 +79,8 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 		return nil, fmt.Errorf("Invalid analyzer id %d", idx)
 	}
 	config := phase.config[idx]
-	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub, Token: phase.currentToken}, nil
+	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub, Token: phase.currentToken,
+		CacheDir: filepath.Join(phase.serverConfig.CacheDir, config.Analyzer, config.Name)}, nil
 }
 
 func (phase *serverPhaseAnalysis) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {

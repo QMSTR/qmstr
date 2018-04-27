@@ -53,7 +53,7 @@ func (r *Reporter) RunReporterModule() error {
 
 	err = r.module.Configure(configResp.ConfigMap)
 	if err != nil {
-		return fmt.Errorf("failed to configure module %s %v", r.GetModuleName(), err)
+		return fmt.Errorf("failed to configure reporter module %s %v", r.GetModuleName(), err)
 	}
 
 	resp, err := r.reportingService.GetPackageNode(context.Background(), &service.ReportRequest{Session: configResp.Session})
