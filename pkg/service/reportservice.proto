@@ -20,6 +20,7 @@ message ReporterConfigResponse {
   string session = 1;
   map<string, string> configMap = 2;
   string cacheDir = 3;
+  string name = 4;
 }
 
 service ReportService {

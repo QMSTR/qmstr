@@ -80,7 +80,7 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 	}
 	config := phase.config[idx]
 	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub, Token: phase.currentToken,
-		CacheDir: filepath.Join(phase.serverConfig.CacheDir, config.Analyzer, config.Name)}, nil
+		CacheDir: filepath.Join(phase.serverConfig.CacheDir, config.Analyzer, config.Name), Name: config.Name}, nil
 }
 
 func (phase *serverPhaseAnalysis) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {

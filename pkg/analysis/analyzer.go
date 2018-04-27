@@ -20,6 +20,7 @@ type Analyzer struct {
 	module          AnalyzerModule
 	id              int32
 	name            string
+	cacheDir        string
 }
 
 type AnalyzerModule interface {
@@ -27,7 +28,7 @@ type AnalyzerModule interface {
 	Analyze(node *service.FileNode) (*service.InfoNodeSlice, error)
 }
 
-func NewAnalyzer(name string, module AnalyzerModule) *Analyzer {
+func NewAnalyzer(module AnalyzerModule) *Analyzer {
 	var serviceAddress string
 	var anaID int32
 	flag.StringVar(&serviceAddress, "aserv", "localhost:50051", "Analyzer service address")
@@ -40,7 +41,7 @@ func NewAnalyzer(name string, module AnalyzerModule) *Analyzer {
 	}
 	anaServiceClient := service.NewAnalysisServiceClient(conn)
 
-	return &Analyzer{id: anaID, module: module, analysisService: anaServiceClient, name: name}
+	return &Analyzer{id: anaID, module: module, analysisService: anaServiceClient}
 }
 
 func (a *Analyzer) GetModuleName() string {
@@ -53,6 +54,9 @@ func (a *Analyzer) RunAnalyzerModule() error {
 		log.Printf("Could not get configuration %v\n", err)
 		os.Exit(master.ReturnAnalysisServiceCommFailed)
 	}
+
+	a.name = configResp.Name
+	a.cacheDir = configResp.CacheDir
 
 	err = a.module.Configure(configResp.ConfigMap)
 	if err != nil {

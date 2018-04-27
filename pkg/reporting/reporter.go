@@ -16,6 +16,7 @@ type Reporter struct {
 	module           ReporterModule
 	id               int32
 	name             string
+	cacheDir         string
 }
 
 type ReporterModule interface {
@@ -50,6 +51,9 @@ func (r *Reporter) RunReporterModule() error {
 	if err != nil {
 		return fmt.Errorf("could not get configuration %v", err)
 	}
+
+	r.name = configResp.Name
+	r.cacheDir = configResp.CacheDir
 
 	err = r.module.Configure(configResp.ConfigMap)
 	if err != nil {
