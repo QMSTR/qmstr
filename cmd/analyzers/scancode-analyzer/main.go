@@ -24,7 +24,7 @@ type ScancodeAnalyzer struct {
 }
 
 func main() {
-	analyzer := analysis.NewAnalyzer("Scancode Analyzer", &ScancodeAnalyzer{})
+	analyzer := analysis.NewAnalyzer(&ScancodeAnalyzer{})
 	if err := analyzer.RunAnalyzerModule(); err != nil {
 		log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
 		os.Exit(master.ReturnAnalyzerFailed)

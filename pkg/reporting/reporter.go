@@ -52,6 +52,7 @@ func (r *Reporter) RunReporterModule() error {
 		return fmt.Errorf("could not get reporter configuration %v", err)
 	}
 
+	// Set module name
 	r.name = configResp.Name
 	r.cacheDir = configResp.CacheDir
 

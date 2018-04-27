@@ -50,8 +50,16 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 		return nil, fmt.Errorf("Invalid reporter id %d", idx)
 	}
 	config := phase.config[idx]
+
+	config.Config["name"] = config.Name
+
+	// Set cacheDir, if not overriden
+	if _, ok := config.Config["cacheDir"]; !ok {
+		config.Config["cacheDir"] = filepath.Join(phase.serverConfig.CacheDir, config.Reporter, config.Name)
+	}
+
 	return &service.ReporterConfigResponse{ConfigMap: config.Config, Session: phase.session,
-		CacheDir: filepath.Join(phase.serverConfig.CacheDir, config.Reporter, config.Name), Name: config.Name}, nil
+		CacheDir: config.Config["cacheDir"], Name: config.Name}, nil
 }
 
 func (phase *serverPhaseReport) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
