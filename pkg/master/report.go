@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/service"
@@ -20,7 +21,7 @@ func (phase *serverPhaseReport) Activate() error {
 	for idx, reporterConfig := range phase.config {
 		reporterName := reporterConfig.Reporter
 
-		cmd := exec.Command(reporterName, "--rserv", phase.rpcAddress, "--rid", fmt.Sprintf("%d", idx))
+		cmd := exec.Command(reporterName, "--rserv", phase.serverConfig.RPCAddress, "--rid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			logModuleError(reporterName, out)
@@ -49,7 +50,8 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 		return nil, fmt.Errorf("Invalid reporter id %d", idx)
 	}
 	config := phase.config[idx]
-	return &service.ReporterConfigResponse{ConfigMap: config.Config, Session: phase.session}, nil
+	return &service.ReporterConfigResponse{ConfigMap: config.Config, Session: phase.session,
+		CacheDir: filepath.Join(phase.serverConfig.CacheDir, config.Reporter, config.Name)}, nil
 }
 
 func (phase *serverPhaseReport) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {

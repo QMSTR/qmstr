@@ -34,6 +34,7 @@ message AnalyzerConfigResponse {
     map<string, string> configMap = 2;
     repeated PathSubstitution pathSub = 3;
     int64 token = 4;
+    string cacheDir = 5;
 }
 
 service AnalysisService {

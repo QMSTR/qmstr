@@ -35,11 +35,11 @@ type serverPhase interface {
 }
 
 type genericServerPhase struct {
-	Name       string
-	phaseId    int32
-	db         *database.DataBase
-	rpcAddress string
-	session    string
+	Name         string
+	phaseId      int32
+	db           *database.DataBase
+	session      string
+	serverConfig *config.ServerConfig
 }
 
 type server struct {
@@ -135,10 +135,10 @@ func InitAndRun(configfile string) error {
 	session := fmt.Sprintf("%x", sessionBytes)
 
 	phaseMap = map[int32]serverPhase{
-		1: &serverPhaseBuild{genericServerPhase{Name: "Build phase", phaseId: 1, db: db, session: session}},
-		2: newAnalysisPhase(genericServerPhase{Name: "Analysis phase", phaseId: 2, db: db, rpcAddress: masterConfig.Server.RPCAddress, session: session},
+		1: &serverPhaseBuild{genericServerPhase{Name: "Build phase", phaseId: 1, db: db, session: session, serverConfig: masterConfig.Server}},
+		2: newAnalysisPhase(genericServerPhase{Name: "Analysis phase", phaseId: 2, db: db, serverConfig: masterConfig.Server, session: session},
 			masterConfig.Analysis),
-		3: &serverPhaseReport{genericServerPhase{Name: "Reporting phase", phaseId: 3, db: db, rpcAddress: masterConfig.Server.RPCAddress, session: session}, masterConfig.Reporting},
+		3: &serverPhaseReport{genericServerPhase{Name: "Reporting phase", phaseId: 3, db: db, serverConfig: masterConfig.Server, session: session}, masterConfig.Reporting},
 	}
 
 	s := grpc.NewServer()
