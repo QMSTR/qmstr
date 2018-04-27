@@ -25,7 +25,7 @@ type ReporterModule interface {
 	PostReport() error
 }
 
-func NewReporter(name string, module ReporterModule) *Reporter {
+func NewReporter(module ReporterModule) *Reporter {
 	var serviceAddress string
 	var anaID int32
 	flag.StringVar(&serviceAddress, "rserv", "localhost:50051", "Reporting service address")
@@ -38,7 +38,7 @@ func NewReporter(name string, module ReporterModule) *Reporter {
 	}
 	reportingServiceClient := service.NewReportServiceClient(conn)
 
-	return &Reporter{id: anaID, module: module, reportingService: reportingServiceClient, name: name}
+	return &Reporter{id: anaID, module: module, reportingService: reportingServiceClient}
 }
 
 func (r *Reporter) GetModuleName() string {
@@ -49,7 +49,7 @@ func (r *Reporter) GetModuleName() string {
 func (r *Reporter) RunReporterModule() error {
 	configResp, err := r.reportingService.GetReporterConfig(context.Background(), &service.ReporterConfigRequest{ReporterID: r.id})
 	if err != nil {
-		return fmt.Errorf("could not get configuration %v", err)
+		return fmt.Errorf("could not get reporter configuration %v", err)
 	}
 
 	r.name = configResp.Name

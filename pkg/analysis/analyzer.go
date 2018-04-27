@@ -4,12 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 
 	"golang.org/x/net/context"
 
-	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/service"
 	flag "github.com/spf13/pflag"
 	"google.golang.org/grpc"
@@ -52,7 +50,7 @@ func (a *Analyzer) RunAnalyzerModule() error {
 	configResp, err := a.analysisService.GetAnalyzerConfig(context.Background(), &service.AnalyzerConfigRequest{AnalyzerID: a.id})
 	if err != nil {
 		log.Printf("Could not get configuration %v\n", err)
-		os.Exit(master.ReturnAnalysisServiceCommFailed)
+		return fmt.Errorf("could not get analyzer configuration %v", err)
 	}
 
 	a.name = configResp.Name
