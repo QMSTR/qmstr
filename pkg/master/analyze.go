@@ -79,8 +79,15 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 		return nil, fmt.Errorf("Invalid analyzer id %d", idx)
 	}
 	config := phase.config[idx]
+	config.Config["name"] = config.Name
+
+	// Set cacheDir, if not overriden
+	if _, ok := config.Config["cacheDir"]; !ok {
+		config.Config["cacheDir"] = filepath.Join(phase.serverConfig.CacheDir, config.Analyzer, config.Name)
+
+	}
 	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub, Token: phase.currentToken,
-		CacheDir: filepath.Join(phase.serverConfig.CacheDir, config.Analyzer, config.Name), Name: config.Name}, nil
+		CacheDir: config.Config["cacheDir"], Name: config.Name}, nil
 }
 
 func (phase *serverPhaseAnalysis) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
