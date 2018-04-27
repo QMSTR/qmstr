@@ -54,7 +54,10 @@ func (a *Analyzer) RunAnalyzerModule() error {
 		os.Exit(master.ReturnAnalysisServiceCommFailed)
 	}
 
-	a.module.Configure(configResp.ConfigMap)
+	err = a.module.Configure(configResp.ConfigMap)
+	if err != nil {
+		return fmt.Errorf("failed to configure analyzer module %s %v", a.GetModuleName(), err)
+	}
 
 	nodeResp, err := a.analysisService.GetNodes(context.Background(), &service.NodeRequest{Type: configResp.TypeSelector})
 	if err != nil {
