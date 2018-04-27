@@ -51,7 +51,7 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 	}
 	config := phase.config[idx]
 	return &service.ReporterConfigResponse{ConfigMap: config.Config, Session: phase.session,
-		CacheDir: filepath.Join(phase.serverConfig.CacheDir, config.Reporter, config.Name)}, nil
+		CacheDir: filepath.Join(phase.serverConfig.CacheDir, config.Reporter, config.Name), Name: config.Name}, nil
 }
 
 func (phase *serverPhaseReport) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
