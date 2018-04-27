@@ -124,11 +124,97 @@ package:
         testfile: "/the/test"
   reporting:
     - reporter: test-reporter
+      name: "The reporter"
       config:
         tester: "Endocode"
 `
 	_, err := readConfig([]byte(config))
 	if err == nil || err.Error() != "2. analyzer misconfigured duplicate value of The Testalyzer in Name" {
+		t.Log(err)
+		t.Fail()
+	}
+}
+
+func TestMissingAnalyzerExecutableName(t *testing.T) {
+
+	var config = `
+package:
+  name: "The Test"
+  metadata:
+    Vendor: "Endocode"
+    OcFossLiaison: "Mirko Boehm"
+    OcComplianceContact: "foss@endocode.com"
+  server:
+    rpcaddress: ":12345"
+    dbaddress: "testhost:54321"
+    dbworkers: 4
+  analysis:
+    - name: "The Testalyzer"
+      selector: sourcecode
+      pathsub:
+        - old: "/the/path"
+          new: "/buildroot"
+      config:
+        workdir: "/buildroot"
+    - analyzer: test-analyzer-2
+      name: "The Testalyzer 2"
+      selector: sourcecode
+      pathsub:
+        - old: "/the/path"
+          new: "/buildroot"
+      config:
+        workdir: "/buildroot"
+        testfile: "/the/test"
+  reporting:
+    - reporter: test-reporter
+      name: "The reporter"
+      config:
+        tester: "Endocode"
+`
+	_, err := readConfig([]byte(config))
+	if err == nil || err.Error() != "1. analyzer misconfigured Analyzer invalid" {
+		t.Log(err)
+		t.Fail()
+	}
+}
+
+func TestMissingRepoterExecutableName(t *testing.T) {
+
+	var config = `
+package:
+  name: "The Test"
+  metadata:
+    Vendor: "Endocode"
+    OcFossLiaison: "Mirko Boehm"
+    OcComplianceContact: "foss@endocode.com"
+  server:
+    rpcaddress: ":12345"
+    dbaddress: "testhost:54321"
+    dbworkers: 4
+  analysis:
+    - name: "The Testalyzer"
+      analyzer: test-analyzer
+      selector: sourcecode
+      pathsub:
+        - old: "/the/path"
+          new: "/buildroot"
+      config:
+        workdir: "/buildroot"
+    - analyzer: test-analyzer
+      name: "The Testalyzer 2"
+      selector: sourcecode
+      pathsub:
+        - old: "/the/path"
+          new: "/buildroot"
+      config:
+        workdir: "/buildroot"
+        testfile: "/the/test"
+  reporting:
+    - config:
+        tester: "Endocode"
+`
+	_, err := readConfig([]byte(config))
+	if err == nil || err.Error() != "1. reporter misconfigured Name invalid" {
 		t.Log(err)
 		t.Fail()
 	}
