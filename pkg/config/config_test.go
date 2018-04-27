@@ -48,7 +48,7 @@ package:
 	}
 }
 
-func TestMissingModuleNameConfig(t *testing.T) {
+func TestMissingModuleInstanceName(t *testing.T) {
 
 	var config = `
 package:
@@ -90,7 +90,7 @@ package:
 	}
 }
 
-func TestDuplicateModuleNames(t *testing.T) {
+func TestDuplicateModuleInstanceNames(t *testing.T) {
 
 	var config = `
 package:
