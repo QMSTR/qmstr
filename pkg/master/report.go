@@ -57,9 +57,13 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 	if _, ok := config.Config["cacheDir"]; !ok {
 		config.Config["cacheDir"] = filepath.Join(phase.serverConfig.CacheDir, config.Reporter, config.PosixName)
 	}
+	// Set output dir, if not overriden
+	if _, ok := config.Config["outputDir"]; !ok {
+		config.Config["outputDir"] = filepath.Join(phase.serverConfig.OutputDir, config.Reporter, config.PosixName)
+	}
 
 	return &service.ReporterConfigResponse{ConfigMap: config.Config, Session: phase.session,
-		CacheDir: config.Config["cacheDir"], Name: config.Name}, nil
+		Name: config.Name}, nil
 }
 
 func (phase *serverPhaseReport) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {

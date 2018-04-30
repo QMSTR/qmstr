@@ -17,7 +17,6 @@ type Reporter struct {
 	module           ReporterModule
 	id               int32
 	name             string
-	cacheDir         string
 }
 
 type ReporterModule interface {
@@ -55,11 +54,17 @@ func (r *Reporter) RunReporterModule() error {
 
 	// Set module name
 	r.name = configResp.Name
-	r.cacheDir = configResp.CacheDir
+	cacheDir := configResp.ConfigMap["cacheDir"]
+	outDir := configResp.ConfigMap["outputDir"]
 
-	err = os.MkdirAll(r.cacheDir, os.ModePerm)
+	err = os.MkdirAll(cacheDir, os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("failed to create cache directory for module %s %v", r.GetModuleName(), err)
+	}
+
+	err = os.MkdirAll(outDir, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("failed to create output directory for module %s %v", r.GetModuleName(), err)
 	}
 
 	err = r.module.Configure(configResp.ConfigMap)

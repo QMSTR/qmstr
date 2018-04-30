@@ -33,6 +33,7 @@ type ServerConfig struct {
 	DBAddress  string
 	DBWorkers  int
 	CacheDir   string
+	OutputDir  string
 }
 
 type MasterConfig struct {
@@ -50,8 +51,9 @@ type QmstrConfig struct {
 func getDefaultConfig() *QmstrConfig {
 	return &QmstrConfig{
 		Package: &MasterConfig{
-			// TODO make default cache dir platform independent
-			Server: &ServerConfig{DBWorkers: 2, RPCAddress: ":50051", DBAddress: "localhost:9080", CacheDir: "/var/cache/qmstr"},
+			// TODO make default output and cache dir platform independent
+			Server: &ServerConfig{DBWorkers: 2, RPCAddress: ":50051", DBAddress: "localhost:9080",
+				CacheDir: "/var/cache/qmstr", OutputDir: "/var/qmstr"},
 		},
 	}
 }

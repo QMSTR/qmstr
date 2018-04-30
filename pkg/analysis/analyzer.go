@@ -19,7 +19,6 @@ type Analyzer struct {
 	module          AnalyzerModule
 	id              int32
 	name            string
-	cacheDir        string
 }
 
 type AnalyzerModule interface {
@@ -55,11 +54,17 @@ func (a *Analyzer) RunAnalyzerModule() error {
 	}
 
 	a.name = configResp.Name
-	a.cacheDir = configResp.CacheDir
+	cacheDir := configResp.ConfigMap["cacheDir"]
+	outDir := configResp.ConfigMap["outputDir"]
 
-	err = os.MkdirAll(a.cacheDir, os.ModePerm)
+	err = os.MkdirAll(cacheDir, os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("failed to create cache directory for module %s %v", a.GetModuleName(), err)
+	}
+
+	err = os.MkdirAll(outDir, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("failed to create output directory for module %s %v", a.GetModuleName(), err)
 	}
 
 	err = a.module.Configure(configResp.ConfigMap)

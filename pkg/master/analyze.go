@@ -85,8 +85,12 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 	if _, ok := config.Config["cacheDir"]; !ok {
 		config.Config["cacheDir"] = filepath.Join(phase.serverConfig.CacheDir, config.Analyzer, config.PosixName)
 	}
-	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub, Token: phase.currentToken,
-		CacheDir: config.Config["cacheDir"], Name: config.Name}, nil
+	// Set output dir, if not overriden
+	if _, ok := config.Config["outputDir"]; !ok {
+		config.Config["outputDir"] = filepath.Join(phase.serverConfig.OutputDir, config.Analyzer, config.PosixName)
+	}
+	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub,
+		Token: phase.currentToken, Name: config.Name}, nil
 }
 
 func (phase *serverPhaseAnalysis) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
