@@ -6,23 +6,26 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"regexp"
 
 	"github.com/QMSTR/qmstr/pkg/service"
 	yaml "gopkg.in/yaml.v2"
 )
 
 type Analysis struct {
-	Name     string `yaml:"name"`
-	Selector string
-	Analyzer string
-	PathSub  []*service.PathSubstitution
-	Config   map[string]string
+	Name      string `yaml:"name"`
+	PosixName string
+	Selector  string
+	Analyzer  string
+	PathSub   []*service.PathSubstitution
+	Config    map[string]string
 }
 
 type Reporting struct {
-	Name     string `yaml:"name"`
-	Reporter string
-	Config   map[string]string
+	Name      string `yaml:"name"`
+	PosixName string
+	Reporter  string
+	Config    map[string]string
 }
 
 type ServerConfig struct {
@@ -94,16 +97,23 @@ func validateConfig(configuration *MasterConfig) error {
 
 	uniqueFields := map[string]map[string]struct{}{}
 	uniqueFields["Name"] = map[string]struct{}{}
+	uniqueFields["PosixName"] = map[string]struct{}{}
 
 	// Validate analyzers
 	for idx, analyzer := range configuration.Analysis {
-		err := validateFields(analyzer, uniqueFields, "Name", "Analyzer")
+		if analyzer.PosixName == "" {
+			analyzer.PosixName = posixFullyPortableFilename(analyzer.Name)
+		}
+		err := validateFields(analyzer, uniqueFields, "Name", "Analyzer", "PosixName")
 		if err != nil {
 			return fmt.Errorf("%d. analyzer misconfigured %v", idx+1, err)
 		}
 	}
 	// Validate reporters
 	for idx, reporter := range configuration.Reporting {
+		if reporter.PosixName == "" {
+			reporter.PosixName = posixFullyPortableFilename(reporter.Name)
+		}
 		err := validateFields(reporter, uniqueFields, "Name", "Reporter")
 		if err != nil {
 			return fmt.Errorf("%d. reporter misconfigured %v", idx+1, err)
@@ -127,7 +137,13 @@ func validateFields(structure interface{}, uniqueFields map[string]map[string]st
 			return fmt.Errorf("duplicate value of %s in %s", f.String(), field)
 		}
 		trackSet[f.String()] = struct{}{}
-
 	}
+
 	return nil
+}
+
+func posixFullyPortableFilename(path string) string {
+	nonPosixChars := regexp.MustCompile(`[^A-Za-z0-9\._-]`)
+	posixPath := nonPosixChars.ReplaceAllString(path, "_")
+	return posixPath
 }

@@ -219,3 +219,47 @@ package:
 		t.Fail()
 	}
 }
+
+func TestImplicitDuplicatePosixNameConfig(t *testing.T) {
+
+	var config = `
+package:
+  name: "The Test"
+  metadata:
+    Vendor: "Endocode"
+    OcFossLiaison: "Mirko Boehm"
+    OcComplianceContact: "foss@endocode.com"
+  server:
+    rpcaddress: ":12345"
+    dbaddress: "testhost:54321"
+    dbworkers: 4
+  analysis:
+    - analyzer: test-analyzer
+      name: "The Testalyzer"
+      selector: sourcecode
+      pathsub:
+        - old: "/the/path"
+          new: "/buildroot"
+      config:
+        workdir: "/buildroot"
+    - analyzer: test-analyzer-2
+      name: "The_Testalyzer"
+      selector: sourcecode
+      pathsub:
+        - old: "/the/path"
+          new: "/buildroot"
+      config:
+        workdir: "/buildroot"
+        testfile: "/the/test"
+  reporting:
+    - reporter: test-reporter
+      name: "The test reporter"
+      config:
+        tester: "Endocode"
+`
+	_, err := readConfig([]byte(config))
+	if err == nil || err.Error() != "2. analyzer misconfigured duplicate value of The_Testalyzer in PosixName" {
+		t.Log(err)
+		t.Fail()
+	}
+}
