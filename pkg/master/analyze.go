@@ -83,7 +83,7 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 
 	// Set cacheDir, if not overriden
 	if _, ok := config.Config["cacheDir"]; !ok {
-		config.Config["cacheDir"] = filepath.Join(phase.serverConfig.CacheDir, config.Analyzer, config.Name)
+		config.Config["cacheDir"] = filepath.Join(phase.serverConfig.CacheDir, config.Analyzer, config.PosixName)
 	}
 	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub, Token: phase.currentToken,
 		CacheDir: config.Config["cacheDir"], Name: config.Name}, nil
