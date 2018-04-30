@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"golang.org/x/net/context"
@@ -55,6 +56,11 @@ func (a *Analyzer) RunAnalyzerModule() error {
 
 	a.name = configResp.Name
 	a.cacheDir = configResp.CacheDir
+
+	err = os.MkdirAll(a.cacheDir, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("failed to create cache directory for module %s %v", a.GetModuleName(), err)
+	}
 
 	err = a.module.Configure(configResp.ConfigMap)
 	if err != nil {
