@@ -3,6 +3,7 @@ package reporting
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"golang.org/x/net/context"
 
@@ -55,6 +56,11 @@ func (r *Reporter) RunReporterModule() error {
 	// Set module name
 	r.name = configResp.Name
 	r.cacheDir = configResp.CacheDir
+
+	err = os.MkdirAll(r.cacheDir, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("failed to create cache directory for module %s %v", r.GetModuleName(), err)
+	}
 
 	err = r.module.Configure(configResp.ConfigMap)
 	if err != nil {
