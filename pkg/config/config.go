@@ -144,8 +144,8 @@ func validateFields(structure interface{}, uniqueFields map[string]map[string]st
 	return nil
 }
 
-func posixFullyPortableFilename(path string) string {
+func posixFullyPortableFilename(filename string) string {
 	nonPosixChars := regexp.MustCompile(`[^A-Za-z0-9\._-]`)
-	posixPath := nonPosixChars.ReplaceAllString(path, "_")
-	return posixPath
+	posixFilename := nonPosixChars.ReplaceAllString(filename, "_")
+	return posixFilename
 }
