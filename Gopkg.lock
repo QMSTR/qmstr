@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  revision = "346938d642f2ec3594ed81d874461961cd0faa76"
+  version = "v1.1.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/dgraph-io/dgo"
   packages = [
@@ -30,6 +36,12 @@
   version = "v1.0.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/hashicorp/go-version"
+  packages = ["."]
+  revision = "23480c0665776210b5fbbac6eaaee40e3e6a96b7"
+
+[[projects]]
   name = "github.com/inconshreveable/mousetrap"
   packages = ["."]
   revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
@@ -42,6 +54,12 @@
   version = "v0.8.0"
 
 [[projects]]
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
   name = "github.com/spf13/cobra"
   packages = ["."]
   revision = "7b2c5ac9fc04fc5efafb60700713d4fa609b777b"
@@ -52,6 +70,15 @@
   packages = ["."]
   revision = "e57e3eeb33f795204c1ca35f56c44f83227c6e66"
   version = "v1.0.0"
+
+[[projects]]
+  name = "github.com/stretchr/testify"
+  packages = [
+    "assert",
+    "require"
+  ]
+  revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
+  version = "v1.2.1"
 
 [[projects]]
   branch = "master"
@@ -132,6 +159,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2d9b18f6feca2a07c8d254f0ae572132a646deb6c1b59b3e58ba7e5ec9307a35"
+  inputs-digest = "7581b0cb3d1dcf05e975e8bbc37a6f92fa26df350a713fda62e6eb1fee33d5ef"
   solver-name = "gps-cdcl"
   solver-version = 1
