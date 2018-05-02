@@ -12,27 +12,16 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # install golang tools
-RUN go get -u github.com/golang/protobuf/protoc-gen-go && \
-    go get -u github.com/golang/dep/cmd/dep
-
 RUN mkdir -p ${GOPATH}/src/github.com/QMSTR/qmstr && \
     mkdir ${GOPATH}/src/github.com/QMSTR/qmstr/cmd && \
     mkdir ${GOPATH}/src/github.com/QMSTR/qmstr/pkg
 ADD cmd ${GOPATH}/src/github.com/QMSTR/qmstr/cmd
 ADD pkg ${GOPATH}/src/github.com/QMSTR/qmstr/pkg
 COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
+COPY install.sh /tmp/install-qmstr.sh
 
-RUN cd $GOPATH/src/github.com/QMSTR/qmstr && \
-    dep ensure
-RUN go generate github.com/QMSTR/qmstr/cmd/qmstr-master
-RUN go install github.com/QMSTR/qmstr/cmd/qmstr-master && \
-    go install github.com/QMSTR/qmstr/cmd/qmstr-wrapper && \
-    go install github.com/QMSTR/qmstr/cmd/qmstr-cli && \
-    go install github.com/QMSTR/qmstr/cmd/qmstr
-
-RUN go install github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer && \
-    go install github.com/QMSTR/qmstr/cmd/analyzers/scancode-analyzer && \
-    go install github.com/QMSTR/qmstr/cmd/qmstr-reporter-html
+RUN chmod +x /tmp/install-qmstr.sh
+RUN /tmp/install-qmstr.sh
 
 # separate stage just to run the master unit tests:
 FROM builder as master_unit_tests
