@@ -14,7 +14,7 @@ function start_dgraph_web {
 # Generate and build
 /usr/local/bin/install-qmstr.sh -d
 /usr/local/bin/install-qmstr.sh -i
-(cd $GOPATH/src/github.com/QMSTR/qmstr/cmd/qmstr-reporter-html && ./setup.sh /usr/share/qmstr $GOPATH/src/github.com/QMSTR/qmstr)
+(cd $GOPATH/src/github.com/QMSTR/qmstr/cmd/reporters/qmstr-reporter-html && ./setup.sh /usr/share/qmstr $GOPATH/src/github.com/QMSTR/qmstr)
 
 start_dgraph
 start_dgraph_web
