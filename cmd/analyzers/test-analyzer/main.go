@@ -9,6 +9,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/analysis"
 	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/tester"
 )
 
 var testnode *service.FileNode
@@ -37,7 +38,7 @@ func (testanalyzer *TestAnalyzer) Analyze(node *service.FileNode) (*service.Info
 			F:    TestGraphIntegrity,
 		},
 	}
-	t := &DummyTestDeps{}
+	t := &tester.DummyTestDeps{}
 	testing.MainStart(t, testSuite, nil, nil).Run()
 	return &service.InfoNodeSlice{}, nil
 }
