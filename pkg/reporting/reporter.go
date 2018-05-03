@@ -7,6 +7,8 @@ import (
 
 	"golang.org/x/net/context"
 
+	goflag "flag"
+
 	"github.com/QMSTR/qmstr/pkg/service"
 	flag "github.com/spf13/pflag"
 	"google.golang.org/grpc"
@@ -30,6 +32,7 @@ func NewReporter(module ReporterModule) *Reporter {
 	var anaID int32
 	flag.StringVar(&serviceAddress, "rserv", "localhost:50051", "Reporting service address")
 	flag.Int32Var(&anaID, "rid", -1, "unique reporter id")
+	flag.CommandLine.AddGoFlagSet(goflag.CommandLine)
 	flag.Parse()
 
 	conn, err := grpc.Dial(serviceAddress, grpc.WithInsecure(), grpc.WithBlock())
