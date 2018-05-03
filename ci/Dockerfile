@@ -87,6 +87,7 @@ COPY --from=builder /go/bin/qmstr-master /go/bin/qmstr-master
 COPY --from=builder /go/bin/spdx-analyzer /go/bin/spdx-analyzer
 COPY --from=builder /go/bin/scancode-analyzer /go/bin/scancode-analyzer
 COPY --from=builder /go/bin/test-analyzer /go/bin/test-analyzer
+COPY --from=builder /go/bin/test-reporter /go/bin/test-reporter
 COPY --from=builder /go/bin/qmstr-reporter-html /go/bin/qmstr-reporter-html
 COPY --from=builder /usr/local/bin/pyqmstr-spdx-analyzer /usr/local/bin/pyqmstr-spdx-analyzer
 
