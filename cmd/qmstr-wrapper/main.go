@@ -1,4 +1,4 @@
-//go:generate protoc -I ../../pkg/service --go_out=plugins=grpc:../../pkg/service ../../pkg/service/datamodel.proto ../../pkg/service/analyzerservice.proto ../../pkg/service/buildservice.proto ../../pkg/service/controlservice.proto  ../../pkg/service/reportservice.proto
+//go:generate protoc -I ../../proto --go_out=plugins=grpc:../../pkg/service ../../proto/datamodel.proto ../../proto/analyzerservice.proto ../../proto/buildservice.proto ../../proto/controlservice.proto  ../../proto/reportservice.proto
 package main
 
 import (
