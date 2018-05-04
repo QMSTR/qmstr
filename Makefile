@@ -1,6 +1,9 @@
 PROTO_PYTHON_FILES = $(shell find python/ -type f -name '*_pb2*.py' -printf '%p ')
 PYTHON_FILES = $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
 GO_PKGS = $(shell go list ./... | grep -v /vendor)
+GO_BIN = $(GOPATH)/bin
+GOMETALINTER = $(GO_BIN)/gometalinter
+GODEP = $(GO_BIN)/dep
 
 generate: go_proto python_proto
 
@@ -24,3 +27,17 @@ checkpep8: $(PYTHON_FILES)
 .PHONY: gotest
 gotest:
 	go test $(GO_PKGS)
+
+$(GOMETALINTER):
+	go get -u github.com/alecthomas/gometalinter
+	gometalinter --install &> /dev/null
+
+.PHONY: golint
+golint:	$(GOMETALINTER)
+	gometalinter ./... --vendor
+
+$(GODEP):
+	go get -u github.com/golang/dep
+
+godep: $(GODEP)
+	dep ensure
