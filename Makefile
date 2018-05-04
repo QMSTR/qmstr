@@ -1,3 +1,6 @@
+PROTO_PYTHON_FILES = $(shell find python/ -type f -name '*_pb2*.py' -printf '%p ')
+PYTHON_FILES = $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
+
 generate: go_proto python_proto
 
 go_proto:
@@ -10,3 +13,6 @@ python_proto:
 clean:
 	rm python/service/*_pb2*.py
 	rm pkg/service/*.pb.go
+
+checkpep8: $(PYTHON_FILES)
+	autopep8 --diff $^
