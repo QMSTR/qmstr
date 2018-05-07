@@ -49,3 +49,7 @@ godep: $(GODEP)
 
 $(QMSTR_GO_BINARIES): godep go_proto gotest
 	go build github.com/QMSTR/qmstr/cmd/$@
+
+.PHONY: container
+container: ci/Dockerfile
+	docker build --no-cache -f ci/Dockerfile -t qmstr/master --target master .
