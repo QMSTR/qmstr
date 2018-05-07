@@ -53,3 +53,7 @@ $(QMSTR_GO_BINARIES): godep go_proto gotest
 .PHONY: container
 container: ci/Dockerfile
 	docker build --no-cache -f ci/Dockerfile -t qmstr/master --target master .
+
+.PHONY: devcontainer
+devcontainer: ci/Dockerfile
+	docker build --no-cache -f ci/Dockerfile -t qmstr/dev --target dev .

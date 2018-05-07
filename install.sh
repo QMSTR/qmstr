@@ -24,6 +24,11 @@ function installqmstr() {
     go install -v github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer
     go install -v github.com/QMSTR/qmstr/cmd/analyzers/scancode-analyzer
     go install -v github.com/QMSTR/qmstr/cmd/qmstr-reporter-html
+    pushd $GOPATH/src/github.com/QMSTR/qmstr
+    make python_proto
+    pip install python/pyqmstr
+    pip install python/spdx-analyzer
+    popd
 }
 
 function usage() {
