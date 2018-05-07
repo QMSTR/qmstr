@@ -1,23 +1,77 @@
 #!/bin/bash
-go get -u github.com/golang/dep/cmd/dep
 
-go get -u github.com/QMSTR/qmstr
-pushd $GOPATH/src/github.com/QMSTR/qmstr
-dep ensure
-pushd vendor/github.com/golang/protobuf/protoc-gen-go
-go install
+function downloadqmstr() {
+    go get -u -v github.com/QMSTR/qmstr || true
+}
 
-popd
-popd
+function installdeps() {
+    go get -u -v github.com/golang/dep/cmd/dep
+    pushd $GOPATH/src/github.com/QMSTR/qmstr
+    dep ensure
+    echo "install the go protobuf comiler plugin"
+    pushd vendor/github.com/golang/protobuf/protoc-gen-go
+    go install
+    popd
+    popd
+}
 
-go generate github.com/QMSTR/qmstr/cmd/qmstr-master
+function installqmstr() {
+    go generate github.com/QMSTR/qmstr/cmd/qmstr-master
+    go install -v github.com/QMSTR/qmstr/cmd/qmstr-master
+    go install -v github.com/QMSTR/qmstr/cmd/qmstr-wrapper
+    go install -v github.com/QMSTR/qmstr/cmd/qmstr-cli
+    go install -v github.com/QMSTR/qmstr/cmd/qmstr
+    go install -v github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer
+    go install -v github.com/QMSTR/qmstr/cmd/analyzers/scancode-analyzer
+    go install -v github.com/QMSTR/qmstr/cmd/qmstr-reporter-html
+}
 
-go install github.com/QMSTR/qmstr/cmd/qmstr-master
-go install github.com/QMSTR/qmstr/cmd/qmstr-wrapper
-go install github.com/QMSTR/qmstr/cmd/qmstr-cli
-go install github.com/QMSTR/qmstr/cmd/qmstr
-go install github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer
-go install github.com/QMSTR/qmstr/cmd/analyzers/scancode-analyzer
-go install github.com/QMSTR/qmstr/cmd/qmstr-reporter-html
+function usage() {
+    echo "install.sh -q     # download qmstr sources"
+    echo "install.sh -d     # download and install dependencies"
+    echo "install.sh -i     # install qmstr only"
+    echo "install.sh        # download and install"
+    exit 1
+}
 
-echo Done.
+TASK=''
+
+while getopts ":diq" opt; do
+  case $opt in
+    d)
+      echo "installing deps" >&2
+      [[ -n "$TASK" ]] && usage || TASK='deps'
+      ;;
+    q)
+      echo "download qmstr sources" >&2
+      [[ -n "$TASK" ]] && usage || TASK='download'
+      ;;
+    i)
+      echo "installing qmstr only" >&2
+      [[ -n "$TASK" ]] && usage || TASK='install'
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      ;;
+  esac
+done
+
+case $TASK in
+    download)
+         downloadqmstr
+         ;;
+    deps)
+         installdeps
+         ;;
+    install)
+         installdeps
+         installqmstr
+         ;;
+    '')
+         echo "full clean install"
+         downloadqmstr
+         installdeps
+         installqmstr
+         ;;
+esac

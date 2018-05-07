@@ -17,11 +17,13 @@ RUN mkdir -p ${GOPATH}/src/github.com/QMSTR/qmstr && \
     mkdir ${GOPATH}/src/github.com/QMSTR/qmstr/pkg
 ADD cmd ${GOPATH}/src/github.com/QMSTR/qmstr/cmd
 ADD pkg ${GOPATH}/src/github.com/QMSTR/qmstr/pkg
+ADD proto ${GOPATH}/src/github.com/QMSTR/qmstr/proto
 COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
 COPY install.sh /tmp/install-qmstr.sh
 
 RUN chmod +x /tmp/install-qmstr.sh
-RUN /tmp/install-qmstr.sh
+RUN /tmp/install-qmstr.sh -d
+RUN /tmp/install-qmstr.sh -i
 
 # separate stage just to run the master unit tests:
 FROM builder as master_unit_tests
@@ -91,8 +93,8 @@ RUN chmod +x /docker-entrypoint.sh
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
-# development container for the master and other tools, based in the runtime stage:
-# The $GOROOT/src directory can be passed in as a volume, to allow for testing local changes.
+# development container for the master and other tools, based on the runtime stage:
+# The $GOROOT/src directory can be mounted in as a volume, to allow testing of local changes.
 FROM runtime as dev
 ENV GOPATH /go
 ENV PATH ${GOPATH}/bin:/usr/lib/go-1.9/bin:$PATH
@@ -106,15 +108,11 @@ RUN apt-get update && \
 
 EXPOSE 2345
 
-# install go deps
-RUN go get -u -v github.com/golang/protobuf/protoc-gen-go && \
-    go get -v github.com/dgraph-io/dgo && \
-    go get -u -v github.com/derekparker/delve/cmd/dlv && \
-    go get -v github.com/spf13/pflag
-
-RUN go get -v github.com/magefile/mage
-RUN go get -d -v github.com/gohugoio/hugo
-RUN (cd $GOPATH/src/github.com/gohugoio/hugo && mage vendor && mage install)
+# install additional go deps
+RUN go get -u -v github.com/derekparker/delve/cmd/dlv
+COPY --from=builder /tmp/install-qmstr.sh /usr/local/bin/install-qmstr.sh
+RUN /usr/local/bin/install-qmstr.sh -q
+RUN /usr/local/bin/install-qmstr.sh -d
 
 VOLUME /go/src
 
