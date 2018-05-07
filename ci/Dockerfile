@@ -2,13 +2,14 @@
 ARG DGRAPH_VERSION=1.0.5
 ARG HUGO_VERSION=0.39
 ARG SCANCODE_VERSION=2.9.1
+ARG GRPCIOTOOLS_VERSION=1.11.0
 
 # Create a container that only builds the software to be installed into the master container:
 FROM golang:1.9 as builder
 
 # install build deps
 RUN apt-get update && \
-    apt-get install -y git protobuf-compiler && \
+    apt-get install -y git protobuf-compiler python-pip && \
     rm -rf /var/lib/apt/lists/*
 
 # install golang tools
@@ -58,6 +59,8 @@ RUN mkdir /ninka && \
 # install scancode
 ARG SCANCODE_VERSION
 RUN pip install -U scancode-toolkit==${SCANCODE_VERSION}
+ARG GRPCIOTOOLS_VERSION
+RUN pip install -U grpcio-tools==${GRPCIOTOOLS_VERSION}
 
 # install dgraph
 ARG DGRAPH_VERSION
