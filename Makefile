@@ -59,5 +59,5 @@ container: ci/Dockerfile
 	docker build --no-cache -f ci/Dockerfile -t qmstr/master --target master .
 
 .PHONY: devcontainer
-devcontainer: ci/Dockerfile
-	docker build --no-cache -f ci/Dockerfile -t qmstr/dev --target dev .
+devcontainer: container
+	docker build -f ci/Dockerfile -t qmstr/dev --target dev .
