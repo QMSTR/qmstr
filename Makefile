@@ -28,6 +28,10 @@ clean:
 checkpep8: $(PYTHON_FILES)
 	@autopep8 --diff $^
 
+.PHONY: checkpep8
+autopep8: $(PYTHON_FILES)
+	@autopep8 -i $^
+
 .PHONY: gotest
 gotest:
 	go test $(GO_PKGS)
