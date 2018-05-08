@@ -1,3 +1,10 @@
+# generated protobuf code
 **/*.pb.go
+**/*_pb2.py
+**/*_pb2_grpc.py
+
+# go vendor dir
 vendor/
+
+# misc
 **/.DS_Store
