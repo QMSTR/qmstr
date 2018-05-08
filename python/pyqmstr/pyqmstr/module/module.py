@@ -1,13 +1,23 @@
 import grpc
 from pyqmstr.service.analyzerservice_pb2 import AnalyzerConfigRequest, NodeRequest
 from pyqmstr.service.analyzerservice_pb2_grpc import AnalysisServiceStub
+import logging
+
+
+def sanitize_address(address):
+    if address[0] == ":":
+        logging.warn("sanitizing localhost address")
+        return "localhost{}".format(address)
+    return address
 
 
 class QMSTR_Module(object):
     def __init__(self, address, aid):
         self.id = aid
         self.name = ""
-        channel = grpc.insecure_channel(address)
+        aserv_address = sanitize_address(address)
+        logging.info("Connecting to qmstr-master at %s", aserv_address)
+        channel = grpc.insecure_channel(aserv_address)
         self.aserv = AnalysisServiceStub(
             channel)
 
@@ -34,4 +44,3 @@ class Analyzer(QMSTR_Module):
 
         for node in node_response.fileNodes:
             self.analyzer_module.analyze(node)
-
