@@ -14,8 +14,10 @@ import (
 var (
 	conn                 *grpc.ClientConn
 	controlServiceClient service.ControlServiceClient
-	address              string
-	verbose              bool
+	// AddressOptional means the command does not require a server address (version, start, ...)
+	AddressOptional bool
+	address         string
+	verbose         bool
 	// Debug receives log messages in verbose mode
 	Debug *golog.Logger
 	// Log is the standard logger
@@ -29,11 +31,11 @@ var rootCmd = &cobra.Command{
 	Long: `qmstrctl controls and manages the Quartermaster master process.
 	It provides commands to run, quit and configure the master.`,
 	Run:              func(cmd *cobra.Command, args []string) {},
-	PersistentPreRun: SetupLogging,
+	PersistentPreRun: SetupPersistentVariables,
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&address, "cserv", "localhost:50051", "connect to control service")
+	rootCmd.PersistentFlags().StringVar(&address, "cserv", "", "connect to control service")
 	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "enable diagnostics")
 }
 
@@ -49,10 +51,10 @@ func Execute() {
 func setUpServer() {
 	var err error
 	conn, err = grpc.Dial(address, grpc.WithInsecure())
-	Log.Printf("Connecting to address: %v\n", address)
 	if err != nil {
 		Log.Fatalf("Failed to connect to master: %v", err)
 	}
+	Debug.Printf("Connected to master at %v\n", address)
 	controlServiceClient = service.NewControlServiceClient(conn)
 }
 
@@ -60,9 +62,16 @@ func tearDownServer() {
 	conn.Close()
 }
 
-// SetupLogging sets up logging
-func SetupLogging(cmd *cobra.Command, args []string) {
+// SetupPersistentVariables sets up logging
+func SetupPersistentVariables(cmd *cobra.Command, args []string) {
 	log := logging.Setup(verbose)
 	Debug = log.Debug
 	Log = log.Log
+
+	if len(address) == 0 {
+		address = os.Getenv("QMSTR_MASTER")
+	}
+	if len(address) == 0 && !AddressOptional {
+		Log.Fatalln("Error: master address not specified and not optional")
+	}
 }
