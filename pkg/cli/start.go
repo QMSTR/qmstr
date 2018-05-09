@@ -13,7 +13,7 @@ import (
 )
 
 const retryLimit = 16
-const minPort = 7686 // MSTR on the dial pad
+const minPort = 6787 // MSTR on the dial pad
 const portCount = 1024
 const maxPort = minPort + portCount
 
