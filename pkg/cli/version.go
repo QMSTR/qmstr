@@ -12,11 +12,10 @@ var minor = 1
 // quitCmd represents the quit command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Version of qmstr-cli",
-	Long:  `The current version of qmstr-cli`,
+	Short: "version of qmstrctl",
+	Long:  `prints the version of qmstr-cli`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("The qmstr-cli version: %d.%d\n", major, minor)
-
+		fmt.Printf("This is qmstrctl version %d.%d.\n", major, minor)
 	},
 }
 

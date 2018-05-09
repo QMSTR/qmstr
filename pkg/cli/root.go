@@ -16,11 +16,10 @@ var address string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "qmstr-cli",
-	Short: "Qmstr client connects to qmstr and serves",
-	Long: `Qmstr client connects to qmstr and serves depending 
-	what we want to do with it. Right now it just quits the server 
-	and prints the version of qmstr-cli.`,
+	Use:   "qmstrctl",
+	Short: "qmstrctl controls and manages the Quartermaster master",
+	Long: `qmstrctl controls and manages the Quartermaster master process.
+	It provides commands to run, quit and configure the master.`,
 	Run: func(cmd *cobra.Command, args []string) {
 	},
 }
@@ -29,6 +28,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&address, "cserv", "localhost:50051", "connect to control service")
 }
 
+// Execute the control program and perform the command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -36,8 +36,8 @@ func Execute() {
 	}
 }
 
+// Set up connection to the server
 func setUpServer() {
-	// Set up server connection
 	var err error
 	conn, err = grpc.Dial(address, grpc.WithInsecure())
 	fmt.Printf("Connecting to address: %v\n", address)
