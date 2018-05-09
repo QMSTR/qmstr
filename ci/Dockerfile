@@ -32,7 +32,7 @@ FROM builder as master_unit_tests
 CMD cd $GOPATH/src/github.com/QMSTR/qmstr && go test ./...
 
 # the runtime stage contains all the elements needed to run the master and the analysis tools:
-FROM ubuntu:17.10 as runtime
+FROM ubuntu:18.04 as runtime
 
 # install runtime deps
 RUN apt-get update && \
