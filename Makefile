@@ -6,29 +6,43 @@ GOMETALINTER := $(GO_BIN)/gometalinter
 GODEP := $(GO_BIN)/dep
 QMSTR_GO_BINARIES := qmstr-wrapper qmstr qmstr-master qmstr-cli
 
+GRPCIOTOOLS_VERSION := 1.11.0
+
 .PHONY: all
 all: $(QMSTR_GO_BINARIES)
 
 generate: go_proto python_proto
 
+venv: venv/bin/activate
+venv/bin/activate: requirements.txt 
+	test -d venv || virtualenv venv
+	venv/bin/pip install -Ur requirements.txt
+	touch venv/bin/activate
+
+requirements.txt:
+	echo grpcio-tools==$(GRPCIOTOOLS_VERSION) >> requirements.txt
+	echo pex >> requirements.txt
+
 go_proto:
 	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
 
-python_proto:
+python_proto: venv
 	@mkdir python/pyqmstr/service || true
-	python -m grpc_tools.protoc -Iproto --python_out=./python/pyqmstr/service --grpc_python_out=./python/pyqmstr/service proto/*.proto
+	venv/bin/python -m grpc_tools.protoc -Iproto --python_out=./python/pyqmstr/service --grpc_python_out=./python/pyqmstr/service proto/*.proto
 
 .PHONY: clean
 clean:
 	@rm python/pyqmstr/service/*_pb2*.py || true
 	@rm pkg/service/*.pb.go || true
 	@rm $(QMSTR_GO_BINARIES) || true
+	@rm -fr venv
+	@rm requirements.txt
 
 .PHONY: checkpep8
 checkpep8: $(PYTHON_FILES)
 	@autopep8 --diff $^
 
-.PHONY: checkpep8
+.PHONY: autopep8
 autopep8: $(PYTHON_FILES)
 	@autopep8 -i $^
 
