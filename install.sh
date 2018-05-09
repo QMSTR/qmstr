@@ -20,7 +20,7 @@ function installqmstr() {
     go generate github.com/QMSTR/qmstr/cmd/qmstr-master
     go install -v github.com/QMSTR/qmstr/cmd/qmstr-master
     go install -v github.com/QMSTR/qmstr/cmd/qmstr-wrapper
-    go install -v github.com/QMSTR/qmstr/cmd/qmstr-cli
+    go install -v github.com/QMSTR/qmstr/cmd/qmstrctl
     go install -v github.com/QMSTR/qmstr/cmd/qmstr
     go install -v github.com/QMSTR/qmstr/cmd/analyzers/pkg-analyzer
     go install -v github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer
