@@ -2,14 +2,13 @@
 ARG DGRAPH_VERSION=1.0.5
 ARG HUGO_VERSION=0.39
 ARG SCANCODE_VERSION=2.9.1
-ARG GRPCIOTOOLS_VERSION=1.11.0
 
 # Create a container that only builds the software to be installed into the master container:
 FROM golang:1.9 as builder
 
 # install build deps
 RUN apt-get update && \
-    apt-get install -y git protobuf-compiler python-pip && \
+    apt-get install -y git protobuf-compiler python-virtualenv python-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # install golang tools
@@ -19,6 +18,8 @@ RUN mkdir -p ${GOPATH}/src/github.com/QMSTR/qmstr && \
 ADD cmd ${GOPATH}/src/github.com/QMSTR/qmstr/cmd
 ADD pkg ${GOPATH}/src/github.com/QMSTR/qmstr/pkg
 ADD proto ${GOPATH}/src/github.com/QMSTR/qmstr/proto
+ADD python ${GOPATH}/src/github.com/QMSTR/qmstr/python
+ADD Makefile ${GOPATH}/src/github.com/QMSTR/qmstr/Makefile
 COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
 COPY install.sh /tmp/install-qmstr.sh
 
@@ -59,8 +60,6 @@ RUN mkdir /ninka && \
 # install scancode
 ARG SCANCODE_VERSION
 RUN pip install -U scancode-toolkit==${SCANCODE_VERSION}
-ARG GRPCIOTOOLS_VERSION
-RUN pip install -U grpcio-tools==${GRPCIOTOOLS_VERSION}
 
 # install dgraph
 ARG DGRAPH_VERSION
@@ -80,6 +79,8 @@ COPY --from=builder /go/bin/spdx-analyzer /go/bin/spdx-analyzer
 COPY --from=builder /go/bin/scancode-analyzer /go/bin/scancode-analyzer
 COPY --from=builder /go/bin/test-analyzer /go/bin/test-analyzer
 COPY --from=builder /go/bin/qmstr-reporter-html /go/bin/qmstr-reporter-html
+COPY --from=builder /usr/local/bin/pyqmstr-spdx-analyzer /usr/local/bin/pyqmstr-spdx-analyzer
+
 EXPOSE 50051
 # dgraph ratel web ui
 EXPOSE 8000
@@ -108,7 +109,7 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository ppa:gophers/archive && \
     apt-get update && \
-    apt-get install -y curl golang-1.9-go autoconf git libio-captureoutput-perl python python-pip protobuf-compiler
+    apt-get install -y curl golang-1.9-go autoconf git libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
 
 EXPOSE 2345
 

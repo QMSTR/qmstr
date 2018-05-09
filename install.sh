@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 function downloadqmstr() {
     go get -u -v github.com/QMSTR/qmstr || true
@@ -26,9 +27,8 @@ function installqmstr() {
     go install -v github.com/QMSTR/qmstr/cmd/analyzers/test-analyzer
     go install -v github.com/QMSTR/qmstr/cmd/qmstr-reporter-html
     pushd $GOPATH/src/github.com/QMSTR/qmstr
-    make python_proto
-    pip install python/pyqmstr
-    pip install python/spdx-analyzer
+    make clean
+    make install_python_modules
     popd
 }
 
