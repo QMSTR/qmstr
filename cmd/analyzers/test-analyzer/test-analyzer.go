@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -15,6 +16,7 @@ var testnode *service.FileNode
 type TestAnalyzer struct{}
 
 func main() {
+	fmt.Println("This is the testalyzer")
 	analyzer := analysis.NewAnalyzer(&TestAnalyzer{})
 	if err := analyzer.RunAnalyzerModule(); err != nil {
 		log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
@@ -27,6 +29,7 @@ func (testanalyzer *TestAnalyzer) Configure(configMap map[string]string) error {
 }
 
 func (testanalyzer *TestAnalyzer) Analyze(node *service.FileNode) (*service.InfoNodeSlice, error) {
+	fmt.Println("Testalyzer running tests")
 	testnode = node
 	testSuite := []testing.InternalTest{
 		{

@@ -9,6 +9,8 @@ import (
 
 	"golang.org/x/net/context"
 
+	goflag "flag"
+
 	"github.com/QMSTR/qmstr/pkg/service"
 	flag "github.com/spf13/pflag"
 	"google.golang.org/grpc"
@@ -31,6 +33,7 @@ func NewAnalyzer(module AnalyzerModule) *Analyzer {
 	var anaID int32
 	flag.StringVar(&serviceAddress, "aserv", "localhost:50051", "Analyzer service address")
 	flag.Int32Var(&anaID, "aid", -1, "unique analyzer id")
+	flag.CommandLine.AddGoFlagSet(goflag.CommandLine)
 	flag.Parse()
 
 	conn, err := grpc.Dial(serviceAddress, grpc.WithInsecure(), grpc.WithBlock())
