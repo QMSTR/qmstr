@@ -5,8 +5,10 @@ GO_BIN := $(GOPATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
 GODEP := $(GO_BIN)/dep
 QMSTR_GO_BINARIES := qmstr-wrapper qmstr qmstr-master qmstr-cli
-
 GRPCIOTOOLS_VERSION := 1.11.0
+
+QMSTR_PYTHON_SPDX_ANALYZER := out/pyqmstr-spdx-analyzer
+QMSTR_PYTHON_MODULES := $(QMSTR_PYTHON_SPDX_ANALYZER)
 
 .PHONY: all
 all: $(QMSTR_GO_BINARIES)
@@ -14,7 +16,7 @@ all: $(QMSTR_GO_BINARIES)
 generate: go_proto python_proto
 
 venv: venv/bin/activate
-venv/bin/activate: requirements.txt 
+venv/bin/activate: requirements.txt
 	test -d venv || virtualenv venv
 	venv/bin/pip install -Ur requirements.txt
 	touch venv/bin/activate
@@ -22,6 +24,7 @@ venv/bin/activate: requirements.txt
 requirements.txt:
 	echo grpcio-tools==$(GRPCIOTOOLS_VERSION) >> requirements.txt
 	echo pex >> requirements.txt
+	echo autopep8 >> requirements.txt
 
 go_proto:
 	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
@@ -35,16 +38,17 @@ clean:
 	@rm python/pyqmstr/service/*_pb2*.py || true
 	@rm pkg/service/*.pb.go || true
 	@rm $(QMSTR_GO_BINARIES) || true
-	@rm -fr venv
-	@rm requirements.txt
+	@rm -fr venv || true
+	@rm requirements.txt || true
+	@rm -r out || true
 
 .PHONY: checkpep8
-checkpep8: $(PYTHON_FILES)
-	@autopep8 --diff $^
+checkpep8: $(PYTHON_FILES) venv
+	venv/bin/autopep8 --diff $(filter-out venv, $^)
 
 .PHONY: autopep8
-autopep8: $(PYTHON_FILES)
-	@autopep8 -i $^
+autopep8: $(PYTHON_FILES) venv
+	venv/bin/autopep8 -i $(filter-out venv, $^)
 
 .PHONY: gotest
 gotest:
@@ -75,3 +79,14 @@ container: ci/Dockerfile
 .PHONY: devcontainer
 devcontainer: container
 	docker build -f ci/Dockerfile -t qmstr/dev --target dev .
+
+.PHONY: pyqmstr-spdx-analyzer
+pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
+
+$(QMSTR_PYTHON_SPDX_ANALYZER): python_proto
+	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer -e spdxanalyzer.__main__:main -o $@
+
+python_modules: $(QMSTR_PYTHON_MODULES)
+
+install_python_modules: $(QMSTR_PYTHON_MODULES)
+	cp $^ /usr/local/bin
