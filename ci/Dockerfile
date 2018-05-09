@@ -38,7 +38,7 @@ RUN /tmp/install-qmstr.sh -i
 
 # separate stage just to run the master unit tests:
 FROM builder as master_unit_tests
-CMD cd $GOPATH/src/github.com/QMSTR/qmstr && go test ./...
+CMD cd $GOPATH/src/github.com/QMSTR/qmstr && make gotest
 
 # the runtime stage contains all the elements needed to run the master and the analysis tools:
 FROM ubuntu:18.04 as runtime

@@ -51,7 +51,7 @@ autopep8: $(PYTHON_FILES) venv
 	venv/bin/autopep8 -i $(filter-out venv, $^)
 
 .PHONY: gotest
-gotest:
+gotest: go_proto
 	go test $(GO_PKGS)
 
 $(GOMETALINTER):
