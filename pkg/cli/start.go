@@ -23,25 +23,25 @@ func startMaster(cmd *cobra.Command, args []string) {
 		port := rand.Intn(portCount) + minPort
 		wd, err := os.Getwd()
 		if err != nil {
-			fmt.Println("unable to determine current working directory")
+			Log.Println("unable to determine current working directory")
 			os.Exit(1)
 		}
-		fmt.Printf("Starting Quartermaster master with port %d...\n", port)
+		Log.Printf("Starting Quartermaster master with port %d...\n", port)
 		cmd := exec.Command("docker", "run", "-d", "-p", fmt.Sprintf("%d:50051", port),
 			"-v", fmt.Sprintf("%s:/buildroot", wd), "qmstr/master")
+		Debug.Printf("master command line: \"%s\".\n", strings.Join(cmd.Args, " "))
 		err = cmd.Run()
 		switch value := err.(type) {
 		case *exec.ExitError:
 			ws := value.Sys().(syscall.WaitStatus)
-			fmt.Printf("Master failed to start: %v (exit status %d).\nRetrying to see if there was a problem allocating the port.\n", err, ws.ExitStatus())
-			fmt.Printf("Note: master command line was \"%s\".\n", strings.Join(cmd.Args, " "))
+			Log.Printf("Master failed to start: %v (exit status %d).\nRetrying to see if there was a problem allocating the port.\n", err, ws.ExitStatus())
 		default:
 			fmt.Printf("export QMSTR_MASTER=localhost:%d\n", port)
-			fmt.Println("Done.")
+			Log.Println("Done.")
 			return
 		}
 	}
-	fmt.Printf("Error starting the Quartermaster master. I retried %d times.\n", retryLimit)
+	Log.Printf("Error starting the Quartermaster master. I retried %d times.\n", retryLimit)
 }
 
 var startCmd = &cobra.Command{
