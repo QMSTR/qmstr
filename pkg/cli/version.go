@@ -20,5 +20,6 @@ var versionCmd = &cobra.Command{
 }
 
 func init() {
+	AddressOptional = true
 	rootCmd.AddCommand(versionCmd)
 }

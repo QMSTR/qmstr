@@ -26,7 +26,7 @@ func startMaster(cmd *cobra.Command, args []string) {
 			Log.Println("unable to determine current working directory")
 			os.Exit(1)
 		}
-		Log.Printf("Starting Quartermaster master with port %d...\n", port)
+		Debug.Printf("Starting Quartermaster master with port %d...\n", port)
 		cmd := exec.Command("docker", "run", "-d", "-p", fmt.Sprintf("%d:50051", port),
 			"-v", fmt.Sprintf("%s:/buildroot", wd), "qmstr/master")
 		Debug.Printf("master command line: \"%s\".\n", strings.Join(cmd.Args, " "))
@@ -37,7 +37,7 @@ func startMaster(cmd *cobra.Command, args []string) {
 			Log.Printf("Master failed to start: %v (exit status %d).\nRetrying to see if there was a problem allocating the port.\n", err, ws.ExitStatus())
 		default:
 			fmt.Printf("export QMSTR_MASTER=localhost:%d\n", port)
-			Log.Println("Done.")
+			Debug.Println("Done.")
 			return
 		}
 	}
@@ -52,5 +52,6 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
+	AddressOptional = true
 	rootCmd.AddCommand(startCmd)
 }
