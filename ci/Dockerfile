@@ -4,7 +4,16 @@ ARG HUGO_VERSION=0.39
 ARG SCANCODE_VERSION=2.9.1
 
 # Create a container that only builds the software to be installed into the master container:
-FROM golang:1.9 as builder
+FROM ubuntu:18.04 as builder
+
+ENV GOPATH /go
+ENV PATH ${GOPATH}/bin:/usr/lib/go-1.9/bin:$PATH
+# install golang 1.9
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:gophers/archive && \
+    apt-get update && \
+    apt-get install -y curl golang-1.9-go autoconf git libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
 
 # install build deps
 RUN apt-get update && \
