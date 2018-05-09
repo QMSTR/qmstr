@@ -12,11 +12,7 @@ function start_dgraph_web {
 }
 
 # Generate and build
-go generate github.com/QMSTR/qmstr/cmd/qmstr-master
-go install github.com/QMSTR/qmstr/cmd/qmstr-master
-go install github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer
-go install github.com/QMSTR/qmstr/cmd/analyzers/scancode-analyzer
-go install github.com/QMSTR/qmstr/cmd/qmstr-reporter-html
+/usr/local/bin/install-qmstr.sh -q
 (cd $GOPATH/src/github.com/QMSTR/qmstr/cmd/qmstr-reporter-html && ./setup.sh /usr/share/qmstr $GOPATH/src/github.com/QMSTR/qmstr)
 
 start_dgraph
