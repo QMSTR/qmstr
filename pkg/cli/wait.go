@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"os"
 	"time"
 
@@ -32,7 +31,7 @@ func init() {
 func awaitServer() {
 	go func() {
 		<-time.After(time.Second * time.Duration(timeout))
-		fmt.Printf("wait for qmstr-master timed out after %d seconds\n", timeout)
+		Log.Printf("wait for qmstr-master timed out after %d seconds\n", timeout)
 		os.Exit(ReturnCodeTimeout)
 	}()
 	for {
