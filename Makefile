@@ -84,7 +84,7 @@ devcontainer: container
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
 
 $(QMSTR_PYTHON_SPDX_ANALYZER): python_proto
-	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer -e spdxanalyzer.__main__:main -o $@
+	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer -f /tmp/wheelhouse -e spdxanalyzer.__main__:main -o $@
 
 python_modules: $(QMSTR_PYTHON_MODULES)
 

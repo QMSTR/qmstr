@@ -131,6 +131,8 @@ RUN /usr/local/bin/install-qmstr.sh -d
 
 VOLUME /go/src
 
+COPY --from=builder /root/.pex/build/grpcio-1.11.0*.whl /tmp/wheelhouse/
+
 COPY ci/dev-entrypoint.sh /dev-entrypoint.sh
 RUN chmod +x /dev-entrypoint.sh
 ENTRYPOINT [ "/dev-entrypoint.sh" ]
