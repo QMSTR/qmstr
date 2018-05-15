@@ -59,6 +59,8 @@ var (
 		"-shared":          struct{}{},
 		"-static":          struct{}{},
 		"-dynamiclib":      struct{}{},
+		"-dumpversion":     struct{}{},
+		"-dM":              struct{}{},
 		"--version":        struct{}{},
 	}
 
