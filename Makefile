@@ -31,11 +31,11 @@ go_proto:
 
 python_proto: venv
 	@mkdir python/pyqmstr/service || true
-	venv/bin/python -m grpc_tools.protoc -Iproto --python_out=./python/pyqmstr/service --grpc_python_out=./python/pyqmstr/service proto/*.proto
+	venv/bin/python -m grpc_tools.protoc -Iproto --python_out=./python/pyqmstr/pyqmstr/service --grpc_python_out=./python/pyqmstr/pyqmstr/service proto/*.proto
 
 .PHONY: clean
 clean:
-	@rm python/pyqmstr/service/*_pb2*.py || true
+	@rm $(PROTO_PYTHON_FILES) || true
 	@rm pkg/service/*.pb.go || true
 	@rm $(QMSTR_GO_BINARIES) || true
 	@rm -fr venv || true
