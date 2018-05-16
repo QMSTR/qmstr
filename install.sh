@@ -22,6 +22,7 @@ function installqmstr() {
     go install -v github.com/QMSTR/qmstr/cmd/qmstr-wrapper
     go install -v github.com/QMSTR/qmstr/cmd/qmstr-cli
     go install -v github.com/QMSTR/qmstr/cmd/qmstr
+    go install -v github.com/QMSTR/qmstr/cmd/analyzers/pkg-analyzer
     go install -v github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer
     go install -v github.com/QMSTR/qmstr/cmd/analyzers/scancode-analyzer
     go install -v github.com/QMSTR/qmstr/cmd/analyzers/test-analyzer
