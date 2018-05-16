@@ -30,8 +30,8 @@ ADD proto ${GOPATH}/src/github.com/QMSTR/qmstr/proto
 ADD python ${GOPATH}/src/github.com/QMSTR/qmstr/python
 ADD Makefile ${GOPATH}/src/github.com/QMSTR/qmstr/Makefile
 COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
-COPY install.sh /tmp/install-qmstr.sh
 
+COPY install.sh /tmp/install-qmstr.sh
 RUN chmod +x /tmp/install-qmstr.sh
 RUN /tmp/install-qmstr.sh -d
 RUN /tmp/install-qmstr.sh -i
@@ -131,7 +131,9 @@ RUN /usr/local/bin/install-qmstr.sh -d
 
 VOLUME /go/src
 
-COPY --from=builder /root/.pex/build/grpcio-1.11.0*.whl /tmp/wheelhouse/
+# cache wheels
+COPY --from=builder /root/.pex/build /root/.pex/build
+RUN rm /root/.pex/build/*qmstr*
 
 COPY ci/dev-entrypoint.sh /dev-entrypoint.sh
 RUN chmod +x /dev-entrypoint.sh
