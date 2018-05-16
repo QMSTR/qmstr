@@ -10,4 +10,4 @@ function start_dgraph() {
 
 start_dgraph
 
-exec /go/bin/qmstr-master --config /buildroot/qmstr.yaml
+exec /usr/local/bin/qmstr-master --config /buildroot/qmstr.yaml

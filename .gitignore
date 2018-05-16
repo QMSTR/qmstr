@@ -8,3 +8,4 @@ vendor/
 
 # misc
 **/.DS_Store
+Gopkg.lock

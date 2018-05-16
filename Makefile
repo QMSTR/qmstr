@@ -4,14 +4,23 @@ GO_PKGS := $(shell go list ./... | grep -v /vendor)
 GO_BIN := $(GOPATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
 GODEP := $(GO_BIN)/dep
-QMSTR_GO_BINARIES := qmstr-wrapper qmstr qmstr-master qmstr-cli
+PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
+PROTOC_GEN_GO_SRC := vendor/github.com/golang/protobuf/protoc-gen-go
 GRPCIO_VERSION := 1.11.0
 
-QMSTR_PYTHON_SPDX_ANALYZER := out/pyqmstr-spdx-analyzer
+OUTDIR := out/
+QMSTR_GO_ANALYZERS := $(foreach ana, $(shell ls cmd/analyzers), ${OUTDIR}analyzers/$(ana))
+QMSTR_GO_REPORTERS := $(foreach rep, $(shell ls cmd/reporters), ${OUTDIR}reporters/$(rep))
+QMSTR_GO_BUILDERS := $(foreach builder, qmstr-wrapper, ${OUTDIR}$(builder))
+QMSTR_CLIENT_BINARIES := $(foreach cli, qmstr-cli qmstr, ${OUTDIR}$(cli)) $(QMSTR_GO_BUILDERS)
+QMSTR_MASTER := $(foreach bin, qmstr-master, ${OUTDIR}$(bin))
+QMSTR_PYTHON_SPDX_ANALYZER := ${OUTDIR}pyqmstr-spdx-analyzer
 QMSTR_PYTHON_MODULES := $(QMSTR_PYTHON_SPDX_ANALYZER)
+QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_GO_ANALYZERS) $(QMSTR_GO_REPORTERS) $(QMSTR_PYTHON_MODULES)
+QMSTR_GO_BINARIES := $(QMSTR_MASTER) $(QMSTR_CLIENT_BINARIES) $(QMSTR_GO_ANALYZERS) $(QMSTR_GO_REPORTERS)
 
 .PHONY: all
-all: $(QMSTR_GO_BINARIES)
+all: $(QMSTR_GO_BINARIES) $(QMSTR_PYTHON_MODULES)
 
 generate: go_proto python_proto
 
@@ -26,7 +35,7 @@ requirements.txt:
 	echo pex >> requirements.txt
 	echo autopep8 >> requirements.txt
 
-go_proto:
+go_proto: $(PROTOC_GEN_GO)
 	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
 
 python_proto: venv
@@ -37,10 +46,9 @@ python_proto: venv
 clean:
 	@rm $(PROTO_PYTHON_FILES) || true
 	@rm pkg/service/*.pb.go || true
-	@rm $(QMSTR_GO_BINARIES) || true
+	@rm -r out || true
 	@rm -fr venv || true
 	@rm requirements.txt || true
-	@rm -r out || true
 
 .PHONY: checkpep8
 checkpep8: $(PYTHON_FILES) venv
@@ -63,14 +71,19 @@ golint:	$(GOMETALINTER)
 	gometalinter ./... --vendor
 
 $(GODEP):
-	go get -u github.com/golang/dep
+	go get -u -v github.com/golang/dep/cmd/dep
 
 .PHONY: godep
 godep: $(GODEP)
 	dep ensure
 
-$(QMSTR_GO_BINARIES): godep go_proto gotest
-	go build github.com/QMSTR/qmstr/cmd/$@
+$(PROTOC_GEN_GO_SRC): godep
+
+$(PROTOC_GEN_GO): $(PROTOC_GEN_GO_SRC) 
+	(cd ${PROTOC_GEN_GO_SRC} && go install)
+
+$(QMSTR_GO_BINARIES): go_proto gotest
+	go build -o $@ github.com/QMSTR/qmstr/cmd/$(subst $(OUTDIR),,$@)
 
 .PHONY: container
 container: ci/Dockerfile
@@ -85,9 +98,15 @@ devcontainer: container
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
 
 $(QMSTR_PYTHON_SPDX_ANALYZER): python_proto
-	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer 'grpcio==${GRPCIO_VERSION}' -vvv -e spdxanalyzer.__main__:main -o $@
+	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer 'grpcio==${GRPCIO_VERSION}' -v -e spdxanalyzer.__main__:main -o $@
 
 python_modules: $(QMSTR_PYTHON_MODULES)
 
 install_python_modules: $(QMSTR_PYTHON_MODULES)
+	cp $^ /usr/local/bin
+
+install_qmstr_server: $(QMSTR_SERVER_BINARIES)
+	cp $^ /usr/local/bin
+
+install_qmstr_client: $(QMSTR_CLIENT_BINARIES)
 	cp $^ /usr/local/bin

@@ -12,15 +12,18 @@ function start_dgraph_web {
 }
 
 # Generate and build
-/usr/local/bin/install-qmstr.sh -d
-/usr/local/bin/install-qmstr.sh -i
-(cd $GOPATH/src/github.com/QMSTR/qmstr/cmd/reporters/qmstr-reporter-html && ./setup.sh /usr/share/qmstr $GOPATH/src/github.com/QMSTR/qmstr)
+pushd $GOPATH/src/github.com/QMSTR/qmstr/
+make install_qmstr_server
+pushd cmd/reporters/qmstr-reporter-html
+./setup.sh /usr/share/qmstr $GOPATH/src/github.com/QMSTR/qmstr
+popd
+popd
 
 start_dgraph
 start_dgraph_web
 
 if [ -z "$QMSTR_DEV" ]; then
-    exec /go/bin/qmstr-master --config /buildroot/qmstr.yaml
+    exec /usr/local/bin/qmstr-master --config /buildroot/qmstr.yaml
 else
     echo "Running debug session"
     exec dlv debug github.com/QMSTR/qmstr/cmd/qmstr-master -l 0.0.0.0:2345 --headless=true --log=true -- --config /buildroot/qmstr.yaml
