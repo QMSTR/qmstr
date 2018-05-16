@@ -1,6 +1,8 @@
 syntax = "proto3";
 package service;
 
+import weak "datamodel.proto";
+
 message LogMessage {
   bytes msg = 1;
 }
@@ -25,8 +27,18 @@ message SwitchPhaseResponse {
   bool success = 1;
 }
 
+message PackageRequest {
+  string session = 1;
+}
+
+message PackageResponse {
+  bool success = 1;
+  PackageNode packageNode = 2;
+}
+
 service ControlService {
   rpc Log(LogMessage) returns (LogResponse) {}
   rpc Quit(QuitMessage) returns (QuitResponse) {}
   rpc SwitchPhase(SwitchPhaseMessage) returns (SwitchPhaseResponse) {}
+  rpc GetPackageNode(PackageRequest) returns (PackageResponse) {}
 }

@@ -1,17 +1,6 @@
 syntax = "proto3";
 package service;
 
-import weak "datamodel.proto";
-
-message ReportRequest {
-  string session = 1;
-}
-
-message ReportResponse {
-  bool success = 1;
-  PackageNode packageNode = 2;
-}
-
 message ReporterConfigRequest {
   int32 reporterID = 1;
 }
@@ -23,6 +12,5 @@ message ReporterConfigResponse {
 }
 
 service ReportService {
-  rpc GetPackageNode(ReportRequest) returns (ReportResponse) {}
   rpc GetReporterConfig(ReporterConfigRequest) returns (ReporterConfigResponse) {}
 }
