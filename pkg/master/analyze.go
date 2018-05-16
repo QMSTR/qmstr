@@ -133,7 +133,3 @@ func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*servi
 
 	return &service.AnalysisResponse{Success: true}, nil
 }
-
-func (phase *serverPhaseAnalysis) GetPackageNode(in *service.ReportRequest) (*service.ReportResponse, error) {
-	return nil, errors.New("Wrong phase")
-}

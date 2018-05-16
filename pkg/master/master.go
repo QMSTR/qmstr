@@ -31,7 +31,6 @@ type serverPhase interface {
 	GetReporterConfig(*service.ReporterConfigRequest) (*service.ReporterConfigResponse, error)
 	GetNodes(*service.NodeRequest) (*service.NodeResponse, error)
 	SendNodes(*service.AnalysisMessage) (*service.AnalysisResponse, error)
-	GetPackageNode(*service.ReportRequest) (*service.ReportResponse, error)
 }
 
 type genericServerPhase struct {
@@ -70,8 +69,12 @@ func (s *server) SendNodes(ctx context.Context, in *service.AnalysisMessage) (*s
 	return s.currentPhase.SendNodes(in)
 }
 
-func (s *server) GetPackageNode(ctx context.Context, in *service.ReportRequest) (*service.ReportResponse, error) {
-	return s.currentPhase.GetPackageNode(in)
+func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest) (*service.PackageResponse, error) {
+	node, err := s.db.GetPackageNode(in.Session)
+	if err != nil {
+		return nil, err
+	}
+	return &service.PackageResponse{PackageNode: node}, nil
 }
 
 func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage) (*service.SwitchPhaseResponse, error) {

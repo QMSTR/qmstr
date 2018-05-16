@@ -77,11 +77,3 @@ func (phase *serverPhaseReport) GetNodes(in *service.NodeRequest) (*service.Node
 func (phase *serverPhaseReport) SendNodes(in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
 	return nil, errors.New("Wrong phase")
 }
-
-func (phase *serverPhaseReport) GetPackageNode(in *service.ReportRequest) (*service.ReportResponse, error) {
-	node, err := phase.db.GetPackageNode(in.Session)
-	if err != nil {
-		return nil, err
-	}
-	return &service.ReportResponse{PackageNode: node}, nil
-}
