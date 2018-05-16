@@ -5,7 +5,7 @@ GO_BIN := $(GOPATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
 GODEP := $(GO_BIN)/dep
 QMSTR_GO_BINARIES := qmstr-wrapper qmstr qmstr-master qmstr-cli
-GRPCIOTOOLS_VERSION := 1.11.0
+GRPCIO_VERSION := 1.11.0
 
 QMSTR_PYTHON_SPDX_ANALYZER := out/pyqmstr-spdx-analyzer
 QMSTR_PYTHON_MODULES := $(QMSTR_PYTHON_SPDX_ANALYZER)
@@ -22,7 +22,7 @@ venv/bin/activate: requirements.txt
 	touch venv/bin/activate
 
 requirements.txt:
-	echo grpcio-tools==$(GRPCIOTOOLS_VERSION) >> requirements.txt
+	echo grpcio-tools==$(GRPCIO_VERSION) >> requirements.txt
 	echo pex >> requirements.txt
 	echo autopep8 >> requirements.txt
 
@@ -85,7 +85,7 @@ devcontainer: container
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
 
 $(QMSTR_PYTHON_SPDX_ANALYZER): python_proto
-	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer -f /tmp/wheelhouse -e spdxanalyzer.__main__:main -o $@
+	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer 'grpcio==${GRPCIO_VERSION}' -vvv -e spdxanalyzer.__main__:main -o $@
 
 python_modules: $(QMSTR_PYTHON_MODULES)
 
