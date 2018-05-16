@@ -31,14 +31,14 @@ ADD python ${GOPATH}/src/github.com/QMSTR/qmstr/python
 ADD Makefile ${GOPATH}/src/github.com/QMSTR/qmstr/Makefile
 COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
 
-COPY install.sh /tmp/install-qmstr.sh
-RUN chmod +x /tmp/install-qmstr.sh
-RUN /tmp/install-qmstr.sh -d
-RUN /tmp/install-qmstr.sh -i
+WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
+RUN make install_qmstr_server
 
 # separate stage just to run the master unit tests:
 FROM builder as master_unit_tests
-CMD cd $GOPATH/src/github.com/QMSTR/qmstr && make gotest
+
+WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
+CMD make gotest
 
 # the runtime stage contains all the elements needed to run the master and the analysis tools:
 FROM ubuntu:18.04 as runtime
@@ -83,13 +83,7 @@ RUN rm /tmp/dgraph*
 
 # copy qmstr installation from previous stage
 RUN mkdir -p /go/bin
-COPY --from=builder /go/bin/qmstr-master /go/bin/qmstr-master
-COPY --from=builder /go/bin/spdx-analyzer /go/bin/spdx-analyzer
-COPY --from=builder /go/bin/scancode-analyzer /go/bin/scancode-analyzer
-COPY --from=builder /go/bin/test-analyzer /go/bin/test-analyzer
-COPY --from=builder /go/bin/test-reporter /go/bin/test-reporter
-COPY --from=builder /go/bin/qmstr-reporter-html /go/bin/qmstr-reporter-html
-COPY --from=builder /usr/local/bin/pyqmstr-spdx-analyzer /usr/local/bin/pyqmstr-spdx-analyzer
+COPY --from=builder /usr/local/bin/* /usr/local/bin/ 
 
 EXPOSE 50051
 # dgraph ratel web ui
@@ -125,9 +119,6 @@ EXPOSE 2345
 
 # install additional go deps
 RUN go get -u -v github.com/derekparker/delve/cmd/dlv
-COPY --from=builder /tmp/install-qmstr.sh /usr/local/bin/install-qmstr.sh
-RUN /usr/local/bin/install-qmstr.sh -q
-RUN /usr/local/bin/install-qmstr.sh -d
 
 VOLUME /go/src
 
