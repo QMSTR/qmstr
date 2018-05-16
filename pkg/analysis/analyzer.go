@@ -18,6 +18,7 @@ import (
 
 type Analyzer struct {
 	analysisService service.AnalysisServiceClient
+	controlService  service.ControlServiceClient
 	module          AnalyzerModule
 	id              int32
 	name            string
@@ -42,8 +43,9 @@ func NewAnalyzer(module AnalyzerModule) *Analyzer {
 		log.Fatalf("Failed to connect to master: %v", err)
 	}
 	anaServiceClient := service.NewAnalysisServiceClient(conn)
+	controlServiceClient := service.NewControlServiceClient(conn)
 
-	return &Analyzer{id: anaID, module: module, analysisService: anaServiceClient}
+	return &Analyzer{id: anaID, module: module, analysisService: anaServiceClient, controlService: controlServiceClient}
 }
 
 func (a *Analyzer) GetModuleName() string {
@@ -79,6 +81,11 @@ func (a *Analyzer) RunAnalyzerModule() error {
 	nodeResp, err := a.analysisService.GetNodes(context.Background(), &service.NodeRequest{Type: configResp.TypeSelector})
 	if err != nil {
 		return fmt.Errorf("could not get nodes %v", err)
+	}
+
+	pkgNodeResp, err := a.controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: configResp.Session})
+	if err != nil {
+		return fmt.Errorf("could not get package node %v", err)
 	}
 
 	a.module.SetPackageNode(pkgNodeResp.PackageNode)
