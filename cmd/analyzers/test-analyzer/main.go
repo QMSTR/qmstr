@@ -43,6 +43,8 @@ func (testanalyzer *TestAnalyzer) Analyze(node *service.FileNode) (*service.Info
 	return &service.InfoNodeSlice{}, nil
 }
 
+func (testanalyzer *TestAnalyzer) SetPackageNode(pkg *service.PackageNode) {}
+
 func TestGraphIntegrity(t *testing.T) {
 	if testnode.Type == "linkedtarget" {
 		if len(testnode.DerivedFrom) == 0 {

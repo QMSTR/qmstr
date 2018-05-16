@@ -26,6 +26,7 @@ type Analyzer struct {
 type AnalyzerModule interface {
 	Configure(configMap map[string]string) error
 	Analyze(node *service.FileNode) (*service.InfoNodeSlice, error)
+	SetPackageNode(pkgNode *service.PackageNode)
 }
 
 func NewAnalyzer(module AnalyzerModule) *Analyzer {
@@ -79,6 +80,8 @@ func (a *Analyzer) RunAnalyzerModule() error {
 	if err != nil {
 		return fmt.Errorf("could not get nodes %v", err)
 	}
+
+	a.module.SetPackageNode(pkgNodeResp.PackageNode)
 
 	resultMap := map[string]*service.InfoNodeSlice{}
 
