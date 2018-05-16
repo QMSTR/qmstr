@@ -16,6 +16,7 @@ import (
 
 type Reporter struct {
 	reportingService service.ReportServiceClient
+	controlService   service.ControlServiceClient
 	module           ReporterModule
 	id               int32
 	name             string
@@ -40,8 +41,9 @@ func NewReporter(module ReporterModule) *Reporter {
 		log.Fatalf("Failed to connect to master: %v", err)
 	}
 	reportingServiceClient := service.NewReportServiceClient(conn)
+	controlServiceClient := service.NewControlServiceClient(conn)
 
-	return &Reporter{id: anaID, module: module, reportingService: reportingServiceClient}
+	return &Reporter{id: anaID, module: module, reportingService: reportingServiceClient, controlService: controlServiceClient}
 }
 
 func (r *Reporter) GetModuleName() string {
@@ -75,7 +77,7 @@ func (r *Reporter) RunReporterModule() error {
 		return fmt.Errorf("failed to configure reporter module %s %v", r.GetModuleName(), err)
 	}
 
-	resp, err := r.reportingService.GetPackageNode(context.Background(), &service.ReportRequest{Session: configResp.Session})
+	resp, err := r.controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: configResp.Session})
 	if err != nil {
 		return fmt.Errorf("could not get package node %v", err)
 	}
