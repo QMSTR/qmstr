@@ -5,7 +5,7 @@ ARG SCANCODE_VERSION=2.9.1
 
 # Create a container that only builds the software to be installed into the master container:
 FROM ubuntu:18.04 as builder
-
+LABEL org.qmstr.image builder
 ENV GOPATH /go
 ENV PATH ${GOPATH}/bin:/usr/lib/go-1.9/bin:$PATH
 # install golang 1.9
@@ -37,11 +37,15 @@ RUN make install_qmstr_server
 # separate stage just to run the master unit tests:
 FROM builder as master_unit_tests
 
+LABEL org.qmstr.image master_unit_tests
+
 WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
 CMD make gotest
 
 # the runtime stage contains all the elements needed to run the master and the analysis tools:
 FROM ubuntu:18.04 as runtime
+
+LABEL org.qmstr.image runtime
 
 # install runtime deps
 RUN apt-get update && \
@@ -94,6 +98,8 @@ VOLUME /buildroot
 # release master container, based on the runtime stage:
 FROM runtime as master
 
+LABEL org.qmstr.image master 
+
 ENV GOPATH /go
 ENV PATH ${GOPATH}/bin:$PATH
 
@@ -105,6 +111,9 @@ ENTRYPOINT [ "/docker-entrypoint.sh" ]
 # development container for the master and other tools, based on the runtime stage:
 # The $GOROOT/src directory can be mounted in as a volume, to allow testing of local changes.
 FROM runtime as dev
+
+LABEL org.qmstr.image dev 
+
 ENV GOPATH /go
 ENV PATH ${GOPATH}/bin:/usr/lib/go-1.9/bin:$PATH
 
