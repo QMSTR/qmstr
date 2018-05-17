@@ -19,6 +19,10 @@ QMSTR_PYTHON_MODULES := $(QMSTR_PYTHON_SPDX_ANALYZER)
 QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_GO_ANALYZERS) $(QMSTR_GO_REPORTERS) $(QMSTR_PYTHON_MODULES)
 QMSTR_GO_BINARIES := $(QMSTR_MASTER) $(QMSTR_CLIENT_BINARIES) $(QMSTR_GO_ANALYZERS) $(QMSTR_GO_REPORTERS)
 
+CONTAINER_TAG_DEV := qmstr/dev
+CONTAINER_TAG_MASTER := qmstr/master
+CONTAINER_TAG_RUNTIME := qmstr/runtime
+
 .PHONY: all
 all: $(QMSTR_GO_BINARIES) $(QMSTR_PYTHON_MODULES)
 
@@ -49,6 +53,11 @@ clean:
 	@rm -r out || true
 	@rm -fr venv || true
 	@rm requirements.txt || true
+
+.PHONY: cleanall
+cleanall: clean
+	@docker rmi ${CONTAINER_TAG_DEV} ${CONTAINER_TAG_MASTER} ${CONTAINER_TAG_RUNTIME} || true
+	@docker image prune --all --force --filter=label=org.qmstr.image
 
 .PHONY: checkpep8
 checkpep8: $(PYTHON_FILES) venv
@@ -87,12 +96,12 @@ $(QMSTR_GO_BINARIES): go_proto gotest
 
 .PHONY: container
 container: ci/Dockerfile
-	docker build --no-cache -f ci/Dockerfile -t qmstr/master --target master .
-	docker build -f ci/Dockerfile -t qmstr/runtime --target runtime .
+	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master .
+	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime .
 
 .PHONY: devcontainer
 devcontainer: container
-	docker build -f ci/Dockerfile -t qmstr/dev --target dev .
+	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_DEV} --target dev .
 
 .PHONY: pyqmstr-spdx-analyzer
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
