@@ -28,7 +28,6 @@ const (
 	linkedTrg = "linkedtarget"
 	obj       = "objectfile"
 	src       = "sourcecode"
-	lib       = "library"
 )
 
 var (
@@ -119,7 +118,7 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			} else if ext == ".c" {
 				inputFileNode = NewFileNode(wrapper.BuildCleanPath(g.WorkDir, inFile, false), src)
 			} else {
-				inputFileNode = NewFileNode(wrapper.BuildCleanPath(g.WorkDir, inFile, false), lib)
+				inputFileNode = NewFileNode(wrapper.BuildCleanPath(g.WorkDir, inFile, false), linkedTrg)
 			}
 			dependencies = append(dependencies, inputFileNode)
 		}
@@ -128,7 +127,7 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			g.logger.Fatalf("Failed to collect dependencies: %v", err)
 		}
 		for _, actualLib := range actualLibs {
-			linkLib := NewFileNode(actualLib, lib)
+			linkLib := NewFileNode(actualLib, linkedTrg)
 			dependencies = append(dependencies, linkLib)
 		}
 		linkedTarget.DerivedFrom = dependencies
