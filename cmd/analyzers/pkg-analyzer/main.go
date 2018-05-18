@@ -53,6 +53,10 @@ func (pkganalyzer *PkgAnalyzer) Analyze(node *service.FileNode) (*service.InfoNo
 	return &service.InfoNodeSlice{}, nil
 }
 
+func (pkganalyzer *PkgAnalyzer) GetPackageNode() *service.PackageNode {
+	return pkganalyzer.pkgNode
+}
+
 func (pkganalyzer *PkgAnalyzer) SetPackageNode(pkgNode *service.PackageNode) {
 	pkganalyzer.pkgNode = pkgNode
 }

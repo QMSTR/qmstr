@@ -10,6 +10,7 @@ message InfoNodeSlice {
 message AnalysisMessage {
     int64 token = 1;
     map<string, InfoNodeSlice> resultMap = 2;
+    PackageNode packageNode = 3;
 }
   
 message AnalysisResponse {

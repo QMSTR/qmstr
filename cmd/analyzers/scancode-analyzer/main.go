@@ -79,6 +79,9 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(node *service.FileNode) (*service.In
 }
 
 func (scanalyzer *ScancodeAnalyzer) SetPackageNode(pkg *service.PackageNode) {}
+func (scanalyzer *ScancodeAnalyzer) GetPackageNode() *service.PackageNode {
+	return nil
+}
 
 func scancodeExitHandler(err error, output []byte) {
 	// print to stdout so master server can log it

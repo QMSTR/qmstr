@@ -107,10 +107,9 @@ func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*servi
 	log.Println("Nodes received")
 
 	if in.Token != phase.currentToken {
-		fmt.Println("Analyzer supplied wrong token")
+		log.Println("Analyzer supplied wrong token")
 		return nil, errors.New("wrong token supplied")
 	}
-
 	for hash, inodes := range in.ResultMap {
 		log.Printf("Processing node %s with %d info nodes\n", hash, len(inodes.Inodes))
 		fileNode, err := phase.db.GetNodeByHash(hash, true)
@@ -131,5 +130,9 @@ func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*servi
 		phase.db.AlterFileNode(fileNode)
 	}
 
+	if in.PackageNode != nil {
+		log.Printf("Connecting package node %v to targets.", in.PackageNode.Name)
+		phase.db.AlterPackageNode(in.PackageNode)
+	}
 	return &service.AnalysisResponse{Success: true}, nil
 }

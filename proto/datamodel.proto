@@ -39,9 +39,10 @@ message PathSubstitution {
 }
 
 message PackageNode {
-    string name = 1;
-    string session = 2;
-    int32 nodeType = 3;
-    repeated FileNode targets = 4;
-    repeated InfoNode additionalInfo = 5;
+    string uid = 1;
+    string name = 2;
+    string session = 3;
+    int32 nodeType = 4;
+    repeated FileNode targets = 5;
+    repeated InfoNode additionalInfo = 6;
 }

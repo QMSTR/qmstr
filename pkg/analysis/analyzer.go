@@ -28,6 +28,7 @@ type AnalyzerModule interface {
 	Configure(configMap map[string]string) error
 	Analyze(node *service.FileNode) (*service.InfoNodeSlice, error)
 	SetPackageNode(pkgNode *service.PackageNode)
+	GetPackageNode() *service.PackageNode
 }
 
 func NewAnalyzer(module AnalyzerModule) *Analyzer {
@@ -89,9 +90,7 @@ func (a *Analyzer) RunAnalyzerModule() error {
 	}
 
 	a.module.SetPackageNode(pkgNodeResp.PackageNode)
-
 	resultMap := map[string]*service.InfoNodeSlice{}
-
 	for _, node := range nodeResp.FileNodes {
 		for _, substitution := range configResp.PathSub {
 			node.Path = strings.Replace(node.Path, substitution.Old, substitution.New, 1)
@@ -107,7 +106,8 @@ func (a *Analyzer) RunAnalyzerModule() error {
 		}
 	}
 
-	anaresp, err := a.analysisService.SendNodes(context.Background(), &service.AnalysisMessage{ResultMap: resultMap, Token: configResp.Token})
+	pkgNode := a.module.GetPackageNode()
+	anaresp, err := a.analysisService.SendNodes(context.Background(), &service.AnalysisMessage{ResultMap: resultMap, Token: configResp.Token, PackageNode: pkgNode})
 	if err != nil {
 		return fmt.Errorf("failed to send nodes %v", err)
 	}

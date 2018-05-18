@@ -49,6 +49,9 @@ func (spdxalizer *SpdxAnalyzer) Analyze(node *service.FileNode) (*service.InfoNo
 }
 
 func (spdxalizer *SpdxAnalyzer) SetPackageNode(pkg *service.PackageNode) {}
+func (spdxalizer *SpdxAnalyzer) GetPackageNode() *service.PackageNode {
+	return nil
+}
 
 func detectSPDXLicense(srcFilePath string) (string, error) {
 	f, err := os.Open(srcFilePath)
