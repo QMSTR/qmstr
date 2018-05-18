@@ -47,3 +47,14 @@ func SanitizeDataNode(datanode *InfoNode_DataNode) {
 func SanitizeAnalyzerNode(analyzerNode *Analyzer) {
 	analyzerNode.NodeType = NodeTypeAnalyzerNode
 }
+
+func SanitizePackageNode(packageNode *PackageNode, uid string) *PackageNode {
+	sanitizedPackageNode := PackageNode{
+		Uid:            uid,
+		Name:           packageNode.Name,
+		NodeType:       NodeTypePackageNode,
+		Targets:        packageNode.Targets,
+		AdditionalInfo: packageNode.AdditionalInfo,
+	}
+	return &sanitizedPackageNode
+}

@@ -155,6 +155,16 @@ func (db *DataBase) AlterFileNode(node *service.FileNode) (string, error) {
 	return uid, err
 }
 
+func (db *DataBase) AlterPackageNode(pkgNode *service.PackageNode) (string, error) {
+	db.insertMutex.Lock()
+	// Get the package uid from db and pass it to the altered package node
+	pkg, err := db.GetPackageNode(pkgNode.Session)
+	alteredpkgNode := service.SanitizePackageNode(pkgNode, pkg.Uid)
+	uid, err := dbInsert(db.client, alteredpkgNode)
+	db.insertMutex.Unlock()
+	return uid, err
+}
+
 // GetFileNodeUid returns the UID of the node if exists otherwise ""
 func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 
