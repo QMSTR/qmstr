@@ -32,7 +32,7 @@ ADD Makefile ${GOPATH}/src/github.com/QMSTR/qmstr/Makefile
 COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
 
 WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
-RUN make install_qmstr_server
+RUN make install_qmstr_all
 
 # separate stage just to run the master unit tests:
 FROM builder as master_unit_tests
