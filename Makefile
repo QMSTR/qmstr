@@ -22,6 +22,7 @@ QMSTR_GO_BINARIES := $(QMSTR_MASTER) $(QMSTR_CLIENT_BINARIES) $(QMSTR_GO_ANALYZE
 CONTAINER_TAG_DEV := qmstr/dev
 CONTAINER_TAG_MASTER := qmstr/master
 CONTAINER_TAG_RUNTIME := qmstr/runtime
+CONTAINER_TAG_BUILDER:= qmstr/master_build
 
 .PHONY: all
 all: $(QMSTR_GO_BINARIES) $(QMSTR_PYTHON_MODULES)
@@ -97,11 +98,15 @@ $(QMSTR_GO_BINARIES): go_proto gotest
 .PHONY: container
 container: ci/Dockerfile
 	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master .
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime .
 
 .PHONY: devcontainer
 devcontainer: container
 	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_DEV} --target dev .
+
+.PHONY: democontainer
+democontainer: container
+	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime .
+	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target builder .
 
 .PHONY: pyqmstr-spdx-analyzer
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
