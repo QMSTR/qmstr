@@ -36,10 +36,23 @@ class SpdxAnalyzer(object):
         else:
             self.format = config_map[fileformat_key]
 
-        self._parse_spdx()
+        self.doc = self._parse_spdx()
+        self._processPackageNodeData()
 
     def analyze(self, node):
-        print("Analyze node")
+        logging.info("Analyze node {}".format(node.path))
+        filtered_files = filter(lambda f: node.path.endswith(f.name), self.doc.files)
+        if not filtered_files:
+            logging.warn(
+                "File {} not found in SPDX document".format(node.path))
+            return
+        spdx_doc_file_info = filtered_files[0]
+        logging.info("Concluded license {}".format(spdx_doc_file_info.conc_lics))
+
+
+    def _processPackageNodeData(self):
+        logging.warn("Package node not yet available")
+        # self.packageNode.Name = self.doc.package.name
 
     def setPackageNode(self, pkg):
         pass
@@ -53,7 +66,11 @@ class SpdxAnalyzer(object):
             sys.exit(4)
         with open(self.spdx_file, "r") as spdxfile:
             spdxdata = spdxfile.read()
-            self.parse_func_map[self.format](spdxdata)
+            doc, error = self.parse_func_map[self.format](spdxdata)
+            if error != None:
+                logging.error(error)
+                sys.exit(5)
+            return doc
 
     def __parse_tagvalue(self, data):
         from spdx.parsers.tagvalue import Parser
@@ -72,7 +89,6 @@ class SpdxAnalyzer(object):
         from spdx.parsers.rdfbuilders import Builder
         from spdx.parsers.loggers import StandardLogger
         p = Parser(Builder(), StandardLogger())
-        p.build()
         document, error = p.parse(data)
         if error:
             return (None, error)
