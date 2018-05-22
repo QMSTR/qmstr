@@ -1,3 +1,4 @@
+OWNERGROUP := $(shell stat -c %u:%g Makefile)
 PROTO_PYTHON_FILES := $(shell find python/ -type f -name '*_pb2*.py' -printf '%p ')
 PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
 GO_PKGS := $(shell go list ./... | grep -v /vendor)
@@ -22,7 +23,7 @@ QMSTR_GO_BINARIES := $(QMSTR_MASTER) $(QMSTR_CLIENT_BINARIES) $(QMSTR_GO_ANALYZE
 CONTAINER_TAG_DEV := qmstr/dev
 CONTAINER_TAG_MASTER := qmstr/master
 CONTAINER_TAG_RUNTIME := qmstr/runtime
-CONTAINER_TAG_BUILDER:= qmstr/master_build
+CONTAINER_TAG_BUILDER := qmstr/master_build
 
 .PHONY: all
 all: $(QMSTR_GO_BINARIES) $(QMSTR_PYTHON_MODULES)
@@ -33,19 +34,24 @@ venv: venv/bin/activate
 venv/bin/activate: requirements.txt
 	test -d venv || virtualenv venv
 	venv/bin/pip install -Ur requirements.txt
+	@chown -R ${OWNERGROUP} venv &
 	touch venv/bin/activate
 
 requirements.txt:
 	echo grpcio-tools==$(GRPCIO_VERSION) >> requirements.txt
 	echo pex >> requirements.txt
 	echo autopep8 >> requirements.txt
+	@chown -R ${OWNERGROUP} $@ &
+
 
 go_proto: $(PROTOC_GEN_GO)
 	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
+	@chown -R ${OWNERGROUP} pkg/service &
 
 python_proto: venv
 	@mkdir python/pyqmstr/service || true
 	venv/bin/python -m grpc_tools.protoc -Iproto --python_out=./python/pyqmstr/pyqmstr/service --grpc_python_out=./python/pyqmstr/pyqmstr/service proto/*.proto
+	@chown -R ${OWNERGROUP} python/pyqmstr/pyqmstr/service &
 
 .PHONY: clean
 clean:
@@ -86,6 +92,7 @@ $(GODEP):
 .PHONY: godep
 godep: $(GODEP)
 	dep ensure
+	@chown -R ${OWNERGROUP} vendor &
 
 $(PROTOC_GEN_GO_SRC): godep
 
@@ -94,6 +101,7 @@ $(PROTOC_GEN_GO): $(PROTOC_GEN_GO_SRC)
 
 $(QMSTR_GO_BINARIES): go_proto gotest
 	go build -o $@ github.com/QMSTR/qmstr/cmd/$(subst $(OUTDIR),,$@)
+	@chown ${OWNERGROUP} $@ &
 
 .PHONY: container
 container: ci/Dockerfile
@@ -113,6 +121,7 @@ pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
 
 $(QMSTR_PYTHON_SPDX_ANALYZER): python_proto
 	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer 'grpcio==${GRPCIO_VERSION}' -v -e spdxanalyzer.__main__:main -o $@
+	@chown ${OWNERGROUP} $@ &
 
 python_modules: $(QMSTR_PYTHON_MODULES)
 
