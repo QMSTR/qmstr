@@ -1,6 +1,7 @@
 import grpc
 from pyqmstr.service.analyzerservice_pb2 import AnalyzerConfigRequest, NodeRequest
 from pyqmstr.service.analyzerservice_pb2_grpc import AnalysisServiceStub
+from pyqmstr.service.controlservice_pb2_grpc import ControlServiceStub
 import logging
 
 
@@ -20,6 +21,7 @@ class QMSTR_Module(object):
         channel = grpc.insecure_channel(aserv_address)
         self.aserv = AnalysisServiceStub(
             channel)
+        self.cserv = ControlServiceStub(channel)
 
     def getName(self):
         return self.name
