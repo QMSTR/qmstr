@@ -39,7 +39,7 @@ type HTMLReporter struct {
 // Configure sets up the working directory for this reporting run.
 // It is part of the ReporterModule interface.
 func (r *HTMLReporter) Configure(config map[string]string) error {
-	if outDir, ok := config["outputDir"]; ok {
+	if outDir, ok := config["outputdir"]; ok {
 		r.packageDir = outDir
 	} else {
 		return errors.New("no output directory configured")

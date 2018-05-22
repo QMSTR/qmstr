@@ -61,8 +61,8 @@ func (a *Analyzer) RunAnalyzerModule() error {
 	}
 
 	a.name = configResp.Name
-	cacheDir := configResp.ConfigMap["cacheDir"]
-	outDir := configResp.ConfigMap["outputDir"]
+	cacheDir := configResp.ConfigMap["cachedir"]
+	outDir := configResp.ConfigMap["outputdir"]
 
 	err = os.MkdirAll(cacheDir, os.ModePerm)
 	if err != nil {
