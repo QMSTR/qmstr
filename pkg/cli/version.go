@@ -13,7 +13,7 @@ var minor = 1
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "version of qmstrctl",
-	Long:  `prints the version of qmstr-cli`,
+	Long:  `prints the version of qmstrctl`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("This is qmstrctl version %d.%d.\n", major, minor)
 	},

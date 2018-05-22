@@ -31,7 +31,7 @@ Install the wrapper
 
 Optional: install the cli
 
-	> go get github.com/QMSTR/qmstr/cmd/qmstr-cli
+	> go get github.com/QMSTR/qmstr/cmd/qmstrctl
 
 Or if you dare:
 
