@@ -41,6 +41,12 @@ class SpdxAnalyzer(object):
     def analyze(self, node):
         print("Analyze node")
 
+    def setPackageNode(self, pkg):
+        pass
+
+    def getPackageNode(self):
+        return None
+
     def _parse_spdx(self):
         if not self.format in self.parse_func_map:
             logging.error("Unsupported format {}".format(self.format))
