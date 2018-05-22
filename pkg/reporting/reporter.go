@@ -59,8 +59,8 @@ func (r *Reporter) RunReporterModule() error {
 
 	// Set module name
 	r.name = configResp.Name
-	cacheDir := configResp.ConfigMap["cacheDir"]
-	outDir := configResp.ConfigMap["outputDir"]
+	cacheDir := configResp.ConfigMap["cachedir"]
+	outDir := configResp.ConfigMap["outputdir"]
 
 	err = os.MkdirAll(cacheDir, os.ModePerm)
 	if err != nil {
