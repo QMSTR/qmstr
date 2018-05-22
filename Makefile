@@ -126,3 +126,6 @@ install_qmstr_client: $(QMSTR_CLIENT_BINARIES)
 	cp $^ /usr/local/bin
 
 install_qmstr_all: install_qmstr_client install_qmstr_server
+
+install_qmstr_client_gopath: $(QMSTR_CLIENT_BINARIES)
+	cp $^ ${GOPATH}/bin/
