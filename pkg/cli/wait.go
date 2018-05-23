@@ -37,7 +37,9 @@ func awaitServer() {
 	for {
 		res, err := controlServiceClient.Log(context.Background(), &service.LogMessage{Msg: []byte("Client is waiting for qmstr server to be ready")})
 		if err != nil {
+			Debug.Println("Master server not yet available")
 			<-time.After(time.Second * time.Duration(1))
+			Debug.Println("retrying")
 			continue
 		}
 		if res.Success {
