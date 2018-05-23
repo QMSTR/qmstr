@@ -65,6 +65,7 @@ var (
 
 	stringArgs = map[string]struct{}{
 		"-D":                     struct{}{},
+		"-Q":                     struct{}{},
 		"-U":                     struct{}{},
 		"-x":                     struct{}{},
 		"-MF":                    struct{}{},
