@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	addrEnv  = "QMSTR_ADDRESS"
+	addrEnv  = "QMSTR_MASTER"
 	debugEnv = "QMSTR_DEBUG"
 )
 
