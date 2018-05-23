@@ -49,12 +49,18 @@ func Execute() {
 
 // Set up connection to the server
 func setUpServer() {
+	if len(address) == 0 {
+		address = os.Getenv("QMSTR_MASTER")
+	}
+	if len(address) == 0 {
+		Log.Fatalln("Error: master address not specified")
+	}
 	var err error
 	conn, err = grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
-		Log.Fatalf("Failed to connect to master: %v", err)
+		Log.Fatalf("Failed to setup connection to master: %v", err)
 	}
-	Debug.Printf("Connected to master at %v\n", address)
+	Debug.Printf("Connection to master at %v set up\n", address)
 	controlServiceClient = service.NewControlServiceClient(conn)
 }
 
@@ -67,11 +73,4 @@ func SetupPersistentVariables(cmd *cobra.Command, args []string) {
 	log := logging.Setup(verbose)
 	Debug = log.Debug
 	Log = log.Log
-
-	if len(address) == 0 {
-		address = os.Getenv("QMSTR_MASTER")
-	}
-	if len(address) == 0 && !AddressOptional {
-		Log.Fatalln("Error: master address not specified and not optional")
-	}
 }
