@@ -52,6 +52,5 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
-	AddressOptional = true
 	rootCmd.AddCommand(startCmd)
 }
