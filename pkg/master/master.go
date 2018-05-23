@@ -10,6 +10,7 @@ import (
 	"net"
 	"strings"
 	"sync"
+	"sync/atomic"
 
 	"golang.org/x/net/context"
 
@@ -42,11 +43,12 @@ type genericServerPhase struct {
 }
 
 type server struct {
-	db             *database.DataBase
-	analysisClosed chan bool
-	serverMutex    *sync.Mutex
-	analysisDone   bool
-	currentPhase   serverPhase
+	db                 *database.DataBase
+	analysisClosed     chan bool
+	serverMutex        *sync.Mutex
+	analysisDone       bool
+	currentPhase       serverPhase
+	pendingPhaseSwitch int64
 }
 
 func (s *server) Build(ctx context.Context, in *service.BuildMessage) (*service.BuildResponse, error) {
@@ -78,6 +80,11 @@ func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest)
 }
 
 func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage) (*service.SwitchPhaseResponse, error) {
+	if !atomic.CompareAndSwapInt64(&s.pendingPhaseSwitch, 0, 1) {
+		errMsg := "denied there is a pending phase transition"
+		log.Println(errMsg)
+		return &service.SwitchPhaseResponse{Success: false}, errors.New(errMsg)
+	}
 	requestedPhase := in.Phase
 	if requestedPhase <= s.currentPhase.GetPhaseId() {
 		errMsg := fmt.Sprintf("Illegal phase transition %d->%d requested", s.currentPhase.GetPhaseId(), requestedPhase)
@@ -88,6 +95,7 @@ func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage
 		log.Printf("Switching to phase %d", requestedPhase)
 		s.currentPhase.Shutdown()
 		s.currentPhase = phase
+		s.pendingPhaseSwitch = 0
 		err := s.currentPhase.Activate()
 		if err != nil {
 			return &service.SwitchPhaseResponse{Success: false}, err
