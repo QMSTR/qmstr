@@ -48,13 +48,8 @@ func SanitizeAnalyzerNode(analyzerNode *Analyzer) {
 	analyzerNode.NodeType = NodeTypeAnalyzerNode
 }
 
-func SanitizePackageNode(packageNode *PackageNode, uid string) *PackageNode {
-	sanitizedPackageNode := PackageNode{
-		Uid:            uid,
-		Name:           packageNode.Name,
-		NodeType:       NodeTypePackageNode,
-		Targets:        packageNode.Targets,
-		AdditionalInfo: packageNode.AdditionalInfo,
-	}
-	return &sanitizedPackageNode
+func SanitizePackageNode(pkgNode *PackageNode, dbpkgNode *PackageNode) {
+	pkgNode.Uid = dbpkgNode.Uid
+	pkgNode.Session = dbpkgNode.Session
+	pkgNode.NodeType = NodeTypePackageNode
 }
