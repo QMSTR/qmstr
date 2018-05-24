@@ -159,8 +159,8 @@ func (db *DataBase) AlterPackageNode(pkgNode *service.PackageNode) (string, erro
 	db.insertMutex.Lock()
 	// Get the package uid from db and pass it to the altered package node
 	pkg, err := db.GetPackageNode(pkgNode.Session)
-	alteredpkgNode := service.SanitizePackageNode(pkgNode, pkg.Uid)
-	uid, err := dbInsert(db.client, alteredpkgNode)
+	service.SanitizePackageNode(pkgNode, pkg)
+	uid, err := dbInsert(db.client, pkgNode)
 	db.insertMutex.Unlock()
 	return uid, err
 }
