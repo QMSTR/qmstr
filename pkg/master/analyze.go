@@ -90,7 +90,7 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 		config.Config["outputdir"] = filepath.Join(phase.serverConfig.OutputDir, config.Analyzer, config.PosixName)
 	}
 	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub,
-		Token: phase.currentToken, Name: config.Name}, nil
+		Token: phase.currentToken, Name: config.Name, Session: phase.session}, nil
 }
 
 func (phase *serverPhaseAnalysis) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
