@@ -294,9 +294,12 @@ func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error)
 	q := `query PackageNode($Session: string) {
 		getPackageNode(func: eq(nodeType, 5)) @recurse(loop: false) {
 			uid
+			session
+			nodeType
 			hash
 			name
 			type
+			targets
 			derivedFrom
 			path
 			additionalInfo
