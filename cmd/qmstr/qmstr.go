@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	golog "log"
@@ -12,6 +11,8 @@ import (
 	"regexp"
 	"strings"
 	"syscall"
+
+	flag "github.com/spf13/pflag"
 )
 
 // Options contains the context of a program invocation
@@ -36,6 +37,7 @@ func main() {
 	flag.BoolVar(&options.keepTmpDirectories, "keep", false, "Keep the created directories instead of cleaning up.")
 	flag.BoolVar(&options.verbose, "verbose", false, "Enable diagnostic log output.")
 	flag.Parse()
+
 	if options.verbose {
 		Debug = golog.New(os.Stderr, "DEBUG: ", golog.Ldate|golog.Ltime)
 	} else {
