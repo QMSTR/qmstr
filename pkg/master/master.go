@@ -123,22 +123,23 @@ func (s *server) Quit(ctx context.Context, in *service.QuitMessage) (*service.Qu
 	return &service.QuitResponse{Success: true}, nil
 }
 
-func InitAndRun(configfile string) error {
+// InitAndRun sets up and runs the grpc services and the dgraph database connection
+func InitAndRun(configfile string) (chan error, error) {
 	masterConfig, err := config.ReadConfigFromFile(configfile)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Connect to backend database (dgraph)
 	db, err := database.Setup(masterConfig.Server.DBAddress, masterConfig.Server.DBWorkers)
 	if err != nil {
-		return fmt.Errorf("Could not setup database: %v", err)
+		return nil, fmt.Errorf("Could not setup database: %v", err)
 	}
 
 	// Setup buildservice
 	lis, err := net.Listen("tcp", masterConfig.Server.RPCAddress)
 	if err != nil {
-		return fmt.Errorf("Failed to setup socket and listen: %v", err)
+		return nil, fmt.Errorf("Failed to setup socket and listen: %v", err)
 	}
 
 	sessionBytes := make([]byte, 32)
@@ -176,11 +177,14 @@ func InitAndRun(configfile string) error {
 
 	initPackage(masterConfig, db, session)
 
-	log.Printf("qmstr-master listening on %s\n", masterConfig.Server.RPCAddress)
-	if err := s.Serve(lis); err != nil {
-		return fmt.Errorf("Failed to start rpc service %v", err)
-	}
-	return nil
+	masterRun := make(chan error)
+	go func() {
+		log.Printf("qmstr-master listening on %s\n", masterConfig.Server.RPCAddress)
+		err := s.Serve(lis)
+		masterRun <- err
+	}()
+
+	return masterRun, nil
 }
 
 func initPackage(masterConfig *config.MasterConfig, db *database.DataBase, session string) {
