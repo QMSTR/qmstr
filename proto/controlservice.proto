@@ -36,9 +36,21 @@ message PackageResponse {
   PackageNode packageNode = 2;
 }
 
+message StatusMessage {
+  bool phase = 1;
+  bool switch = 2;
+}
+
+message StatusResponse {
+  string phase = 1;
+  int32 phaseID = 2;
+  bool switching = 3;
+}
+
 service ControlService {
   rpc Log(LogMessage) returns (LogResponse) {}
   rpc Quit(QuitMessage) returns (QuitResponse) {}
   rpc SwitchPhase(SwitchPhaseMessage) returns (SwitchPhaseResponse) {}
   rpc GetPackageNode(PackageRequest) returns (PackageResponse) {}
+  rpc Status(StatusMessage) returns (StatusResponse) {}
 }

@@ -25,14 +25,15 @@ var phaseMap map[int32]func(string, *config.MasterConfig, *database.DataBase) se
 
 func init() {
 	phaseMap = map[int32]func(string, *config.MasterConfig, *database.DataBase) serverPhase{
-		phaseIDBuild:    newBuildPhase,
-		phaseIDAnalysis: newAnalysisPhase,
-		phaseIDReport:   newReportPhase,
+		PhaseIDBuild:    newBuildPhase,
+		PhaseIDAnalysis: newAnalysisPhase,
+		PhaseIDReport:   newReportPhase,
 	}
 }
 
 type serverPhase interface {
 	GetPhaseID() int32
+	getName() string
 	Activate() error
 	Shutdown() error
 	getDataBase() (*database.DataBase, error)
@@ -65,6 +66,10 @@ func (gsp *genericServerPhase) getSession() string {
 
 func (gsp *genericServerPhase) getMasterConfig() *config.MasterConfig {
 	return gsp.masterConfig
+}
+
+func (gsp *genericServerPhase) getName() string {
+	return gsp.Name
 }
 
 type server struct {
@@ -105,6 +110,18 @@ func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest)
 		return nil, err
 	}
 	return &service.PackageResponse{PackageNode: node}, nil
+}
+
+func (s *server) Status(ctx context.Context, in *service.StatusMessage) (*service.StatusResponse, error) {
+	resp := service.StatusResponse{}
+	resp.PhaseID = s.currentPhase.GetPhaseID()
+	if in.Phase {
+		resp.Phase = s.currentPhase.getName()
+	}
+	if in.Switch {
+		resp.Switching = atomic.LoadInt64(&s.pendingPhaseSwitch) == 1
+	}
+	return &resp, nil
 }
 
 func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage) (*service.SwitchPhaseResponse, error) {
@@ -207,7 +224,7 @@ func InitAndRun(configfile string) (chan error, error) {
 		return nil, err
 	}
 
-	serverImpl.switchPhase(phaseIDBuild)
+	serverImpl.switchPhase(PhaseIDBuild)
 
 	quitServer = make(chan interface{})
 	go func() {
