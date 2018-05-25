@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -35,14 +36,14 @@ func awaitServer() {
 		os.Exit(ReturnCodeTimeout)
 	}()
 	for {
-		res, err := controlServiceClient.Log(context.Background(), &service.LogMessage{Msg: []byte("Client is waiting for qmstr server to be ready")})
+		res, err := controlServiceClient.Status(context.Background(), &service.StatusMessage{})
 		if err != nil {
 			Debug.Println("Master server not yet available")
 			<-time.After(time.Second * time.Duration(1))
 			Debug.Println("retrying")
 			continue
 		}
-		if res.Success {
+		if res.PhaseID > master.PhaseIDInit {
 			return
 		}
 	}

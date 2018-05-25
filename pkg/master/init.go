@@ -49,7 +49,7 @@ func (phase *serverPhaseInit) Shutdown() error {
 }
 
 func (phase *serverPhaseInit) GetPhaseID() int32 {
-	return phaseIDInit
+	return PhaseIDInit
 }
 
 func (phase *serverPhaseInit) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
