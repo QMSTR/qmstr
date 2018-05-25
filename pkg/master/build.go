@@ -4,11 +4,19 @@ import (
 	"errors"
 	"log"
 
+	"github.com/QMSTR/qmstr/pkg/config"
+	"github.com/QMSTR/qmstr/pkg/database"
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 type serverPhaseBuild struct {
 	genericServerPhase
+}
+
+func newBuildPhase(session string, masterConfig *config.MasterConfig, db *database.DataBase) serverPhase {
+	return &serverPhaseBuild{
+		genericServerPhase{Name: "Build", session: session, masterConfig: masterConfig, db: db},
+	}
 }
 
 func (phase *serverPhaseBuild) Activate() error {
@@ -20,8 +28,8 @@ func (phase *serverPhaseBuild) Shutdown() error {
 	return nil
 }
 
-func (phase *serverPhaseBuild) GetPhaseId() int32 {
-	return phase.phaseId
+func (phase *serverPhaseBuild) GetPhaseID() int32 {
+	return phaseIDBuild
 }
 
 func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildResponse, error) {

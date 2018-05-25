@@ -8,20 +8,26 @@ import (
 	"path/filepath"
 
 	"github.com/QMSTR/qmstr/pkg/config"
+	"github.com/QMSTR/qmstr/pkg/database"
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 type serverPhaseReport struct {
 	genericServerPhase
-	config []config.Reporting
+}
+
+func newReportPhase(session string, masterConfig *config.MasterConfig, db *database.DataBase) serverPhase {
+	return &serverPhaseReport{
+		genericServerPhase{Name: "Report", session: session, masterConfig: masterConfig, db: db},
+	}
 }
 
 func (phase *serverPhaseReport) Activate() error {
 	log.Println("Reporting activated")
-	for idx, reporterConfig := range phase.config {
+	for idx, reporterConfig := range phase.masterConfig.Reporting {
 		reporterName := reporterConfig.Reporter
 
-		cmd := exec.Command(reporterName, "--rserv", phase.serverConfig.RPCAddress, "--rid", fmt.Sprintf("%d", idx))
+		cmd := exec.Command(reporterName, "--rserv", phase.masterConfig.Server.RPCAddress, "--rid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			logModuleError(reporterName, out)
@@ -36,8 +42,8 @@ func (phase *serverPhaseReport) Shutdown() error {
 	return nil
 }
 
-func (phase *serverPhaseReport) GetPhaseId() int32 {
-	return phase.phaseId
+func (phase *serverPhaseReport) GetPhaseID() int32 {
+	return phaseIDReport
 }
 
 func (phase *serverPhaseReport) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
@@ -46,20 +52,20 @@ func (phase *serverPhaseReport) Build(in *service.BuildMessage) (*service.BuildR
 
 func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequest) (*service.ReporterConfigResponse, error) {
 	idx := in.ReporterID
-	if idx < 0 || idx >= int32(len(phase.config)) {
+	if idx < 0 || idx >= int32(len(phase.masterConfig.Reporting)) {
 		return nil, fmt.Errorf("Invalid reporter id %d", idx)
 	}
-	config := phase.config[idx]
+	config := phase.masterConfig.Reporting[idx]
 
 	config.Config["name"] = config.Name
 
 	// Set cachedir, if not overriden
 	if _, ok := config.Config["cachedir"]; !ok {
-		config.Config["cachedir"] = filepath.Join(phase.serverConfig.CacheDir, config.Reporter, config.PosixName)
+		config.Config["cachedir"] = filepath.Join(phase.masterConfig.Server.CacheDir, config.Reporter, config.PosixName)
 	}
 	// Set output dir, if not overriden
 	if _, ok := config.Config["outputdir"]; !ok {
-		config.Config["outputdir"] = filepath.Join(phase.serverConfig.OutputDir, config.Reporter, config.PosixName)
+		config.Config["outputdir"] = filepath.Join(phase.masterConfig.Server.OutputDir, config.Reporter, config.PosixName)
 	}
 
 	return &service.ReporterConfigResponse{ConfigMap: config.Config, Session: phase.session,
