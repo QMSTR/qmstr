@@ -10,12 +10,12 @@ import (
 	"time"
 
 	"github.com/QMSTR/qmstr/pkg/config"
+	"github.com/QMSTR/qmstr/pkg/database"
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 type serverPhaseAnalysis struct {
 	genericServerPhase
-	config          []config.Analysis
 	currentAnalyzer *service.Analyzer
 	currentToken    int64
 	finished        chan interface{}
@@ -23,13 +23,15 @@ type serverPhaseAnalysis struct {
 
 var src = rand.NewSource(time.Now().UnixNano())
 
-func newAnalysisPhase(genericPhase genericServerPhase, anaConfig []config.Analysis) *serverPhaseAnalysis {
-	return &serverPhaseAnalysis{genericPhase, anaConfig, nil, src.Int63(), make(chan interface{}, 1)}
+func newAnalysisPhase(session string, masterConfig *config.MasterConfig, db *database.DataBase) serverPhase {
+	return &serverPhaseAnalysis{
+		genericServerPhase{Name: "Analysis", session: session, masterConfig: masterConfig, db: db},
+		nil, src.Int63(), make(chan interface{}, 1)}
 }
 
 func (phase *serverPhaseAnalysis) Activate() error {
 	log.Println("Analysis activated")
-	for idx, anaConfig := range phase.config {
+	for idx, anaConfig := range phase.masterConfig.Analysis {
 		analyzerName := anaConfig.Analyzer
 
 		analyzer, err := phase.db.GetAnalyzerByName(analyzerName)
@@ -41,7 +43,7 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		phase.currentToken = src.Int63()
 
 		log.Printf("Running analyzer %s ...\n", analyzerName)
-		cmd := exec.Command(analyzerName, "--aserv", phase.serverConfig.RPCAddress, "--aid", fmt.Sprintf("%d", idx))
+		cmd := exec.Command(analyzerName, "--aserv", phase.masterConfig.Server.RPCAddress, "--aid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			logModuleError(analyzerName, out)
@@ -61,8 +63,8 @@ func (phase *serverPhaseAnalysis) Shutdown() error {
 	return nil
 }
 
-func (phase *serverPhaseAnalysis) GetPhaseId() int32 {
-	return phase.phaseId
+func (phase *serverPhaseAnalysis) GetPhaseID() int32 {
+	return phaseIDAnalysis
 }
 
 func (phase *serverPhaseAnalysis) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
@@ -75,19 +77,19 @@ func (phase *serverPhaseAnalysis) GetReporterConfig(in *service.ReporterConfigRe
 
 func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
 	idx := in.AnalyzerID
-	if idx < 0 || idx >= int32(len(phase.config)) {
+	if idx < 0 || idx >= int32(len(phase.masterConfig.Analysis)) {
 		return nil, fmt.Errorf("Invalid analyzer id %d", idx)
 	}
-	config := phase.config[idx]
+	config := phase.masterConfig.Analysis[idx]
 	config.Config["name"] = config.Name
 
 	// Set cachedir, if not overriden
 	if _, ok := config.Config["cachedir"]; !ok {
-		config.Config["cachedir"] = filepath.Join(phase.serverConfig.CacheDir, config.Analyzer, config.PosixName)
+		config.Config["cachedir"] = filepath.Join(phase.masterConfig.Server.CacheDir, config.Analyzer, config.PosixName)
 	}
 	// Set output dir, if not overriden
 	if _, ok := config.Config["outputdir"]; !ok {
-		config.Config["outputdir"] = filepath.Join(phase.serverConfig.OutputDir, config.Analyzer, config.PosixName)
+		config.Config["outputdir"] = filepath.Join(phase.masterConfig.Server.OutputDir, config.Analyzer, config.PosixName)
 	}
 	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub,
 		Token: phase.currentToken, Name: config.Name}, nil

@@ -21,12 +21,23 @@ import (
 )
 
 var quitServer chan interface{}
-var phaseMap map[int32]serverPhase
+var phaseMap map[int32]func(string, *config.MasterConfig, *database.DataBase) serverPhase
+
+func init() {
+	phaseMap = map[int32]func(string, *config.MasterConfig, *database.DataBase) serverPhase{
+		phaseIDBuild:    newBuildPhase,
+		phaseIDAnalysis: newAnalysisPhase,
+		phaseIDReport:   newReportPhase,
+	}
+}
 
 type serverPhase interface {
-	GetPhaseId() int32
+	GetPhaseID() int32
 	Activate() error
 	Shutdown() error
+	getDataBase() (*database.DataBase, error)
+	getSession() string
+	getMasterConfig() *config.MasterConfig
 	Build(*service.BuildMessage) (*service.BuildResponse, error)
 	GetAnalyzerConfig(*service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error)
 	GetReporterConfig(*service.ReporterConfigRequest) (*service.ReporterConfigResponse, error)
@@ -36,14 +47,27 @@ type serverPhase interface {
 
 type genericServerPhase struct {
 	Name         string
-	phaseId      int32
 	db           *database.DataBase
 	session      string
-	serverConfig *config.ServerConfig
+	masterConfig *config.MasterConfig
+}
+
+func (gsp *genericServerPhase) getDataBase() (*database.DataBase, error) {
+	if gsp.db == nil {
+		return nil, errors.New("Database not yet available")
+	}
+	return gsp.db, nil
+}
+
+func (gsp *genericServerPhase) getSession() string {
+	return gsp.session
+}
+
+func (gsp *genericServerPhase) getMasterConfig() *config.MasterConfig {
+	return gsp.masterConfig
 }
 
 type server struct {
-	db                 *database.DataBase
 	analysisClosed     chan bool
 	serverMutex        *sync.Mutex
 	analysisDone       bool
@@ -72,7 +96,11 @@ func (s *server) SendNodes(ctx context.Context, in *service.AnalysisMessage) (*s
 }
 
 func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest) (*service.PackageResponse, error) {
-	node, err := s.db.GetPackageNode(in.Session)
+	db, err := s.currentPhase.getDataBase()
+	if err != nil {
+		return nil, err
+	}
+	node, err := db.GetPackageNode(in.Session)
 	if err != nil {
 		return nil, err
 	}
@@ -80,29 +108,41 @@ func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest)
 }
 
 func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage) (*service.SwitchPhaseResponse, error) {
+	requestedPhase := in.Phase
+	err := s.switchPhase(requestedPhase)
+	if err != nil {
+		return &service.SwitchPhaseResponse{Success: false}, err
+	}
+	return &service.SwitchPhaseResponse{Success: true}, nil
+}
+
+func (s *server) switchPhase(requestedPhase int32) error {
 	if !atomic.CompareAndSwapInt64(&s.pendingPhaseSwitch, 0, 1) {
 		errMsg := "denied there is a pending phase transition"
 		log.Println(errMsg)
-		return &service.SwitchPhaseResponse{Success: false}, errors.New(errMsg)
+		return errors.New(errMsg)
 	}
-	requestedPhase := in.Phase
-	if requestedPhase <= s.currentPhase.GetPhaseId() {
-		errMsg := fmt.Sprintf("Illegal phase transition %d->%d requested", s.currentPhase.GetPhaseId(), requestedPhase)
+	if requestedPhase <= s.currentPhase.GetPhaseID() {
+		errMsg := fmt.Sprintf("Illegal phase transition %d->%d requested", s.currentPhase.GetPhaseID(), requestedPhase)
 		log.Println(errMsg)
-		return &service.SwitchPhaseResponse{Success: false}, errors.New(errMsg)
+		return errors.New(errMsg)
 	}
-	if phase, ok := phaseMap[requestedPhase]; ok {
+	if phaseCtor, ok := phaseMap[requestedPhase]; ok {
 		log.Printf("Switching to phase %d", requestedPhase)
 		s.currentPhase.Shutdown()
-		s.currentPhase = phase
-		s.pendingPhaseSwitch = 0
-		err := s.currentPhase.Activate()
+		db, err := s.currentPhase.getDataBase()
 		if err != nil {
-			return &service.SwitchPhaseResponse{Success: false}, err
+			return err
 		}
-		return &service.SwitchPhaseResponse{Success: true}, nil
+		s.currentPhase = phaseCtor(s.currentPhase.getSession(), s.currentPhase.getMasterConfig(), db)
+		s.pendingPhaseSwitch = 0
+		err = s.currentPhase.Activate()
+		if err != nil {
+			return err
+		}
+		return nil
 	}
-	return &service.SwitchPhaseResponse{Success: false}, fmt.Errorf("Invalid phase requested %d", requestedPhase)
+	return fmt.Errorf("Invalid phase requested %d", requestedPhase)
 }
 
 func (s *server) Log(ctx context.Context, in *service.LogMessage) (*service.LogResponse, error) {
@@ -130,12 +170,6 @@ func InitAndRun(configfile string) (chan error, error) {
 		return nil, err
 	}
 
-	// Connect to backend database (dgraph)
-	db, err := database.Setup(masterConfig.Server.DBAddress, masterConfig.Server.DBWorkers)
-	if err != nil {
-		return nil, fmt.Errorf("Could not setup database: %v", err)
-	}
-
 	// Setup buildservice
 	lis, err := net.Listen("tcp", masterConfig.Server.RPCAddress)
 	if err != nil {
@@ -146,25 +180,34 @@ func InitAndRun(configfile string) (chan error, error) {
 	rand.Read(sessionBytes)
 	session := fmt.Sprintf("%x", sessionBytes)
 
-	phaseMap = map[int32]serverPhase{
-		1: &serverPhaseBuild{genericServerPhase{Name: "Build phase", phaseId: 1, db: db, session: session, serverConfig: masterConfig.Server}},
-		2: newAnalysisPhase(genericServerPhase{Name: "Analysis phase", phaseId: 2, db: db, serverConfig: masterConfig.Server, session: session},
-			masterConfig.Analysis),
-		3: &serverPhaseReport{genericServerPhase{Name: "Reporting phase", phaseId: 3, db: db, serverConfig: masterConfig.Server, session: session}, masterConfig.Reporting},
-	}
-
 	s := grpc.NewServer()
 	serverImpl := &server{
-		db:             db,
 		serverMutex:    &sync.Mutex{},
 		analysisClosed: make(chan bool),
 		analysisDone:   false,
-		currentPhase:   phaseMap[1],
+		currentPhase:   newInitServerPhase(session, masterConfig),
 	}
 	service.RegisterBuildServiceServer(s, serverImpl)
 	service.RegisterAnalysisServiceServer(s, serverImpl)
 	service.RegisterReportServiceServer(s, serverImpl)
 	service.RegisterControlServiceServer(s, serverImpl)
+
+	// start grpc service as soon as possible to allow clients to connect and get status feedback
+	masterRun := make(chan error)
+	go func() {
+		log.Printf("qmstr-master listening on %s\n", masterConfig.Server.RPCAddress)
+		err := s.Serve(lis)
+		masterRun <- err
+	}()
+
+	// Activate init phase
+	err = serverImpl.currentPhase.Activate()
+	if err != nil {
+		masterRun <- err
+		return nil, err
+	}
+
+	serverImpl.switchPhase(phaseIDBuild)
 
 	quitServer = make(chan interface{})
 	go func() {
@@ -175,31 +218,7 @@ func InitAndRun(configfile string) (chan error, error) {
 		quitServer = nil
 	}()
 
-	initPackage(masterConfig, db, session)
-
-	masterRun := make(chan error)
-	go func() {
-		log.Printf("qmstr-master listening on %s\n", masterConfig.Server.RPCAddress)
-		err := s.Serve(lis)
-		masterRun <- err
-	}()
-
 	return masterRun, nil
-}
-
-func initPackage(masterConfig *config.MasterConfig, db *database.DataBase, session string) {
-	rootPackageNode := &service.PackageNode{Name: masterConfig.Name}
-	tmpInfoNode := &service.InfoNode{Type: "metadata", NodeType: service.NodeTypeInfoNode}
-	for key, val := range masterConfig.MetaData {
-		tmpInfoNode.DataNodes = append(tmpInfoNode.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val, NodeType: service.NodeTypeDataNode})
-	}
-
-	if len(tmpInfoNode.DataNodes) > 0 {
-		rootPackageNode.AdditionalInfo = []*service.InfoNode{tmpInfoNode}
-	}
-
-	rootPackageNode.Session = session
-	db.AddPackageNode(rootPackageNode)
 }
 
 func logModuleError(moduleName string, output []byte) {
