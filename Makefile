@@ -2,7 +2,8 @@ OWNERGROUP := $(shell stat -c %u:%g Makefile)
 PROTO_PYTHON_FILES := $(shell find python/ -type f -name '*_pb2*.py' -printf '%p ')
 PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
 GO_PKGS := $(shell go list ./... | grep -v /vendor)
-GO_BIN := $(GOPATH)/bin
+GO_PATH := $(shell go env GOPATH)
+GO_BIN := $(GO_PATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
 GODEP := $(GO_BIN)/dep
 PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
@@ -137,4 +138,4 @@ install_qmstr_client: $(QMSTR_CLIENT_BINARIES)
 install_qmstr_all: install_qmstr_client install_qmstr_server
 
 install_qmstr_client_gopath: $(QMSTR_CLIENT_BINARIES)
-	cp $^ ${GOPATH}/bin/
+	cp $^ ${GO_PATH}/bin/
