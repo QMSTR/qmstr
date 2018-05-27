@@ -41,6 +41,7 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		phase.currentAnalyzer = analyzer
 		src.Seed(phase.currentToken)
 		phase.currentToken = src.Int63()
+		phase.currentAnalyzer.TrustLevel = anaConfig.TrustLevel
 
 		log.Printf("Running analyzer %s ...\n", analyzerName)
 		phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: fmt.Sprintf("Running analyzer %s", analyzerName)})
@@ -125,6 +126,7 @@ func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*servi
 			// prevent inserting data nodes twice
 			infoNode.DataNodes = nil
 			infoNode.Analyzer = append(infoNode.Analyzer, phase.currentAnalyzer)
+
 			inodes.Inodes[idx] = infoNode
 		}
 		fileNode.AdditionalInfo = append(fileNode.AdditionalInfo, inodes.Inodes...)

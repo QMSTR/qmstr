@@ -31,6 +31,7 @@ message Analyzer {
     string uid = 1;
     string name = 2;
     int32 nodeType = 3;
+    int64 trustLevel = 4;
 }
 
 message PathSubstitution {
