@@ -92,7 +92,7 @@ $(GODEP):
 
 .PHONY: godep
 godep: $(GODEP)
-	dep ensure
+	${GO_BIN}/dep ensure
 	@chown -R ${OWNERGROUP} vendor &
 
 $(PROTOC_GEN_GO_SRC): godep
