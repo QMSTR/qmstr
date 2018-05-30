@@ -42,7 +42,7 @@ func init() {
 // Execute the control program and perform the command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		Log.Printf("Error: %v!\n", err)
+		golog.Printf("Error: %v!\n", err)
 		os.Exit(1)
 	}
 }
