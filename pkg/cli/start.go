@@ -22,11 +22,11 @@ const retryLimit = 16
 const minPort = 6787 // MSTR on the dial pad
 const portCount = 1024
 const maxPort = minPort + portCount
-const masterImageName = "qmstr/master"
 const containerBuildDir = "/buildroot"
 const proto = "tcp"
 
 var hostPortRange = fmt.Sprintf("%d-%d", minPort, maxPort)
+var masterImageName = "qmstr/master"
 var internalMasterPort string
 var wait bool
 
@@ -39,6 +39,12 @@ func startMaster(cmd *cobra.Command, args []string) {
 	config, err := config.ReadConfigFromFile(filepath.Join(wd, "qmstr.yaml"))
 	if err != nil {
 		Log.Fatalf("failed to read configuration %v", err)
+	}
+
+	configuredImageName := config.Server.ImageName
+	if configuredImageName != "" {
+		Debug.Printf("using configured image %s", configuredImageName)
+		masterImageName = configuredImageName
 	}
 
 	internalMasterPort, err = config.GetRPCPort()
