@@ -46,6 +46,14 @@ required = ["github.com/golang/protobuf/protoc-gen-go"]
   name = "google.golang.org/grpc"
   version = "1.9.2"
 
+[[constraint]]
+  name = "github.com/docker/go-connections"
+  version = "v0.3.0"
+
+[[constraint]]
+  name = "github.com/docker/docker"
+  version = "v1.13.1"
+
 [prune]
   go-tests = true
   unused-packages = true

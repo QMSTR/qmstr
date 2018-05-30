@@ -1,12 +1,14 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
 	"regexp"
+	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/service"
 	yaml "gopkg.in/yaml.v2"
@@ -97,6 +99,11 @@ func validateConfig(configuration *MasterConfig) error {
 		return fmt.Errorf("empty configuration -- check indentation")
 	}
 
+	serveraddress := strings.Split(configuration.Server.RPCAddress, ":")
+	if len(serveraddress) != 2 {
+		return errors.New("Invalid RPC address")
+	}
+
 	uniqueFields := map[string]map[string]struct{}{}
 	uniqueFields["Name"] = map[string]struct{}{}
 	uniqueFields["PosixName"] = map[string]struct{}{}
@@ -148,4 +155,13 @@ func posixFullyPortableFilename(filename string) string {
 	nonPosixChars := regexp.MustCompile(`[^A-Za-z0-9\._-]`)
 	posixFilename := nonPosixChars.ReplaceAllString(filename, "_")
 	return posixFilename
+}
+
+// GetRPCPort returns the configured port for qmstr's grpc service
+func (mc *MasterConfig) GetRPCPort() (string, error) {
+	err := validateConfig(mc)
+	if err != nil {
+		return "", err
+	}
+	return strings.Split(mc.Server.RPCAddress, ":")[1], nil
 }
