@@ -30,11 +30,11 @@ var rootCmd = &cobra.Command{
 	Short: "qmstrctl controls and manages the Quartermaster master",
 	Long: `qmstrctl controls and manages the Quartermaster master process.
 	It provides commands to run, quit and configure the master.`,
-	Run: func(cmd *cobra.Command, args []string) {},
+	Run:              func(cmd *cobra.Command, args []string) {},
+	PersistentPreRun: SetupLogging,
 }
 
 func init() {
-	SetupLogging()
 	rootCmd.PersistentFlags().StringVar(&address, "cserv", "", "connect to control service")
 	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "enable diagnostics")
 }
@@ -69,7 +69,7 @@ func tearDownServer() {
 }
 
 // SetupLogging sets up logging
-func SetupLogging() {
+func SetupLogging(cmd *cobra.Command, args []string) {
 	log := logging.Setup(verbose)
 	Debug = log.Debug
 	Log = log.Log
