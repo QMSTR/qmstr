@@ -36,6 +36,7 @@ type ServerConfig struct {
 	DBWorkers  int
 	CacheDir   string
 	OutputDir  string
+	ImageName  string
 }
 
 type MasterConfig struct {
