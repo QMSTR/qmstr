@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"golang.org/x/net/context"
 
@@ -31,12 +32,21 @@ func init() {
 	}
 }
 
+type EventClass string
+
+const (
+	EventAll    EventClass = "all"
+	EventPhase  EventClass = "phase"
+	EventModule EventClass = "module"
+)
+
 type server struct {
 	analysisClosed     chan bool
 	serverMutex        *sync.Mutex
 	analysisDone       bool
 	currentPhase       serverPhase
 	pendingPhaseSwitch int64
+	eventChannels      map[EventClass][]chan *service.Event
 }
 
 func (s *server) Build(ctx context.Context, in *service.BuildMessage) (*service.BuildResponse, error) {
@@ -148,6 +158,61 @@ func (s *server) Quit(ctx context.Context, in *service.QuitMessage) (*service.Qu
 	return &service.QuitResponse{Success: true}, nil
 }
 
+func (s *server) SubscribeEvents(in *service.EventMessage, stream service.ControlService_SubscribeEventsServer) error {
+	var eventKey EventClass
+	switch in.Class {
+	case "all":
+		eventKey = EventAll
+	case "phase":
+		eventKey = EventPhase
+	case "module":
+		eventKey = EventModule
+	default:
+		return fmt.Errorf("No such event class %s", in.Class)
+	}
+	eventC := make(chan *service.Event)
+	err := s.registerEventChannel(eventKey, eventC)
+	if err != nil {
+		return err
+	}
+
+	for event := range eventC {
+		stream.Send(event)
+	}
+	return nil
+}
+
+func (s *server) registerEventChannel(eventClass EventClass, eventChannel chan *service.Event) error {
+	if _, ok := s.eventChannels[eventClass]; !ok {
+		return fmt.Errorf("No such event class %v", eventClass)
+	}
+	s.eventChannels[eventClass] = append(s.eventChannels[eventClass], eventChannel)
+	return nil
+}
+
+func (s *server) publishEvent(event *service.Event) error {
+	if _, ok := s.eventChannels[EventClass(event.Class)]; !ok {
+		return fmt.Errorf("No such event class %v", event.Class)
+	}
+	for _, sub := range []EventClass{EventClass(event.Class), EventAll} {
+		for _, channel := range s.eventChannels[sub] {
+			go func(c chan *service.Event) {
+				ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+				defer cancel()
+				select {
+				case c <- event:
+					return
+				case <-ctx.Done():
+					log.Printf("Could not send event %v to channel", event)
+				}
+			}(channel)
+		}
+	}
+
+	// TODO publish the events to the corresponding channels
+	return nil
+}
+
 // InitAndRun sets up and runs the grpc services and the dgraph database connection
 func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 	// Setup buildservice
@@ -166,6 +231,11 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 		analysisClosed: make(chan bool),
 		analysisDone:   false,
 		currentPhase:   newInitServerPhase(session, masterConfig),
+		eventChannels: map[EventClass][]chan *service.Event{
+			EventAll:    []chan *service.Event{},
+			EventModule: []chan *service.Event{},
+			EventPhase:  []chan *service.Event{},
+		},
 	}
 	service.RegisterBuildServiceServer(s, serverImpl)
 	service.RegisterAnalysisServiceServer(s, serverImpl)
