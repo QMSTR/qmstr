@@ -15,5 +15,5 @@ const (
 	PhaseIDBuild
 	PhaseIDAnalysis
 	PhaseIDReport
-	PhaseIDFailed
+	PhaseIDFailure
 )

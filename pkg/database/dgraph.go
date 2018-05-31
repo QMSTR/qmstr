@@ -189,9 +189,9 @@ func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 	return ret["hasNode"][0].Uid, nil
 }
 
-func (db *DataBase) AddPackageNode(pNode *service.PackageNode) {
+func (db *DataBase) AddPackageNode(pNode *service.PackageNode) (string, error) {
 	pNode.NodeType = service.NodeTypePackageNode
-	dbInsert(db.client, pNode)
+	return dbInsert(db.client, pNode)
 }
 
 // the data should be JSON marshalable

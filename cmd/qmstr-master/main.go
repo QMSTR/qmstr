@@ -31,7 +31,7 @@ func main() {
 
 	masterRun, err := master.InitAndRun(masterConfig)
 	if err != nil {
-		log.Fatalf("Cannot start QMSTR Server: %v\n", err)
+		log.Printf("Cannot start QMSTR Server: %v\n", err)
 	}
 
 	err = <-masterRun

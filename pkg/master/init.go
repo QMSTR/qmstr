@@ -24,11 +24,11 @@ func (phase *serverPhaseInit) Activate() error {
 	}
 	phase.db = db
 
-	phase.initPackage(phase.session)
-	return nil
+	err = phase.initPackage(phase.session)
+	return err
 }
 
-func (phase *serverPhaseInit) initPackage(session string) {
+func (phase *serverPhaseInit) initPackage(session string) error {
 	rootPackageNode := &service.PackageNode{Name: phase.masterConfig.Name}
 	tmpInfoNode := &service.InfoNode{Type: "metadata", NodeType: service.NodeTypeInfoNode}
 	for key, val := range phase.masterConfig.MetaData {
@@ -40,7 +40,8 @@ func (phase *serverPhaseInit) initPackage(session string) {
 	}
 
 	rootPackageNode.Session = session
-	phase.db.AddPackageNode(rootPackageNode)
+	_, err := phase.db.AddPackageNode(rootPackageNode)
+	return err
 }
 
 func (phase *serverPhaseInit) Shutdown() error {
