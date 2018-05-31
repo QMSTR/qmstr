@@ -23,9 +23,9 @@ type serverPhaseAnalysis struct {
 
 var src = rand.NewSource(time.Now().UnixNano())
 
-func newAnalysisPhase(session string, masterConfig *config.MasterConfig, db *database.DataBase) serverPhase {
+func newAnalysisPhase(session string, masterConfig *config.MasterConfig, db *database.DataBase, server *server) serverPhase {
 	return &serverPhaseAnalysis{
-		genericServerPhase{Name: "Analysis", session: session, masterConfig: masterConfig, db: db},
+		genericServerPhase{Name: "Analysis", session: session, masterConfig: masterConfig, db: db, server: server},
 		nil, src.Int63(), make(chan interface{}, 1)}
 }
 
@@ -43,12 +43,15 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		phase.currentToken = src.Int63()
 
 		log.Printf("Running analyzer %s ...\n", analyzerName)
+		phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: fmt.Sprintf("Running analyzer %s", analyzerName)})
 		cmd := exec.Command(analyzerName, "--aserv", phase.masterConfig.Server.RPCAddress, "--aid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			logModuleError(analyzerName, out)
+			phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: fmt.Sprintf("Analyzer %s failed", analyzerName)})
 			return err
 		}
+		phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: fmt.Sprintf("Analyzer %s successfully finished", analyzerName)})
 		log.Printf("Analyzer %s finished successfully: %s\n", analyzerName, out)
 	}
 
