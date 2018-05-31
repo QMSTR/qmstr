@@ -46,3 +46,8 @@ message PackageNode {
     repeated FileNode targets = 5;
     repeated InfoNode additionalInfo = 6;
 }
+
+message Event {
+    string class = 1;
+    string message = 2;
+}
