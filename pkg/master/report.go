@@ -15,9 +15,9 @@ type serverPhaseReport struct {
 	genericServerPhase
 }
 
-func newReportPhase(session string, masterConfig *config.MasterConfig, db *database.DataBase) serverPhase {
+func newReportPhase(session string, masterConfig *config.MasterConfig, db *database.DataBase, server *server) serverPhase {
 	return &serverPhaseReport{
-		genericServerPhase{Name: "Report", session: session, masterConfig: masterConfig, db: db},
+		genericServerPhase{Name: "Report", session: session, masterConfig: masterConfig, db: db, server: server},
 	}
 }
 

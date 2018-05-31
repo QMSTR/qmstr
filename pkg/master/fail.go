@@ -3,6 +3,8 @@ package master
 import (
 	"errors"
 	"log"
+
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 type serverPhaseFailure struct {
@@ -11,8 +13,9 @@ type serverPhaseFailure struct {
 }
 
 func (server *server) enterFailureServerPhase(cause error) {
+	server.publishEvent(&service.Event{Class: string(EventPhase), Message: "Entering failure phase"})
 	server.currentPhase = &serverPhaseFailure{genericServerPhase{Name: "Fail"}, cause}
-	log.Printf("Server entered failure state due to %v\n", cause)
+	log.Printf("Server entered failure phase due to %v\n", cause)
 }
 
 func (phase *serverPhaseFailure) Activate() error {

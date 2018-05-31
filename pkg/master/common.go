@@ -29,6 +29,7 @@ type genericServerPhase struct {
 	db           *database.DataBase
 	session      string
 	masterConfig *config.MasterConfig
+	server       *server
 }
 
 func (gsp *genericServerPhase) getDataBase() (*database.DataBase, error) {

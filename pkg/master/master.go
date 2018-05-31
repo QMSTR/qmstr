@@ -22,10 +22,10 @@ import (
 )
 
 var quitServer chan interface{}
-var phaseMap map[int32]func(string, *config.MasterConfig, *database.DataBase) serverPhase
+var phaseMap map[int32]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase
 
 func init() {
-	phaseMap = map[int32]func(string, *config.MasterConfig, *database.DataBase) serverPhase{
+	phaseMap = map[int32]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase{
 		PhaseIDBuild:    newBuildPhase,
 		PhaseIDAnalysis: newAnalysisPhase,
 		PhaseIDReport:   newReportPhase,
@@ -116,6 +116,7 @@ func (s *server) switchPhase(requestedPhase int32) error {
 	}
 	if phaseCtor, ok := phaseMap[requestedPhase]; ok {
 		log.Printf("Switching to phase %d", requestedPhase)
+		s.publishEvent(&service.Event{Class: string(EventPhase), Message: fmt.Sprintf("Switching to phase %d", requestedPhase)})
 		err := s.currentPhase.Shutdown()
 		if err != nil {
 			// switch to failure phase
@@ -128,13 +129,15 @@ func (s *server) switchPhase(requestedPhase int32) error {
 			s.enterFailureServerPhase(err)
 			return err
 		}
-		s.currentPhase = phaseCtor(s.currentPhase.getSession(), s.currentPhase.getMasterConfig(), db)
+		s.currentPhase = phaseCtor(s.currentPhase.getSession(), s.currentPhase.getMasterConfig(), db, s)
 		s.pendingPhaseSwitch = 0
 		err = s.currentPhase.Activate()
 		if err != nil {
+			s.publishEvent(&service.Event{Class: string(EventPhase), Message: "Entering failure phase"})
 			s.enterFailureServerPhase(err)
 			return err
 		}
+		s.publishEvent(&service.Event{Class: string(EventPhase), Message: fmt.Sprintf("Switched to phase %d", requestedPhase)})
 		return nil
 	}
 	return fmt.Errorf("Invalid phase requested %d", requestedPhase)
