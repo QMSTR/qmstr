@@ -181,12 +181,7 @@ func (s *server) Quit(ctx context.Context, in *service.QuitMessage) (*service.Qu
 }
 
 // InitAndRun sets up and runs the grpc services and the dgraph database connection
-func InitAndRun(configfile string) (chan error, error) {
-	masterConfig, err := config.ReadConfigFromFile(configfile)
-	if err != nil {
-		return nil, err
-	}
-
+func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 	// Setup buildservice
 	lis, err := net.Listen("tcp", masterConfig.Server.RPCAddress)
 	if err != nil {
