@@ -6,6 +6,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +18,7 @@ var anaCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		setUpServer()
-		startPhase(2)
+		startPhase(master.PhaseIDAnalysis)
 		tearDownServer()
 	},
 }
@@ -29,7 +30,7 @@ var reportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		setUpServer()
-		startPhase(3)
+		startPhase(master.PhaseIDReport)
 		tearDownServer()
 	},
 }
