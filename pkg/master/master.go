@@ -31,47 +31,6 @@ func init() {
 	}
 }
 
-type serverPhase interface {
-	GetPhaseID() int32
-	getName() string
-	Activate() error
-	Shutdown() error
-	getDataBase() (*database.DataBase, error)
-	getSession() string
-	getMasterConfig() *config.MasterConfig
-	Build(*service.BuildMessage) (*service.BuildResponse, error)
-	GetAnalyzerConfig(*service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error)
-	GetReporterConfig(*service.ReporterConfigRequest) (*service.ReporterConfigResponse, error)
-	GetNodes(*service.NodeRequest) (*service.NodeResponse, error)
-	SendNodes(*service.AnalysisMessage) (*service.AnalysisResponse, error)
-}
-
-type genericServerPhase struct {
-	Name         string
-	db           *database.DataBase
-	session      string
-	masterConfig *config.MasterConfig
-}
-
-func (gsp *genericServerPhase) getDataBase() (*database.DataBase, error) {
-	if gsp.db == nil {
-		return nil, errors.New("Database not yet available")
-	}
-	return gsp.db, nil
-}
-
-func (gsp *genericServerPhase) getSession() string {
-	return gsp.session
-}
-
-func (gsp *genericServerPhase) getMasterConfig() *config.MasterConfig {
-	return gsp.masterConfig
-}
-
-func (gsp *genericServerPhase) getName() string {
-	return gsp.Name
-}
-
 type server struct {
 	analysisClosed     chan bool
 	serverMutex        *sync.Mutex
