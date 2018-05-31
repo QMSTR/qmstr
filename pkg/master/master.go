@@ -105,15 +105,23 @@ func (s *server) switchPhase(requestedPhase int32) error {
 	}
 	if phaseCtor, ok := phaseMap[requestedPhase]; ok {
 		log.Printf("Switching to phase %d", requestedPhase)
-		s.currentPhase.Shutdown()
+		err := s.currentPhase.Shutdown()
+		if err != nil {
+			// switch to failure phase
+			s.enterFailureServerPhase()
+			return err
+		}
 		db, err := s.currentPhase.getDataBase()
 		if err != nil {
+			// switch to failure phase
+			s.enterFailureServerPhase()
 			return err
 		}
 		s.currentPhase = phaseCtor(s.currentPhase.getSession(), s.currentPhase.getMasterConfig(), db)
 		s.pendingPhaseSwitch = 0
 		err = s.currentPhase.Activate()
 		if err != nil {
+			s.enterFailureServerPhase()
 			return err
 		}
 		return nil
@@ -174,8 +182,8 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 	// Activate init phase
 	err = serverImpl.currentPhase.Activate()
 	if err != nil {
-		masterRun <- err
-		return nil, err
+		serverImpl.enterFailureServerPhase()
+		return masterRun, err
 	}
 
 	serverImpl.switchPhase(PhaseIDBuild)
