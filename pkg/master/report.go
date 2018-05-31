@@ -1,7 +1,6 @@
 package master
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os/exec"
@@ -46,10 +45,6 @@ func (phase *serverPhaseReport) GetPhaseID() int32 {
 	return PhaseIDReport
 }
 
-func (phase *serverPhaseReport) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
 func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequest) (*service.ReporterConfigResponse, error) {
 	idx := in.ReporterID
 	if idx < 0 || idx >= int32(len(phase.masterConfig.Reporting)) {
@@ -70,16 +65,4 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 
 	return &service.ReporterConfigResponse{ConfigMap: config.Config, Session: phase.session,
 		Name: config.Name}, nil
-}
-
-func (phase *serverPhaseReport) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
-func (phase *serverPhaseReport) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
-func (phase *serverPhaseReport) SendNodes(in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
-	return nil, errors.New("Wrong phase")
 }

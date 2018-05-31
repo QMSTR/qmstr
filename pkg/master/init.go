@@ -1,7 +1,6 @@
 package master
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/QMSTR/qmstr/pkg/config"
@@ -50,24 +49,4 @@ func (phase *serverPhaseInit) Shutdown() error {
 
 func (phase *serverPhaseInit) GetPhaseID() int32 {
 	return PhaseIDInit
-}
-
-func (phase *serverPhaseInit) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
-func (phase *serverPhaseInit) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
-func (phase *serverPhaseInit) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
-func (phase *serverPhaseInit) SendNodes(in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
-func (phase *serverPhaseInit) GetReporterConfig(in *service.ReporterConfigRequest) (*service.ReporterConfigResponse, error) {
-	return nil, errors.New("Wrong phase")
 }

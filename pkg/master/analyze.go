@@ -67,14 +67,6 @@ func (phase *serverPhaseAnalysis) GetPhaseID() int32 {
 	return PhaseIDAnalysis
 }
 
-func (phase *serverPhaseAnalysis) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
-func (phase *serverPhaseAnalysis) GetReporterConfig(in *service.ReporterConfigRequest) (*service.ReporterConfigResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
 func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
 	idx := in.AnalyzerID
 	if idx < 0 || idx >= int32(len(phase.masterConfig.Analysis)) {

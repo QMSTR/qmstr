@@ -1,7 +1,6 @@
 package master
 
 import (
-	"errors"
 	"log"
 
 	"github.com/QMSTR/qmstr/pkg/config"
@@ -38,20 +37,4 @@ func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildRe
 		phase.db.AddFileNode(node)
 	}
 	return &service.BuildResponse{Success: true}, nil
-}
-
-func (phase *serverPhaseBuild) GetReporterConfig(in *service.ReporterConfigRequest) (*service.ReporterConfigResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
-func (phase *serverPhaseBuild) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
-func (phase *serverPhaseBuild) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
-	return nil, errors.New("Wrong phase")
-}
-
-func (phase *serverPhaseBuild) SendNodes(in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
-	return nil, errors.New("Wrong phase")
 }
