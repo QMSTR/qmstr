@@ -80,6 +80,7 @@ func (s *server) Status(ctx context.Context, in *service.StatusMessage) (*servic
 	if in.Switch {
 		resp.Switching = atomic.LoadInt64(&s.pendingPhaseSwitch) == 1
 	}
+	resp.Error = s.currentPhase.getError()
 	return &resp, nil
 }
 
@@ -108,20 +109,20 @@ func (s *server) switchPhase(requestedPhase int32) error {
 		err := s.currentPhase.Shutdown()
 		if err != nil {
 			// switch to failure phase
-			s.enterFailureServerPhase()
+			s.enterFailureServerPhase(err)
 			return err
 		}
 		db, err := s.currentPhase.getDataBase()
 		if err != nil {
 			// switch to failure phase
-			s.enterFailureServerPhase()
+			s.enterFailureServerPhase(err)
 			return err
 		}
 		s.currentPhase = phaseCtor(s.currentPhase.getSession(), s.currentPhase.getMasterConfig(), db)
 		s.pendingPhaseSwitch = 0
 		err = s.currentPhase.Activate()
 		if err != nil {
-			s.enterFailureServerPhase()
+			s.enterFailureServerPhase(err)
 			return err
 		}
 		return nil
@@ -182,7 +183,7 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 	// Activate init phase
 	err = serverImpl.currentPhase.Activate()
 	if err != nil {
-		serverImpl.enterFailureServerPhase()
+		serverImpl.enterFailureServerPhase(err)
 		return masterRun, err
 	}
 

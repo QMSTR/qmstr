@@ -15,6 +15,7 @@ type serverPhase interface {
 	Shutdown() error
 	getDataBase() (*database.DataBase, error)
 	getSession() string
+	getError() string
 	getMasterConfig() *config.MasterConfig
 	Build(*service.BuildMessage) (*service.BuildResponse, error)
 	GetAnalyzerConfig(*service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error)
@@ -39,6 +40,10 @@ func (gsp *genericServerPhase) getDataBase() (*database.DataBase, error) {
 
 func (gsp *genericServerPhase) getSession() string {
 	return gsp.session
+}
+
+func (gsp *genericServerPhase) getError() string {
+	return ""
 }
 
 func (gsp *genericServerPhase) getMasterConfig() *config.MasterConfig {

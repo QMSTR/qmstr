@@ -43,6 +43,10 @@ func awaitServer() {
 			Debug.Println("retrying")
 			continue
 		}
+		if res.PhaseID == master.PhaseIDFailure {
+			Log.Println("qmstr master is in failure state")
+			os.Exit(ReturnCodeServerFailureError)
+		}
 		if res.PhaseID > master.PhaseIDInit {
 			return
 		}

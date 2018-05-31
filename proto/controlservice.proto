@@ -45,6 +45,7 @@ message StatusResponse {
   string phase = 1;
   int32 phaseID = 2;
   bool switching = 3;
+  string error = 4;
 }
 
 service ControlService {

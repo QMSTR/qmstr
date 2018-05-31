@@ -9,4 +9,5 @@ const (
 	ReturnCodeParameterError
 	ReturnCodeSysError
 	ReturnCodeFormatError
+	ReturnCodeServerFailureError
 )
