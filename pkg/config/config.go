@@ -37,6 +37,7 @@ type ServerConfig struct {
 	CacheDir   string
 	OutputDir  string
 	ImageName  string
+	PathSub    []*service.PathSubstitution
 }
 
 type MasterConfig struct {
