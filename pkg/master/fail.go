@@ -7,11 +7,12 @@ import (
 
 type serverPhaseFailure struct {
 	genericServerPhase
+	cause error
 }
 
-func (server *server) enterFailureServerPhase() {
-	server.currentPhase = &serverPhaseFailure{genericServerPhase{Name: "Fail"}}
-	log.Println("Server entered failure state.")
+func (server *server) enterFailureServerPhase(cause error) {
+	server.currentPhase = &serverPhaseFailure{genericServerPhase{Name: "Fail"}, cause}
+	log.Printf("Server entered failure state due to %v\n", cause)
 }
 
 func (phase *serverPhaseFailure) Activate() error {

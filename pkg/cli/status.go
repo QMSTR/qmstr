@@ -34,4 +34,8 @@ func getStatus() {
 		switching = ""
 	}
 	Log.Printf("Master server is in %s phase and %s switching", res.Phase, switching)
+
+	if res.Error != "" {
+		Log.Printf("Failure caused by %s\n", res.Error)
+	}
 }
