@@ -91,6 +91,10 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 	if _, ok := config.Config["outputdir"]; !ok {
 		config.Config["outputdir"] = filepath.Join(phase.masterConfig.Server.OutputDir, config.Analyzer, config.PosixName)
 	}
+	// Set path substitution, if not overriden
+	if config.PathSub == nil || len(config.PathSub) == 0 {
+		config.PathSub = phase.masterConfig.Server.PathSub
+	}
 	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub,
 		Token: phase.currentToken, Name: config.Name}, nil
 }
