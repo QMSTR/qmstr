@@ -7,7 +7,6 @@ function start_dgraph() {
     dgraph server --lru_mb=2048 --zero=localhost:5080 &
 }
 
-
 start_dgraph
 
-exec /usr/local/bin/qmstr-master --config /buildroot/qmstr.yaml
+exec /usr/local/bin/qmstr-master --config /buildroot/qmstr.yaml ${PATH_SUB:+--pathsub="$PATH_SUB"}
