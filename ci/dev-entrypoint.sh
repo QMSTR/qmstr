@@ -23,8 +23,8 @@ start_dgraph
 start_dgraph_web
 
 if [ -z "$QMSTR_DEV" ]; then
-    exec /usr/local/bin/qmstr-master --config /buildroot/qmstr.yaml
+    exec /usr/local/bin/qmstr-master --config /buildroot/qmstr.yaml ${PATH_SUB:+--pathsub="$PATH_SUB"}
 else
     echo "Running debug session"
-    exec dlv debug github.com/QMSTR/qmstr/cmd/qmstr-master -l 0.0.0.0:2345 --headless=true --log=true -- --config /buildroot/qmstr.yaml
+    exec dlv debug github.com/QMSTR/qmstr/cmd/qmstr-master -l 0.0.0.0:2345 --headless=true --log=true -- --config /buildroot/qmstr.yaml ${PATH_SUB:+--pathsub="$PATH_SUB"}
 fi
