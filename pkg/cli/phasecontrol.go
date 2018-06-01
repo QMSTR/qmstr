@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"io"
 	"os"
 
 	"golang.org/x/net/context"
@@ -43,23 +42,7 @@ func init() {
 
 func startPhase(phase int32) {
 	if verbose {
-		go func() {
-			stream, err := controlServiceClient.SubscribeEvents(context.Background(), &service.EventMessage{Class: string(master.EventAll)})
-			if err != nil {
-				Log.Printf("Could not subscribe to events %v", err)
-			}
-			for {
-				event, err := stream.Recv()
-				if err == io.EOF {
-					break
-				}
-				if err != nil {
-					Log.Printf("failed to receive event %v", err)
-					continue
-				}
-				Log.Printf("Event: %v, Message: %v", event.Class, event.Message)
-			}
-		}()
+		go printEvents()
 	}
 	resp, err := controlServiceClient.SwitchPhase(context.Background(), &service.SwitchPhaseMessage{Phase: phase})
 	if err != nil {
