@@ -38,4 +38,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("QMSTR master failed: %v\n", err)
 	}
+	log.Println("QMSTR master quit")
 }
