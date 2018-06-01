@@ -204,6 +204,7 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 		log.Println("qmstr-master terminated by client")
 		s.GracefulStop()
 		close(quitServer)
+		masterRun <- nil
 		quitServer = nil
 	}()
 
