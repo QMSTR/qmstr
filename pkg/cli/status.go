@@ -1,12 +1,16 @@
 package cli
 
 import (
+	"io"
 	"os"
 
+	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )
+
+var follow bool
 
 var statusCmd = &cobra.Command{
 	Use:   "status",
@@ -21,6 +25,7 @@ var statusCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(statusCmd)
+	statusCmd.Flags().BoolVar(&follow, "follow", false, "print status and follow events")
 }
 
 func getStatus() {
@@ -38,4 +43,32 @@ func getStatus() {
 	if res.Error != "" {
 		Log.Printf("Failure caused by %s\n", res.Error)
 	}
+
+	if follow {
+		err = printEvents()
+		if err != nil {
+			Log.Printf("Failed to follow event stream")
+			os.Exit(ReturnCodeServerCommunicationError)
+		}
+	}
+}
+
+func printEvents() error {
+	stream, err := controlServiceClient.SubscribeEvents(context.Background(), &service.EventMessage{Class: string(master.EventAll)})
+	if err != nil {
+		Log.Printf("Could not subscribe to events %v", err)
+		return err
+	}
+	for {
+		event, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			Log.Printf("failed to receive event %v", err)
+			return err
+		}
+		Log.Printf("Event: %v, Message: %v", event.Class, event.Message)
+	}
+	return nil
 }
