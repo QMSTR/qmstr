@@ -52,6 +52,10 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 	}
 	config := phase.masterConfig.Reporting[idx]
 
+	if config.Config == nil {
+		config.Config = make(map[string]string)
+	}
+
 	config.Config["name"] = config.Name
 
 	// Set cachedir, if not overriden

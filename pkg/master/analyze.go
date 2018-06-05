@@ -77,6 +77,11 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 		return nil, fmt.Errorf("Invalid analyzer id %d", idx)
 	}
 	config := phase.masterConfig.Analysis[idx]
+
+	if config.Config == nil {
+		config.Config = make(map[string]string)
+	}
+
 	config.Config["name"] = config.Name
 
 	// Set cachedir, if not overriden
