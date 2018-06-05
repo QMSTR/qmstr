@@ -1,5 +1,5 @@
 import grpc
-from pyqmstr.service.analyzerservice_pb2 import AnalyzerConfigRequest, NodeRequest
+from pyqmstr.service.analyzerservice_pb2 import AnalyzerConfigRequest, NodeRequest, AnalysisMessage
 from pyqmstr.service.analyzerservice_pb2_grpc import AnalysisServiceStub
 from pyqmstr.service.controlservice_pb2 import PackageRequest
 from pyqmstr.service.controlservice_pb2_grpc import ControlServiceStub
@@ -63,3 +63,12 @@ class Analyzer(QMSTR_Module):
 
         for node in node_response.fileNodes:
             self.analyzer_module.analyze(node)
+
+        pkg_node = self.getPackageNode()
+
+        ana_msg = AnalysisMessage(
+            token=conf_response.token,
+            packageNode=pkg_node,
+            resultMap=None
+        )
+        anaresp = self.aserv.SendNodes(ana_msg)
