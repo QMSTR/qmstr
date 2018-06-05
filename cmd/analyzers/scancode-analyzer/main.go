@@ -172,10 +172,10 @@ func (scanalyzer *ScancodeAnalyzer) detectLicenses(srcFilePath string) ([]*servi
 						Data: spdxIdent,
 					})
 				}
-
 				licenseNodes = append(licenseNodes, &service.InfoNode{
-					Type:      "license",
-					DataNodes: tempDataNodes,
+					Type:            "license",
+					ConfidenceScore: license["score"].(float64) / 100,
+					DataNodes:       tempDataNodes,
 				})
 			}
 			return licenseNodes, nil

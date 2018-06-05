@@ -126,6 +126,7 @@ func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*servi
 			// prevent inserting data nodes twice
 			infoNode.DataNodes = nil
 			infoNode.Analyzer = append(infoNode.Analyzer, phase.currentAnalyzer)
+			infoNode.ConfidenceScore = inode.ConfidenceScore
 
 			inodes.Inodes[idx] = infoNode
 		}

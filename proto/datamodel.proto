@@ -17,14 +17,15 @@ message InfoNode {
     string uid = 1;
     int32 nodeType = 2;
     string type = 3;
-    repeated Analyzer analyzer = 4;
+    double confidenceScore = 4;
+    repeated Analyzer analyzer = 5;
 
     message DataNode {
         int32 nodeType = 1;
         string type = 2;
         string data = 3;
     }
-    repeated DataNode dataNodes = 5;
+    repeated DataNode dataNodes = 6;
 }
 
 message Analyzer {
