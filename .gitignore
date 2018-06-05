@@ -6,6 +6,11 @@
 # go vendor dir
 vendor/
 
+# python stuff
+venv/
+requirements.txt
+python/**/*egg-info
+
 # misc
 **/.DS_Store
 Gopkg.lock
