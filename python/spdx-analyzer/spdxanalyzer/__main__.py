@@ -51,6 +51,9 @@ class SpdxAnalyzer(object):
         logging.info("Concluded license {}".format(
             spdx_doc_file_info.conc_lics))
 
+    def post_analyze(self):
+        logging.info(self.get_package_node())
+
     def _processPackageNodeData(self):
         logging.warn("Package node not yet available")
         # self.packageNode.Name = self.doc.package.name

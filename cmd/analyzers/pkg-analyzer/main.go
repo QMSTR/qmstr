@@ -42,7 +42,6 @@ func (pkganalyzer *PkgAnalyzer) Configure(configMap map[string]string) error {
 	return nil
 }
 
-// Analyze finds the targets in db which we are going to connect to the package node
 func (pkganalyzer *PkgAnalyzer) Analyze(node *service.FileNode) (*service.InfoNodeSlice, error) {
 	for _, target := range pkganalyzer.targetsSlice {
 		if node.Path == filepath.Join(pkganalyzer.targetsDir, target) {
@@ -51,6 +50,10 @@ func (pkganalyzer *PkgAnalyzer) Analyze(node *service.FileNode) (*service.InfoNo
 		}
 	}
 	return &service.InfoNodeSlice{}, nil
+}
+
+func (pkganalyzer *PkgAnalyzer) PostAnalyze() error {
+	return nil
 }
 
 func (pkganalyzer *PkgAnalyzer) GetPackageNode() *service.PackageNode {

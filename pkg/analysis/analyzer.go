@@ -29,6 +29,7 @@ type AnalyzerModule interface {
 	Analyze(node *service.FileNode) (*service.InfoNodeSlice, error)
 	SetPackageNode(pkgNode *service.PackageNode)
 	GetPackageNode() *service.PackageNode
+	PostAnalyze() error
 }
 
 func NewAnalyzer(module AnalyzerModule) *Analyzer {

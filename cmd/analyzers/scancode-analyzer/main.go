@@ -78,6 +78,10 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(node *service.FileNode) (*service.In
 	return retVal, nil
 }
 
+func (scanalyzer *ScancodeAnalyzer) PostAnalyze() error {
+	return nil
+}
+
 func (scanalyzer *ScancodeAnalyzer) SetPackageNode(pkg *service.PackageNode) {}
 func (scanalyzer *ScancodeAnalyzer) GetPackageNode() *service.PackageNode {
 	return nil

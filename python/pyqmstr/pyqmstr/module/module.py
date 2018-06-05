@@ -24,18 +24,20 @@ class QMSTR_Module(object):
             channel)
         self.cserv = ControlServiceStub(channel)
 
-    def getName(self):
+    def get_name(self):
         return self.name
 
-    def setPackageNode(self, pkg):
+    def set_package_node(self, pkg):
         self.pkg = pkg
 
-    def getPackageNode(self):
+    def get_package_node(self):
         return self.pkg
 
     def analyze(self, node):
         raise NotImplementedError()
 
+    def post_analyze(self):
+        raise NotImplementedError()
 
 class Analyzer(QMSTR_Module):
     def __init__(self, module, address, aid):
@@ -64,7 +66,9 @@ class Analyzer(QMSTR_Module):
         for node in node_response.fileNodes:
             self.analyzer_module.analyze(node)
 
-        pkg_node = self.getPackageNode()
+        self.analyzer_module.post_analyze()
+
+        pkg_node = self.analyzer_module.get_package_node()
 
         ana_msg = AnalysisMessage(
             token=conf_response.token,
