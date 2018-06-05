@@ -33,29 +33,26 @@ class QMSTR_Module(object):
     def get_package_node(self):
         return self.pkg
 
-    def analyze(self, node):
+    def configure(self, config):
         raise NotImplementedError()
 
-    def post_analyze(self):
-        raise NotImplementedError()
 
-class Analyzer(QMSTR_Module):
-    def __init__(self, module, address, aid):
-        super(Analyzer, self).__init__(address, aid)
-        self.analyzer_module = module
+class QMSTR_Analyzer(QMSTR_Module):
+    def __init__(self, address, aid):
+        super(QMSTR_Analyzer, self).__init__(address, aid)
 
     def run_analyzer(self):
         conf_request = AnalyzerConfigRequest(
             analyzerID=self.id)
         conf_response = self.aserv.GetAnalyzerConfig(conf_request)
-        self.analyzer_module.configure(conf_response.configMap)
+        self.configure(conf_response.configMap)
 
         package_request = PackageRequest(
             session=conf_response.session
         )
 
         package_response = self.cserv.GetPackageNode(package_request)
-        self.analyzer_module.setPackageNode(package_response.packageNode)
+        self.set_package_node(package_response.packageNode)
 
         node_request = NodeRequest(
             type=conf_response.typeSelector
@@ -64,11 +61,11 @@ class Analyzer(QMSTR_Module):
         node_response = self.aserv.GetNodes(node_request)
 
         for node in node_response.fileNodes:
-            self.analyzer_module.analyze(node)
+            self.analyze(node)
 
-        self.analyzer_module.post_analyze()
+        self.post_analyze()
 
-        pkg_node = self.analyzer_module.get_package_node()
+        pkg_node = self.get_package_node()
 
         ana_msg = AnalysisMessage(
             token=conf_response.token,
@@ -76,3 +73,9 @@ class Analyzer(QMSTR_Module):
             resultMap=None
         )
         anaresp = self.aserv.SendNodes(ana_msg)
+
+    def analyze(self, node):
+        raise NotImplementedError()
+
+    def post_analyze(self):
+        raise NotImplementedError()
