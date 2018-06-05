@@ -136,6 +136,15 @@ func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*servi
 
 	if in.PackageNode != nil {
 		log.Printf("Connecting package node %v to targets.", in.PackageNode.Name)
+		for idx, additInfo := range in.PackageNode.AdditionalInfo {
+			infoNode, err := phase.db.GetInfoNodeByDataNode(additInfo.Type, additInfo.DataNodes...)
+			if err != nil {
+				return &service.AnalysisResponse{Success: false}, err
+			}
+			// prevent inserting metadata twice
+			infoNode.DataNodes = nil
+			in.PackageNode.AdditionalInfo[idx] = infoNode
+		}
 		phase.db.AlterPackageNode(in.PackageNode)
 	}
 	return &service.AnalysisResponse{Success: true}, nil
