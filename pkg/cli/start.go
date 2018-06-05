@@ -68,7 +68,7 @@ func startMaster(cmd *cobra.Command, args []string) {
 		Log.Fatalf("Starting qmstr-master failed: %v", err)
 	}
 
-	var address = fmt.Sprintf("%s:%s", portBinding.HostIP, portBinding.HostPort)
+	address = fmt.Sprintf("%s:%s", portBinding.HostIP, portBinding.HostPort)
 
 	if wait {
 		setUpServer()
