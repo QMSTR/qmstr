@@ -41,24 +41,19 @@ class SpdxAnalyzer(object):
 
     def analyze(self, node):
         logging.info("Analyze node {}".format(node.path))
-        filtered_files = filter(lambda f: node.path.endswith(f.name), self.doc.files)
+        filtered_files = filter(
+            lambda f: node.path.endswith(f.name), self.doc.files)
         if not filtered_files:
             logging.warn(
                 "File {} not found in SPDX document".format(node.path))
             return
         spdx_doc_file_info = filtered_files[0]
-        logging.info("Concluded license {}".format(spdx_doc_file_info.conc_lics))
-
+        logging.info("Concluded license {}".format(
+            spdx_doc_file_info.conc_lics))
 
     def _processPackageNodeData(self):
         logging.warn("Package node not yet available")
         # self.packageNode.Name = self.doc.package.name
-
-    def setPackageNode(self, pkg):
-        pass
-
-    def getPackageNode(self):
-        return None
 
     def _parse_spdx(self):
         if not self.format in self.parse_func_map:
