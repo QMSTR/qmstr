@@ -64,27 +64,27 @@ func (r *Reporter) RunReporterModule() error {
 
 	err = os.MkdirAll(cacheDir, os.ModePerm)
 	if err != nil {
-		return fmt.Errorf("failed to create cache directory for module %s %v", r.GetModuleName(), err)
+		return fmt.Errorf("failed to create cache directory \"%s\" for module %s: %v", cacheDir, r.GetModuleName(), err)
 	}
 
 	err = os.MkdirAll(outDir, os.ModePerm)
 	if err != nil {
-		return fmt.Errorf("failed to create output directory for module %s %v", r.GetModuleName(), err)
+		return fmt.Errorf("failed to create output directory \"%s\" for module %s: %v", outDir, r.GetModuleName(), err)
 	}
 
 	err = r.module.Configure(configResp.ConfigMap)
 	if err != nil {
-		return fmt.Errorf("failed to configure reporter module %s %v", r.GetModuleName(), err)
+		return fmt.Errorf("failed to configure reporter module %s: %v", r.GetModuleName(), err)
 	}
 
 	resp, err := r.controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: configResp.Session})
 	if err != nil {
-		return fmt.Errorf("could not get package node %v", err)
+		return fmt.Errorf("could not get package node: %v", err)
 	}
 
 	err = r.module.Report(resp.PackageNode)
 	if err != nil {
-		return fmt.Errorf("reporter %s failed %v", r.name, err)
+		return fmt.Errorf("reporter %s failed: %v", r.name, err)
 	}
 
 	if err := r.module.PostReport(); err != nil {
