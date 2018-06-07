@@ -34,6 +34,7 @@ type HTMLReporter struct {
 	baseURL       string
 	siteData      SiteData
 	packageDir    string
+	cacheDir      string
 }
 
 // Configure sets up the working directory for this reporting run.
@@ -61,6 +62,10 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 		r.siteData = SiteData{Provider: "The Site Provider"}
 	}
 
+	if cacheDir, ok := config["cachedir"]; ok {
+		r.cacheDir = cacheDir
+	}
+
 	detectedVersion, err := DetectHugoAndVerifyVersion()
 	if err != nil {
 		return fmt.Errorf("error generating HTML reports: %v", err)
@@ -71,7 +76,7 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 	if err != nil {
 		return fmt.Errorf("cannot identify QMSTR shared data directory: %v", err)
 	}
-	r.workingDir, err = CreateHugoWorkingDirectory(r.sharedDataDir, r.baseURL)
+	r.workingDir, err = r.CreateHugoWorkingDirectory(r.sharedDataDir, r.baseURL)
 	if err != nil {
 		return fmt.Errorf("error preparing temporary Hugo working directory: %v", err)
 	}
@@ -96,7 +101,7 @@ func (r *HTMLReporter) Report(packageNode *service.PackageNode) error {
 	return nil
 }
 
-// PostReport is called after the report has bee generated.
+// PostReport is called after the report has been generated.
 // It is part of the ReporterModule interface.
 func (r *HTMLReporter) PostReport() error {
 	if !r.Keep {
@@ -214,7 +219,7 @@ func CheckMinimumRequiredVersion(versionstring string) error {
 }
 
 //CreateHugoWorkingDirectory creates a temporary directory with the directory structure required to run Hugo
-func CreateHugoWorkingDirectory(sharedDataDir string, baseURL string) (string, error) {
+func (r *HTMLReporter) CreateHugoWorkingDirectory(sharedDataDir string, baseURL string) (string, error) {
 	tmpWorkDir, err := ioutil.TempDir("", "qmstr-")
 	if err != nil {
 		return tmpWorkDir, fmt.Errorf("error creating temporary Hugo working directory: %v", err)
@@ -225,11 +230,28 @@ func CreateHugoWorkingDirectory(sharedDataDir string, baseURL string) (string, e
 	templateDir := "templates"
 	linksfromTo := make(map[string]string)
 
-	for _, folder := range []string{"themes", "content", "data"} {
-		if err := os.MkdirAll(path.Join(tmpWorkDir, folder), 0700); err != nil {
-			return "", fmt.Errorf("error creating folder in site skeleton: %v", err)
+	if err := os.MkdirAll(path.Join(tmpWorkDir, "themes"), 0700); err != nil {
+		return "", fmt.Errorf("error creating folder in site skeleton: %v", err)
+	}
+
+	// save content and data in the cache directory:
+	if len(r.cacheDir) == 0 {
+		return "", fmt.Errorf("no cache directory specified - it is required")
+	}
+
+	for _, folder := range []string{"content", "data"} {
+		cachePath := path.Join(r.cacheDir, folder)
+		// create the folder in the cache directory (it may exist, that is not an error):
+		if err := os.MkdirAll(cachePath, 0700); err != nil {
+			return "", fmt.Errorf("error creating folder \"%s\" in cache directory: %v", folder, err)
+		}
+		// symlink it to the temp working directory:
+		link := path.Join(tmpWorkDir, folder)
+		if err := os.Symlink(cachePath, link); err != nil {
+			return "", fmt.Errorf("unable to link folder \"%s\" from the cache directory to the temporary working directory: %v", folder, err)
 		}
 	}
+
 	linksfromTo[path.Join(sharedDataDir, skeletonDir, "archetypes")] = "archetypes"
 	linksfromTo[path.Join(sharedDataDir, skeletonDir, "layouts")] = "layouts"
 	linksfromTo[path.Join(sharedDataDir, skeletonDir, "static")] = "static"
