@@ -165,6 +165,51 @@ func (db *DataBase) AlterPackageNode(pkgNode *service.PackageNode) (string, erro
 	return uid, err
 }
 
+func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) error {
+	db.insertMutex.Lock()
+	defer db.insertMutex.Unlock()
+
+	const q = `
+	query Node($id: string){
+		node(func: uid($id)) @recurse(loop: false) {
+			uid
+			nodeType
+			additionalInfo
+		}
+	}
+	`
+	vars := map[string]string{"$id": nodeID}
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
+	if err != nil {
+		return err
+	}
+
+	type GenericNode struct {
+		Uid            string
+		NodeType       int32
+		AdditionalInfo []*service.InfoNode
+	}
+
+	var receiverNode GenericNode
+	err = json.Unmarshal(resp.Json, &receiverNode)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if receiverNode.NodeType != service.NodeTypeFileNode && receiverNode.NodeType != service.NodeTypePackageNode {
+		return errors.New("can not attach infonode, receiver is neither file nor package node")
+	}
+
+	receiverNode.AdditionalInfo = append(receiverNode.AdditionalInfo, infonodes...)
+
+	_, err = dbInsert(db.client, receiverNode)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetFileNodeUid returns the UID of the node if exists otherwise ""
 func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 

@@ -3,6 +3,7 @@ package master
 import (
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"math/rand"
 	"os/exec"
@@ -103,6 +104,24 @@ func (phase *serverPhaseAnalysis) GetNodes(in *service.NodeRequest) (*service.No
 	}
 	resp := &service.NodeResponse{FileNodes: nodes}
 	return resp, nil
+}
+
+func (phase *serverPhaseAnalysis) SendInfoNode(stream service.AnalysisService_SendInfoNodesServer) error {
+	for {
+		infoNodeReq, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&service.SendResponse{
+				Success: true,
+			})
+		}
+		if err != nil {
+			return err
+		}
+		err = phase.db.AddInfoNodes(infoNodeReq.Uid, infoNodeReq.Infonode)
+		if err != nil {
+			return err
+		}
+	}
 }
 
 func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
