@@ -10,7 +10,7 @@ weight = 1
 
 ## About Quartermaster
 
-Quartermaster is an integrated Free and Ope Source Software (FOSS)
+Quartermaster is an integrated Free and Open Source Software (FOSS)
 toolchain that implements industry best practises of license
 compliance management.
 
