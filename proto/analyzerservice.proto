@@ -39,8 +39,18 @@ message AnalyzerConfigResponse {
     string name = 6;
 }
 
+message InfoNodeMessage {
+    string uid = 1;
+    InfoNode infonode = 2;
+}
+
+message SendResponse {
+    bool success = 1;
+}
+
 service AnalysisService {
     rpc GetNodes(NodeRequest) returns (NodeResponse) {}
     rpc SendNodes(AnalysisMessage) returns (AnalysisResponse) {}
     rpc GetAnalyzerConfig(AnalyzerConfigRequest) returns (AnalyzerConfigResponse) {}
+    rpc SendInfoNodes(stream InfoNodeMessage) returns (SendResponse) {}
 }
