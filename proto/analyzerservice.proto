@@ -40,8 +40,9 @@ message AnalyzerConfigResponse {
 }
 
 message InfoNodeMessage {
-    string uid = 1;
-    InfoNode infonode = 2;
+    int64 token = 1;
+    string uid = 2;
+    InfoNode infonode = 3;
 }
 
 message SendResponse {

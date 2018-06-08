@@ -117,7 +117,13 @@ func (phase *serverPhaseAnalysis) SendInfoNode(stream service.AnalysisService_Se
 		if err != nil {
 			return err
 		}
-		err = phase.db.AddInfoNodes(infoNodeReq.Uid, infoNodeReq.Infonode)
+		if infoNodeReq.Token != phase.currentToken {
+			log.Println("Analyzer supplied wrong token")
+			return errors.New("wrong token supplied")
+		}
+		infoNode := infoNodeReq.Infonode
+		infoNode.Analyzer = []*service.Analyzer{phase.currentAnalyzer}
+		err = phase.db.AddInfoNodes(infoNodeReq.Uid, infoNode)
 		if err != nil {
 			return err
 		}
