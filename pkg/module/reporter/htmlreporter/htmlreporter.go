@@ -115,7 +115,7 @@ func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.
 			return fmt.Errorf("error generating package level report: %v", err)
 		}
 	}
-	log.Printf("(r *HTMLReporter) Report: %v", packageNode.Name)
+	log.Printf("HTML reporter: created report for %v", packageNode.Name)
 	return nil
 }
 
