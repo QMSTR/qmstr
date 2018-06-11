@@ -52,14 +52,6 @@ func (s *server) GetReporterConfig(ctx context.Context, in *service.ReporterConf
 	return s.currentPhase.GetReporterConfig(in)
 }
 
-func (s *server) GetNodes(ctx context.Context, in *service.NodeRequest) (*service.NodeResponse, error) {
-	return s.currentPhase.GetNodes(in)
-}
-
-func (s *server) SendNodes(ctx context.Context, in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
-	return s.currentPhase.SendNodes(in)
-}
-
 func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest) (*service.PackageResponse, error) {
 	db, err := s.currentPhase.getDataBase()
 	if err != nil {

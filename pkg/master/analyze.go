@@ -1,7 +1,6 @@
 package master
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -98,59 +97,4 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 	}
 	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub,
 		Token: phase.currentToken, Name: config.Name, Session: phase.session}, nil
-}
-
-func (phase *serverPhaseAnalysis) GetNodes(in *service.NodeRequest) (*service.NodeResponse, error) {
-	log.Println("Nodes requested")
-	nodes, err := phase.db.GetFileNodesByType(in.Type, true)
-	if err != nil {
-		return nil, err
-	}
-	resp := &service.NodeResponse{FileNodes: nodes}
-	return resp, nil
-}
-
-func (phase *serverPhaseAnalysis) SendNodes(in *service.AnalysisMessage) (*service.AnalysisResponse, error) {
-	log.Println("Nodes received")
-
-	if in.Token != phase.currentToken {
-		log.Println("Analyzer supplied wrong token")
-		return nil, errors.New("wrong token supplied")
-	}
-	for hash, inodes := range in.ResultMap {
-		log.Printf("Processing node %s with %d info nodes\n", hash, len(inodes.Inodes))
-		fileNode, err := phase.db.GetNodeByHash(hash, true)
-		if err != nil {
-			return &service.AnalysisResponse{Success: false}, err
-		}
-		for idx, inode := range inodes.Inodes {
-			infoNode, err := phase.db.GetInfoNodeByDataNode(inode.Type, inode.DataNodes...)
-			if err != nil {
-				return nil, err
-			}
-			// prevent inserting data nodes twice
-			infoNode.DataNodes = nil
-			infoNode.Analyzer = append(infoNode.Analyzer, phase.currentAnalyzer)
-			infoNode.ConfidenceScore = inode.ConfidenceScore
-
-			inodes.Inodes[idx] = infoNode
-		}
-		fileNode.AdditionalInfo = append(fileNode.AdditionalInfo, inodes.Inodes...)
-		phase.db.AlterFileNode(fileNode)
-	}
-
-	if in.PackageNode != nil {
-		log.Printf("Connecting package node %v to targets.", in.PackageNode.Name)
-		for idx, additInfo := range in.PackageNode.AdditionalInfo {
-			infoNode, err := phase.db.GetInfoNodeByDataNode(additInfo.Type, additInfo.DataNodes...)
-			if err != nil {
-				return &service.AnalysisResponse{Success: false}, err
-			}
-			// prevent inserting metadata twice
-			infoNode.DataNodes = nil
-			in.PackageNode.AdditionalInfo[idx] = infoNode
-		}
-		phase.db.AlterPackageNode(in.PackageNode)
-	}
-	return &service.AnalysisResponse{Success: true}, nil
 }
