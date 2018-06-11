@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -11,6 +13,10 @@ import (
 	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/QMSTR/qmstr/pkg/tester"
+)
+
+const (
+	queryType = "sourcecode"
 )
 
 var (
@@ -29,6 +35,49 @@ func main() {
 		log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
 		os.Exit(master.ReturnAnalyzerFailed)
 	}
+}
+
+func (testanalyzer *TestAnalyzer) Configure(configMap map[string]string) error {
+	if _, ok := configMap["tests"]; !ok {
+		log.Println("No build graph tests provided. Running default test.")
+		return nil
+	}
+	tests = strings.Split(configMap["tests"], ";")
+	return nil
+}
+
+func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceClient, session string) error {
+	queryNode := &service.FileNode{Type: queryType}
+
+	pkgNodeResp, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
+	pkgNode = pkgNodeResp.PackageNode
+
+	stream, err := controlService.GetFileNode(context.Background(), queryNode)
+	if err != nil {
+		log.Printf("Could not get file node %v", err)
+		return err
+	}
+
+	// Run tests for file nodes
+	for {
+		fileNode, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+
+		fmt.Println("Testalyzer running tests")
+		testnode = fileNode
+		testSuite := []testing.InternalTest{
+			{
+				Name: "TestGraphIntegrity",
+				F:    TestGraphIntegrity,
+			},
+		}
+		t := &tester.DummyTestDeps{}
+		testing.MainStart(t, testSuite, nil, nil).Run()
+	}
+
+	// Run tests for package node
 	for _, test := range tests {
 		if test == "TestPackageNode" {
 			testfunction = TestPackageNode
@@ -49,36 +98,7 @@ func main() {
 		t := &tester.DummyTestDeps{}
 		testing.MainStart(t, testSuite, nil, nil).Run()
 	}
-}
 
-func (testanalyzer *TestAnalyzer) Configure(configMap map[string]string) error {
-	if _, ok := configMap["tests"]; !ok {
-		log.Println("No build graph tests provided. Running default test.")
-		return nil
-	}
-	tests = strings.Split(configMap["tests"], ";")
-	return nil
-}
-
-func (testanalyzer *TestAnalyzer) Analyze(node *service.FileNode) (*service.InfoNodeSlice, error) {
-	fmt.Println("Testalyzer running tests")
-	testnode = node
-	testSuite := []testing.InternalTest{
-		{
-			Name: "TestGraphIntegrity",
-			F:    TestGraphIntegrity,
-		},
-	}
-	t := &tester.DummyTestDeps{}
-	testing.MainStart(t, testSuite, nil, nil).Run()
-	return &service.InfoNodeSlice{}, nil
-}
-
-func (testanalyzer *TestAnalyzer) SetPackageNode(pkg *service.PackageNode) {
-	pkgNode = pkg
-}
-
-func (testanalyzer *TestAnalyzer) GetPackageNode() *service.PackageNode {
 	return nil
 }
 

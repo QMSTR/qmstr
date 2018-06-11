@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 import argparse
 from pyqmstr.module.module import Analyzer
+from pyqmstr.service.datamodel_pb2 import FileNode
 import logging
 import sys
 
@@ -39,15 +40,24 @@ class SpdxAnalyzer(object):
         self.doc = self._parse_spdx()
         self._processPackageNodeData()
 
-    def analyze(self, node):
-        logging.info("Analyze node {}".format(node.path))
-        filtered_files = filter(lambda f: node.path.endswith(f.name), self.doc.files)
-        if not filtered_files:
-            logging.warn(
-                "File {} not found in SPDX document".format(node.path))
-            return
-        spdx_doc_file_info = filtered_files[0]
-        logging.info("Concluded license {}".format(spdx_doc_file_info.conc_lics))
+    def analyze(self, cserv):
+        const_type = "sourcecode"
+
+        query_node = FileNode(
+            type=const_type
+        )
+
+        stream_resp = cserv.GetFileNode(query_node)
+
+        for node in stream_resp :
+            logging.info("Analyze node {}".format(node.path))
+            filtered_files = filter(lambda f: node.path.endswith(f.name), self.doc.files)
+            if not filtered_files:
+                logging.warn(
+                    "File {} not found in SPDX document".format(node.path))
+                return
+            spdx_doc_file_info = filtered_files[0]
+            logging.info("Concluded license {}".format(spdx_doc_file_info.conc_lics))
 
 
     def _processPackageNodeData(self):

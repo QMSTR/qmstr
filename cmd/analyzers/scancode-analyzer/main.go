@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -12,12 +13,17 @@ import (
 	"strconv"
 	"syscall"
 
+	"golang.org/x/net/context"
+
 	"github.com/QMSTR/qmstr/pkg/analysis"
 	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
-const scancodeErrorCount = "Errors count:\\s*(\\d+)"
+const (
+	scancodeErrorCount = "Errors count:\\s*(\\d+)"
+	queryType          = "sourcecode"
+)
 
 type ScancodeAnalyzer struct {
 	scanData interface{}
@@ -62,24 +68,34 @@ func (scanalyzer *ScancodeAnalyzer) Configure(configMap map[string]string) error
 	return fmt.Errorf("Misconfigured scancode analyzer")
 }
 
-func (scanalyzer *ScancodeAnalyzer) Analyze(node *service.FileNode) (*service.InfoNodeSlice, error) {
-	log.Printf("Analyzing file %s", node.Path)
+func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServiceClient, session string) error {
+	queryNode := &service.FileNode{Type: queryType}
 
-	retVal := &service.InfoNodeSlice{Inodes: []*service.InfoNode{}}
-
-	licenseInfo, err := scanalyzer.detectLicenses(node.GetPath())
-	if err == nil {
-		retVal.Inodes = append(retVal.Inodes, licenseInfo...)
+	stream, err := controlService.GetFileNode(context.Background(), queryNode)
+	if err != nil {
+		log.Printf("Could not get file node %v", err)
+		return err
 	}
-	copyrights, err := scanalyzer.detectCopyrights(node.GetPath())
-	if err == nil {
-		retVal.Inodes = append(retVal.Inodes, copyrights)
-	}
-	return retVal, nil
-}
 
-func (scanalyzer *ScancodeAnalyzer) SetPackageNode(pkg *service.PackageNode) {}
-func (scanalyzer *ScancodeAnalyzer) GetPackageNode() *service.PackageNode {
+	for {
+		fileNode, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+
+		log.Printf("Analyzing file %s", fileNode.Path)
+
+		retVal := &service.InfoNodeSlice{Inodes: []*service.InfoNode{}}
+
+		licenseInfo, err := scanalyzer.detectLicenses(fileNode.GetPath())
+		if err == nil {
+			retVal.Inodes = append(retVal.Inodes, licenseInfo...)
+		}
+		copyrights, err := scanalyzer.detectCopyrights(fileNode.GetPath())
+		if err == nil {
+			retVal.Inodes = append(retVal.Inodes, copyrights)
+		}
+	}
 	return nil
 }
 

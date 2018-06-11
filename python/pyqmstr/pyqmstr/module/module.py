@@ -1,5 +1,5 @@
 import grpc
-from pyqmstr.service.analyzerservice_pb2 import AnalyzerConfigRequest, NodeRequest
+from pyqmstr.service.analyzerservice_pb2 import AnalyzerConfigRequest
 from pyqmstr.service.analyzerservice_pb2_grpc import AnalysisServiceStub
 from pyqmstr.service.controlservice_pb2_grpc import ControlServiceStub
 import logging
@@ -21,7 +21,9 @@ class QMSTR_Module(object):
         channel = grpc.insecure_channel(aserv_address)
         self.aserv = AnalysisServiceStub(
             channel)
-        self.cserv = ControlServiceStub(channel)
+        self.cserv = ControlServiceStub(
+            channel
+        )
 
     def getName(self):
         return self.name
@@ -38,11 +40,4 @@ class Analyzer(QMSTR_Module):
         conf_response = self.aserv.GetAnalyzerConfig(conf_request)
         self.analyzer_module.configure(conf_response.configMap)
 
-        node_request = NodeRequest(
-            type=conf_response.typeSelector
-        )
-
-        node_response = self.aserv.GetNodes(node_request)
-
-        for node in node_response.fileNodes:
-            self.analyzer_module.analyze(node)
+        self.analyzer_module.analyze(self.cserv)
