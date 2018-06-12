@@ -46,7 +46,7 @@ func (pkganalyzer *PkgAnalyzer) Configure(configMap map[string]string) error {
 }
 
 // Analyze finds the targets in db which we are going to connect to the package node
-func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceClient, session string) error {
+func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
 	queryNode := &service.FileNode{Type: queryType}
 
 	pkgNodeResp, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})

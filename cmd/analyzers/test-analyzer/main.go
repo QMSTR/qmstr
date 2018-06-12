@@ -46,7 +46,7 @@ func (testanalyzer *TestAnalyzer) Configure(configMap map[string]string) error {
 	return nil
 }
 
-func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceClient, session string) error {
+func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
 	queryNode := &service.FileNode{Type: queryType}
 
 	pkgNodeResp, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})

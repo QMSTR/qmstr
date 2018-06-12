@@ -3,10 +3,6 @@ package service;
 
 import weak "datamodel.proto";
 
-message InfoNodeSlice {
-    repeated InfoNode inodes = 1;
-}
-
 message AnalyzerConfigRequest {
     int32 analyzerID = 1;
 }

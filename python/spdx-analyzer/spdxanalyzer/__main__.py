@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 import argparse
-from pyqmstr.service.datamodel_pb2 import FileNode
+from pyqmstr.service.datamodel_pb2 import FileNode, InfoNode
 from pyqmstr.module.module import QMSTR_Analyzer
 import logging
 import sys
@@ -39,9 +39,13 @@ class SpdxAnalyzer(QMSTR_Analyzer):
             self.format = config_map[fileformat_key]
 
         self.doc = self._parse_spdx()
-        self._processPackageNodeData()
+        logging.info("This is da doc: %s", self.doc)
 
     def analyze(self):
+        self._process_filenodes()
+        self._process_packagenode()
+
+    def _process_filenodes(self):
         const_type = "sourcecode"
 
         query_node = FileNode(
@@ -50,22 +54,42 @@ class SpdxAnalyzer(QMSTR_Analyzer):
 
         stream_resp = self.cserv.GetFileNode(query_node)
 
-        for node in stream_resp :
+        for node in stream_resp:
             logging.info("Analyze node {}".format(node.path))
-            filtered_files = filter(lambda f: node.path.endswith(f.name), self.doc.files)
+            filtered_files = filter(
+                lambda f: node.path.endswith(f.name), self.doc.files)
             if not filtered_files:
                 logging.warn(
                     "File {} not found in SPDX document".format(node.path))
                 continue
             spdx_doc_file_info = filtered_files[0]
-            logging.info("Concluded license {}".format(spdx_doc_file_info.conc_lics))
+            logging.info("Concluded license {}".format(
+                spdx_doc_file_info.conc_lics))
 
     def post_analyze(self):
         logging.info(self.get_package_node())
 
-    def _processPackageNodeData(self):
-        logging.warn("Package node not yet available")
-        # self.packageNode.Name = self.doc.package.name
+    def _process_packagenode(self):
+        logging.info("Processing package node")
+
+        data_nodes = []
+        data_nodes.append(InfoNode.DataNode(
+            type="name",
+            data=self.doc.package.name
+        ))
+
+        info_node = InfoNode(
+            type="metadata",
+            dataNodes=data_nodes
+        )
+
+        info_nodes = []
+        info_nodes.append(info_node)
+
+        info_iterator = _generate_iterator(info_nodes)
+
+        pkg_node = self.get_package_node()
+        stream_resp = self.aserv.SendInfoNodes(info_iterator)
 
     def _parse_spdx(self):
         if not self.format in self.parse_func_map:
@@ -101,6 +125,11 @@ class SpdxAnalyzer(QMSTR_Analyzer):
             return (None, error)
         else:
             return (document, None)
+
+
+def _generate_iterator(collection):
+    for i in collection:
+        yield i
 
 
 def main():

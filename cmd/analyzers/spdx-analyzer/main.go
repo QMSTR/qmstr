@@ -32,7 +32,7 @@ func (spdxalizer *SpdxAnalyzer) Configure(configMap map[string]string) error {
 	return nil
 }
 
-func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceClient, session string) error {
+func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
 	queryNode := &service.FileNode{Type: queryType}
 
 	stream, err := controlService.GetFileNode(context.Background(), queryNode)
@@ -61,7 +61,22 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 					},
 				},
 			}
-			log.Printf("Still we need to add %v to database.", licenseNode)
+			sendStream, err := analysisService.SendInfoNodes(context.Background())
+			if err != nil {
+				return err
+			}
+			err = sendStream.Send(&service.InfoNodeMessage{Token: token, Infonode: &licenseNode, Uid: fileNode.Uid})
+			if err != nil {
+				return err
+			}
+
+			reply, err := sendStream.CloseAndRecv()
+			if err != nil {
+				return err
+			}
+			if reply.Success {
+				log.Println("Simple SPDX Analyzer sent InfoNodes")
+			}
 		}
 
 	}

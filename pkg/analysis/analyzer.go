@@ -24,7 +24,7 @@ type Analyzer struct {
 
 type AnalyzerModule interface {
 	Configure(configMap map[string]string) error
-	Analyze(controlService service.ControlServiceClient, session string) error
+	Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error
 	PostAnalyze() error
 }
 
@@ -76,7 +76,7 @@ func (a *Analyzer) RunAnalyzerModule() error {
 		return fmt.Errorf("failed to configure analyzer module %s %v", a.GetModuleName(), err)
 	}
 
-	err = a.module.Analyze(a.controlService, configResp.Session)
+	err = a.module.Analyze(a.controlService, a.analysisService, configResp.Token, configResp.Session)
 	if err != nil {
 		return fmt.Errorf("Analysis failed for analyzer module %s %v", a.GetModuleName(), err)
 	}

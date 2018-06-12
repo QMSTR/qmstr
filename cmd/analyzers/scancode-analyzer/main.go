@@ -68,7 +68,7 @@ func (scanalyzer *ScancodeAnalyzer) Configure(configMap map[string]string) error
 	return fmt.Errorf("Misconfigured scancode analyzer")
 }
 
-func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServiceClient, session string) error {
+func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
 	queryNode := &service.FileNode{Type: queryType}
 
 	stream, err := controlService.GetFileNode(context.Background(), queryNode)
@@ -76,6 +76,8 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServic
 		log.Printf("Could not get file node %v", err)
 		return err
 	}
+
+	infoNodeMsgs := []*service.InfoNodeMessage{}
 
 	for {
 		fileNode, err := stream.Recv()
@@ -85,17 +87,34 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServic
 
 		log.Printf("Analyzing file %s", fileNode.Path)
 
-		retVal := &service.InfoNodeSlice{Inodes: []*service.InfoNode{}}
-
 		licenseInfo, err := scanalyzer.detectLicenses(fileNode.GetPath())
 		if err == nil {
-			retVal.Inodes = append(retVal.Inodes, licenseInfo...)
+			for _, inode := range licenseInfo {
+				infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: inode, Uid: fileNode.Uid})
+			}
 		}
 		copyrights, err := scanalyzer.detectCopyrights(fileNode.GetPath())
 		if err == nil {
-			retVal.Inodes = append(retVal.Inodes, copyrights)
+			infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: copyrights, Uid: fileNode.Uid})
 		}
 	}
+
+	send_stream, err := analysisService.SendInfoNodes(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, inodeMsg := range infoNodeMsgs {
+		send_stream.Send(inodeMsg)
+	}
+
+	reply, err := send_stream.CloseAndRecv()
+	if err != nil {
+		return err
+	}
+	if reply.Success {
+		log.Println("Scancode Analyzer sent InfoNodes")
+	}
+
 	return nil
 }
 
