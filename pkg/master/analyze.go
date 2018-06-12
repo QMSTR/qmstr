@@ -101,7 +101,7 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 		Token: phase.currentToken, Name: config.Name, Session: phase.session}, nil
 }
 
-func (phase *serverPhaseAnalysis) SendInfoNode(stream service.AnalysisService_SendInfoNodesServer) error {
+func (phase *serverPhaseAnalysis) SendInfoNodes(stream service.AnalysisService_SendInfoNodesServer) error {
 	for {
 		infoNodeReq, err := stream.Recv()
 		if err == io.EOF {
