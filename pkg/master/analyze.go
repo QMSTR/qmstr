@@ -124,3 +124,26 @@ func (phase *serverPhaseAnalysis) SendInfoNodes(stream service.AnalysisService_S
 		}
 	}
 }
+
+func (phase *serverPhaseAnalysis) SendFileNodes(stream service.AnalysisService_SendFileNodesServer) error {
+	for {
+		fileNodeReq, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&service.SendResponse{
+				Success: true,
+			})
+		}
+		if err != nil {
+			return err
+		}
+		if fileNodeReq.Token != phase.currentToken {
+			log.Println("Analyzer supplied wrong token")
+			return errors.New("wrong token supplied")
+		}
+		fileNode := fileNodeReq.Filenode
+		err = phase.db.AddFileNodes(fileNodeReq.Uid, fileNode)
+		if err != nil {
+			return err
+		}
+	}
+}
