@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"regexp"
@@ -13,6 +15,8 @@ import (
 )
 
 var spdxPattern = regexp.MustCompile(`SPDX-License-Identifier: (.+)\s*`)
+
+const queryType = "sourcecode"
 
 type SpdxAnalyzer struct{}
 
@@ -28,28 +32,39 @@ func (spdxalizer *SpdxAnalyzer) Configure(configMap map[string]string) error {
 	return nil
 }
 
-func (spdxalizer *SpdxAnalyzer) Analyze(node *service.FileNode) (*service.InfoNodeSlice, error) {
-	log.Printf("Analyzing file %s", node.Path)
-	spdxIdent, err := detectSPDXLicense(node.Path)
+func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceClient, session string) error {
+	queryNode := &service.FileNode{Type: queryType}
+
+	stream, err := controlService.GetFileNode(context.Background(), queryNode)
 	if err != nil {
-		log.Printf("No SPDX license identifier found")
-		return &service.InfoNodeSlice{Inodes: []*service.InfoNode{}}, nil
+		log.Printf("Could not get file node %v", err)
+		return err
 	}
 
-	licenseNode := service.InfoNode{
-		Type: "license",
-		DataNodes: []*service.InfoNode_DataNode{
-			&service.InfoNode_DataNode{
-				Type: "spdxIdentifier",
-				Data: spdxIdent,
-			},
-		},
-	}
-	return &service.InfoNodeSlice{Inodes: []*service.InfoNode{&licenseNode}}, nil
-}
+	for {
+		fileNode, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
 
-func (spdxalizer *SpdxAnalyzer) SetPackageNode(pkg *service.PackageNode) {}
-func (spdxalizer *SpdxAnalyzer) GetPackageNode() *service.PackageNode {
+		log.Printf("Analyzing file %s", fileNode.Path)
+		spdxIdent, err := detectSPDXLicense(fileNode.Path)
+		if err != nil {
+			log.Printf("No SPDX license identifier found")
+		} else {
+			licenseNode := service.InfoNode{
+				Type: "license",
+				DataNodes: []*service.InfoNode_DataNode{
+					&service.InfoNode_DataNode{
+						Type: "spdxIdentifier",
+						Data: spdxIdent,
+					},
+				},
+			}
+			log.Printf("Still we need to add %v to database.", licenseNode)
+		}
+
+	}
 	return nil
 }
 

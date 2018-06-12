@@ -57,6 +57,7 @@ service ControlService {
   rpc Quit(QuitMessage) returns (QuitResponse) {}
   rpc SwitchPhase(SwitchPhaseMessage) returns (SwitchPhaseResponse) {}
   rpc GetPackageNode(PackageRequest) returns (PackageResponse) {}
+  rpc GetFileNode(FileNode) returns (stream FileNode) {}
   rpc Status(StatusMessage) returns (StatusResponse) {}
   rpc SubscribeEvents(EventMessage) returns (stream Event) {}
 }

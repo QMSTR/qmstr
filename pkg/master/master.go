@@ -76,6 +76,19 @@ func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest)
 	return &service.PackageResponse{PackageNode: node}, nil
 }
 
+func (s *server) GetFileNode(in *service.FileNode, stream service.ControlService_GetFileNodeServer) error {
+	db, err := s.currentPhase.getDataBase()
+	if err != nil {
+		return err
+	}
+	nodeFiles, err := db.GetFileNodesByFileNode(in, true)
+
+	for _, nodeFile := range nodeFiles {
+		stream.Send(nodeFile)
+	}
+	return nil
+}
+
 func (s *server) Status(ctx context.Context, in *service.StatusMessage) (*service.StatusResponse, error) {
 	resp := service.StatusResponse{}
 	resp.PhaseID = s.currentPhase.GetPhaseID()

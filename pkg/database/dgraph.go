@@ -409,6 +409,52 @@ func (db *DataBase) GetFileNodesByType(filetype string, recursive bool) ([]*serv
 	return ret["getFileNodeByType"], nil
 }
 
+func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool) ([]*service.FileNode, error) {
+	ret := map[string][]*service.FileNode{}
+
+	q := `query FileNodeByFileNode($Filter: string){
+		getFileNodeByFileNode(func: eq(nodeType, 1)) {{.Type}} {{.Recurse}}{
+		  uid
+		  hash
+		  path
+		  derivedFrom
+		}}`
+
+	queryTmpl, err := template.New("filenodesbyfilenode").Parse(q)
+
+	type QueryParams struct {
+		Recurse string
+		Type    string
+		Filter  string
+	}
+
+	qp := QueryParams{}
+
+	if recursive {
+		qp.Recurse = "@recurse(loop: false)"
+	}
+	if filenode.Type != "" {
+		qp.Type = "@filter(eq(type, $Filter))"
+		qp.Filter = filenode.Type
+	}
+
+	var b bytes.Buffer
+	err = queryTmpl.Execute(&b, qp)
+	if err != nil {
+		panic(err)
+	}
+
+	vars := map[string]string{"$Filter": qp.Filter}
+
+	err = db.queryNodes(b.String(), vars, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	return ret["getFileNodeByFileNode"], nil
+
+}
+
 func (db *DataBase) GetAnalyzerByName(name string) (*service.Analyzer, error) {
 	ret := map[string][]*service.Analyzer{}
 

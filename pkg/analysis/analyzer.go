@@ -1,11 +1,9 @@
 package analysis
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"golang.org/x/net/context"
 
@@ -26,9 +24,7 @@ type Analyzer struct {
 
 type AnalyzerModule interface {
 	Configure(configMap map[string]string) error
-	Analyze(node *service.FileNode) (*service.InfoNodeSlice, error)
-	SetPackageNode(pkgNode *service.PackageNode)
-	GetPackageNode() *service.PackageNode
+	Analyze(controlService service.ControlServiceClient, session string) error
 }
 
 func NewAnalyzer(module AnalyzerModule) *Analyzer {
@@ -79,41 +75,9 @@ func (a *Analyzer) RunAnalyzerModule() error {
 		return fmt.Errorf("failed to configure analyzer module %s %v", a.GetModuleName(), err)
 	}
 
-	nodeResp, err := a.analysisService.GetNodes(context.Background(), &service.NodeRequest{Type: configResp.TypeSelector})
+	err = a.module.Analyze(a.controlService, configResp.Session)
 	if err != nil {
-		return fmt.Errorf("could not get nodes %v", err)
+		return fmt.Errorf("Analysis failed for analyzer module %s %v", a.GetModuleName(), err)
 	}
-
-	pkgNodeResp, err := a.controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: configResp.Session})
-	if err != nil {
-		return fmt.Errorf("could not get package node %v", err)
-	}
-
-	a.module.SetPackageNode(pkgNodeResp.PackageNode)
-	resultMap := map[string]*service.InfoNodeSlice{}
-	for _, node := range nodeResp.FileNodes {
-		for _, substitution := range configResp.PathSub {
-			node.Path = strings.Replace(node.Path, substitution.Old, substitution.New, 1)
-		}
-
-		infoNodeSlice, err := a.module.Analyze(node)
-		if err != nil {
-			return fmt.Errorf("analyzer %s failed %v", a.name, err)
-		}
-
-		if len(infoNodeSlice.Inodes) > 0 {
-			resultMap[node.Hash] = infoNodeSlice
-		}
-	}
-
-	pkgNode := a.module.GetPackageNode()
-	anaresp, err := a.analysisService.SendNodes(context.Background(), &service.AnalysisMessage{ResultMap: resultMap, Token: configResp.Token, PackageNode: pkgNode})
-	if err != nil {
-		return fmt.Errorf("failed to send nodes %v", err)
-	}
-	if !anaresp.Success {
-		return errors.New("Server could not process nodes")
-	}
-
 	return nil
 }

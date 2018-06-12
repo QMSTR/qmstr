@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"errors"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -12,9 +14,10 @@ import (
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
+const queryType = "linkedtarget"
+
 type PkgAnalyzer struct {
 	targetsSlice []string
-	pkgNode      *service.PackageNode
 	targetsDir   string
 }
 
@@ -43,20 +46,29 @@ func (pkganalyzer *PkgAnalyzer) Configure(configMap map[string]string) error {
 }
 
 // Analyze finds the targets in db which we are going to connect to the package node
-func (pkganalyzer *PkgAnalyzer) Analyze(node *service.FileNode) (*service.InfoNodeSlice, error) {
-	for _, target := range pkganalyzer.targetsSlice {
-		if node.Path == filepath.Join(pkganalyzer.targetsDir, target) {
-			log.Printf("Adding node %v to package targets.", node.Path)
-			pkganalyzer.pkgNode.Targets = append(pkganalyzer.pkgNode.Targets, node)
-		}
+func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceClient, session string) error {
+	queryNode := &service.FileNode{Type: queryType}
+
+	pkgNodeResp, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
+	stream, err := controlService.GetFileNode(context.Background(), queryNode)
+	if err != nil {
+		log.Printf("Could not get file node %v", err)
+		return err
 	}
-	return &service.InfoNodeSlice{}, nil
-}
 
-func (pkganalyzer *PkgAnalyzer) GetPackageNode() *service.PackageNode {
-	return pkganalyzer.pkgNode
-}
+	for {
+		fileNode, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
 
-func (pkganalyzer *PkgAnalyzer) SetPackageNode(pkgNode *service.PackageNode) {
-	pkganalyzer.pkgNode = pkgNode
+		for _, target := range pkganalyzer.targetsSlice {
+			if fileNode.Path == filepath.Join(pkganalyzer.targetsDir, target) {
+				log.Printf("Adding node %v to package targets.", fileNode.Path)
+				pkgNodeResp.PackageNode.Targets = append(pkgNodeResp.PackageNode.Targets, fileNode)
+			}
+		}
+
+	}
+	return nil
 }

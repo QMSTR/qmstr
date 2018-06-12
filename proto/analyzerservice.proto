@@ -7,25 +7,6 @@ message InfoNodeSlice {
     repeated InfoNode inodes = 1;
 }
 
-message AnalysisMessage {
-    int64 token = 1;
-    map<string, InfoNodeSlice> resultMap = 2;
-    PackageNode packageNode = 3;
-}
-  
-message AnalysisResponse {
-    bool success = 1;
-}
-
-message NodeRequest {
-    string type = 1;
-    string name = 2;
-}
-
-message NodeResponse {
-    repeated FileNode fileNodes = 1;
-}
-
 message AnalyzerConfigRequest {
     int32 analyzerID = 1;
 }
@@ -50,8 +31,6 @@ message SendResponse {
 }
 
 service AnalysisService {
-    rpc GetNodes(NodeRequest) returns (NodeResponse) {}
-    rpc SendNodes(AnalysisMessage) returns (AnalysisResponse) {}
     rpc GetAnalyzerConfig(AnalyzerConfigRequest) returns (AnalyzerConfigResponse) {}
     rpc SendInfoNodes(stream InfoNodeMessage) returns (SendResponse) {}
 }
