@@ -56,11 +56,11 @@ class QMSTR_Analyzer(QMSTR_Module):
         package_response = self.cserv.GetPackageNode(package_request)
         self.set_package_node(package_response.packageNode)
 
-        self.analyzer_module.analyze(self.cserv)
+        self.analyze()
 
         self.post_analyze()
 
-    def analyze(self, cserv):
+    def analyze(self):
         raise NotImplementedError()
 
     def post_analyze(self):

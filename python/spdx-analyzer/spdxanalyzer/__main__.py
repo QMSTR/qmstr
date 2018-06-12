@@ -19,7 +19,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         }
 
     def configure(self, config_map):
-        print("Configuring spdx analyzer module")
+        logging.info("Configuring spdx analyzer module")
         if not filename_key in config_map:
             logging.error(
                 "spdx-analyzer misconfigured. {} missing.".format(filename_key))
@@ -41,14 +41,14 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         self.doc = self._parse_spdx()
         self._processPackageNodeData()
 
-    def analyze(self, cserv):
+    def analyze(self):
         const_type = "sourcecode"
 
         query_node = FileNode(
             type=const_type
         )
 
-        stream_resp = cserv.GetFileNode(query_node)
+        stream_resp = self.cserv.GetFileNode(query_node)
 
         for node in stream_resp :
             logging.info("Analyze node {}".format(node.path))
@@ -56,7 +56,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
             if not filtered_files:
                 logging.warn(
                     "File {} not found in SPDX document".format(node.path))
-                return
+                continue
             spdx_doc_file_info = filtered_files[0]
             logging.info("Concluded license {}".format(spdx_doc_file_info.conc_lics))
 
