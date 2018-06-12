@@ -210,6 +210,56 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 	return nil
 }
 
+func (db *DataBase) AddFileNodes(nodeID string, filenodes ...*service.FileNode) error {
+	db.insertMutex.Lock()
+	defer db.insertMutex.Unlock()
+
+	const q = `
+	query Node($id: string){
+		node(func: uid($id)) @recurse(loop: false) {
+			uid
+			nodeType
+			targets
+			derivedFrom
+		}
+	}
+	`
+	vars := map[string]string{"$id": nodeID}
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
+	if err != nil {
+		return err
+	}
+
+	type GenericNode struct {
+		Uid         string
+		NodeType    int32
+		DerivedFrom []*service.FileNode
+		Targets     []*service.FileNode
+	}
+
+	var receiverNode GenericNode
+	err = json.Unmarshal(resp.Json, &receiverNode)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	switch receiverNode.NodeType {
+	case service.NodeTypeFileNode:
+		receiverNode.DerivedFrom = append(receiverNode.DerivedFrom, filenodes...)
+	case service.NodeTypePackageNode:
+		receiverNode.Targets = append(receiverNode.Targets, filenodes...)
+	default:
+		return errors.New("can not attach infonode, receiver is neither file nor package node")
+	}
+
+	_, err = dbInsert(db.client, receiverNode)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetFileNodeUid returns the UID of the node if exists otherwise ""
 func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 
