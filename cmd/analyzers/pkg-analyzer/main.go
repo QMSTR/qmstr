@@ -56,6 +56,8 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 		return err
 	}
 
+	FileNodeMsgs := []*service.FileNodeMessage{}
+
 	for {
 		fileNode, err := stream.Recv()
 		if err == io.EOF {
@@ -65,9 +67,25 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 		for _, target := range pkganalyzer.targetsSlice {
 			if fileNode.Path == filepath.Join(pkganalyzer.targetsDir, target) {
 				log.Printf("Adding node %v to package targets.", fileNode.Path)
-				pkgNodeResp.PackageNode.Targets = append(pkgNodeResp.PackageNode.Targets, fileNode)
+				FileNodeMsgs = append(FileNodeMsgs, &service.FileNodeMessage{Token: token, Uid: pkgNodeResp.PackageNode.Uid, Filenode: fileNode})
 			}
 		}
+	}
+
+	send_stream, err := analysisService.SendFileNodes(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, fnodeMsg := range FileNodeMsgs {
+		send_stream.Send(fnodeMsg)
+	}
+
+	reply, err := send_stream.CloseAndRecv()
+	if err != nil {
+		return err
+	}
+	if reply.Success {
+		log.Println("Package Analyzer sent FileNodes")
 	}
 	return nil
 }
