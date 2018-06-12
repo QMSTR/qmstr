@@ -49,8 +49,11 @@ func (testanalyzer *TestAnalyzer) Configure(configMap map[string]string) error {
 func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
 	queryNode := &service.FileNode{Type: queryType}
 
-	pkgNodeResp, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
-	pkgNode = pkgNodeResp.PackageNode
+	var err error
+	pkgNode, err = controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
+	if err != nil {
+		return err
+	}
 
 	stream, err := controlService.GetFileNode(context.Background(), queryNode)
 	if err != nil {

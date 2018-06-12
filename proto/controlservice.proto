@@ -31,11 +31,6 @@ message PackageRequest {
   string session = 1;
 }
 
-message PackageResponse {
-  bool success = 1;
-  PackageNode packageNode = 2;
-}
-
 message StatusMessage {
   bool phase = 1;
   bool switch = 2;
@@ -56,7 +51,7 @@ service ControlService {
   rpc Log(LogMessage) returns (LogResponse) {}
   rpc Quit(QuitMessage) returns (QuitResponse) {}
   rpc SwitchPhase(SwitchPhaseMessage) returns (SwitchPhaseResponse) {}
-  rpc GetPackageNode(PackageRequest) returns (PackageResponse) {}
+  rpc GetPackageNode(PackageRequest) returns (PackageNode) {}
   rpc GetFileNode(FileNode) returns (stream FileNode) {}
   rpc Status(StatusMessage) returns (StatusResponse) {}
   rpc SubscribeEvents(EventMessage) returns (stream Event) {}

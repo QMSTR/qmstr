@@ -1,6 +1,8 @@
 #!/usr/bin/env python2
 import argparse
-from pyqmstr.service.datamodel_pb2 import FileNode, InfoNode
+from pyqmstr.service.datamodel_pb2 import FileNode, InfoNode 
+from pyqmstr.service.controlservice_pb2 import PackageRequest
+from pyqmstr.service.analyzerservice_pb2 import InfoNodeMessage 
 from pyqmstr.module.module import QMSTR_Analyzer
 import logging
 import sys
@@ -67,7 +69,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
                 spdx_doc_file_info.conc_lics))
 
     def post_analyze(self):
-        logging.info(self.get_package_node())
+        pass
 
     def _process_packagenode(self):
         logging.info("Processing package node")
@@ -83,12 +85,20 @@ class SpdxAnalyzer(QMSTR_Analyzer):
             dataNodes=data_nodes
         )
 
+        package_request = PackageRequest(
+            session=self.session
+        )
+
+        package_node = self.cserv.GetPackageNode(package_request)
+
         info_nodes = []
-        info_nodes.append(info_node)
+        info_nodes.append(InfoNodeMessage(
+            uid=package_node.uid,
+            token=self.token,
+            infonode=info_node))
 
         info_iterator = _generate_iterator(info_nodes)
 
-        pkg_node = self.get_package_node()
         stream_resp = self.aserv.SendInfoNodes(info_iterator)
 
     def _parse_spdx(self):

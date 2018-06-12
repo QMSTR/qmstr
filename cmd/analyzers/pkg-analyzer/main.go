@@ -49,7 +49,11 @@ func (pkganalyzer *PkgAnalyzer) Configure(configMap map[string]string) error {
 func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
 	queryNode := &service.FileNode{Type: queryType}
 
-	pkgNodeResp, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
+	pkgNode, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
+	if err != nil {
+		return err
+	}
+
 	stream, err := controlService.GetFileNode(context.Background(), queryNode)
 	if err != nil {
 		log.Printf("Could not get file node %v", err)
@@ -67,7 +71,8 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 		for _, target := range pkganalyzer.targetsSlice {
 			if fileNode.Path == filepath.Join(pkganalyzer.targetsDir, target) {
 				log.Printf("Adding node %v to package targets.", fileNode.Path)
-				FileNodeMsgs = append(FileNodeMsgs, &service.FileNodeMessage{Token: token, Uid: pkgNodeResp.PackageNode.Uid, Filenode: fileNode})
+				FileNodeMsgs = append(FileNodeMsgs, &service.FileNodeMessage{Token: token, Uid: pkgNode.Uid, Filenode: fileNode})
+				break
 			}
 		}
 	}

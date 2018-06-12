@@ -29,12 +29,6 @@ class QMSTR_Module(object):
     def get_name(self):
         return self.name
 
-    def set_package_node(self, pkg):
-        self.pkg = pkg
-
-    def get_package_node(self):
-        return self.pkg
-
     def configure(self, config):
         raise NotImplementedError()
 
@@ -48,14 +42,8 @@ class QMSTR_Analyzer(QMSTR_Module):
             analyzerID=self.id)
         conf_response = self.aserv.GetAnalyzerConfig(conf_request)
         self.configure(conf_response.configMap)
-
-        package_request = PackageRequest(
-            session=conf_response.session
-        )
-
-        package_response = self.cserv.GetPackageNode(package_request)
-        self.set_package_node(package_response.packageNode)
-
+        self.token = conf_response.token
+        self.session = conf_response.session
         self.analyze()
 
         self.post_analyze()

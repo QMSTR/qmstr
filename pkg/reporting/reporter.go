@@ -77,12 +77,12 @@ func (r *Reporter) RunReporterModule() error {
 		return fmt.Errorf("failed to configure reporter module %s: %v", r.GetModuleName(), err)
 	}
 
-	resp, err := r.controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: configResp.Session})
+	pkgNode, err := r.controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: configResp.Session})
 	if err != nil {
 		return fmt.Errorf("could not get package node: %v", err)
 	}
 
-	err = r.module.Report(resp.PackageNode)
+	err = r.module.Report(pkgNode)
 	if err != nil {
 		return fmt.Errorf("reporter %s failed: %v", r.name, err)
 	}

@@ -60,7 +60,7 @@ func (s *server) SendFileNodes(stream service.AnalysisService_SendFileNodesServe
 	return s.currentPhase.SendFileNodes(stream)
 }
 
-func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest) (*service.PackageResponse, error) {
+func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest) (*service.PackageNode, error) {
 	db, err := s.currentPhase.getDataBase()
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest)
 	if err != nil {
 		return nil, err
 	}
-	return &service.PackageResponse{PackageNode: node}, nil
+	return node, nil
 }
 
 func (s *server) GetFileNode(in *service.FileNode, stream service.ControlService_GetFileNodeServer) error {

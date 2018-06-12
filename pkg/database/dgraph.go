@@ -178,33 +178,74 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 		}
 	}
 	`
+	log.Printf("Receiver uid %s", nodeID)
+
 	vars := map[string]string{"$id": nodeID}
 	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
 	if err != nil {
 		return err
 	}
 
+	log.Printf("RAW JSON response: %s", resp.Json)
+
 	type GenericNode struct {
 		Uid            string
-		NodeType       int32
+		NodeType       int
 		AdditionalInfo []*service.InfoNode
 	}
 
-	var receiverNode GenericNode
-	err = json.Unmarshal(resp.Json, &receiverNode)
+	type GenericRoot struct {
+		Node []GenericNode
+	}
+	var r GenericRoot
+
+	err = json.Unmarshal(resp.Json, &r)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if receiverNode.NodeType != service.NodeTypeFileNode && receiverNode.NodeType != service.NodeTypePackageNode {
-		return errors.New("can not attach infonode, receiver is neither file nor package node")
+	if len(r.Node) < 1 {
+		return fmt.Errorf("No node with uid %s found", nodeID)
 	}
 
-	receiverNode.AdditionalInfo = append(receiverNode.AdditionalInfo, infonodes...)
+	receiverNode := r.Node[0]
 
-	_, err = dbInsert(db.client, receiverNode)
-	if err != nil {
-		return err
+	switch receiverNode.NodeType {
+	case service.NodeTypeFileNode:
+		type FileRoot struct {
+			Node []service.FileNode
+		}
+		var r FileRoot
+
+		err = json.Unmarshal(resp.Json, &r)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fileNode := r.Node[0]
+		fileNode.AdditionalInfo = append(fileNode.AdditionalInfo, infonodes...)
+		_, err = dbInsert(db.client, fileNode)
+		if err != nil {
+			return err
+		}
+	case service.NodeTypePackageNode:
+		type PackageRoot struct {
+			Node []service.PackageNode
+		}
+		var r PackageRoot
+
+		err = json.Unmarshal(resp.Json, &r)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pkgNode := r.Node[0]
+		pkgNode.AdditionalInfo = append(pkgNode.AdditionalInfo, infonodes...)
+		log.Printf("Package node uid %s", pkgNode.Uid)
+		_, err := dbInsert(db.client, pkgNode)
+		if err != nil {
+			return err
+		}
+	default:
+		return errors.New("can not attach infonode, receiver is neither file nor package node")
 	}
 
 	return nil
@@ -213,6 +254,8 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 func (db *DataBase) AddFileNodes(nodeID string, filenodes ...*service.FileNode) error {
 	db.insertMutex.Lock()
 	defer db.insertMutex.Unlock()
+
+	log.Printf("Receiver uid %s", nodeID)
 
 	const q = `
 	query Node($id: string){
@@ -230,31 +273,67 @@ func (db *DataBase) AddFileNodes(nodeID string, filenodes ...*service.FileNode) 
 		return err
 	}
 
+	log.Printf("Resp JSON %s", resp.Json)
+
 	type GenericNode struct {
-		Uid         string
-		NodeType    int32
-		DerivedFrom []*service.FileNode
-		Targets     []*service.FileNode
+		Uid      string
+		NodeType int
 	}
 
-	var receiverNode GenericNode
-	err = json.Unmarshal(resp.Json, &receiverNode)
+	type GenericRoot struct {
+		Node []GenericNode
+	}
+	var r GenericRoot
+
+	err = json.Unmarshal(resp.Json, &r)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	if len(r.Node) < 1 {
+		return fmt.Errorf("No node with uid %s found", nodeID)
+	}
+	receiverNode := r.Node[0]
+
+	log.Printf("Node type %d", receiverNode.NodeType)
+	log.Printf("Node uid %s", receiverNode.Uid)
+
 	switch receiverNode.NodeType {
 	case service.NodeTypeFileNode:
-		receiverNode.DerivedFrom = append(receiverNode.DerivedFrom, filenodes...)
+		type FileRoot struct {
+			Node []service.FileNode
+		}
+		var r FileRoot
+
+		err = json.Unmarshal(resp.Json, &r)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fileNode := r.Node[0]
+		fileNode.DerivedFrom = append(fileNode.DerivedFrom, filenodes...)
+		_, err = dbInsert(db.client, fileNode)
+		if err != nil {
+			return err
+		}
 	case service.NodeTypePackageNode:
-		receiverNode.Targets = append(receiverNode.Targets, filenodes...)
+		type PackageRoot struct {
+			Node []service.PackageNode
+		}
+		var r PackageRoot
+
+		err = json.Unmarshal(resp.Json, &r)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pkgNode := r.Node[0]
+		pkgNode.Targets = append(pkgNode.Targets, filenodes...)
+		log.Printf("Package node uid %s", pkgNode.Uid)
+		_, err := dbInsert(db.client, pkgNode)
+		if err != nil {
+			return err
+		}
 	default:
 		return errors.New("can not attach infonode, receiver is neither file nor package node")
-	}
-
-	_, err = dbInsert(db.client, receiverNode)
-	if err != nil {
-		return err
 	}
 
 	return nil

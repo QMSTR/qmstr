@@ -119,6 +119,7 @@ func (phase *serverPhaseAnalysis) SendInfoNodes(stream service.AnalysisService_S
 			return errors.New("wrong token supplied")
 		}
 		infoNode := infoNodeReq.Infonode
+		infoNode.NodeType = service.NodeTypeInfoNode
 		infoNode.Analyzer = []*service.Analyzer{phase.currentAnalyzer}
 		err = phase.db.AddInfoNodes(infoNodeReq.Uid, infoNode)
 		if err != nil {
@@ -143,6 +144,7 @@ func (phase *serverPhaseAnalysis) SendFileNodes(stream service.AnalysisService_S
 			return errors.New("wrong token supplied")
 		}
 		fileNode := fileNodeReq.Filenode
+		fileNode.NodeType = service.NodeTypeFileNode
 		err = phase.db.AddFileNodes(fileNodeReq.Uid, fileNode)
 		if err != nil {
 			return err
