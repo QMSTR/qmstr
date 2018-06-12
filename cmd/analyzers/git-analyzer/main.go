@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
-	"time"
+	"reflect"
 
+	"github.com/QMSTR/qmstr/pkg/analysis"
+	"github.com/QMSTR/qmstr/pkg/master"
+	"github.com/QMSTR/qmstr/pkg/service"
 	git "gopkg.in/libgit2/git2go.v26"
 )
 
@@ -14,10 +18,10 @@ type Revision struct {
 	CommitMessage  string
 	CommitterName  string
 	CommitterEmail string
-	CommitterDate  time.Time
+	CommitterDate  string
 	AuthorName     string
 	AuthorEmail    string
-	AuthorDate     time.Time
+	AuthorDate     string
 }
 
 type GitAnalyzer struct {
@@ -26,21 +30,64 @@ type GitAnalyzer struct {
 }
 
 func main() {
-	cwd, err := os.Getwd()
-	if err != nil {
-		log.Fatalf("Oh no %v", err)
+	analyzer := analysis.NewAnalyzer(&GitAnalyzer{})
+	if err := analyzer.RunAnalyzerModule(); err != nil {
+		log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
+		os.Exit(master.ReturnAnalyzerFailed)
 	}
-	ga := NewGitAnalyzer(cwd)
-	ga.fillRevision()
-	log.Printf("You git %s", ga.revision)
 }
 
-func NewGitAnalyzer(workdir string) *GitAnalyzer {
-	repo, err := git.OpenRepository(workdir)
-	if err != nil {
-		log.Fatalf("Oh no %v", err)
+func (ga *GitAnalyzer) Configure(configMap map[string]string) error {
+	if workdir, ok := configMap["workdir"]; ok {
+		repo, err := git.OpenRepository(workdir)
+		if err != nil {
+			log.Fatalf("Oh no %v", err)
+		}
+		ga.repo = repo
+		ga.revision = Revision{}
 	}
-	return &GitAnalyzer{repo: repo, revision: Revision{}}
+	return nil
+}
+
+func (ga *GitAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
+	ga.fillRevision()
+
+	log.Printf("You git %s", ga.revision)
+	pkgNode, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
+	tempDataNodes := []*service.InfoNode_DataNode{}
+
+	v := reflect.ValueOf(ga.revision)
+
+	for i := 0; i < v.NumField(); i++ {
+		tempDataNodes = append(tempDataNodes, &service.InfoNode_DataNode{
+			Type: v.Type().Field(i).Name,
+			Data: v.Field(i).Interface().(string),
+		})
+	}
+
+	gitNodes := &service.InfoNode{
+		Type:      "Revision",
+		DataNodes: tempDataNodes,
+	}
+
+	infoNodeMsg := &service.InfoNodeMessage{Token: token, Infonode: gitNodes, Uid: pkgNode.Uid}
+
+	send_stream, err := analysisService.SendInfoNodes(context.Background())
+	if err != nil {
+		return err
+	}
+
+	send_stream.Send(infoNodeMsg)
+
+	reply, err := send_stream.CloseAndRecv()
+	if err != nil {
+		return err
+	}
+	if reply.Success {
+		log.Println("Scancode Analyzer sent InfoNodes")
+	}
+
+	return nil
 }
 
 func (ga *GitAnalyzer) obtainDesc() {
@@ -74,13 +121,17 @@ func (ga *GitAnalyzer) fillRevision() error {
 
 	ga.revision.CommitterName = commit.Committer().Name
 	ga.revision.CommitterEmail = commit.Committer().Email
-	ga.revision.CommitterDate = commit.Committer().When
+	ga.revision.CommitterDate = commit.Committer().When.String()
 
 	ga.revision.AuthorName = commit.Author().Name
 	ga.revision.AuthorEmail = commit.Author().Email
-	ga.revision.AuthorDate = commit.Author().When
+	ga.revision.AuthorDate = commit.Author().When.String()
 
 	ga.obtainDesc()
 
+	return nil
+}
+
+func (ga *GitAnalyzer) PostAnalyze() error {
 	return nil
 }
