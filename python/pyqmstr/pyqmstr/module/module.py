@@ -1,6 +1,7 @@
 import grpc
 from pyqmstr.service.analyzerservice_pb2 import AnalyzerConfigRequest
 from pyqmstr.service.analyzerservice_pb2_grpc import AnalysisServiceStub
+from pyqmstr.service.controlservice_pb2 import PackageRequest
 from pyqmstr.service.controlservice_pb2_grpc import ControlServiceStub
 import logging
 
@@ -25,19 +26,42 @@ class QMSTR_Module(object):
             channel
         )
 
-    def getName(self):
+    def get_name(self):
         return self.name
 
+    def set_package_node(self, pkg):
+        self.pkg = pkg
 
-class Analyzer(QMSTR_Module):
-    def __init__(self, module, address, aid):
-        super(Analyzer, self).__init__(address, aid)
-        self.analyzer_module = module
+    def get_package_node(self):
+        return self.pkg
+
+    def configure(self, config):
+        raise NotImplementedError()
+
+
+class QMSTR_Analyzer(QMSTR_Module):
+    def __init__(self, address, aid):
+        super(QMSTR_Analyzer, self).__init__(address, aid)
 
     def run_analyzer(self):
         conf_request = AnalyzerConfigRequest(
             analyzerID=self.id)
         conf_response = self.aserv.GetAnalyzerConfig(conf_request)
-        self.analyzer_module.configure(conf_response.configMap)
+        self.configure(conf_response.configMap)
+
+        package_request = PackageRequest(
+            session=conf_response.session
+        )
+
+        package_response = self.cserv.GetPackageNode(package_request)
+        self.set_package_node(package_response.packageNode)
 
         self.analyzer_module.analyze(self.cserv)
+
+        self.post_analyze()
+
+    def analyze(self, cserv):
+        raise NotImplementedError()
+
+    def post_analyze(self):
+        raise NotImplementedError()

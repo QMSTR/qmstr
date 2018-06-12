@@ -68,7 +68,10 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 				pkgNodeResp.PackageNode.Targets = append(pkgNodeResp.PackageNode.Targets, fileNode)
 			}
 		}
-
 	}
+	return nil
+}
+
+func (pkganalyzer *PkgAnalyzer) PostAnalyze() error {
 	return nil
 }

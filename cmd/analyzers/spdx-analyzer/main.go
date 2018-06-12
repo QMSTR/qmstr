@@ -68,6 +68,10 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 	return nil
 }
 
+func (spdxalizer *SpdxAnalyzer) PostAnalyze() error {
+	return nil
+}
+
 func detectSPDXLicense(srcFilePath string) (string, error) {
 	f, err := os.Open(srcFilePath)
 	if err != nil {

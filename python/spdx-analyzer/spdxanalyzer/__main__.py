@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 import argparse
-from pyqmstr.module.module import Analyzer
 from pyqmstr.service.datamodel_pb2 import FileNode
+from pyqmstr.module.module import QMSTR_Analyzer
 import logging
 import sys
 
@@ -9,9 +9,10 @@ filename_key = "spdxfile"
 fileformat_key = "fileformat"
 
 
-class SpdxAnalyzer(object):
+class SpdxAnalyzer(QMSTR_Analyzer):
 
-    def __init__(self):
+    def __init__(self, address, aid):
+        super(SpdxAnalyzer, self).__init__(address, aid)
         self.parse_func_map = {
             'rdf': self.__parse_rdf,
             'tag': self.__parse_tagvalue
@@ -59,16 +60,12 @@ class SpdxAnalyzer(object):
             spdx_doc_file_info = filtered_files[0]
             logging.info("Concluded license {}".format(spdx_doc_file_info.conc_lics))
 
+    def post_analyze(self):
+        logging.info(self.get_package_node())
 
     def _processPackageNodeData(self):
         logging.warn("Package node not yet available")
         # self.packageNode.Name = self.doc.package.name
-
-    def setPackageNode(self, pkg):
-        pass
-
-    def getPackageNode(self):
-        return None
 
     def _parse_spdx(self):
         if not self.format in self.parse_func_map:
@@ -113,7 +110,7 @@ def main():
     parser.add_argument("--aserv", help="qmstr-master address")
     parser.add_argument("--aid", help="analyzer id", type=int)
     args = parser.parse_args()
-    spdx_analyzer = Analyzer(SpdxAnalyzer(), args.aserv, args.aid)
+    spdx_analyzer = SpdxAnalyzer(args.aserv, args.aid)
     spdx_analyzer.run_analyzer()
 
 

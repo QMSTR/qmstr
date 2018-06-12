@@ -25,6 +25,7 @@ type Analyzer struct {
 type AnalyzerModule interface {
 	Configure(configMap map[string]string) error
 	Analyze(controlService service.ControlServiceClient, session string) error
+	PostAnalyze() error
 }
 
 func NewAnalyzer(module AnalyzerModule) *Analyzer {

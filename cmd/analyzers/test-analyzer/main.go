@@ -102,6 +102,10 @@ func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceC
 	return nil
 }
 
+func (testanalyzer *TestAnalyzer) PostAnalyze() error {
+	return nil
+}
+
 func TestGraphIntegrity(t *testing.T) {
 	if testnode.Type == "linkedtarget" {
 		if len(testnode.DerivedFrom) == 0 {

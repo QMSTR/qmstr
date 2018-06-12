@@ -99,6 +99,10 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServic
 	return nil
 }
 
+func (scanalyzer *ScancodeAnalyzer) PostAnalyze() error {
+	return nil
+}
+
 func scancodeExitHandler(err error, output []byte) {
 	// print to stdout so master server can log it
 	fmt.Print(string(output))
