@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/QMSTR/qmstr/pkg/config"
@@ -97,6 +98,7 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 	if config.PathSub == nil || len(config.PathSub) == 0 {
 		config.PathSub = phase.masterConfig.Server.PathSub
 	}
+	phase.currentAnalyzer.PathSub = config.PathSub
 	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub,
 		Token: phase.currentToken, Name: config.Name, Session: phase.session}, nil
 }
@@ -146,4 +148,21 @@ func (phase *serverPhaseAnalysis) SendFileNodes(stream service.AnalysisService_S
 			return err
 		}
 	}
+}
+
+func (phase *serverPhaseAnalysis) GetFileNode(in *service.FileNode, stream service.ControlService_GetFileNodeServer) error {
+	// TODO get rid of code duplication
+	db, err := phase.getDataBase()
+	if err != nil {
+		return err
+	}
+	nodeFiles, err := db.GetFileNodesByFileNode(in, true)
+
+	for _, nodeFile := range nodeFiles {
+		for _, substitution := range phase.currentAnalyzer.PathSub {
+			nodeFile.Path = strings.Replace(nodeFile.Path, substitution.Old, substitution.New, 1)
+		}
+		stream.Send(nodeFile)
+	}
+	return nil
 }

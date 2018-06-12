@@ -33,6 +33,7 @@ message Analyzer {
     string name = 2;
     int32 nodeType = 3;
     int64 trustLevel = 4;
+    repeated PathSubstitution pathSub = 5;
 }
 
 message PathSubstitution {
