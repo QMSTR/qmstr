@@ -51,7 +51,6 @@ func (ga *GitAnalyzer) Configure(configMap map[string]string) error {
 
 func (ga *GitAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
 	ga.fillRevision()
-
 	log.Printf("You git %s", ga.revision)
 	pkgNode, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
 	tempDataNodes := []*service.InfoNode_DataNode{}

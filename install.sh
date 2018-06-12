@@ -26,6 +26,7 @@ function installqmstr() {
     go install -v github.com/QMSTR/qmstr/cmd/analyzers/spdx-analyzer
     go install -v github.com/QMSTR/qmstr/cmd/analyzers/scancode-analyzer
     go install -v github.com/QMSTR/qmstr/cmd/analyzers/test-analyzer
+    go install -v github.com/QMSTR/qmstr/cmd/analyzers/git-analyzer
     go install -v github.com/QMSTR/qmstr/cmd/reporters/test-reporter
     go install -v github.com/QMSTR/qmstr/cmd/reporters/qmstr-reporter-html
     pushd $GOPATH/src/github.com/QMSTR/qmstr
