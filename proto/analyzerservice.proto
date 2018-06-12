@@ -22,6 +22,12 @@ message InfoNodeMessage {
     InfoNode infonode = 3;
 }
 
+message FileNodeMessage {
+    int64 token = 1;
+    string uid = 2;
+    FileNode filenode = 3;
+}
+
 message SendResponse {
     bool success = 1;
 }
@@ -29,4 +35,5 @@ message SendResponse {
 service AnalysisService {
     rpc GetAnalyzerConfig(AnalyzerConfigRequest) returns (AnalyzerConfigResponse) {}
     rpc SendInfoNodes(stream InfoNodeMessage) returns (SendResponse) {}
+    rpc SendFileNodes(stream FileNodeMessage) returns (SendResponse) {}
 }
