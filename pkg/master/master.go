@@ -56,6 +56,10 @@ func (s *server) SendInfoNodes(stream service.AnalysisService_SendInfoNodesServe
 	return s.currentPhase.SendInfoNodes(stream)
 }
 
+func (s *server) SendFileNodes(stream service.AnalysisService_SendFileNodesServer) error {
+	return s.currentPhase.SendFileNodes(stream)
+}
+
 func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest) (*service.PackageResponse, error) {
 	db, err := s.currentPhase.getDataBase()
 	if err != nil {

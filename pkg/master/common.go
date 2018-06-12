@@ -21,6 +21,7 @@ type serverPhase interface {
 	GetAnalyzerConfig(*service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error)
 	GetReporterConfig(*service.ReporterConfigRequest) (*service.ReporterConfigResponse, error)
 	SendInfoNodes(stream service.AnalysisService_SendInfoNodesServer) error
+	SendFileNodes(stream service.AnalysisService_SendFileNodesServer) error
 }
 
 type genericServerPhase struct {
@@ -67,5 +68,9 @@ func (gsp *genericServerPhase) GetAnalyzerConfig(in *service.AnalyzerConfigReque
 }
 
 func (gsp *genericServerPhase) SendInfoNodes(stream service.AnalysisService_SendInfoNodesServer) error {
+	return errors.New("Wrong phase")
+}
+
+func (gsp *genericServerPhase) SendFileNodes(stream service.AnalysisService_SendFileNodesServer) error {
 	return errors.New("Wrong phase")
 }
