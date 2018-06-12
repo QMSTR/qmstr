@@ -87,6 +87,10 @@ $(GOMETALINTER):
 golint:	$(GOMETALINTER)
 	gometalinter ./... --vendor
 
+.PHONY: govet
+govet: gotest
+	go tool vet cmd pkg
+
 $(GODEP):
 	go get -u -v github.com/golang/dep/cmd/dep
 
