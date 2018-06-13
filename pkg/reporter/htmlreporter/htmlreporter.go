@@ -389,7 +389,8 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 				switch dnode.Type {
 				case "AuthorName":
 					revisionData.Author = dnode.Data
-				case "Description":
+				case "CommitID":
+					log.Printf("WARN: using CommitID instead of description this can be misleading as it does not cover not commited changes")
 					revisionData.VersionIdentifier = dnode.Data
 				case "CommitterDate":
 					revisionData.ChangeDateTime = dnode.Data
