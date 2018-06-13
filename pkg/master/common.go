@@ -23,6 +23,7 @@ type serverPhase interface {
 	SendInfoNodes(service.AnalysisService_SendInfoNodesServer) error
 	SendFileNodes(service.AnalysisService_SendFileNodesServer) error
 	GetFileNode(*service.FileNode, service.ControlService_GetFileNodeServer) error
+	GetInfoData(*service.InfoDataRequest) (*service.InfoDataResponse, error)
 }
 
 type genericServerPhase struct {
@@ -87,4 +88,8 @@ func (gsp *genericServerPhase) GetFileNode(in *service.FileNode, stream service.
 		stream.Send(nodeFile)
 	}
 	return nil
+}
+
+func (gsp *genericServerPhase) GetInfoData(in *service.InfoDataRequest) (*service.InfoDataResponse, error) {
+	return nil, errors.New("Wrong phase")
 }

@@ -11,6 +11,17 @@ message ReporterConfigResponse {
   string name = 4;
 }
 
+message InfoDataRequest {
+  string rootID = 1;
+  string infotype = 2;
+  string datatype = 3;
+}
+
+message InfoDataResponse {
+  repeated string data = 1;
+}
+
 service ReportService {
   rpc GetReporterConfig(ReporterConfigRequest) returns (ReporterConfigResponse) {}
+  rpc GetInfoData(InfoDataRequest) returns (InfoDataResponse) {}
 }

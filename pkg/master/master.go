@@ -76,6 +76,10 @@ func (s *server) GetFileNode(in *service.FileNode, stream service.ControlService
 	return s.currentPhase.GetFileNode(in, stream)
 }
 
+func (s *server) GetInfoData(ctx context.Context, in *service.InfoDataRequest) (*service.InfoDataResponse, error) {
+	return s.currentPhase.GetInfoData(in)
+}
+
 func (s *server) Status(ctx context.Context, in *service.StatusMessage) (*service.StatusResponse, error) {
 	resp := service.StatusResponse{}
 	resp.PhaseID = s.currentPhase.GetPhaseID()

@@ -70,3 +70,26 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 	return &service.ReporterConfigResponse{ConfigMap: config.Config, Session: phase.session,
 		Name: config.Name}, nil
 }
+
+func (phase *serverPhaseReport) GetInfoData(in *service.InfoDataRequest) (*service.InfoDataResponse, error) {
+	db, err := phase.getDataBase()
+	if err != nil {
+		return nil, err
+	}
+	infos, err := db.GetInfoData(in.RootID, in.Infotype, in.Datatype)
+	if err != nil {
+		return nil, err
+	}
+
+	infoSet := map[string]struct{}{}
+	for _, data := range infos {
+		infoSet[data] = struct{}{}
+	}
+
+	uniqInfos := []string{}
+	for key := range infoSet {
+		uniqInfos = append(uniqInfos, key)
+	}
+
+	return &service.InfoDataResponse{Data: uniqInfos}, nil
+}

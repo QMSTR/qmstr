@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -31,8 +33,12 @@ func (testRporter *TestReporter) Configure(config map[string]string) error {
 }
 
 // Report generates the actual reports.
-func (testRporter *TestReporter) Report(packageNode *service.PackageNode) error {
-	testpackageNode = packageNode
+func (testRporter *TestReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient, session string) error {
+	var err error
+	testpackageNode, err = cserv.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
+	if err != nil {
+		return fmt.Errorf("could not get package node: %v", err)
+	}
 	testSuite := []testing.InternalTest{
 		{
 			Name: "TestGraphLAdditionalInfo",

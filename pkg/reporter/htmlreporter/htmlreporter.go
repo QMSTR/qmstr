@@ -2,6 +2,7 @@ package htmlreporter
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -90,7 +91,18 @@ var once = false
 
 // Report generates the actual reports.
 // It is part of the ReporterModule interface.
-func (r *HTMLReporter) Report(packageNode *service.PackageNode) error {
+func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient, session string) error {
+	packageNode, err := cserv.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
+	if err != nil {
+		return fmt.Errorf("could not get package node: %v", err)
+	}
+
+	licenses, err := rserv.GetInfoData(context.Background(), &service.InfoDataRequest{RootID: packageNode.Targets[0].Uid, Infotype: "license", Datatype: "spdxIdentifier"})
+	if err != nil {
+		return err
+	}
+	log.Printf("Licenses: %v", licenses.Data)
+
 	if !once {
 		once = true
 		if err := r.CreatePackageLevelReports(packageNode); err != nil {

@@ -165,6 +165,59 @@ func (db *DataBase) AlterPackageNode(pkgNode *service.PackageNode) (string, erro
 	return uid, err
 }
 
+func (db *DataBase) GetInfoData(rootNodeID string, infotype string, datatype string) ([]string, error) {
+	const q = `
+	query InfoData($id: string, $itype: string, $dtype: string){
+		var(func: uid($id)) @recurse(loop: false) {
+			uid
+			nodeType
+			name:type
+			analyzer
+			trustLevel
+			A as dataNodes @filter(eq(type, $dtype))
+			data
+			confidenceScore
+			additionalInfo @filter(eq(type, $itype)) (orderdesc: confidenceScore, first: 1)
+			derivedFrom
+		}
+
+		infodata(func: uid(A)) {
+			data
+		}
+	}
+	`
+
+	vars := map[string]string{"$id": rootNodeID, "$itype": infotype, "$dtype": datatype}
+
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Printf("InfoData Response %s", resp.Json)
+
+	type Data struct {
+		Data string
+	}
+
+	type InfoData struct {
+		Infodata []Data
+	}
+
+	var r InfoData
+
+	err = json.Unmarshal(resp.Json, &r)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ret := []string{}
+	for _, data := range r.Infodata {
+		ret = append(ret, data.Data)
+	}
+	return ret, nil
+}
+
 func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) error {
 	db.insertMutex.Lock()
 	defer db.insertMutex.Unlock()
