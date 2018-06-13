@@ -103,6 +103,12 @@ func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.
 	}
 	log.Printf("Licenses: %v", licenses.Data)
 
+	authors, err := rserv.GetInfoData(context.Background(), &service.InfoDataRequest{RootID: packageNode.Targets[0].Uid, Infotype: "copyright", Datatype: "author"})
+	if err != nil {
+		return err
+	}
+	log.Printf("Authors: %v", authors.Data)
+
 	if !once {
 		once = true
 		if err := r.CreatePackageLevelReports(packageNode); err != nil {
