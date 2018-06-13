@@ -371,6 +371,8 @@ type RevisionData struct {
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode) error {
 	packageData := PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", r.siteData}
+	revisionData := RevisionData{"a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "2017-11-06 14:35", "Jonas Oberg", packageData}
+
 	ps := reflect.ValueOf(&packageData)
 	s := ps.Elem()
 	for _, inode := range packageNode.AdditionalInfo {
@@ -381,11 +383,22 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 					f.SetString(dnode.Data)
 				}
 			}
-			break
+		}
+		if inode.Type == "Revision" {
+			for _, dnode := range inode.DataNodes {
+				switch dnode.Type {
+				case "AuthorName":
+					revisionData.Author = dnode.Data
+				case "Description":
+					revisionData.VersionIdentifier = dnode.Data
+				case "CommitterDate":
+					revisionData.ChangeDateTime = dnode.Data
+				}
+			}
 		}
 	}
-	// TODO @hemarkus: Give me that data.
-	revisionData := RevisionData{"a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "2017-11-06 14:35", "Jonas Oberg", packageData}
+
+	log.Printf("Using revision %v", revisionData)
 
 	dataDirectory := path.Join(r.workingDir, "data")
 	contentDirectory := path.Join(r.workingDir, "content")
