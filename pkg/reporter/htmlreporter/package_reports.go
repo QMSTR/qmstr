@@ -28,13 +28,14 @@ type RevisionData struct {
 	VersionIdentifier string      // Usually a Git hash, but any string can be used
 	ChangeDateTime    string      // The change timestamp
 	Author            string      // The author of the change
+	Message           string      // The commit message
 	Package           PackageData // The package this version is associated with.
 }
 
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode) error {
 	packageData := PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", r.siteData}
-	revisionData := RevisionData{"(SHA)", "(commit datetime)", "(author)", packageData}
+	revisionData := RevisionData{"(SHA)", "(commit datetime)", "(author)", "(commit message)", packageData}
 
 	ps := reflect.ValueOf(&packageData)
 	s := ps.Elem()
@@ -52,6 +53,8 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 				switch dnode.Type {
 				case "AuthorName":
 					revisionData.Author = dnode.Data
+				case "CommitMessage":
+					revisionData.Message = dnode.Data
 				case "CommitID":
 					log.Printf("WARN: using CommitID instead of description this can be misleading as it does not cover not commited changes")
 					revisionData.VersionIdentifier = dnode.Data
@@ -62,7 +65,7 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 		}
 	}
 
-	log.Printf("Using revision %v", revisionData)
+	log.Printf("Using revision %v", revisionData.VersionIdentifier)
 
 	dataDirectory := path.Join(r.workingDir, "data")
 	contentDirectory := path.Join(r.workingDir, "content")
