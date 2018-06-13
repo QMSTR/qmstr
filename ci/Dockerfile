@@ -13,7 +13,7 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository ppa:gophers/archive && \
     apt-get update && \
-    apt-get install -y curl golang-1.9-go autoconf git libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
+    apt-get install -y curl golang-1.9-go autoconf git libgit2-dev libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
 
 # install build deps
 RUN apt-get update && \
@@ -49,7 +49,7 @@ LABEL org.qmstr.image runtime
 
 # install runtime deps
 RUN apt-get update && \
-    apt-get install -y software-properties-common curl autoconf git libio-captureoutput-perl python python-pip protobuf-compiler && \
+    apt-get install -y software-properties-common curl autoconf git libgit2-dev libio-captureoutput-perl python python-pip protobuf-compiler && \
     rm -rf /var/lib/apt/lists/*
 
 ARG HUGO_VERSION
