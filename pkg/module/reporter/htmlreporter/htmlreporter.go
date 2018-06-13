@@ -3,7 +3,6 @@ package htmlreporter
 import (
 	"bufio"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -11,7 +10,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"reflect"
 	"regexp"
 	"strings"
 	"text/template"
@@ -86,9 +84,6 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 	return nil
 }
 
-// TEMP: until Report is called with the Package node:
-var once = false
-
 // Report generates the actual reports.
 // It is part of the ReporterModule interface.
 func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient, session string) error {
@@ -97,23 +92,8 @@ func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.
 		return fmt.Errorf("could not get package node: %v", err)
 	}
 
-	licenses, err := rserv.GetInfoData(context.Background(), &service.InfoDataRequest{RootID: packageNode.Targets[0].Uid, Infotype: "license", Datatype: "spdxIdentifier"})
-	if err != nil {
-		return err
-	}
-	log.Printf("Licenses: %v", licenses.Data)
-
-	authors, err := rserv.GetInfoData(context.Background(), &service.InfoDataRequest{RootID: packageNode.Targets[0].Uid, Infotype: "copyright", Datatype: "author"})
-	if err != nil {
-		return err
-	}
-	log.Printf("Authors: %v", authors.Data)
-
-	if !once {
-		once = true
-		if err := r.CreatePackageLevelReports(packageNode); err != nil {
-			return fmt.Errorf("error generating package level report: %v", err)
-		}
+	if err := r.CreatePackageLevelReports(packageNode); err != nil {
+		return fmt.Errorf("error generating package level report: %v", err)
 	}
 	log.Printf("HTML reporter: created report for %v", packageNode.Name)
 	return nil
@@ -331,7 +311,7 @@ func CreateStaticHTML(workingdir string) (string, error) {
 	return outputDir, nil
 }
 
-// CreateReporCreateReportsPackagetsPackage creates a tarball of the static HTML reports in the packagePath directory.
+// CreateReportsPackage creates a tarball of the static HTML reports in the packagePath directory.
 func CreateReportsPackage(workingDir string, contentDir string, packagePath string) error {
 	outputFile := path.Join(packagePath, "qmstr-reports.tar.bz2")
 	cmd := exec.Command("tar", "cfj", outputFile, "-C", workingDir, contentDir)
@@ -347,115 +327,6 @@ func CreateReportsPackage(workingDir string, contentDir string, packagePath stri
 // SiteData contains information about this Quartermaster site.
 type SiteData struct {
 	Provider string // the responsible entity running the site
-}
-
-// PackageData is the package metadata that the report will visualize.
-// PackageData is expected to stay more or less constant across versions of the package.
-// oc... refers to OpenChain related fields
-type PackageData struct {
-	PackageName         string   // The package name, e.g. "CURL" or "Linux"
-	Vendor              string   // Name of the entity distributing this package
-	OcFossLiaison       string   // Name of the FOSS liaison function
-	OcComplianceContact string   // Email address acting as the general FOSS compliance contact for the vendor
-	Site                SiteData // The site this page is associated with
-}
-
-// RevisionData contains metadata about a specific revision.
-type RevisionData struct {
-	VersionIdentifier string      // Usually a Git hash, but any string can be used
-	ChangeDateTime    string      // The change timestamp
-	Author            string      // The author of the change
-	Package           PackageData // The package this version is associated with.
-}
-
-// CreatePackageLevelReports creates the top level report about the package.
-func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode) error {
-	packageData := PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", r.siteData}
-	revisionData := RevisionData{"a3ca6e98ab6ca4be5d74052efa97b2d3f710dd39", "2017-11-06 14:35", "Jonas Oberg", packageData}
-
-	ps := reflect.ValueOf(&packageData)
-	s := ps.Elem()
-	for _, inode := range packageNode.AdditionalInfo {
-		if inode.Type == "metadata" {
-			for _, dnode := range inode.DataNodes {
-				f := s.FieldByName(dnode.Type)
-				if f.IsValid() && f.CanSet() && f.Kind() == reflect.String {
-					f.SetString(dnode.Data)
-				}
-			}
-		}
-		if inode.Type == "Revision" {
-			for _, dnode := range inode.DataNodes {
-				switch dnode.Type {
-				case "AuthorName":
-					revisionData.Author = dnode.Data
-				case "CommitID":
-					log.Printf("WARN: using CommitID instead of description this can be misleading as it does not cover not commited changes")
-					revisionData.VersionIdentifier = dnode.Data
-				case "CommitterDate":
-					revisionData.ChangeDateTime = dnode.Data
-				}
-			}
-		}
-	}
-
-	log.Printf("Using revision %v", revisionData)
-
-	dataDirectory := path.Join(r.workingDir, "data")
-	contentDirectory := path.Join(r.workingDir, "content")
-	packageContentDirectory := path.Join(contentDirectory, packageData.PackageName)
-	versionContentDirectory := path.Join(packageContentDirectory, revisionData.VersionIdentifier)
-	packageDirectory := path.Join(dataDirectory, packageData.PackageName)
-	versionDirectory := path.Join(packageDirectory, revisionData.VersionIdentifier)
-	if err := os.MkdirAll(versionDirectory, os.ModePerm); err != nil {
-		return fmt.Errorf("error creating package metadata directory: %v", err)
-	}
-	packageJSON, err := json.Marshal(packageData)
-	if err != nil {
-		return fmt.Errorf("error generating JSON representation of package metadata: %v", err)
-	}
-	packageDataFile := path.Join(packageDirectory, "data.json")
-	if err := ioutil.WriteFile(packageDataFile, packageJSON, 0644); err != nil {
-		return fmt.Errorf("error creating JSON package metadata file: %v", err)
-	}
-
-	// create content directories for package and version:
-	if err := os.MkdirAll(versionContentDirectory, os.ModePerm); err != nil {
-		return fmt.Errorf("error creating content directories: %v", err)
-	}
-	// generate top-level site data:
-	{
-		templatePath := path.Join(r.sharedDataDir, "templates", "site-index.md")
-		outputPath := path.Join(contentDirectory, "_index.md")
-		if err := applyTemplate(templatePath, r.siteData, outputPath); err != nil {
-			return fmt.Errorf("error creating site index: %v", err)
-		}
-	}
-	// generate content/<package>/_index.md
-	{
-		templatePath := path.Join(r.sharedDataDir, "templates", "package-index.md")
-		outputPath := path.Join(packageContentDirectory, "_index.md")
-		if err := applyTemplate(templatePath, packageData, outputPath); err != nil {
-			return fmt.Errorf("error creating package content: %v", err)
-		}
-	}
-	// generate content/<package>/<version>/_index.md
-	{
-		templatePath := path.Join(r.sharedDataDir, "templates", "version-index.md")
-		outputPath := path.Join(versionContentDirectory, "_index.md")
-		if err := applyTemplate(templatePath, revisionData, outputPath); err != nil {
-			return fmt.Errorf("error creating version index page: %v", err)
-		}
-	}
-	revisionJSON, err := json.Marshal(revisionData)
-	if err != nil {
-		return fmt.Errorf("error generating JSON representation of revision metadata: %v", err)
-	}
-	versionDataFile := path.Join(versionDirectory, "data.json")
-	if err := ioutil.WriteFile(versionDataFile, revisionJSON, 0644); err != nil {
-		return fmt.Errorf("error creating JSON version data file: %v", err)
-	}
-	return nil
 }
 
 func applyTemplate(templatePath string, data interface{}, target string) error {
