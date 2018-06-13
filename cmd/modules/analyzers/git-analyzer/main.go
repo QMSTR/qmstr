@@ -85,7 +85,7 @@ func (ga *GitAnalyzer) Analyze(controlService service.ControlServiceClient, anal
 		return err
 	}
 	if reply.Success {
-		log.Println("Git Analyzer sent InfoNodes")
+		log.Println("Git analyzer sent InfoNodes")
 	}
 
 	return nil
