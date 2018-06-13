@@ -194,8 +194,6 @@ func (db *DataBase) GetInfoData(rootNodeID string, infotype string, datatype str
 		return nil, err
 	}
 
-	log.Printf("InfoData Response %s", resp.Json)
-
 	type Data struct {
 		Data string
 	}
@@ -231,15 +229,11 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 		}
 	}
 	`
-	log.Printf("Receiver uid %s", nodeID)
-
 	vars := map[string]string{"$id": nodeID}
 	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
 	if err != nil {
 		return err
 	}
-
-	log.Printf("RAW JSON response: %s", resp.Json)
 
 	type GenericNode struct {
 		Uid            string
@@ -308,8 +302,6 @@ func (db *DataBase) AddFileNodes(nodeID string, filenodes ...*service.FileNode) 
 	db.insertMutex.Lock()
 	defer db.insertMutex.Unlock()
 
-	log.Printf("Receiver uid %s", nodeID)
-
 	const q = `
 	query Node($id: string){
 		node(func: uid($id)) @recurse(loop: false) {
@@ -325,8 +317,6 @@ func (db *DataBase) AddFileNodes(nodeID string, filenodes ...*service.FileNode) 
 	if err != nil {
 		return err
 	}
-
-	log.Printf("Resp JSON %s", resp.Json)
 
 	type GenericNode struct {
 		Uid      string
@@ -347,9 +337,6 @@ func (db *DataBase) AddFileNodes(nodeID string, filenodes ...*service.FileNode) 
 		return fmt.Errorf("No node with uid %s found", nodeID)
 	}
 	receiverNode := r.Node[0]
-
-	log.Printf("Node type %d", receiverNode.NodeType)
-	log.Printf("Node uid %s", receiverNode.Uid)
 
 	switch receiverNode.NodeType {
 	case service.NodeTypeFileNode:
