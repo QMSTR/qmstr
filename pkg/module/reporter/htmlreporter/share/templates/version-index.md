@@ -1,5 +1,5 @@
 +++
-title = "{{{.VersionIdentifier}}}"
+title = "{{{.VersionIdentifierShort}}}"
 versionid = "{{{.VersionIdentifier}}}"
 package = "{{{.Package.PackageName}}}"
 author = "{{{.Author}}}"
