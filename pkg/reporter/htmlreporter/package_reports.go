@@ -36,7 +36,7 @@ type RevisionData struct {
 }
 
 // CreatePackageLevelReports creates the top level report about the package.
-func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode) error {
+func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
 	packageData := PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", r.siteData}
 	revisionData := RevisionData{"(SHA long)", "(SHA #8)", "(commit datetime)", "(author)", "(commit message)", "(commit summary)", packageData}
 
@@ -132,7 +132,7 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 	}
 
 	for _, node := range packageNode.Targets {
-		if err := r.CreateTargetLevelReports(node); err != nil {
+		if err := r.CreateTargetLevelReports(node, cserv, rserv); err != nil {
 			return fmt.Errorf("error creating target report for %s: %v", node.Name, err)
 		}
 	}
