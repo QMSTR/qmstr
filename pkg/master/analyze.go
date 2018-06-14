@@ -99,7 +99,7 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 		config.PathSub = phase.masterConfig.Server.PathSub
 	}
 	phase.currentAnalyzer.PathSub = config.PathSub
-	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, TypeSelector: config.Selector, PathSub: config.PathSub,
+	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, PathSub: config.PathSub,
 		Token: phase.currentToken, Name: config.Name, Session: phase.session}, nil
 }
 
@@ -159,6 +159,9 @@ func (phase *serverPhaseAnalysis) GetFileNode(in *service.FileNode, stream servi
 		return err
 	}
 	nodeFiles, err := db.GetFileNodesByFileNode(in, true)
+	if err != nil {
+		return err
+	}
 
 	for _, nodeFile := range nodeFiles {
 		for _, substitution := range phase.currentAnalyzer.PathSub {

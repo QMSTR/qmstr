@@ -17,7 +17,6 @@ import (
 type Analysis struct {
 	Name       string `yaml:"name"`
 	PosixName  string
-	Selector   string
 	Analyzer   string
 	TrustLevel int64
 	PathSub    []*service.PathSubstitution

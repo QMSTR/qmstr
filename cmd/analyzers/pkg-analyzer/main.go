@@ -14,7 +14,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
-const queryType = "linkedtarget"
+var queryType = "linkedtarget"
 
 type PkgAnalyzer struct {
 	targetsSlice []string
@@ -42,6 +42,9 @@ func (pkganalyzer *PkgAnalyzer) Configure(configMap map[string]string) error {
 	}
 	pkganalyzer.targetsDir = configMap["targetdir"]
 
+	if typeSelector, ok := configMap["selector"]; ok {
+		queryType = typeSelector
+	}
 	return nil
 }
 

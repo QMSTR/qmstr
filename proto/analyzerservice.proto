@@ -8,7 +8,6 @@ message AnalyzerConfigRequest {
 }
 
 message AnalyzerConfigResponse {
-    string typeSelector = 1;
     map<string, string> configMap = 2;
     repeated PathSubstitution pathSub = 3;
     int64 token = 4;
