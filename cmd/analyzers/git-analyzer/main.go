@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"reflect"
@@ -45,8 +46,9 @@ func (ga *GitAnalyzer) Configure(configMap map[string]string) error {
 		}
 		ga.repo = repo
 		ga.revision = Revision{}
+		return nil
 	}
-	return nil
+	return fmt.Errorf("Misconfigured git analyzer")
 }
 
 func (ga *GitAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
@@ -83,7 +85,7 @@ func (ga *GitAnalyzer) Analyze(controlService service.ControlServiceClient, anal
 		return err
 	}
 	if reply.Success {
-		log.Println("Scancode Analyzer sent InfoNodes")
+		log.Println("Git Analyzer sent InfoNodes")
 	}
 
 	return nil
