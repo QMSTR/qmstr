@@ -94,7 +94,7 @@ func startContainer(ctx context.Context, cli *client.Client, workdir string) (st
 		ExposedPorts: nat.PortSet{
 			internalPort: struct{}{},
 		},
-		Env: []string{"PATH_SUB=%s,%s", workdir, containerBuildDir},
+		Env: []string{fmt.Sprintf("PATH_SUB=%s,%s", workdir, containerBuildDir)},
 	},
 		&container.HostConfig{
 			PortBindings: nat.PortMap{internalPort: portsbinds},
