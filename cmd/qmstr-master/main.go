@@ -27,6 +27,7 @@ func main() {
 		for i := 0; i < len(pathSubstitution); i += 2 {
 			masterConfig.Server.PathSub = append(masterConfig.Server.PathSub, &service.PathSubstitution{Old: pathSubstitution[i], New: pathSubstitution[i+1]})
 		}
+		log.Printf("Using following PathSubstitution: %v", masterConfig.Server.PathSub)
 	}
 
 	masterRun, err := master.InitAndRun(masterConfig)
