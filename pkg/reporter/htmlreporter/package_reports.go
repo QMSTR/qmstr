@@ -26,18 +26,19 @@ type PackageData struct {
 
 // RevisionData contains metadata about a specific revision.
 type RevisionData struct {
-	VersionIdentifier string      // Usually a Git hash, but any string can be used
-	ChangeDateTime    string      // The change timestamp
-	Author            string      // The author of the change
-	Message           string      // The commit message
-	Summary           string      // The short form of the commit message
-	Package           PackageData // The package this version is associated with.
+	VersionIdentifier      string      // Usually a Git hash, but any string can be used
+	VersionIdentifierShort string      // The short version of the version identifier
+	ChangeDateTime         string      // The change timestamp
+	Author                 string      // The author of the change
+	Message                string      // The commit message
+	Summary                string      // The short form of the commit message
+	Package                PackageData // The package this version is associated with.
 }
 
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode) error {
 	packageData := PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", r.siteData}
-	revisionData := RevisionData{"(SHA)", "(commit datetime)", "(author)", "(commit message)", "(commit summary)", packageData}
+	revisionData := RevisionData{"(SHA long)", "(SHA #8)", "(commit datetime)", "(author)", "(commit message)", "(commit summary)", packageData}
 
 	ps := reflect.ValueOf(&packageData)
 	s := ps.Elem()
@@ -68,7 +69,8 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 	}
 
 	revisionData.Summary = commitMessageSummary(revisionData.Message)
-	log.Printf("Using revision %v: %s", revisionData.VersionIdentifier[:8], revisionData.Summary)
+	revisionData.VersionIdentifierShort = shortenedVersionIdentifier(revisionData.VersionIdentifier)
+	log.Printf("Using revision %v: %s", revisionData.VersionIdentifierShort, revisionData.Summary)
 
 	dataDirectory := path.Join(r.workingDir, "data")
 	contentDirectory := path.Join(r.workingDir, "content")
@@ -150,4 +152,14 @@ func commitMessageSummary(message string) string {
 		summary = fmt.Sprintf("%s...", summary[47:])
 	}
 	return summary
+}
+
+// Calculate a shorted version of the version identifier, in upper-case characters
+func shortenedVersionIdentifier(message string) string {
+	const cutoff = 8 // this should be configurable
+	result := strings.ToUpper(message)
+	if len(result) <= cutoff {
+		return result
+	}
+	return result[:cutoff]
 }
