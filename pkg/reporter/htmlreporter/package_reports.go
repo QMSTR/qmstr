@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"reflect"
+	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/service"
 )
@@ -29,13 +30,14 @@ type RevisionData struct {
 	ChangeDateTime    string      // The change timestamp
 	Author            string      // The author of the change
 	Message           string      // The commit message
+	Summary           string      // The short form of the commit message
 	Package           PackageData // The package this version is associated with.
 }
 
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode) error {
 	packageData := PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", r.siteData}
-	revisionData := RevisionData{"(SHA)", "(commit datetime)", "(author)", "(commit message)", packageData}
+	revisionData := RevisionData{"(SHA)", "(commit datetime)", "(author)", "(commit message)", "(commit summary)", packageData}
 
 	ps := reflect.ValueOf(&packageData)
 	s := ps.Elem()
@@ -65,7 +67,8 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 		}
 	}
 
-	log.Printf("Using revision %v", revisionData.VersionIdentifier)
+	revisionData.Summary = commitMessageSummary(revisionData.Message)
+	log.Printf("Using revision %v: %s", revisionData.VersionIdentifier[:8], revisionData.Summary)
 
 	dataDirectory := path.Join(r.workingDir, "data")
 	contentDirectory := path.Join(r.workingDir, "content")
@@ -133,4 +136,18 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 	}
 
 	return nil
+}
+
+// commitMessageSummary returns the summary of the commit message according to the usual guidelines
+// (see https://chris.beams.io/posts/git-commit/, "Limit the subject line to 50 characters")
+func commitMessageSummary(message string) string {
+	lines := strings.Split(message, "\n")
+	if len(lines) == 0 {
+		return ""
+	}
+	summary := strings.TrimSpace(lines[0])
+	if len(summary) > 50 {
+		summary = fmt.Sprintf("%s...", summary[47:])
+	}
+	return summary
 }
