@@ -1,7 +1,16 @@
 <h2>Distributed Versions</h2>
 
-<ul>
+<table>
+  <tr>
+    <th>Change</th>
+    <th>Author</th>
+    <th>Description</th>
+  </tr>
   {{ range .Page.Sections }}
-  <li><a href="{{ .URL }}">{{ substr .Params.title 0 8 | upper }} ({{ .Params.author }})</a></li>
+  <tr>
+    <td><a href="{{ .URL }}">{{ substr .Params.title 0 8 | upper }}</a></td>
+    <td>{{ .Params.author }}</td>
+    <td>{{ .Params.summary }}</td>
+  </tr>
   {{ end }}
-</ul>
+</table>
