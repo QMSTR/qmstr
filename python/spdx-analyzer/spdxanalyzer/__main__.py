@@ -1,8 +1,8 @@
 #!/usr/bin/env python2
 import argparse
-from pyqmstr.service.datamodel_pb2 import FileNode, InfoNode 
+from pyqmstr.service.datamodel_pb2 import FileNode, InfoNode
 from pyqmstr.service.controlservice_pb2 import PackageRequest
-from pyqmstr.service.analyzerservice_pb2 import InfoNodeMessage 
+from pyqmstr.service.analyzerservice_pb2 import InfoNodeMessage
 from pyqmstr.module.module import QMSTR_Analyzer
 import logging
 import sys
@@ -12,6 +12,28 @@ fileformat_key = "fileformat"
 
 
 class SpdxAnalyzer(QMSTR_Analyzer):
+
+    @staticmethod
+    def is_primitive(attr):
+        primitive = (int, str, bool, unicode, float)
+        return isinstance(attr, primitive)
+
+    @staticmethod
+    def __stringify(t):
+        if SpdxAnalyzer.is_primitive(t):
+            return unicode(t)
+        if isinstance(t, list):
+            return ",".join(map(lambda x: SpdxAnalyzer.__stringify(x), t))
+        if isinstance(t, tuple):
+            return ":".join(str(i) for i in t)
+        if isinstance(t, dict):
+            return ",".join(map(lambda x: SpdxAnalyzer.__stringify(x), t.iteritems()))
+        members = SpdxAnalyzer.__membersof(t)
+        return ",".join(map(lambda y: SpdxAnalyzer.__stringify(y), zip(members, map(lambda x: SpdxAnalyzer.__stringify(t.__getattribute__(x)), members))))
+
+    @staticmethod
+    def __membersof(t):
+        return [attr for attr in dir(t) if not callable(getattr(t, attr)) and not attr.startswith("_")]
 
     def __init__(self, address, aid):
         super(SpdxAnalyzer, self).__init__(address, aid)
@@ -75,10 +97,12 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         logging.info("Processing package node")
 
         data_nodes = []
-        data_nodes.append(InfoNode.DataNode(
-            type="name",
-            data=self.doc.package.name
-        ))
+        for member in SpdxAnalyzer.__membersof(self.doc.package):
+            value = self.doc.package.__getattribute__(member)
+            data_nodes.append(InfoNode.DataNode(
+                type=member,
+                data=SpdxAnalyzer.__stringify(value)
+            ))
 
         info_node = InfoNode(
             type="metadata",
@@ -99,7 +123,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
 
         info_iterator = _generate_iterator(info_nodes)
 
-        stream_resp = self.aserv.SendInfoNodes(info_iterator)
+        self.aserv.SendInfoNodes(info_iterator)
 
     def _parse_spdx(self):
         if not self.format in self.parse_func_map:
