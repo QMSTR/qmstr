@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/analysis"
@@ -72,7 +73,8 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 		}
 
 		for _, target := range pkganalyzer.targetsSlice {
-			if fileNode.Path == filepath.Join(pkganalyzer.targetsDir, target) {
+			re := regexp.MustCompile(filepath.Join(pkganalyzer.targetsDir, target))
+			if re.MatchString(fileNode.Path) {
 				log.Printf("Adding node %v to package targets.", fileNode.Path)
 				FileNodeMsgs = append(FileNodeMsgs, &service.FileNodeMessage{Token: token, Uid: pkgNode.Uid, Filenode: fileNode})
 				break
