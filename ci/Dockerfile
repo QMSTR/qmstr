@@ -59,7 +59,7 @@ RUN rm /tmp/hugo.deb
 
 # init html reporter data
 COPY --from=builder /go/src/github.com/QMSTR/qmstr /tmp/qmstr
-RUN /tmp/qmstr/cmd/reporters/qmstr-reporter-html/setup.sh /usr/share/qmstr /tmp/qmstr
+RUN /tmp/qmstr/cmd/modules/reporters/qmstr-reporter-html/setup.sh /usr/share/qmstr /tmp/qmstr
 RUN rm -fr /tmp/qmstr
 
 # install ninka

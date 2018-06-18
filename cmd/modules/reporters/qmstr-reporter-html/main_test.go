@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/QMSTR/qmstr/pkg/reporter/htmlreporter"
+	"github.com/QMSTR/qmstr/pkg/module/reporter/htmlreporter"
 	"github.com/stretchr/testify/require"
 )
 

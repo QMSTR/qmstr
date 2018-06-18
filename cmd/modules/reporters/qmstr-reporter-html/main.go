@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/QMSTR/qmstr/pkg/master"
-	"github.com/QMSTR/qmstr/pkg/reporter/htmlreporter"
+	"github.com/QMSTR/qmstr/pkg/module/reporter/htmlreporter"
 	"github.com/QMSTR/qmstr/pkg/reporting"
 )
 
