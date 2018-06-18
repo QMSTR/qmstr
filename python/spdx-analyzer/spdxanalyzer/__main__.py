@@ -4,6 +4,7 @@ from pyqmstr.service.datamodel_pb2 import FileNode, InfoNode
 from pyqmstr.service.controlservice_pb2 import PackageRequest
 from pyqmstr.service.analyzerservice_pb2 import InfoNodeMessage
 from pyqmstr.module.module import QMSTR_Analyzer
+from spdx.document import License
 import logging
 import sys
 
@@ -76,6 +77,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
 
         stream_resp = self.cserv.GetFileNode(query_node)
 
+
         for node in stream_resp:
             logging.info("Analyze node {}".format(node.path))
             filtered_files = filter(
@@ -85,8 +87,35 @@ class SpdxAnalyzer(QMSTR_Analyzer):
                     "File {} not found in SPDX document".format(node.path))
                 continue
             spdx_doc_file_info = filtered_files[0]
+            if not isinstance(spdx_doc_file_info.conc_lics, License):
+                continue
+            
+            data_nodes = []
             logging.info("Concluded license {}".format(
                 spdx_doc_file_info.conc_lics))
+            data_nodes.append(InfoNode.DataNode(
+                type="spdxIdentifier",
+                data=spdx_doc_file_info.conc_lics.identifier
+            ))
+            data_nodes.append(InfoNode.DataNode(
+                type="name",
+                data=spdx_doc_file_info.conc_lics.full_name
+            ))
+        
+            info_node = InfoNode(
+                type="license",
+                dataNodes=data_nodes
+            )
+        
+            info_nodes = []
+            info_nodes.append(InfoNodeMessage(
+                uid=node.uid,
+                token=self.token,
+                infonode=info_node))
+
+            info_iterator = _generate_iterator(info_nodes)
+
+            self.aserv.SendInfoNodes(info_iterator)
 
     def post_analyze(self):
         pass
