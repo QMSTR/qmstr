@@ -62,10 +62,8 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         else:
             self.format = config_map[fileformat_key]
 
-        self.doc = self._parse_spdx()
-        logging.info("This is da doc: %s", self.doc)
-
     def analyze(self):
+        self.doc = self._parse_spdx()
         self._process_filenodes()
         self._process_packagenode()
 
