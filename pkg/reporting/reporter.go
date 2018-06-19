@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+// Reporter contains the fields provided to every report
 type Reporter struct {
 	reportingService service.ReportServiceClient
 	controlService   service.ControlServiceClient
@@ -23,12 +24,14 @@ type Reporter struct {
 	session          string
 }
 
+// ReporterModule defines the methods required to implement a reporter.
 type ReporterModule interface {
 	Configure(configMap map[string]string) error
 	Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient, session string) error
 	PostReport() error
 }
 
+// NewReporter creates a new reporter.
 func NewReporter(module ReporterModule) *Reporter {
 	var serviceAddress string
 	var anaID int32
@@ -47,6 +50,7 @@ func NewReporter(module ReporterModule) *Reporter {
 	return &Reporter{id: anaID, module: module, reportingService: reportingServiceClient, controlService: controlServiceClient}
 }
 
+// GetModuleName returns the module name
 func (r *Reporter) GetModuleName() string {
 	return r.name
 }
