@@ -1,6 +1,7 @@
 package master
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os/exec"
@@ -26,12 +27,17 @@ func (phase *serverPhaseReport) Activate() error {
 	for idx, reporterConfig := range phase.masterConfig.Reporting {
 		reporterName := reporterConfig.Reporter
 
+		log.Printf("Running reporter %s ...\n", reporterName)
+		phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: fmt.Sprintf("Running reporter %s", reporterName)})
 		cmd := exec.Command(reporterName, "--rserv", phase.masterConfig.Server.RPCAddress, "--rid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			logModuleError(reporterName, out)
-			return err
+			errMsg := fmt.Sprintf("Reporter %s failed: %v", reporterName, err)
+			phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: errMsg})
+			return errors.New(errMsg)
 		}
+		phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: fmt.Sprintf("Reporter %s successfully finished", reporterName)})
 		log.Printf("Reporter %s finished successfully: %s\n", reporterName, out)
 	}
 	return nil

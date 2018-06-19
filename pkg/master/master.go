@@ -97,7 +97,7 @@ func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage
 	requestedPhase := in.Phase
 	err := s.switchPhase(requestedPhase)
 	if err != nil {
-		return &service.SwitchPhaseResponse{Success: false}, err
+		return &service.SwitchPhaseResponse{Success: false, Error: err.Error()}, nil
 	}
 	return &service.SwitchPhaseResponse{Success: true}, nil
 }

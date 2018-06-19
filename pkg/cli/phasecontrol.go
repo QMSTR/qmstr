@@ -50,7 +50,7 @@ func startPhase(phase int32) {
 		os.Exit(ReturnCodeServerCommunicationError)
 	}
 	if !resp.Success {
-		fmt.Println("Server responded unsuccessful")
+		fmt.Printf("Server reported failure:\n%s\n", resp.Error)
 		os.Exit(ReturnCodeResponseFalseError)
 	}
 }
