@@ -3,7 +3,6 @@ package htmlreporter
 import (
 	"bufio"
 	"context"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -14,6 +13,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/QMSTR/qmstr/pkg/reporting"
 	"github.com/QMSTR/qmstr/pkg/service"
 	version "github.com/hashicorp/go-version"
 )
@@ -31,7 +31,7 @@ type HTMLReporter struct {
 	sharedDataDir string
 	Keep          bool
 	baseURL       string
-	siteData      SiteData
+	siteData      reporting.SiteData
 	packageDir    string
 	cacheDir      string
 }
@@ -42,7 +42,7 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 	if outDir, ok := config["outputdir"]; ok {
 		r.packageDir = outDir
 	} else {
-		return errors.New("no output directory configured")
+		return fmt.Errorf("no output directory configured")
 	}
 
 	if val, ok := config["keep"]; ok && val == "true" {
@@ -55,10 +55,10 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 		r.baseURL = "file:///var/lib/qmstr/reports"
 	}
 
-	if sitePro, ok := config["siteprovider"]; ok {
-		r.siteData = SiteData{Provider: sitePro}
+	if siteData, err := reporting.GetSiteDataFromConfiguration(config); err == nil {
+		r.siteData = siteData
 	} else {
-		r.siteData = SiteData{Provider: "The Site Provider"}
+		return fmt.Errorf("missing or incomplete site data in configuration: %v", err)
 	}
 
 	if cacheDir, ok := config["cachedir"]; ok {
@@ -71,7 +71,7 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 	}
 	log.Printf("detected beautiful Hugo version %v", detectedVersion)
 
-	r.sharedDataDir, err = DetectModuleSharedDataDirectory(ModuleName)
+	r.sharedDataDir, err = reporting.DetectModuleSharedDataDirectory(ModuleName)
 	if err != nil {
 		return fmt.Errorf("cannot identify QMSTR shared data directory: %v", err)
 	}
@@ -141,44 +141,6 @@ func DetectHugoAndVerifyVersion() (string, error) {
 		return version, err
 	}
 	return version, CheckMinimumRequiredVersion(version)
-}
-
-// DetectSharedDataDirectory detects the shared data directory for all of QMSTR.
-// It looks for /usr/share/qmstr, /usr/local/share/qmstr and /opt/share/qmstr, in that order.
-// TODO this function should be refactored to be used across all modules
-func DetectSharedDataDirectory() (string, error) {
-	var sharedDataLocations = []string{"/usr/share/qmstr", "/usr/local/share/qmstr", "/opt/share/qmstr"}
-	for _, location := range sharedDataLocations {
-		fileInfo, err := os.Stat(location)
-		if err != nil {
-			continue
-		}
-		if !fileInfo.IsDir() {
-			return "", fmt.Errorf("shared data directory exists at %v, but is not a directory, strange", location)
-		}
-		log.Printf("shared data directory identified at %v", location) // Debug...
-		return location, nil
-	}
-	return "", fmt.Errorf("no suitable QMSTR shared data location found (candidates are %s)", strings.Join(sharedDataLocations, ", "))
-}
-
-// DetectModuleSharedDataDirectory detects the directory where QMSTR's shared data is stored.
-// TODO this function should be refactored to be used across all modules
-func DetectModuleSharedDataDirectory(moduleName string) (string, error) {
-	sharedDataLocation, err := DetectSharedDataDirectory()
-	if err != nil {
-		return "", err
-	}
-	moduleDataLocation := path.Join(sharedDataLocation, moduleName)
-	fileInfo, err := os.Stat(moduleDataLocation)
-	if err != nil {
-		return "", fmt.Errorf("module shared data directory %v not accessible: %v", moduleDataLocation, err)
-	}
-	if !fileInfo.IsDir() {
-		return "", fmt.Errorf("module shared data directory %v not found in shared data directory at %v", moduleDataLocation, sharedDataLocation)
-	}
-	log.Printf("module shared data directory identified at %v", moduleDataLocation)
-	return moduleDataLocation, nil
 }
 
 // ParseVersion returns the version for both released and self-compiled versions
@@ -322,11 +284,6 @@ func CreateReportsPackage(workingDir string, contentDir string, packagePath stri
 	}
 	log.Printf("generated package of QMSTR reports at %v", outputFile)
 	return nil
-}
-
-// SiteData contains information about this Quartermaster site.
-type SiteData struct {
-	Provider string // the responsible entity running the site
 }
 
 func applyTemplate(templatePath string, data interface{}, target string) error {

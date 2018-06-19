@@ -27,6 +27,12 @@ func (r *HTMLReporter) CreateTargetLevelReports(targetNode *service.FileNode, cs
 	}
 	log.Printf("Authors: %v", authors.Data)
 
+	holders, err := rserv.GetInfoData(context.Background(), &service.InfoDataRequest{RootID: targetNode.Uid, Infotype: "copyright", Datatype: "holder"})
+	if err != nil {
+		return err
+	}
+	log.Printf("Holders: %v", holders.Data)
+
 	log.Printf("NI")
 	return nil
 }

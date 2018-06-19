@@ -10,3 +10,8 @@ type PackageData struct {
 	OcComplianceContact string   // Email address acting as the general FOSS compliance contact for the vendor
 	Site                SiteData // The site this page is associated with
 }
+
+// GetPackageData extracts the package data from the configuration
+func GetPackageData(config map[string]string) (PackageData, error) {
+	panic("NI")
+}
