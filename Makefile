@@ -1,8 +1,8 @@
 OWNERGROUP := $(shell stat -c %u:%g Makefile)
 PROTO_PYTHON_FILES := $(shell find python/ -type f -name '*_pb2*.py' -printf '%p ')
 PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
-GO_MODULE_PKGS := $(shell go list ./... | grep /module)
-GO_PKGS := $(shell go list ./... | grep -v /module)
+GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
+GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
 GO_PATH := $(shell go env GOPATH)
 GO_BIN := $(GO_PATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
