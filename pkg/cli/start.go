@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/user"
 	"path/filepath"
 	"time"
 
@@ -89,17 +90,25 @@ func startContainer(ctx context.Context, cli *client.Client, workdir string) (st
 
 	portsbinds := []nat.PortBinding{nat.PortBinding{HostIP: "0.0.0.0", HostPort: hostPortRange}}
 
-	resp, err := cli.ContainerCreate(ctx, &container.Config{
+	config := &container.Config{
 		Image: masterImageName,
 		ExposedPorts: nat.PortSet{
 			internalPort: struct{}{},
 		},
 		Env: []string{fmt.Sprintf("PATH_SUB=%s,%s", workdir, containerBuildDir)},
-	},
-		&container.HostConfig{
-			PortBindings: nat.PortMap{internalPort: portsbinds},
-			Mounts:       []mount.Mount{mount.Mount{Source: workdir, Target: containerBuildDir, Type: mount.TypeBind}},
-		}, nil, "")
+	}
+
+	user, err := user.Current()
+	if err == nil {
+		config.Env = append(config.Env, fmt.Sprintf("USERID=%s", user.Uid))
+	}
+
+	hostConf := &container.HostConfig{
+		PortBindings: nat.PortMap{internalPort: portsbinds},
+		Mounts:       []mount.Mount{mount.Mount{Source: workdir, Target: containerBuildDir, Type: mount.TypeBind}},
+	}
+
+	resp, err := cli.ContainerCreate(ctx, config, hostConf, nil, "")
 	if err != nil {
 		return "", nil, err
 	}

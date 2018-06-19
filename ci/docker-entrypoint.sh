@@ -1,12 +1,10 @@
 #!/bin/bash
 set -e
 
-function start_dgraph() {
-    dgraph version
-    dgraph zero &
-    dgraph server --lru_mb=2048 --zero=localhost:5080 &
-}
+source /common.inc
 
 start_dgraph
 
-exec /usr/local/bin/qmstr-master --config /buildroot/qmstr.yaml ${PATH_SUB:+--pathsub="$PATH_SUB"}
+create_qmstr_user
+
+start_qmstr

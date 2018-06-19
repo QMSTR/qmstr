@@ -85,6 +85,8 @@ RUN temp_dir=$(mktemp -d 2>/dev/null) && \
     rmdir ${temp_dir}
 RUN rm /tmp/dgraph*
 
+ADD ci/common.inc /common.inc
+
 # copy qmstr installation from previous stage
 RUN mkdir -p /go/bin
 COPY --from=builder /usr/local/bin/* /usr/local/bin/ 
