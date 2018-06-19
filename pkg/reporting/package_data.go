@@ -1,5 +1,11 @@
 package reporting
 
+import (
+	"reflect"
+
+	"github.com/QMSTR/qmstr/pkg/service"
+)
+
 // PackageData is the package metadata that the report will visualize.
 // PackageData is expected to stay more or less constant across versions of the package.
 // oc... refers to OpenChain related fields
@@ -12,6 +18,19 @@ type PackageData struct {
 }
 
 // GetPackageData extracts the package data from the configuration
-func GetPackageData(config map[string]string) (PackageData, error) {
-	panic("NI")
+func GetPackageData(packageNode *service.PackageNode, siteData SiteData) PackageData {
+	packageData := PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", siteData}
+	ps := reflect.ValueOf(&packageData)
+	s := ps.Elem()
+	for _, inode := range packageNode.AdditionalInfo {
+		if inode.Type == "metadata" {
+			for _, dnode := range inode.DataNodes {
+				f := s.FieldByName(dnode.Type)
+				if f.IsValid() && f.CanSet() && f.Kind() == reflect.String {
+					f.SetString(dnode.Data)
+				}
+			}
+		}
+	}
+	return packageData
 }

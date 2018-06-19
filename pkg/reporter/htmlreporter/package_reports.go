@@ -14,7 +14,7 @@ import (
 
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
-	packageData := reporting.PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", r.siteData}
+	packageData := reporting.GetPackageData(packageNode, r.siteData)
 	revisionData, err := reporting.GetRevisionData(packageNode, packageData)
 	log.Printf("Using revision %v: %s", revisionData.VersionIdentifierShort, revisionData.Summary)
 
@@ -41,6 +41,7 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 		return fmt.Errorf("error creating content directories: %v", err)
 	}
 	// generate top-level site data:
+	// TODO this needs to be refactored out of the *package* level reports
 	{
 		templatePath := path.Join(r.sharedDataDir, "templates", "site-index.md")
 		outputPath := path.Join(contentDirectory, "_index.md")
