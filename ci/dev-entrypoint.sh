@@ -14,7 +14,7 @@ function start_dgraph_web {
 # Generate and build
 pushd $GOPATH/src/github.com/QMSTR/qmstr/
 make install_qmstr_server
-pushd cmd/reporters/qmstr-reporter-html
+pushd cmd/modules/reporters/qmstr-reporter-html
 ./setup.sh /usr/share/qmstr $GOPATH/src/github.com/QMSTR/qmstr
 popd
 popd
