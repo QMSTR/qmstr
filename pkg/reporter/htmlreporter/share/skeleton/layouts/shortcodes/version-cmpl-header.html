@@ -1,0 +1,10 @@
+{{ $data := index .Site.Data .Page.Params.package .Page.Params.versionid "data" }}
+
+<h2>Vendor Information</h2>
+
+<ul>
+  <li>Vendor: {{ $data.Package.Vendor }}</li>
+  <li>FOSS Liaison: {{ $data.Package.OcFossLiaison }}</li>
+  <li>FOSS Compliance Contact: {{ $data.Package.OcComplianceContact }}</li>
+</ul>
+
