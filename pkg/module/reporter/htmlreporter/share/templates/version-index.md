@@ -7,6 +7,8 @@ summary = "{{{.Summary}}}"
 weight = 1
 +++
 
-## {{{.VersionIdentifier}}}
+## {{{.Package.PackageName}}} @ {{{.VersionIdentifierShort}}}
+
+{{< version-cmpl-header >}}
 
 {{< authors >}}

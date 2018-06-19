@@ -7,69 +7,15 @@ import (
 	"log"
 	"os"
 	"path"
-	"reflect"
-	"strings"
 
+	"github.com/QMSTR/qmstr/pkg/reporting"
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
-// PackageData is the package metadata that the report will visualize.
-// PackageData is expected to stay more or less constant across versions of the package.
-// oc... refers to OpenChain related fields
-type PackageData struct {
-	PackageName         string   // The package name, e.g. "CURL" or "Linux"
-	Vendor              string   // Name of the entity distributing this package
-	OcFossLiaison       string   // Name of the FOSS liaison function
-	OcComplianceContact string   // Email address acting as the general FOSS compliance contact for the vendor
-	Site                SiteData // The site this page is associated with
-}
-
-// RevisionData contains metadata about a specific revision.
-type RevisionData struct {
-	VersionIdentifier      string      // Usually a Git hash, but any string can be used
-	VersionIdentifierShort string      // The short version of the version identifier
-	ChangeDateTime         string      // The change timestamp
-	Author                 string      // The author of the change
-	Message                string      // The commit message
-	Summary                string      // The short form of the commit message
-	Package                PackageData // The package this version is associated with.
-}
-
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
-	packageData := PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", r.siteData}
-	revisionData := RevisionData{"(SHA long)", "(SHA #8)", "(commit datetime)", "(author)", "(commit message)", "(commit summary)", packageData}
-
-	ps := reflect.ValueOf(&packageData)
-	s := ps.Elem()
-	for _, inode := range packageNode.AdditionalInfo {
-		if inode.Type == "metadata" {
-			for _, dnode := range inode.DataNodes {
-				f := s.FieldByName(dnode.Type)
-				if f.IsValid() && f.CanSet() && f.Kind() == reflect.String {
-					f.SetString(dnode.Data)
-				}
-			}
-		}
-		if inode.Type == "Revision" {
-			for _, dnode := range inode.DataNodes {
-				switch dnode.Type {
-				case "AuthorName":
-					revisionData.Author = dnode.Data
-				case "CommitMessage":
-					revisionData.Message = dnode.Data
-				case "CommitID":
-					log.Printf("WARN: using CommitID instead of description this can be misleading as it does not cover not commited changes")
-					revisionData.VersionIdentifier = dnode.Data
-				case "CommitterDate":
-					revisionData.ChangeDateTime = dnode.Data
-				}
-			}
-		}
-	}
-
-	revisionData.Summary = commitMessageSummary(revisionData.Message)
-	revisionData.VersionIdentifierShort = shortenedVersionIdentifier(revisionData.VersionIdentifier)
+	packageData := reporting.PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", r.siteData}
+	revisionData, err := reporting.GetRevisionData(packageNode, packageData)
 	log.Printf("Using revision %v: %s", revisionData.VersionIdentifierShort, revisionData.Summary)
 
 	dataDirectory := path.Join(r.workingDir, "data")
@@ -138,28 +84,4 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 	}
 
 	return nil
-}
-
-// commitMessageSummary returns the summary of the commit message according to the usual guidelines
-// (see https://chris.beams.io/posts/git-commit/, "Limit the subject line to 50 characters")
-func commitMessageSummary(message string) string {
-	lines := strings.Split(message, "\n")
-	if len(lines) == 0 {
-		return ""
-	}
-	summary := strings.TrimSpace(lines[0])
-	if len(summary) > 50 {
-		summary = fmt.Sprintf("%s...", summary[47:])
-	}
-	return summary
-}
-
-// Calculate a shorted version of the version identifier, in upper-case characters
-func shortenedVersionIdentifier(message string) string {
-	const cutoff = 8 // this should be configurable
-	result := strings.ToUpper(message)
-	if len(result) <= cutoff {
-		return result
-	}
-	return result[:cutoff]
 }
