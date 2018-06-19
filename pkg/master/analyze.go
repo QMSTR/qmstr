@@ -51,8 +51,9 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			logModuleError(analyzerName, out)
-			phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: fmt.Sprintf("Analyzer %s failed", analyzerName)})
-			return err
+			errMsg := fmt.Sprintf("Analyzer %s failed", analyzerName)
+			phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: errMsg})
+			return errors.New(errMsg)
 		}
 		phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: fmt.Sprintf("Analyzer %s successfully finished", analyzerName)})
 		log.Printf("Analyzer %s finished successfully: %s\n", analyzerName, out)
