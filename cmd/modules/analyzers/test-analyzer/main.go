@@ -154,19 +154,28 @@ func TestPackageNode(t *testing.T) {
 }
 
 func TestCurlBuildGraph(t *testing.T) {
-	if pkgNode.Targets[0].Path != "/buildroot/curl/build/src/curl" && pkgNode.Targets[1].Path != "/buildroot/curl/build/src/curl" {
-		t.Logf("Package node %v is not connected to curl linked target", pkgNode.Name)
+	expectedTargets := []string{"/buildroot/curl/build/src/curl", "/buildroot/curl/build/lib/libcurl.so"}
+	if len(pkgNode.Targets) < 2 {
+		t.Logf("Package node '%v' is not connected to all the configured linked targets", pkgNode.Name)
 		t.Fail()
-	}
-	if pkgNode.Targets[0].Path != "/buildroot/curl/build/lib/libcurl.so" && pkgNode.Targets[1].Path != "/buildroot/curl/build/lib/libcurl.so" {
-		t.Logf("Package node %v is not connected to libcurl linked target", pkgNode.Name)
-		t.Fail()
+	} else {
+		for _, target := range pkgNode.Targets {
+			if target.Path != expectedTargets[0] && target.Path != expectedTargets[1] {
+				t.Logf("Package node %v is not connected to the configured linked target", pkgNode.Name)
+				t.Logf("Package node %v is connected to %v", pkgNode.Name, target.Path)
+				t.Fail()
+			}
+		}
 	}
 }
 
 func TestCalcBuildGraph(t *testing.T) {
-	if pkgNode.Targets[0].Path != "/buildroot/Calculator/calc" {
-		t.Logf("Package node %v is not connected to curl linked target", pkgNode.Name)
+	expectedTarget := "/buildroot/Calculator/calc"
+	if len(pkgNode.Targets) < 1 {
+		t.Logf("Package node '%v' is not connected to any linked targets", pkgNode.Name)
+		t.Fail()
+	} else if pkgNode.Targets[0].Path != expectedTarget {
+		t.Logf("Package node %v is not connected to calc linked target", pkgNode.Name)
 		t.Fail()
 	}
 }
