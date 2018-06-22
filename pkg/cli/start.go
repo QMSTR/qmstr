@@ -91,6 +91,7 @@ func startMaster(cmd *cobra.Command, args []string) {
 }
 
 func createNetwork(ctx context.Context, cli *client.Client) (string, error) {
+	cleanUpContainerNetworks(ctx, cli)
 	// find qmstr networks
 	args, err := filters.ParseFlag("label=org.qmstr.network=true", filters.NewArgs())
 	if err != nil {
@@ -200,6 +201,28 @@ func cleanUpContainer(ctx context.Context, cli *client.Client, containerID strin
 		}
 	}
 	cli.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{Force: true})
+}
+
+func cleanUpContainerNetworks(ctx context.Context, cli *client.Client) error {
+	// find qmstr networks
+	args, err := filters.ParseFlag("label=org.qmstr.network=true", filters.NewArgs())
+	if err != nil {
+		return err
+	}
+	networks, err := cli.NetworkList(ctx, types.NetworkListOptions{Filters: args})
+	if err != nil {
+		return err
+	}
+
+	for _, net := range networks {
+		Debug.Printf("found qmstr net %s", net.Name)
+		if len(net.Containers) == 0 {
+			Debug.Printf("Remove unused qmstr network %s", net.Name)
+			cli.NetworkRemove(ctx, net.ID)
+		}
+
+	}
+	return nil
 }
 
 var startCmd = &cobra.Command{
