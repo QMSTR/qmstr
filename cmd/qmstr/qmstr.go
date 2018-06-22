@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	golog "log"
@@ -9,8 +10,16 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"syscall"
+
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
+	"github.com/docker/docker/api/types/mount"
+	"github.com/docker/docker/client"
+	"github.com/pkg/errors"
 
 	flag "github.com/spf13/pflag"
 )
@@ -20,6 +29,7 @@ type Options struct {
 	progName           string // The name the program is called as
 	keepTmpDirectories bool   // Keep intermediate files
 	verbose            bool   // Enable trace log output
+	container          string // Image to spawn container from
 }
 
 // global variables
@@ -36,6 +46,7 @@ func main() {
 	options.progName = os.Args[0]
 	flag.BoolVar(&options.keepTmpDirectories, "keep", false, "Keep the created directories instead of cleaning up.")
 	flag.BoolVar(&options.verbose, "verbose", false, "Enable diagnostic log output.")
+	flag.StringVar(&options.container, "container", "", "Run command in a container from this image.")
 	flag.Parse()
 
 	if options.verbose {
@@ -44,8 +55,104 @@ func main() {
 		Debug = golog.New(ioutil.Discard, "", golog.Ldate|golog.Ltime)
 	}
 	Log = golog.New(os.Stderr, "", golog.Ldate|golog.Ltime)
+
+	if options.container != "" {
+		ctx := context.Background()
+		cli, err := client.NewEnvClient()
+		if err != nil {
+			Log.Fatalf("Failed to create docker client %v", err)
+		}
+		masterContainerID, intPort, err := getMasterInfo(ctx, cli)
+		if err != nil {
+			Log.Fatalf("Unable to find qmstr-master container")
+		}
+		err = runContainer(ctx, cli, options.container, flag.Args(), masterContainerID, intPort)
+		if err != nil {
+			Log.Fatalf("Build container failed: %v", err)
+		}
+		os.Exit(0)
+	}
+
 	exitCode := Run(flag.Args())
 	os.Exit(exitCode)
+}
+
+func getMasterInfo(ctx context.Context, cli *client.Client) (string, uint16, error) {
+	qmstrAddr := os.Getenv("QMSTR_MASTER")
+	if qmstrAddr == "" {
+		return "", 0, errors.New("QMSTR_MASTER not set, can't determine qmstr-master container")
+	}
+	qmstrAddrS := strings.Split(qmstrAddr, ":")
+	qmstrHostPort, err := strconv.ParseUint(qmstrAddrS[len(qmstrAddrS)-1], 10, 64)
+	if err != nil {
+		return "", 0, err
+	}
+
+	args, err := filters.ParseFlag("label=org.qmstr.image=master", filters.NewArgs())
+	if err != nil {
+		return "", 0, err
+	}
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{Filters: args})
+	if err != nil {
+		return "", 0, err
+	}
+
+	for _, container := range containers {
+		for _, portCfg := range container.Ports {
+			if uint64(portCfg.PublicPort) == qmstrHostPort {
+				return container.ID, portCfg.PrivatePort, nil
+			}
+		}
+	}
+
+	return "", 0, errors.New("qmstr-master container not found")
+}
+
+func runContainer(ctx context.Context, cli *client.Client, image string, cmd []string, masterContainerID string, qmstrInternalPort uint16) error {
+	Debug.Printf("Using master container %s", masterContainerID)
+
+	const containerBuildDir = "/buildroot"
+	wd, err := os.Getwd()
+	if err != nil {
+		Log.Fatalf("unable to determine current working directory")
+	}
+	hostConf := &container.HostConfig{
+		Mounts:      []mount.Mount{mount.Mount{Source: wd, Target: containerBuildDir, Type: mount.TypeBind}},
+		NetworkMode: container.NetworkMode(fmt.Sprintf("container:%s", masterContainerID)),
+	}
+
+	resp, err := cli.ContainerCreate(ctx, &container.Config{
+		Image: image,
+		Cmd:   append([]string{"qmstr"}, cmd...),
+		Tty:   true,
+		Env:   []string{fmt.Sprintf("QMSTR_MASTER=%s:%d", masterContainerID[:12], qmstrInternalPort)},
+	}, hostConf, nil, "")
+	if err != nil {
+		return err
+	}
+
+	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+		return err
+	}
+
+	status, err := cli.ContainerWait(ctx, resp.ID)
+	if err != nil {
+		return err
+	}
+
+	Debug.Printf("Build container returned status %d", status)
+
+	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
+	if err != nil {
+		return err
+	}
+
+	logmsg, err := ioutil.ReadAll(out)
+	if err != nil {
+		return err
+	}
+	Log.Printf("Container logs:\n%s", logmsg)
+	return nil
 }
 
 func usage(format string, a ...interface{}) {
