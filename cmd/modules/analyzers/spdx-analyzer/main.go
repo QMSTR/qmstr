@@ -47,6 +47,7 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 			break
 		}
 
+		infoNodeMsgs := []*service.InfoNodeMessage{}
 		log.Printf("Analyzing file %s", fileNode.Path)
 		spdxIdent, err := detectSPDXLicense(fileNode.Path)
 		if err != nil {
@@ -61,13 +62,26 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 					},
 				},
 			}
+			infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: &licenseNode, Uid: fileNode.Uid})
+
+			// Check if file node contains a valid SPDX license identifier
+			if _, ok := analysis.SpdxLicenses[licenseNode.DataNodes[0].Data]; !ok {
+				log.Printf("Found invalid spdx license identifier %v.", licenseNode.DataNodes[0].Data)
+				log.Println("Adding warning node...")
+				warningNode := analysis.CreateWarningNode(fmt.Sprintf("File %v contains an invalid SPDX license identifier: %v", fileNode.Path, spdxIdent))
+				infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: warningNode, Uid: fileNode.Uid})
+			}
+
 			sendStream, err := analysisService.SendInfoNodes(context.Background())
 			if err != nil {
 				return err
 			}
-			err = sendStream.Send(&service.InfoNodeMessage{Token: token, Infonode: &licenseNode, Uid: fileNode.Uid})
-			if err != nil {
-				return err
+
+			for _, inodeMsg := range infoNodeMsgs {
+				err = sendStream.Send(inodeMsg)
+				if err != nil {
+					return err
+				}
 			}
 
 			reply, err := sendStream.CloseAndRecv()
