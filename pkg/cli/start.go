@@ -7,11 +7,15 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
@@ -61,7 +65,12 @@ func startMaster(cmd *cobra.Command, args []string) {
 		Log.Fatalf("Failed to create docker client %v", err)
 	}
 
-	containerID, portBinding, err := startContainer(ctx, cli, wd)
+	containerNetwork, err := createNetwork(ctx, cli)
+	if err != nil {
+		Log.Fatalf("Failed to create container network %v", err)
+	}
+
+	containerID, portBinding, err := startContainer(ctx, cli, wd, containerNetwork)
 	if err != nil {
 		if containerID != "" {
 			cleanUpContainer(ctx, cli, containerID, verbose)
@@ -81,8 +90,43 @@ func startMaster(cmd *cobra.Command, args []string) {
 	Debug.Println("Done.")
 }
 
-func startContainer(ctx context.Context, cli *client.Client, workdir string) (string, *nat.PortBinding, error) {
+func createNetwork(ctx context.Context, cli *client.Client) (string, error) {
+	// find qmstr networks
+	args, err := filters.ParseFlag("label=org.qmstr.network=true", filters.NewArgs())
+	if err != nil {
+		return "", err
+	}
+	networks, err := cli.NetworkList(ctx, types.NetworkListOptions{Filters: args})
+	if err != nil {
+		return "", err
+	}
+	netIDs := []uint64{0}
+	for _, net := range networks {
+		Debug.Printf("found qmstr net %s", net.Name)
+		netSplit := strings.Split(net.Name, "-")
+		if len(netSplit) > 1 {
+			id, err := strconv.ParseUint(netSplit[1], 10, 64)
+			if err != nil {
+				return "", err
+			}
+			netIDs = append(netIDs, id)
+		}
+	}
+	// sort descending
+	sort.Slice(netIDs, func(x, y int) bool { return netIDs[x] > netIDs[y] })
 
+	// create new qmstr network
+	containerNetName := fmt.Sprintf("qmstrnet-%d", netIDs[0]+1)
+
+	_, err = cli.NetworkCreate(ctx, containerNetName, types.NetworkCreate{CheckDuplicate: true, Labels: map[string]string{"org.qmstr.network": "true"}})
+	if err != nil {
+		return "", err
+	}
+	Log.Printf("Container network %s created", containerNetName)
+	return containerNetName, nil
+}
+
+func startContainer(ctx context.Context, cli *client.Client, workdir string, network string) (string, *nat.PortBinding, error) {
 	internalPort, err := nat.NewPort(proto, internalMasterPort)
 	if err != nil {
 		return "", nil, err
@@ -106,6 +150,7 @@ func startContainer(ctx context.Context, cli *client.Client, workdir string) (st
 	hostConf := &container.HostConfig{
 		PortBindings: nat.PortMap{internalPort: portsbinds},
 		Mounts:       []mount.Mount{mount.Mount{Source: workdir, Target: containerBuildDir, Type: mount.TypeBind}},
+		NetworkMode:  container.NetworkMode(network),
 	}
 
 	resp, err := cli.ContainerCreate(ctx, config, hostConf, nil, "")
