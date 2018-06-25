@@ -160,6 +160,11 @@ func runContainer(ctx context.Context, cli *client.Client, image string, cmd []s
 		return err
 	}
 	Log.Printf("Container logs:\n%s", logmsg)
+
+	if status != 0 {
+		os.Exit(int(status))
+	}
+
 	return nil
 }
 
