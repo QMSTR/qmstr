@@ -112,7 +112,6 @@ $(QMSTR_GO_BINARIES): go_proto go_qmstr_test
 
 $(QMSTR_GO_MODULES): go_proto go_module_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/modules/$(subst $(OUTDIR),,$@)
-	@chown ${OWNERGROUP} $@ &
 
 .PHONY: container
 container: ci/Dockerfile
