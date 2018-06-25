@@ -14,3 +14,4 @@ python/**/*egg-info
 # misc
 **/.DS_Store
 Gopkg.lock
+.vscode
