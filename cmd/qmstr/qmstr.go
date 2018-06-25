@@ -7,6 +7,7 @@ import (
 	golog "log"
 	"os"
 	"os/exec"
+	"os/user"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -121,12 +122,19 @@ func runContainer(ctx context.Context, cli *client.Client, image string, cmd []s
 		NetworkMode: container.NetworkMode(fmt.Sprintf("container:%s", masterContainerID)),
 	}
 
-	resp, err := cli.ContainerCreate(ctx, &container.Config{
+	containerConf := &container.Config{
 		Image: image,
 		Cmd:   append([]string{"qmstr"}, cmd...),
 		Tty:   true,
 		Env:   []string{fmt.Sprintf("QMSTR_MASTER=%s:%d", masterContainerID[:12], qmstrInternalPort)},
-	}, hostConf, nil, "")
+	}
+
+	user, err := user.Current()
+	if err == nil {
+		containerConf.User = user.Uid
+	}
+
+	resp, err := cli.ContainerCreate(ctx, containerConf, hostConf, nil, "")
 	if err != nil {
 		return err
 	}
