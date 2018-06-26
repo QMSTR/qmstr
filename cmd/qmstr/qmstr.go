@@ -124,7 +124,7 @@ func runContainer(ctx context.Context, cli *client.Client, image string, cmd []s
 
 	containerConf := &container.Config{
 		Image: image,
-		Cmd:   append([]string{"qmstr"}, cmd...),
+		Cmd:   append([]string{"qmstr", "--"}, cmd...),
 		Tty:   true,
 		Env:   []string{fmt.Sprintf("QMSTR_MASTER=%s:%d", masterContainerID[:12], qmstrInternalPort)},
 	}
