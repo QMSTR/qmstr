@@ -234,9 +234,22 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	if err := os.Mkdir(binDir, 0700); err != nil {
 		Log.Fatalf("unable to create %v: %v", binDir, err)
 	}
+
+	envvars := make(map[string][]string)
+	envvars["gcc"] = []string{"CMAKE_LINKER", "CC"}
+
 	// create the symlinks to qmstr-wrapper in there
+	wrappedCmds := []string{"gcc"}
 	symlinks := make(map[string]string)
-	symlinks[path.Join(binDir, "gcc")] = wrapperPath
+	for _, cmd := range wrappedCmds {
+		symlink := path.Join(binDir, cmd)
+		symlinks[symlink] = wrapperPath
+		if envs, ok := envvars[cmd]; ok {
+			for _, envvar := range envs {
+				os.Setenv(envvar, symlink)
+			}
+		}
+	}
 	for from, to := range symlinks {
 		if err := os.Symlink(to, from); err != nil {
 			Log.Fatalf("cannot symlink %s to %s: %v", from, to, err)
