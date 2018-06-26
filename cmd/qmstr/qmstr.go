@@ -31,6 +31,7 @@ type Options struct {
 	keepTmpDirectories bool   // Keep intermediate files
 	verbose            bool   // Enable trace log output
 	container          string // Image to spawn container from
+	instdir            string // create instrumentation in this dir
 }
 
 // global variables
@@ -48,6 +49,7 @@ func main() {
 	flag.BoolVar(&options.keepTmpDirectories, "keep", false, "Keep the created directories instead of cleaning up.")
 	flag.BoolVar(&options.verbose, "verbose", false, "Enable diagnostic log output.")
 	flag.StringVar(&options.container, "container", "", "Run command in a container from this image.")
+	flag.StringVar(&options.instdir, "instdir", "", "Create instrumentation in this directory")
 	flag.Parse()
 
 	if options.verbose {
@@ -122,9 +124,15 @@ func runContainer(ctx context.Context, cli *client.Client, image string, cmd []s
 		NetworkMode: container.NetworkMode(fmt.Sprintf("container:%s", masterContainerID)),
 	}
 
+	containerCmd := []string{"qmstr"}
+	if options.instdir != "" {
+		containerCmd = append(containerCmd, fmt.Sprintf("--instdir=%s", options.instdir))
+	}
+	containerCmd = append(containerCmd, append([]string{"--"}, cmd...)...)
+
 	containerConf := &container.Config{
 		Image: image,
-		Cmd:   append([]string{"qmstr", "--"}, cmd...),
+		Cmd:   containerCmd,
 		Tty:   true,
 		Env:   []string{fmt.Sprintf("QMSTR_MASTER=%s:%d", masterContainerID[:12], qmstrInternalPort)},
 	}
@@ -182,10 +190,19 @@ func Run(payloadCmd []string) int {
 	if len(payloadCmd) == 0 && !options.keepTmpDirectories {
 		usage("No command specified!")
 	}
-	tmpWorkDir, err := ioutil.TempDir("", "qmstr-bin-")
-	if err != nil {
-		Log.Fatalf("error creating temporary Hugo working directory: %v", err)
+
+	var tmpWorkDir string
+	var err error
+	if options.instdir != "" {
+		tmpWorkDir = options.instdir
+		err = os.MkdirAll(tmpWorkDir, os.ModePerm)
+	} else {
+		tmpWorkDir, err = ioutil.TempDir("", "qmstr-bin-")
 	}
+	if err != nil {
+		Log.Fatalf("error creating temporary working directory: %v", err)
+	}
+
 	defer func() {
 		if options.keepTmpDirectories {
 			Debug.Printf("keeping temporary directory at %v", tmpWorkDir)
