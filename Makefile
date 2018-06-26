@@ -27,6 +27,10 @@ CONTAINER_TAG_MASTER := qmstr/master
 CONTAINER_TAG_RUNTIME := qmstr/runtime
 CONTAINER_TAG_BUILDER := qmstr/master_build
 
+ifdef http_proxy
+	DOCKER_PROXY = --build-arg http_proxy=$(http_proxy)
+endif
+
 .PHONY: all
 all: $(QMSTR_GO_BINARIES) $(QMSTR_GO_MODULES) $(QMSTR_PYTHON_MODULES)
 
@@ -115,16 +119,16 @@ $(QMSTR_GO_MODULES): go_proto go_module_test
 
 .PHONY: container
 container: ci/Dockerfile
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master .
+	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master $(DOCKER_PROXY) .
 
 .PHONY: devcontainer
 devcontainer: container
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_DEV} --target dev .
+	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_DEV} --target dev $(DOCKER_PROXY) .
 
 .PHONY: democontainer
 democontainer: container
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime .
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target builder .
+	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime $(DOCKER_PROXY) .
+	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target builder $(DOCKER_PROXY) .
 
 .PHONY: pyqmstr-spdx-analyzer
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
