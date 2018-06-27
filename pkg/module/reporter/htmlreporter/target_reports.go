@@ -9,7 +9,7 @@ import (
 )
 
 // CreateTargetLevelReports creates the report for a link target
-func (r *HTMLReporter) CreateTargetLevelReports(targetNode *service.FileNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
+func (r *HTMLReporter) CreateTargetLevelReports(targetNode *service.FileNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient, enableWarningsErros bool) error {
 
 	if targetNode == nil {
 		return fmt.Errorf("package node contains no targets, please verify that targets got built")
@@ -32,6 +32,23 @@ func (r *HTMLReporter) CreateTargetLevelReports(targetNode *service.FileNode, cs
 		return err
 	}
 	log.Printf("Holders: %v", holders.Data)
+
+	if enableWarningsErros {
+		warnings, err := rserv.GetInfoData(context.Background(), &service.InfoDataRequest{Infotype: "warning"})
+		if err != nil {
+			return err
+		}
+		for _, data := range warnings.Data {
+			log.Printf("WARNING: %v", data)
+		}
+		errors, err := rserv.GetInfoData(context.Background(), &service.InfoDataRequest{Infotype: "error"})
+		if err != nil {
+			return err
+		}
+		for _, data := range errors.Data {
+			log.Printf("ERROR: %v", data)
+		}
+	}
 
 	log.Printf("NI")
 	return nil
