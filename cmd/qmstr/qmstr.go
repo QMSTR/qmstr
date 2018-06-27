@@ -7,20 +7,15 @@ import (
 	golog "log"
 	"os"
 	"os/exec"
-	"os/user"
 	"path"
 	"path/filepath"
 	"regexp"
-	"strconv"
 	"strings"
 	"syscall"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
-	"github.com/pkg/errors"
+
+	"github.com/QMSTR/qmstr/pkg/docker"
 
 	flag "github.com/spf13/pflag"
 )
@@ -68,11 +63,17 @@ func main() {
 		if err != nil {
 			Log.Fatalf("Failed to create docker client %v", err)
 		}
-		masterContainerID, intPort, err := getMasterInfo(ctx, cli)
+		masterContainerID, intPort, err := docker.GetMasterInfo(ctx, cli)
 		if err != nil {
 			Log.Fatalf("Unable to find qmstr-master container")
 		}
-		err = runContainer(ctx, cli, options.container, flag.Args(), masterContainerID, intPort)
+		err = docker.RunClientContainer(ctx, cli, &docker.ClientContainer{
+			Image:             options.container,
+			Cmd:               flag.Args(),
+			MasterContainerID: masterContainerID,
+			QmstrInternalPort: intPort,
+			Instdir:           options.instdir,
+		})
 		if err != nil {
 			Log.Fatalf("Build container failed: %v", err)
 		}
@@ -81,102 +82,6 @@ func main() {
 
 	exitCode := Run(flag.Args())
 	os.Exit(exitCode)
-}
-
-func getMasterInfo(ctx context.Context, cli *client.Client) (string, uint16, error) {
-	qmstrAddr := os.Getenv("QMSTR_MASTER")
-	if qmstrAddr == "" {
-		return "", 0, errors.New("QMSTR_MASTER not set, can't determine qmstr-master container")
-	}
-	qmstrAddrS := strings.Split(qmstrAddr, ":")
-	qmstrHostPort, err := strconv.ParseUint(qmstrAddrS[len(qmstrAddrS)-1], 10, 64)
-	if err != nil {
-		return "", 0, err
-	}
-
-	args, err := filters.ParseFlag("label=org.qmstr.image=master", filters.NewArgs())
-	if err != nil {
-		return "", 0, err
-	}
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{Filters: args})
-	if err != nil {
-		return "", 0, err
-	}
-
-	for _, container := range containers {
-		for _, portCfg := range container.Ports {
-			if uint64(portCfg.PublicPort) == qmstrHostPort {
-				return container.ID, portCfg.PrivatePort, nil
-			}
-		}
-	}
-
-	return "", 0, errors.New("qmstr-master container not found")
-}
-
-func runContainer(ctx context.Context, cli *client.Client, image string, cmd []string, masterContainerID string, qmstrInternalPort uint16) error {
-	Debug.Printf("Using master container %s", masterContainerID)
-
-	const containerBuildDir = "/buildroot"
-	wd, err := os.Getwd()
-	if err != nil {
-		Log.Fatalf("unable to determine current working directory")
-	}
-	hostConf := &container.HostConfig{
-		Mounts:      []mount.Mount{mount.Mount{Source: wd, Target: containerBuildDir, Type: mount.TypeBind}},
-		NetworkMode: container.NetworkMode(fmt.Sprintf("container:%s", masterContainerID)),
-	}
-
-	containerCmd := []string{"qmstr"}
-	if options.instdir != "" {
-		containerCmd = append(containerCmd, fmt.Sprintf("--instdir=%s", options.instdir))
-	}
-	containerCmd = append(containerCmd, append([]string{"--"}, cmd...)...)
-
-	containerConf := &container.Config{
-		Image: image,
-		Cmd:   containerCmd,
-		Tty:   true,
-		Env:   []string{fmt.Sprintf("QMSTR_MASTER=%s:%d", masterContainerID[:12], qmstrInternalPort)},
-	}
-
-	user, err := user.Current()
-	if err == nil {
-		containerConf.User = user.Uid
-	}
-
-	resp, err := cli.ContainerCreate(ctx, containerConf, hostConf, nil, "")
-	if err != nil {
-		return err
-	}
-
-	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-		return err
-	}
-
-	status, err := cli.ContainerWait(ctx, resp.ID)
-	if err != nil {
-		return err
-	}
-
-	Debug.Printf("Build container returned status %d", status)
-
-	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
-	if err != nil {
-		return err
-	}
-
-	logmsg, err := ioutil.ReadAll(out)
-	if err != nil {
-		return err
-	}
-	Log.Printf("Container logs:\n%s", logmsg)
-
-	if status != 0 {
-		os.Exit(int(status))
-	}
-
-	return nil
 }
 
 func usage(format string, a ...interface{}) {

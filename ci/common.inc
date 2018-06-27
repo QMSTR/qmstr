@@ -45,5 +45,5 @@ QMSTR_CMDLINE="/usr/local/bin/qmstr-master --config /buildroot/qmstr.yaml ${PATH
 
 function start_qmstr() {
     echo "$(get_qmstr_user) starting qmstr-master"
-    su -c "${QMSTR_CMDLINE}" $(get_qmstr_user)
+    exec su -c "${QMSTR_CMDLINE}" $(get_qmstr_user)
 }
