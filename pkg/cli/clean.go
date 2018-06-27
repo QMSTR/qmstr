@@ -1,6 +1,9 @@
 package cli
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
@@ -22,6 +25,23 @@ func cleanUpContainers(ctx context.Context, cli *client.Client) error {
 	args, err := filters.ParseFlag("label=org.qmstr.image", filters.NewArgs())
 	if err != nil {
 		return err
+	}
+
+	if force {
+		containers, err := cli.ContainerList(ctx, types.ContainerListOptions{Filters: args})
+		if err != nil {
+			return err
+		}
+		for _, container := range containers {
+			d := time.Duration(2) * time.Second
+			err := cli.ContainerStop(ctx, container.ID, &d)
+			if err != nil {
+				err1 := cli.ContainerKill(ctx, container.ID, "SIGKILL")
+				if err1 != nil {
+					return fmt.Errorf("%v : %v", err, err1)
+				}
+			}
+		}
 	}
 
 	resp, err := cli.ContainersPrune(ctx, args)
@@ -63,4 +83,5 @@ var cleanCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(cleanCmd)
+	cleanCmd.Flags().BoolVar(&force, "force", false, "force removing all qmstr containers (also currently running)")
 }
