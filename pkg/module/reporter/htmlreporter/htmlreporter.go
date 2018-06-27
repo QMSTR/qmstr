@@ -27,13 +27,14 @@ const (
 
 // HTMLReporter is the context of the HTML reporter module
 type HTMLReporter struct {
-	workingDir    string
-	sharedDataDir string
-	Keep          bool
-	baseURL       string
-	siteData      reporting.SiteData
-	packageDir    string
-	cacheDir      string
+	workingDir           string
+	sharedDataDir        string
+	Keep                 bool
+	baseURL              string
+	siteData             reporting.SiteData
+	packageDir           string
+	cacheDir             string
+	enableWarningsErrors bool
 }
 
 // Configure sets up the working directory for this reporting run.
@@ -63,6 +64,10 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 
 	if cacheDir, ok := config["cachedir"]; ok {
 		r.cacheDir = cacheDir
+	}
+
+	if enable, ok := config["warningserrors"]; ok && enable == "true" {
+		r.enableWarningsErrors = true
 	}
 
 	detectedVersion, err := DetectHugoAndVerifyVersion()
@@ -98,7 +103,7 @@ func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.
 	}
 	log.Printf("%v", bom)
 
-	if err := r.CreatePackageLevelReports(packageNode, cserv, rserv); err != nil {
+	if err := r.CreatePackageLevelReports(packageNode, cserv, rserv, r.enableWarningsErrors); err != nil {
 		return fmt.Errorf("error generating package level report: %v", err)
 	}
 	log.Printf("HTML reporter: created report for %v", packageNode.Name)
