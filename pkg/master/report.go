@@ -99,7 +99,14 @@ func (phase *serverPhaseReport) GetInfoData(in *service.InfoDataRequest) (*servi
 	if err != nil {
 		return nil, err
 	}
-	infos, err := db.GetInfoData(in.RootID, in.Infotype, in.Datatype)
+	var infos []string
+
+	if in.Datatype == "" {
+		infos, err = db.GetAllInfoData(in.Infotype)
+		return &service.InfoDataResponse{Data: infos}, nil
+	} else {
+		infos, err = db.GetInfoData(in.RootID, in.Infotype, in.Datatype)
+	}
 	if err != nil {
 		return nil, err
 	}

@@ -165,6 +165,47 @@ func (db *DataBase) AlterPackageNode(pkgNode *service.PackageNode) (string, erro
 	return uid, err
 }
 
+func (db *DataBase) GetAllInfoData(infotype string) ([]string, error) {
+	const q = `
+	query InfoData($itype: string){
+		getInfoData(func:eq(nodeType, 2))  @filter(eq(type, $itype)) {
+			A as dataNodes
+		}
+
+		infodata(func: uid(A)) {
+			data
+		}
+	}
+	`
+	vars := map[string]string{"$itype": infotype}
+
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
+	if err != nil {
+		return nil, err
+	}
+
+	type Data struct {
+		Data string
+	}
+
+	type InfoData struct {
+		Infodata []Data
+	}
+
+	var r InfoData
+
+	err = json.Unmarshal(resp.Json, &r)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ret := []string{}
+	for _, data := range r.Infodata {
+		ret = append(ret, data.Data)
+	}
+	return ret, nil
+}
+
 func (db *DataBase) GetInfoData(rootNodeID string, infotype string, datatype string) ([]string, error) {
 	const q = `
 	query InfoData($id: string, $itype: string, $dtype: string){
@@ -465,7 +506,7 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 						data
 					}
 				}
-	  		}`
+			  }`
 
 	queryTmpl, err := template.New("infobydata").Parse(q)
 
