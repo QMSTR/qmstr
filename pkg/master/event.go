@@ -37,14 +37,21 @@ func (s *server) SubscribeEvents(in *service.EventMessage, stream service.Contro
 }
 
 func (s *server) registerEventChannel(eventClass EventClass, eventChannel chan *service.Event) error {
+	s.eventMutex.RLock()
 	if _, ok := s.eventChannels[eventClass]; !ok {
 		return fmt.Errorf("No such event class %v", eventClass)
 	}
+	s.eventMutex.RUnlock()
+
+	s.eventMutex.Lock()
 	s.eventChannels[eventClass] = append(s.eventChannels[eventClass], eventChannel)
+	s.eventMutex.Unlock()
 	return nil
 }
 
 func (s *server) publishEvent(event *service.Event) error {
+	s.eventMutex.RLock()
+	defer s.eventMutex.RUnlock()
 	if _, ok := s.eventChannels[EventClass(event.Class)]; !ok {
 		return fmt.Errorf("No such event class %v", event.Class)
 	}

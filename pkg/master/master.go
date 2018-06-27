@@ -38,6 +38,7 @@ type server struct {
 	currentPhase       serverPhase
 	pendingPhaseSwitch int64
 	eventChannels      map[EventClass][]chan *service.Event
+	eventMutex         *sync.RWMutex
 }
 
 func (s *server) Build(ctx context.Context, in *service.BuildMessage) (*service.BuildResponse, error) {
@@ -183,6 +184,7 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 			EventModule: []chan *service.Event{},
 			EventPhase:  []chan *service.Event{},
 		},
+		eventMutex: &sync.RWMutex{},
 	}
 	service.RegisterBuildServiceServer(s, serverImpl)
 	service.RegisterAnalysisServiceServer(s, serverImpl)
