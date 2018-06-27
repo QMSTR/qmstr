@@ -60,6 +60,9 @@ func main() {
 	Log = golog.New(os.Stderr, "", golog.Ldate|golog.Ltime)
 
 	if options.container != "" {
+		if options.instdir == "" {
+			options.instdir = "/tmp/qmstr-bin-container"
+		}
 		ctx := context.Background()
 		cli, err := client.NewEnvClient()
 		if err != nil {
