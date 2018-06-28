@@ -23,6 +23,7 @@ type serverPhase interface {
 	SendInfoNodes(service.AnalysisService_SendInfoNodesServer) error
 	SendFileNodes(service.AnalysisService_SendFileNodesServer) error
 	GetFileNode(*service.FileNode, service.ControlService_GetFileNodeServer) error
+	GetBOM(*service.BOMRequest) (*service.BOM, error)
 	GetInfoData(*service.InfoDataRequest) (*service.InfoDataResponse, error)
 }
 
@@ -88,6 +89,10 @@ func (gsp *genericServerPhase) GetFileNode(in *service.FileNode, stream service.
 		stream.Send(nodeFile)
 	}
 	return nil
+}
+
+func (gsp *genericServerPhase) GetBOM(in *service.BOMRequest) (*service.BOM, error) {
+	return nil, errors.New("Wrong phase")
 }
 
 func (gsp *genericServerPhase) GetInfoData(in *service.InfoDataRequest) (*service.InfoDataResponse, error) {

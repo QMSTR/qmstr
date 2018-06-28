@@ -1,6 +1,8 @@
 syntax = "proto3";
 package service;
 
+import weak "bom.proto";
+
 message ReporterConfigRequest {
   int32 reporterID = 1;
 }
@@ -21,7 +23,14 @@ message InfoDataResponse {
   repeated string data = 1;
 }
 
+message BOMRequest {
+  bool warnings = 1;
+  bool errors = 2;
+  string session = 3;
+}
+
 service ReportService {
   rpc GetReporterConfig(ReporterConfigRequest) returns (ReporterConfigResponse) {}
   rpc GetInfoData(InfoDataRequest) returns (InfoDataResponse) {}
+  rpc GetBOM(BOMRequest) returns (BOM) {}
 }
