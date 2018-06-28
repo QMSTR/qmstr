@@ -17,7 +17,7 @@ type PackageData struct {
 	Site                SiteData // The site this page is associated with
 }
 
-// GetPackageData extracts the package data from the configuration
+// GetPackageData extracts the package data from the given PackageNode
 func GetPackageData(packageNode *service.PackageNode, siteData SiteData) PackageData {
 	packageData := PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", siteData}
 	ps := reflect.ValueOf(&packageData)
