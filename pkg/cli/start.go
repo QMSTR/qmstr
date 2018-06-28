@@ -141,6 +141,7 @@ func startContainer(ctx context.Context, cli *client.Client, workdir string, net
 			internalPort: struct{}{},
 		},
 		Env: []string{fmt.Sprintf("PATH_SUB=%s,%s", workdir, containerBuildDir)},
+		Tty: true,
 	}
 
 	user, err := user.Current()
