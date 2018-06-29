@@ -103,6 +103,9 @@ func (phase *serverPhaseReport) GetInfoData(in *service.InfoDataRequest) (*servi
 
 	if in.Datatype == "" {
 		infos, err = db.GetAllInfoData(in.Infotype)
+		if err != nil {
+			return nil, err
+		}
 		return &service.InfoDataResponse{Data: infos}, nil
 	} else {
 		infos, err = db.GetInfoData(in.RootID, in.Infotype, in.Datatype)
