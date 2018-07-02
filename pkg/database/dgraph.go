@@ -147,22 +147,45 @@ func queueWorker(db *DataBase) {
 	}
 }
 
-func (db *DataBase) AlterFileNode(node *service.FileNode) (string, error) {
-	db.insertMutex.Lock()
-	service.SanitizeFileNode(node)
-	uid, err := dbInsert(db.client, node)
-	db.insertMutex.Unlock()
-	return uid, err
-}
+func (db *DataBase) GetAllInfoData(infotype string) ([]string, error) {
+	const q = `
+	query InfoData($itype: string){
+		getInfoData(func:eq(nodeType, 2))  @filter(eq(type, $itype)) {
+			A as dataNodes
+		}
 
-func (db *DataBase) AlterPackageNode(pkgNode *service.PackageNode) (string, error) {
-	db.insertMutex.Lock()
-	// Get the package uid from db and pass it to the altered package node
-	pkg, err := db.GetPackageNode(pkgNode.Session)
-	service.SanitizePackageNode(pkgNode, pkg)
-	uid, err := dbInsert(db.client, pkgNode)
-	db.insertMutex.Unlock()
-	return uid, err
+		infodata(func: uid(A)) {
+			data
+		}
+	}
+	`
+	vars := map[string]string{"$itype": infotype}
+
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
+	if err != nil {
+		return nil, err
+	}
+
+	type Data struct {
+		Data string
+	}
+
+	type InfoData struct {
+		Infodata []Data
+	}
+
+	var r InfoData
+
+	err = json.Unmarshal(resp.Json, &r)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ret := []string{}
+	for _, data := range r.Infodata {
+		ret = append(ret, data.Data)
+	}
+	return ret, nil
 }
 
 func (db *DataBase) GetInfoData(rootNodeID string, infotype string, datatype string) ([]string, error) {
@@ -270,6 +293,7 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 		}
 		fileNode := r.Node[0]
 		fileNode.AdditionalInfo = append(fileNode.AdditionalInfo, infonodes...)
+		service.SanitizeFileNode(&fileNode)
 		_, err = dbInsert(db.client, fileNode)
 		if err != nil {
 			return err
@@ -286,6 +310,7 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 		}
 		pkgNode := r.Node[0]
 		pkgNode.AdditionalInfo = append(pkgNode.AdditionalInfo, infonodes...)
+		service.SanitizePackageNode(&pkgNode)
 		log.Printf("Package node uid %s", pkgNode.Uid)
 		_, err := dbInsert(db.client, pkgNode)
 		if err != nil {
@@ -351,6 +376,7 @@ func (db *DataBase) AddFileNodes(nodeID string, filenodes ...*service.FileNode) 
 		}
 		fileNode := r.Node[0]
 		fileNode.DerivedFrom = append(fileNode.DerivedFrom, filenodes...)
+		service.SanitizeFileNode(&fileNode)
 		_, err = dbInsert(db.client, fileNode)
 		if err != nil {
 			return err
@@ -367,6 +393,7 @@ func (db *DataBase) AddFileNodes(nodeID string, filenodes ...*service.FileNode) 
 		}
 		pkgNode := r.Node[0]
 		pkgNode.Targets = append(pkgNode.Targets, filenodes...)
+		service.SanitizePackageNode(&pkgNode)
 		log.Printf("Package node uid %s", pkgNode.Uid)
 		_, err := dbInsert(db.client, pkgNode)
 		if err != nil {
@@ -465,7 +492,7 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 						data
 					}
 				}
-	  		}`
+			  }`
 
 	queryTmpl, err := template.New("infobydata").Parse(q)
 

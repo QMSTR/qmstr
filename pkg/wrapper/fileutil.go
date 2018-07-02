@@ -1,7 +1,7 @@
 package wrapper
 
 import (
-	"crypto/sha256"
+	"crypto/sha1"
 	"fmt"
 	"io"
 	"os"
@@ -28,7 +28,7 @@ func BuildCleanPath(base string, subpath string, abs bool) string {
 }
 
 func Hash(fileName string) (string, error) {
-	h := sha256.New()
+	h := sha1.New()
 	f, err := os.Open(fileName)
 	if err != nil {
 		return "", err

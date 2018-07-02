@@ -9,6 +9,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
+	"github.com/QMSTR/qmstr/pkg/reporting"
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
@@ -77,12 +78,38 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 		Name: config.Name}, nil
 }
 
+func (phase *serverPhaseReport) GetBOM(in *service.BOMRequest) (*service.BOM, error) {
+	db, err := phase.getDataBase()
+	if err != nil {
+		return nil, err
+	}
+	pkgNode, err := db.GetPackageNode(in.Session)
+	if err != nil {
+		return nil, err
+	}
+	bom, err := reporting.GetBOM(pkgNode, in.Warnings, in.Errors)
+	if err != nil {
+		return nil, err
+	}
+	return bom, nil
+}
+
 func (phase *serverPhaseReport) GetInfoData(in *service.InfoDataRequest) (*service.InfoDataResponse, error) {
 	db, err := phase.getDataBase()
 	if err != nil {
 		return nil, err
 	}
-	infos, err := db.GetInfoData(in.RootID, in.Infotype, in.Datatype)
+	var infos []string
+
+	if in.Datatype == "" {
+		infos, err = db.GetAllInfoData(in.Infotype)
+		if err != nil {
+			return nil, err
+		}
+		return &service.InfoDataResponse{Data: infos}, nil
+	} else {
+		infos, err = db.GetInfoData(in.RootID, in.Infotype, in.Datatype)
+	}
 	if err != nil {
 		return nil, err
 	}

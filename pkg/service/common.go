@@ -48,8 +48,11 @@ func SanitizeAnalyzerNode(analyzerNode *Analyzer) {
 	analyzerNode.NodeType = NodeTypeAnalyzerNode
 }
 
-func SanitizePackageNode(pkgNode *PackageNode, dbpkgNode *PackageNode) {
-	pkgNode.Uid = dbpkgNode.Uid
-	pkgNode.Session = dbpkgNode.Session
-	pkgNode.NodeType = NodeTypePackageNode
+func SanitizePackageNode(pkgNode *PackageNode) {
+	for _, info := range pkgNode.AdditionalInfo {
+		SanitizeInfoNode(info)
+	}
+	for _, target := range pkgNode.Targets {
+		SanitizeFileNode(target)
+	}
 }

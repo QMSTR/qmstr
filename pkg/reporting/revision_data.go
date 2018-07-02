@@ -29,7 +29,7 @@ func CommitMessageSummary(message string) string {
 	}
 	summary := strings.TrimSpace(lines[0])
 	if len(summary) > 50 {
-		summary = fmt.Sprintf("%s...", summary[47:])
+		summary = fmt.Sprintf("%s...", summary[:47])
 	}
 	return summary
 }
