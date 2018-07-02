@@ -92,6 +92,12 @@ func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.
 		return fmt.Errorf("could not get package node: %v", err)
 	}
 
+	bom, err := rserv.GetBOM(context.Background(), &service.BOMRequest{Session: session})
+	if err != nil {
+		return err
+	}
+	log.Printf("%v", bom)
+
 	if err := r.CreatePackageLevelReports(packageNode, cserv, rserv); err != nil {
 		return fmt.Errorf("error generating package level report: %v", err)
 	}

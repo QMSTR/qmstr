@@ -61,6 +61,10 @@ func (s *server) SendFileNodes(stream service.AnalysisService_SendFileNodesServe
 	return s.currentPhase.SendFileNodes(stream)
 }
 
+func (s *server) GetBOM(ctx context.Context, in *service.BOMRequest) (*service.BOM, error) {
+	return s.currentPhase.GetBOM(in)
+}
+
 func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest) (*service.PackageNode, error) {
 	db, err := s.currentPhase.getDataBase()
 	if err != nil {
