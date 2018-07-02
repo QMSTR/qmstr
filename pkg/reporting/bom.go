@@ -8,7 +8,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
-func GetBOM(pkg *service.PackageNode) (*service.BOM, error) {
+func GetBOM(pkg *service.PackageNode, enableWarnings bool, enableErrors bool) (*service.BOM, error) {
 	packageInfo, err := getPackageInfo(pkg)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to get package information : %v", err)
@@ -17,12 +17,38 @@ func GetBOM(pkg *service.PackageNode) (*service.BOM, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Failed to get revision information : %v", err)
 	}
+	warnings, errors := []string{}, []string{}
+	if enableWarnings {
+		warnings = getDataByInfoType(pkg, "warning")
+	}
+	if enableErrors {
+		errors = getDataByInfoType(pkg, "error")
+	}
 	bom := service.BOM{
 		PackageInfo: packageInfo,
 		VersionInfo: revisionInfo,
+		Warnings:    warnings,
+		Errors:      errors,
 		Targets:     getTargetsInfo(pkg),
 	}
 	return &bom, nil
+}
+
+func getDataByInfoType(packageNode *service.PackageNode, infoType string) []string {
+	data := []string{}
+	for _, target := range packageNode.Targets {
+		for _, depNode := range target.DerivedFrom {
+			for _, info := range depNode.AdditionalInfo {
+				if info.Type == infoType {
+					for _, d := range info.DataNodes {
+						data = append(data, d.Data)
+					}
+				}
+			}
+		}
+
+	}
+	return data
 }
 
 func getPackageInfo(pkg *service.PackageNode) (*service.PackageInformation, error) {
