@@ -27,14 +27,15 @@ const (
 
 // HTMLReporter is the context of the HTML reporter module
 type HTMLReporter struct {
-	workingDir           string
-	sharedDataDir        string
-	Keep                 bool
-	baseURL              string
-	siteData             reporting.SiteData
-	packageDir           string
-	cacheDir             string
-	enableWarningsErrors bool
+	workingDir     string
+	sharedDataDir  string
+	Keep           bool
+	baseURL        string
+	siteData       reporting.SiteData
+	packageDir     string
+	cacheDir       string
+	enableWarnings bool
+	enableErrors   bool
 }
 
 // Configure sets up the working directory for this reporting run.
@@ -66,8 +67,12 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 		r.cacheDir = cacheDir
 	}
 
-	if enable, ok := config["warningserrors"]; ok && enable == "true" {
-		r.enableWarningsErrors = true
+	if enable, ok := config["warnings"]; ok && enable == "true" {
+		r.enableWarnings = true
+	}
+
+	if enable, ok := config["errors"]; ok && enable == "true" {
+		r.enableErrors = true
 	}
 
 	detectedVersion, err := DetectHugoAndVerifyVersion()
@@ -97,13 +102,13 @@ func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.
 		return fmt.Errorf("could not get package node: %v", err)
 	}
 
-	bom, err := rserv.GetBOM(context.Background(), &service.BOMRequest{Session: session})
+	bom, err := rserv.GetBOM(context.Background(), &service.BOMRequest{Session: session, Warnings: r.enableWarnings, Errors: r.enableErrors})
 	if err != nil {
 		return err
 	}
 	log.Printf("%v", bom)
 
-	if err := r.CreatePackageLevelReports(packageNode, cserv, rserv, r.enableWarningsErrors); err != nil {
+	if err := r.CreatePackageLevelReports(packageNode, cserv, rserv); err != nil {
 		return fmt.Errorf("error generating package level report: %v", err)
 	}
 	log.Printf("HTML reporter: created report for %v", packageNode.Name)
