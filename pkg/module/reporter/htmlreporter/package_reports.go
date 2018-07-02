@@ -13,7 +13,7 @@ import (
 )
 
 // CreatePackageLevelReports creates the top level report about the package.
-func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient, enableWarningsErrors bool) error {
+func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
 	packageData := reporting.GetPackageData(packageNode, r.siteData)
 	revisionData, err := reporting.GetRevisionData(packageNode, packageData)
 	log.Printf("Using revision %v: %s", revisionData.VersionIdentifierShort, revisionData.Summary)
@@ -79,7 +79,7 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 	}
 
 	for _, node := range packageNode.Targets {
-		if err := r.CreateTargetLevelReports(node, cserv, rserv, enableWarningsErrors); err != nil {
+		if err := r.CreateTargetLevelReports(node, cserv, rserv); err != nil {
 			return fmt.Errorf("error creating target report for %s: %v", node.Name, err)
 		}
 	}

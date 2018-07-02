@@ -87,7 +87,7 @@ func (phase *serverPhaseReport) GetBOM(in *service.BOMRequest) (*service.BOM, er
 	if err != nil {
 		return nil, err
 	}
-	bom, err := reporting.GetBOM(pkgNode)
+	bom, err := reporting.GetBOM(pkgNode, in.Warnings, in.Errors)
 	if err != nil {
 		return nil, err
 	}
