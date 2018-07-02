@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/service"
 )
@@ -36,7 +37,7 @@ func getPackageInfo(pkg *service.PackageNode) (*service.PackageInformation, erro
 	for _, inode := range pkg.AdditionalInfo {
 		if inode.Type == "metadata" {
 			for _, dnode := range inode.DataNodes {
-				f := s.FieldByName(dnode.Type)
+				f := s.FieldByName(getFieldName(dnode.Type))
 				if f.IsValid() && f.CanSet() && f.Kind() == reflect.String {
 					f.SetString(dnode.Data)
 				}
@@ -44,6 +45,14 @@ func getPackageInfo(pkg *service.PackageNode) (*service.PackageInformation, erro
 		}
 	}
 	return &packageInfo, nil
+}
+
+func getFieldName(name string) string {
+	fields := strings.Split(name, "_")
+	for idx := range fields {
+		fields[idx] = strings.Title(fields[idx])
+	}
+	return strings.Join(fields, "")
 }
 
 func getRevisionInfo(packageNode *service.PackageNode) (*service.Revision, error) {
