@@ -7,13 +7,10 @@ ARG SCANCODE_VERSION=2.9.1
 FROM ubuntu:18.04 as builder
 LABEL org.qmstr.image builder
 ENV GOPATH /go
-ENV PATH ${GOPATH}/bin:/usr/lib/go-1.9/bin:$PATH
-# install golang 1.9
+ENV PATH ${GOPATH}/bin:$PATH
+# install golang
 RUN apt-get update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:gophers/archive && \
-    apt-get update && \
-    apt-get install -y curl golang-1.9-go autoconf git libgit2-dev libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
+    apt-get install -y curl golang autoconf git libgit2-dev libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
 
 # install build deps
 RUN apt-get update && \
@@ -117,14 +114,11 @@ FROM runtime as dev
 LABEL org.qmstr.image dev 
 
 ENV GOPATH /go
-ENV PATH ${GOPATH}/bin:/usr/lib/go-1.9/bin:$PATH
+ENV PATH ${GOPATH}/bin:$PATH
 
-# install golang 1.9
+# install golang
 RUN apt-get update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:gophers/archive && \
-    apt-get update && \
-    apt-get install -y curl golang-1.9-go autoconf git libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
+    apt-get install -y curl golang autoconf git libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
 
 EXPOSE 2345
 
