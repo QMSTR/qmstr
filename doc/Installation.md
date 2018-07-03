@@ -32,7 +32,7 @@ now available:
 Only the client side installation is required on a system that builds
 software with Quartermaster instrumentation. All tools and programs
 required to perform analysis and create reports are included in the
-master container.
+master container. For other make targets, inspect the Makefile.
 
 ## Master installation
 
@@ -51,3 +51,15 @@ This may take a while. It will build the master container, including
 all Quartermaster modules and the tools that are used for
 analysis. Once the images have been created, `qmstrctl` can be used to
 start and manage the master process.
+
+## Summary
+
+Every system that builds parts of your software (build slave,
+executor, your CI may call the build clients in a different way) needs
+to have the Quartermaster client tools installed. The easiest way to
+ensure that is usually to include the instructions to install the
+client programs in the automated setup of the build client. The master
+only needs to run once per build process, even if parallel build
+processes are used that deploy build jobs to a number of build
+clients. In most scenarios, the master images need to be built on the
+machine where the software build is started.
