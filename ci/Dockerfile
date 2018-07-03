@@ -86,7 +86,7 @@ ADD ci/common.inc /common.inc
 
 # copy qmstr installation from previous stage
 RUN mkdir -p /go/bin
-COPY --from=builder /usr/local/bin/* /usr/local/bin/ 
+COPY --from=builder /usr/local/bin/* /usr/local/bin/
 
 EXPOSE 50051
 # dgraph ratel web ui
@@ -97,7 +97,7 @@ VOLUME /buildroot
 # release master container, based on the runtime stage:
 FROM runtime as master
 
-LABEL org.qmstr.image master 
+LABEL org.qmstr.image master
 
 ENV GOPATH /go
 ENV PATH ${GOPATH}/bin:$PATH
@@ -111,7 +111,7 @@ ENTRYPOINT [ "/docker-entrypoint.sh" ]
 # The $GOROOT/src directory can be mounted in as a volume, to allow testing of local changes.
 FROM runtime as dev
 
-LABEL org.qmstr.image dev 
+LABEL org.qmstr.image dev
 
 ENV GOPATH /go
 ENV PATH ${GOPATH}/bin:$PATH
