@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class Hash {
 
     static final int hashByteBuffer = 4096;
-    static final String hashAlgo = "SHA-256";
+    static final String hashAlgo = "SHA-1";
     static final String HEXES = "0123456789abcdef";
 
 
