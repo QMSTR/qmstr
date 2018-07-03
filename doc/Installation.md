@@ -31,7 +31,23 @@ now available:
 
 Only the client side installation is required on a system that builds
 software with Quartermaster instrumentation. All tools and programs
-required to perform analysis and ctreate reports are included in the
+required to perform analysis and create reports are included in the
 master container.
 
+## Master installation
 
+The master process runs as a container. The Dockerfile to build the
+container resides in the main Quartermaster repository. The
+Quartermaster project does not provide ready-made images in a
+container repository, the images have to be built on the systems that
+are supposed to run the master. This may change at a later time,
+however at the moment it is the only mechanism to prepare to run the
+master. To crate the master image, run make again:
+
+	> make container
+	...
+
+This may take a while. It will build the master container, including
+all Quartermaster modules and the tools that are used for
+analysis. Once the images have been created, `qmstrctl` can be used to
+start and manage the master process.
