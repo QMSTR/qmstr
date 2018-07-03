@@ -1,7 +1,6 @@
 package htmlreporter
 
 import (
-	"context"
 	"fmt"
 	"log"
 
@@ -9,30 +8,13 @@ import (
 )
 
 // CreateTargetLevelReports creates the report for a link target
-func (r *HTMLReporter) CreateTargetLevelReports(targetNode *service.FileNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
+func (r *HTMLReporter) CreateTargetLevelReports(target *service.Target) error {
 
-	if targetNode == nil {
+	if target == nil {
 		return fmt.Errorf("package node contains no targets, please verify that targets got built")
 	}
 
-	licenses, err := rserv.GetInfoData(context.Background(), &service.InfoDataRequest{RootID: targetNode.Uid, Infotype: "license", Datatype: "spdxIdentifier"})
-	if err != nil {
-		return err
-	}
-	log.Printf("Licenses: %v", licenses.Data)
+	log.Printf("Not yet implemented")
 
-	authors, err := rserv.GetInfoData(context.Background(), &service.InfoDataRequest{RootID: targetNode.Uid, Infotype: "copyright", Datatype: "author"})
-	if err != nil {
-		return err
-	}
-	log.Printf("Authors: %v", authors.Data)
-
-	holders, err := rserv.GetInfoData(context.Background(), &service.InfoDataRequest{RootID: targetNode.Uid, Infotype: "copyright", Datatype: "holder"})
-	if err != nil {
-		return err
-	}
-	log.Printf("Holders: %v", holders.Data)
-
-	log.Printf("NI")
 	return nil
 }

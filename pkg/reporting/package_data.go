@@ -1,8 +1,6 @@
 package reporting
 
 import (
-	"reflect"
-
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
@@ -17,20 +15,7 @@ type PackageData struct {
 	Site                SiteData // The site this page is associated with
 }
 
-// GetPackageData extracts the package data from the given PackageNode
-func GetPackageData(packageNode *service.PackageNode, siteData SiteData) PackageData {
-	packageData := PackageData{packageNode.Name, "Vendor", "FossLiaison", "Compliance contact email", siteData}
-	ps := reflect.ValueOf(&packageData)
-	s := ps.Elem()
-	for _, inode := range packageNode.AdditionalInfo {
-		if inode.Type == "metadata" {
-			for _, dnode := range inode.DataNodes {
-				f := s.FieldByName(dnode.Type)
-				if f.IsValid() && f.CanSet() && f.Kind() == reflect.String {
-					f.SetString(dnode.Data)
-				}
-			}
-		}
-	}
-	return packageData
+// GetPackageData extracts the package data from the given BOM
+func GetPackageData(bom *service.BOM, siteData SiteData) *PackageData {
+	return &PackageData{bom.PackageInfo.Name, bom.PackageInfo.Vendor, bom.PackageInfo.OcFossLiaison, bom.PackageInfo.OcComplianceContact, siteData}
 }

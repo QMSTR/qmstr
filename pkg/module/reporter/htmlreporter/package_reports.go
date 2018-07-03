@@ -13,9 +13,9 @@ import (
 )
 
 // CreatePackageLevelReports creates the top level report about the package.
-func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
-	packageData := reporting.GetPackageData(packageNode, r.siteData)
-	revisionData, err := reporting.GetRevisionData(packageNode, packageData)
+func (r *HTMLReporter) CreatePackageLevelReports(bom *service.BOM, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
+	packageData := reporting.GetPackageData(bom, r.siteData)
+	revisionData := reporting.GetRevisionData(bom, packageData)
 	log.Printf("Using revision %v: %s", revisionData.VersionIdentifierShort, revisionData.Summary)
 
 	dataDirectory := path.Join(r.workingDir, "data")
@@ -74,13 +74,13 @@ func (r *HTMLReporter) CreatePackageLevelReports(packageNode *service.PackageNod
 		return fmt.Errorf("error creating JSON version data file: %v", err)
 	}
 
-	if len(packageNode.Targets) == 0 {
+	if len(bom.Targets) == 0 {
 		log.Printf("Note: package node contains no targets, please verify that targets got built")
 	}
 
-	for _, node := range packageNode.Targets {
-		if err := r.CreateTargetLevelReports(node, cserv, rserv); err != nil {
-			return fmt.Errorf("error creating target report for %s: %v", node.Name, err)
+	for _, target := range bom.Targets {
+		if err := r.CreateTargetLevelReports(target); err != nil {
+			return fmt.Errorf("error creating target report for %s: %v", target.Name, err)
 		}
 	}
 
