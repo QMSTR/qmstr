@@ -78,11 +78,5 @@ func (r *HTMLReporter) CreatePackageLevelReports(bom *service.BOM, cserv service
 		log.Printf("Note: package node contains no targets, please verify that targets got built")
 	}
 
-	for _, target := range bom.Targets {
-		if err := r.CreateTargetLevelReports(target); err != nil {
-			return fmt.Errorf("error creating target report for %s: %v", target.Name, err)
-		}
-	}
-
 	return nil
 }
