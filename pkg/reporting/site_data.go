@@ -16,8 +16,7 @@ func GetSiteDataFromConfiguration(config map[string]string) (*SiteData, error) {
 	if sitePro, ok := config[key]; ok {
 		siteData = &SiteData{Provider: sitePro}
 	} else {
-		siteData = &SiteData{Provider: "(Site Provider)"}
-		return siteData, fmt.Errorf("missing required site provider configuration (key \"%s\")", key)
+		return nil, fmt.Errorf("missing required site provider configuration (key \"%s\")", key)
 	}
-	return &SiteData{}, nil
+	return siteData, nil
 }

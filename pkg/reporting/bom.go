@@ -81,8 +81,22 @@ func getFieldName(name string) string {
 	return strings.Join(fields, "")
 }
 
+func getEmptyRevision() *service.Revision {
+	return &service.Revision{
+		Author:     &service.Person{Name: "Unknown Author", Email: "unknown@unknown.local"},
+		AuthorDate: "",
+		CommitDate: "",
+		Committer:  &service.Person{Name: "Unknown committer", Email: "unknown@unknown.local"},
+		Id:         "unknown id",
+		Message:    "",
+		ShortId:    "unknown id",
+		Summary:    "",
+	}
+}
+
 func getRevisionInfo(packageNode *service.PackageNode) (*service.Revision, error) {
-	revisionData := service.Revision{Author: &service.Person{}}
+	revisionData := getEmptyRevision()
+
 	for _, inode := range packageNode.AdditionalInfo {
 		if inode.Type == "Revision" {
 			for _, dnode := range inode.DataNodes {
@@ -104,7 +118,7 @@ func getRevisionInfo(packageNode *service.PackageNode) (*service.Revision, error
 	}
 	revisionData.Summary = CommitMessageSummary(revisionData.Message)
 	revisionData.ShortId = ShortenedVersionIdentifier(revisionData.Id)
-	return &revisionData, nil
+	return revisionData, nil
 }
 
 func getTargetsInfo(packageNode *service.PackageNode) []*service.Target {
