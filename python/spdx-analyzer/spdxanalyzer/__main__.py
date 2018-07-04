@@ -126,6 +126,12 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         data_nodes = []
         for member in SpdxAnalyzer.__membersof(self.doc.package):
             value = self.doc.package.__getattribute__(member)
+            if member == "license_declared":
+                data_nodes.append(InfoNode.DataNode(
+                    type=member,
+                    data=value.full_name
+                ))
+                continue
             data_nodes.append(InfoNode.DataNode(
                 type=member,
                 data=SpdxAnalyzer.__stringify(value)

@@ -31,7 +31,7 @@ type HTMLReporter struct {
 	sharedDataDir  string
 	Keep           bool
 	baseURL        string
-	siteData       reporting.SiteData
+	siteData       *reporting.SiteData
 	packageDir     string
 	cacheDir       string
 	enableWarnings bool

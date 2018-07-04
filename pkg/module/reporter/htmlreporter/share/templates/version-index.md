@@ -11,4 +11,6 @@ weight = 1
 
 {{< version-cmpl-header >}}
 
+{{< target-list >}}
+
 {{< authors >}}

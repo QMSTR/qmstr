@@ -1,0 +1,23 @@
+{{ $data := index .Site.Data .Page.Params.package .Page.Params.versionid "data" }}
+<!-- <h2>{{ substr .Page.Params.versionid 0 8 | upper }} ({{ .Page.Params.author }})</h2> -->
+<h3>Targets</h3>
+{{ range $data.Package.Targets }}
+    <p> Filename {{ .name }} </p>
+    SHA-1: {{ .sha1 }} <br/>
+    Declared license: {{ $data.Package.LicenseDeclared }}<br/>
+    Sources:
+    <table>
+        <tr>
+            <th>File</th>
+            <th>SPDX Identifier</th>
+            <th>Authors</th>
+        </tr>
+        {{ range .sources }}
+        <tr>
+            <td>{{ .file }}</td>
+            <td>{{ .license.spdxIdentifier }}</td>
+            <td>{{ delimit .authors ", " }}</td>
+        </tr>
+        {{ end }}
+    </table>
+{{ end }}
