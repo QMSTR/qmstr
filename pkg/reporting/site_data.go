@@ -10,14 +10,14 @@ type SiteData struct {
 }
 
 // GetSiteDataFromConfiguration extracts the site provider informatiom from the configuration
-func GetSiteDataFromConfiguration(config map[string]string) (SiteData, error) {
-	var siteData SiteData
+func GetSiteDataFromConfiguration(config map[string]string) (*SiteData, error) {
+	var siteData *SiteData
 	const key = "siteprovider"
 	if sitePro, ok := config[key]; ok {
-		siteData = SiteData{Provider: sitePro}
+		siteData = &SiteData{Provider: sitePro}
 	} else {
-		siteData = SiteData{Provider: "(Site Provider)"}
+		siteData = &SiteData{Provider: "(Site Provider)"}
 		return siteData, fmt.Errorf("missing required site provider configuration (key \"%s\")", key)
 	}
-	return SiteData{}, nil
+	return &SiteData{}, nil
 }
