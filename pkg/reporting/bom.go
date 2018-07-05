@@ -155,13 +155,14 @@ func getSources(filenode *service.FileNode) []*service.Source {
 func getDependencies(filenode *service.FileNode) []*service.Dependency {
 	retDeps := []*service.Dependency{}
 	for _, depNode := range filenode.DerivedFrom {
-		if depNode.Type == "linkedtarget" {
+		switch depNode.Type {
+		case "linkedtarget", "jarfile":
 			tmpDep := &service.Dependency{
 				Filepath: depNode.Path,
 				Name:     depNode.Name,
 			}
 			retDeps = append(retDeps, tmpDep)
-		} else {
+		default:
 			retDeps = append(retDeps, getDependencies(depNode)...)
 		}
 	}
