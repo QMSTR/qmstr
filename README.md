@@ -7,6 +7,10 @@ FOSS compliance documentation and support compliance decisions. It executes as p
 
 ## Compilation and Installation
 
+The client and master side installation of Quartermaster is Makefile
+based. See the [installation instructions](doc/Installation.md) for
+details.
+
 To create a local development environment for Quartermaster, follow these instructions. The master by default runs in a container. See below for more details.
 
 ### Dependencies
