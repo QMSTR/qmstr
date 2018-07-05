@@ -125,9 +125,10 @@ func getTargetsInfo(packageNode *service.PackageNode) []*service.Target {
 	targetsResult := []*service.Target{}
 	for _, target := range packageNode.Targets {
 		tmpTarget := &service.Target{
-			Name:    target.Name,
-			Sha1:    target.Hash,
-			Sources: getSources(target),
+			Name:         target.Name,
+			Sha1:         target.Hash,
+			Sources:      getSources(target),
+			Dependencies: getDependencies(target),
 		}
 		targetsResult = append(targetsResult, tmpTarget)
 	}
@@ -149,6 +150,22 @@ func getSources(filenode *service.FileNode) []*service.Source {
 		}
 	}
 	return retSources
+}
+
+func getDependencies(filenode *service.FileNode) []*service.Dependency {
+	retDeps := []*service.Dependency{}
+	for _, depNode := range filenode.DerivedFrom {
+		if depNode.Type == "linkedtarget" {
+			tmpDep := &service.Dependency{
+				Filepath: depNode.Path,
+				Name:     depNode.Name,
+			}
+			retDeps = append(retDeps, tmpDep)
+		} else {
+			retDeps = append(retDeps, getDependencies(depNode)...)
+		}
+	}
+	return retDeps
 }
 
 func getLicense(fileNode *service.FileNode) *service.License {

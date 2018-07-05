@@ -5,6 +5,7 @@
     <p> Filename {{ .name }} </p>
     SHA-1: {{ .sha1 }} <br/>
     Declared license: {{ $data.Package.LicenseDeclared }}<br/>
+    <p>
     Sources:
     <table>
         <tr>
@@ -20,4 +21,13 @@
         </tr>
         {{ end }}
     </table>
+    </p>
+    <p>
+    Dependencies:
+    <ul>
+    {{ range .dependencies }}
+        <li>{{ .name }}</li>
+    {{ end }}
+    </ul>
+    </p>
 {{ end }}
