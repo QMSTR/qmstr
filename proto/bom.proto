@@ -46,6 +46,7 @@ message Target {
     string name = 1;
     string sha1 = 2;
     repeated Source sources = 4;
+    repeated Dependency dependencies = 5;
 }
 
 message BOM {
