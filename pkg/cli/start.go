@@ -33,6 +33,8 @@ const proto = "tcp"
 var hostPortRange = fmt.Sprintf("%d-%d", minPort, maxPort)
 var masterImageName = "qmstr/master"
 var internalMasterPort string
+
+var configFile string
 var wait bool
 
 func startMaster(cmd *cobra.Command, args []string) {
@@ -41,7 +43,12 @@ func startMaster(cmd *cobra.Command, args []string) {
 		Log.Fatalf("unable to determine current working directory")
 	}
 
-	config, err := config.ReadConfigFromFile(filepath.Join(wd, "qmstr.yaml"))
+	configFile, err = filepath.Abs(configFile)
+	if err != nil {
+		Log.Fatalf("unable to get absolute config path")
+	}
+
+	config, err := config.ReadConfigFromFile(configFile)
 	if err != nil {
 		Log.Fatalf("failed to read configuration %v", err)
 	}
@@ -151,8 +158,11 @@ func startContainer(ctx context.Context, cli *client.Client, workdir string, net
 
 	hostConf := &container.HostConfig{
 		PortBindings: nat.PortMap{internalPort: portsbinds},
-		Mounts:       []mount.Mount{mount.Mount{Source: workdir, Target: containerBuildDir, Type: mount.TypeBind}},
-		NetworkMode:  container.NetworkMode(network),
+		Mounts: []mount.Mount{
+			mount.Mount{Source: workdir, Target: containerBuildDir, Type: mount.TypeBind},
+			mount.Mount{Source: configFile, Target: "/qmstr/qmstr.yaml", Type: mount.TypeBind},
+		},
+		NetworkMode: container.NetworkMode(network),
 	}
 
 	resp, err := cli.ContainerCreate(ctx, config, hostConf, nil, "")
@@ -214,4 +224,5 @@ var startCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(startCmd)
 	startCmd.Flags().BoolVar(&wait, "wait", false, "wait for qmstr-master")
+	startCmd.Flags().StringVarP(&configFile, "config", "c", "qmstr.yaml", "Path to qmstr configuration file")
 }

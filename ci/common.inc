@@ -41,7 +41,7 @@ function start_dgraph_web() {
     dgraph-ratel &
 }
 
-QMSTR_CMDLINE="/usr/local/bin/qmstr-master --config /buildroot/qmstr.yaml ${PATH_SUB:+--pathsub=\"$PATH_SUB\"}"
+QMSTR_CMDLINE="/usr/local/bin/qmstr-master --config /qmstr/qmstr.yaml ${PATH_SUB:+--pathsub=\"$PATH_SUB\"}"
 
 function start_qmstr() {
     echo "$(get_qmstr_user) starting qmstr-master"
