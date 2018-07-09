@@ -169,7 +169,7 @@ func ParseVersion(output []byte) (string, error) {
 		return version, nil
 	}
 
-	re = regexp.MustCompile("Site Generator v(.+) .+/.+ BuildDate")
+	re = regexp.MustCompile("Site Generator v(.+) .+/.+")
 	match = re.FindSubmatch(output)
 	if match != nil {
 		version := strings.TrimSpace(string(match[1][:]))
