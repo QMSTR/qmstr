@@ -11,12 +11,12 @@
 # options are /usr/local/share/qmstr or /opt/share/qmstr.
 #
 # Examples:
-# > ./setup.sh /usr/share/qmstr ~/Go/src/github.com/MYFORK/qmstr
+# > ./setup.sh /usr/share/qmstr ~/go/src/github.com/QMSTR/qmstr
 #    (this will create a shallow clone of the theme directory from Github and
-#    copy the skeleton and template from the local fork)
-# > ./setup.sh /opt/share/qmstr ~/Go/src/github.com/MYFORK/qmstr ~/Go/src/github.com/QMSTR/html-reporter-theme
-#    (this will copy the skeleton and template from the local fork and symlink the theme repository)
-# > ./setup.sh -l /opt/share/qmstr ~/Go/src/github.com/MYFORK/qmstr ~/Go/src/github.com/QMSTR/html-reporter-theme
+#    copy the skeleton and template from the local repository)
+# > ./setup.sh /opt/share/qmstr ~/go/src/github.com/QMSTR/qmstr ~/go/src/github.com/QMSTR/html-reporter-theme
+#    (this will copy the skeleton and template from the local repository and symlink the theme repository)
+# > ./setup.sh -l /opt/share/qmstr ~/go/src/github.com/QMSTR/qmstr ~/go/src/github.com/QMSTR/html-reporter-theme
 #    (this will create the directory, and symlink all components - useful for developers)
 
 CREATE_LINKS_TO_REPO=0
