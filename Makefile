@@ -117,8 +117,8 @@ $(QMSTR_GO_BINARIES): go_proto go_qmstr_test
 $(QMSTR_GO_MODULES): go_proto go_module_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/modules/$(subst $(OUTDIR),,$@)
 
-.PHONY: container
-container: ci/Dockerfile
+.PHONY: container master
+master container: ci/Dockerfile
 	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master $(DOCKER_PROXY) .
 
 .PHONY: devcontainer
