@@ -1,7 +1,8 @@
 #!/bin/sh
-echo "Updating APT repositories and installing golang..."
+echo "Updating APT repositories..."
 apt-get update -qq
-apt-get install -yqq golang
+echo "Installing golang..."
+apt-get -yqq install golang
 echo "Installing protobuf compiler..."
 apt-get -yqq install protobuf-compiler
 echo "Installing Go protobuf interface..."

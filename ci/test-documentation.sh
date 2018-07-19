@@ -11,9 +11,9 @@ if [ ! -f ci/test-documentation.sh ]; then
     exit 2
 fi
 
-# test the README:
-FILES=README.md
 # test the Markdown files under doc/
-FILES="$FILES doc/*md"
+FILES="doc/*md"
+# test the README:
+FILES="$FILES README.md"
 # Aaaand go...:
 shelldoc $FILES
