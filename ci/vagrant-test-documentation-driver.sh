@@ -9,9 +9,9 @@
 # repository.
 set -e
 sudo chown -R $USER:$USER /usr/local/
-export GOPATH=$HOME/test_go
+export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$PATH
-BASEDIR=$GOPATH/github/QMSTR
+BASEDIR=$GOPATH/src/github.com/QMSTR
 mkdir -p $BASEDIR
 cd $BASEDIR
 ln -sf /vagrant qmstr
