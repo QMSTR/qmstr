@@ -1,0 +1,18 @@
+pipeline {
+   agent any
+   stages {
+       stage('Test') {
+           steps {
+	   	 echo "This is where we should run the tests."
+           }
+       }
+   }
+   post {
+       always {
+	   	 echo "Time to clean up."
+       }
+       failure {
+	   	 echo "Time to panic."
+       }
+   }
+}
