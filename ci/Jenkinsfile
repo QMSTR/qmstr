@@ -1,7 +1,5 @@
 stage('document_test') {
     node('linux') {
-        git url: "https://github.com/endocode/qmstr.git"
-
         sh '''#!/bin/bash -e
             export VAGRANT_VAGRANTFILE=ci/Vagrantfile
             vagrant up
