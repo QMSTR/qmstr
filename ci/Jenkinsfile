@@ -1,0 +1,13 @@
+stage('document_test') {
+    node('linux') {
+        git url: "https://github.com/endocode/qmstr.git"
+
+        sh '''#!/bin/bash -e
+            export VAGRANT_VAGRANTFILE=ci/Vagrantfile
+            vagrant up
+            vagrant ssh -c /vagrant/ci/vagrant-test-documentation-driver.sh
+            RESULT=$?
+            vagrant destroy -f
+        '''
+    }
+}
