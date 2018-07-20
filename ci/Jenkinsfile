@@ -1,11 +1,19 @@
-stage('document_test') {
-    node('linux') {
-        sh '''#!/bin/bash -e
-            export VAGRANT_VAGRANTFILE=ci/Vagrantfile
-            vagrant up
-            vagrant ssh -c /vagrant/ci/vagrant-test-documentation-driver.sh
-            RESULT=$?
-            vagrant destroy -f
-        '''
+pipeline {
+    agent { label 'linux' }
+    triggers {
+        pollSCM('H/10 * * * *')
+    }
+    stages {
+        stage('document_test') {
+            steps {
+                sh '''#!/bin/bash -e
+                    export VAGRANT_VAGRANTFILE=ci/Vagrantfile
+                    vagrant up
+                    vagrant ssh -c /vagrant/ci/vagrant-test-documentation-driver.sh
+                    RESULT=$?
+                    vagrant destroy -f
+                '''
+            }
+        }
     }
 }
