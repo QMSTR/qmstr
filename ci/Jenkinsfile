@@ -11,7 +11,7 @@ pipeline {
     }
 
     stages {
-        stage('document_test') {
+        stage('DocTest') {
             steps {
                 sh 'vagrant up'
                 sh 'vagrant ssh -c /vagrant/ci/vagrant-test-documentation-driver.sh'
