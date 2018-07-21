@@ -12,6 +12,15 @@ start` is called. Other build slaves or distributed compile nodes only
 need the client side programs, since the master only runs once per
 build.
 
+The core modules and tools of Quartermaster are written in the Go
+programming language. However it is not primarily a Go
+project. Modules may be written in any programming language that
+provides GRPC bindings. They are usually written in the language of
+the tools they integrate with. The SPDX parser module, for example, is
+written in Python. The Gradle integration is written in Java. The
+Quartermaster build system uses a Makefile to implement the different
+steps required to build these modules in their specific ways.
+
 ## Installing the clients
 
 The main entry point into the installation tasks for Quartermaster is
