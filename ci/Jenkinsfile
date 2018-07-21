@@ -1,19 +1,27 @@
 pipeline {
+
     agent { label 'linux' }
+
     triggers {
         pollSCM('H/10 * * * *')
     }
+
+    environment {
+    	VAGRANT_VAGRANTFILE = 'ci/Vagrantfile'
+    }
+
     stages {
         stage('document_test') {
             steps {
-                sh '''#!/bin/bash -e
-                    export VAGRANT_VAGRANTFILE=ci/Vagrantfile
-                    vagrant up
-                    vagrant ssh -c /vagrant/ci/vagrant-test-documentation-driver.sh
-                    RESULT=$?
-                    vagrant destroy -f
-                '''
+                sh 'vagrant up'
+                sh 'vagrant ssh -c /vagrant/ci/vagrant-test-documentation-driver.sh'
             }
+        }
+    }
+
+    post {
+        always {
+            sh 'vagrant destroy -f'
         }
     }
 }
