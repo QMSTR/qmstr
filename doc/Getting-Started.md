@@ -27,7 +27,7 @@ Verify that the client side tools are available by querying the version of the `
 
 To check that the master image exists, run
 
-    >docker images | grep qmstr/master
+    > docker images | grep qmstr/master
     ...
 
 For the remainder of this tutorial, Git, internet access and the basic
