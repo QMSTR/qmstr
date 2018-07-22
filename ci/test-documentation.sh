@@ -12,7 +12,7 @@ if [ ! -f ci/test-documentation.sh ]; then
 fi
 
 # test the Markdown files under doc/
-FILES="doc/*md"
+FILES="doc/Installation.md doc/Getting-Started.md"
 # test the README:
 FILES="$FILES README.md"
 # Aaaand go...:
