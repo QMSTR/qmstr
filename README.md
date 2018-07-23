@@ -3,7 +3,11 @@
 [Quartermaster](http://qmstr.org) is a suite of command line tools and build system extensions that instruments software builds to create
 FOSS compliance documentation and support compliance decisions. It executes as part of a software build process to generate reports about the analysed product.
 
-[![Build Status](https://ci.endocode.com/buildStatus/icon?job=QMSTR/build_and_unit_test_master)](https://ci.endocode.com/job/QMSTR/job/build_and_unit_test_master/)
+## Continuous Integration Status
+
+| master (build and unit tests) | documentation ([shelldoc](https://github.com/endocode/shelldoc)) |
+| ------------- | ------------- |
+| [![Build Status](https://ci.endocode.com/buildStatus/icon?job=QMSTR/build_and_unit_test_master)](https://ci.endocode.com/job/QMSTR/job/build_and_unit_test_master/) | [![Build Status](https://ci.endocode.com/buildStatus/icon?job=QMSTR/DocTest)](https://ci.endocode.com/view/QMSTR/job/QMSTR/job/DocTest/) |
 
 ## Compilation and Installation
 
