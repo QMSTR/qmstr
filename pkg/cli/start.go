@@ -36,6 +36,7 @@ var internalMasterPort string
 
 var configFile string
 var wait bool
+var debug bool
 
 func startMaster(cmd *cobra.Command, args []string) {
 	wd, err := os.Getwd()
@@ -59,6 +60,8 @@ func startMaster(cmd *cobra.Command, args []string) {
 		masterImageName = configuredImageName
 	}
 
+	debug = config.Server.Debug
+
 	internalMasterPort, err = config.GetRPCPort()
 	if err != nil {
 		Log.Fatalf("failed to get configured rpc port %v", err)
@@ -77,7 +80,10 @@ func startMaster(cmd *cobra.Command, args []string) {
 		Log.Fatalf("Failed to create container network %v", err)
 	}
 
-	containerID, portBinding, err := startContainer(ctx, cli, wd, containerNetwork)
+	extraEnv := config.Server.ExtraEnv
+	extraMount := config.Server.ExtraMount
+
+	containerID, portBinding, err := startContainer(ctx, cli, wd, containerNetwork, extraEnv, extraMount)
 	if err != nil {
 		if containerID != "" {
 			cleanUpContainer(ctx, cli, containerID, verbose)
@@ -134,14 +140,32 @@ func createNetwork(ctx context.Context, cli *client.Client) (string, error) {
 	return containerNetName, nil
 }
 
-func startContainer(ctx context.Context, cli *client.Client, workdir string, network string) (string, *nat.PortBinding, error) {
-	internalPort, err := nat.NewPort(proto, internalMasterPort)
-	if err != nil {
-		return "", nil, err
+func getHostConfig(internalPort nat.Port, workdir string, network string, extraMount map[string]string) *container.HostConfig {
+	portsbinds := []nat.PortBinding{nat.PortBinding{HostIP: "0.0.0.0", HostPort: hostPortRange}}
+	hostConf := &container.HostConfig{
+		PortBindings: nat.PortMap{internalPort: portsbinds},
+		Mounts: []mount.Mount{
+			mount.Mount{Source: workdir, Target: containerBuildDir, Type: mount.TypeBind},
+			mount.Mount{Source: configFile, Target: "/qmstr/qmstr.yaml", Type: mount.TypeBind},
+		},
+		NetworkMode: container.NetworkMode(network),
 	}
 
-	portsbinds := []nat.PortBinding{nat.PortBinding{HostIP: "0.0.0.0", HostPort: hostPortRange}}
+	// for debugging container must run qmstr-master via dlv and so the container needs to be allowed to fork
+	if debug {
+		hostConf.Privileged = true
+		hostConf.SecurityOpt = []string{"seccomp=unconfined"}
+	}
 
+	for target, source := range extraMount {
+		Debug.Printf("Mounting host directory %s to %s inside container", source, target)
+		hostConf.Mounts = append(hostConf.Mounts, mount.Mount{Source: source, Target: target, Type: mount.TypeBind})
+	}
+
+	return hostConf
+}
+
+func getContainerConfig(internalPort nat.Port, workdir string, extraEnv map[string]string) (*container.Config, error) {
 	config := &container.Config{
 		Image: masterImageName,
 		ExposedPorts: nat.PortSet{
@@ -151,19 +175,42 @@ func startContainer(ctx context.Context, cli *client.Client, workdir string, net
 		Tty: true,
 	}
 
-	user, err := user.Current()
-	if err == nil {
-		config.Env = append(config.Env, fmt.Sprintf("USERID=%s", user.Uid))
+	for envk, envv := range extraEnv {
+		config.Env = append(config.Env, fmt.Sprintf("%s=%s", envk, envv))
 	}
 
-	hostConf := &container.HostConfig{
-		PortBindings: nat.PortMap{internalPort: portsbinds},
-		Mounts: []mount.Mount{
-			mount.Mount{Source: workdir, Target: containerBuildDir, Type: mount.TypeBind},
-			mount.Mount{Source: configFile, Target: "/qmstr/qmstr.yaml", Type: mount.TypeBind},
-		},
-		NetworkMode: container.NetworkMode(network),
+	return config, nil
+}
+
+func startContainer(ctx context.Context, cli *client.Client, workdir string, network string,
+	extraEnv map[string]string, extraMount map[string]string) (string, *nat.PortBinding, error) {
+
+	internalPort, err := nat.NewPort(proto, internalMasterPort)
+	if err != nil {
+		return "", nil, err
 	}
+
+	user, err := user.Current()
+	if err == nil {
+		extraEnv["USERID"] = user.Uid
+	}
+
+	if debug {
+		gopathTarget := "/go"
+		gopath := os.Getenv("GOPATH")
+		if gopath == "" {
+			return "", nil, errors.New("GOPATH not set")
+		}
+		extraEnv["GOPATH"] = gopathTarget
+		extraEnv["QMSTR_DEBUG"] = "true"
+		extraMount[filepath.Join(gopathTarget, "src")] = fmt.Sprintf("%s/%s", gopath, "src")
+	}
+
+	config, err := getContainerConfig(internalPort, workdir, extraEnv)
+	if err != nil {
+		return "", nil, err
+	}
+	hostConf := getHostConfig(internalPort, workdir, network, extraMount)
 
 	resp, err := cli.ContainerCreate(ctx, config, hostConf, nil, "")
 	if err != nil {
@@ -186,6 +233,10 @@ func startContainer(ctx context.Context, cli *client.Client, workdir string, net
 
 	if !info.State.Running {
 		return resp.ID, nil, errors.New("container not running")
+	}
+
+	if debug {
+		Log.Println("WARNING: Running qmstr-master container in privileged mode for debugging.")
 	}
 
 	portBindings := info.NetworkSettings.Ports[internalPort]
@@ -211,7 +262,9 @@ func cleanUpContainer(ctx context.Context, cli *client.Client, containerID strin
 			Debug.Printf("qmstr-master log\n%s\n", buf.String())
 		}
 	}
-	cli.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{Force: true})
+	if !debug {
+		cli.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{Force: true})
+	}
 }
 
 var startCmd = &cobra.Command{
