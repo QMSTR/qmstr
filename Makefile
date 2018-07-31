@@ -47,7 +47,6 @@ requirements.txt:
 	echo pex >> requirements.txt
 	echo autopep8 >> requirements.txt
 
-
 go_proto: $(PROTOC_GEN_GO)
 	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
 
