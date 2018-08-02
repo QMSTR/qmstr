@@ -64,15 +64,8 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 	}
 
 	config.Config["name"] = config.Name
-
-	// Set cachedir, if not overriden
-	if _, ok := config.Config["cachedir"]; !ok {
-		config.Config["cachedir"] = filepath.Join(phase.masterConfig.Server.CacheDir, config.Reporter, config.PosixName)
-	}
-	// Set output dir, if not overriden
-	if _, ok := config.Config["outputdir"]; !ok {
-		config.Config["outputdir"] = filepath.Join(phase.masterConfig.Server.OutputDir, config.Reporter, config.PosixName)
-	}
+	config.Config["cachedir"] = filepath.Join(ServerCacheDir, config.Reporter, config.PosixName)
+	config.Config["outputdir"] = filepath.Join(ServerOutputDir, config.Reporter, config.PosixName)
 
 	return &service.ReporterConfigResponse{ConfigMap: config.Config, Session: phase.session,
 		Name: config.Name}, nil
