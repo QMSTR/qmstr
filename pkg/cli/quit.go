@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -15,7 +14,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var force bool
+var force, nocopy bool
 
 // quitCmd represents the quit command
 var quitCmd = &cobra.Command{
@@ -23,7 +22,9 @@ var quitCmd = &cobra.Command{
 	Short: "Quit qmstr",
 	Long:  `Run quit if you want to quit qmstr.`,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		if !nocopy {
+			copyResults()
+		}
 		setUpServer()
 		quitServer()
 		tearDownServer()
@@ -34,16 +35,17 @@ var quitCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(quitCmd)
 	quitCmd.Flags().BoolVarP(&force, "force", "f", false, "force quit")
+	quitCmd.Flags().BoolVar(&nocopy, "no-copy", false, "Do not copy results")
 }
 
 func quitServer() {
 	resp, err := controlServiceClient.Quit(context.Background(), &pb.QuitMessage{Kill: force})
 	if err != nil {
-		fmt.Printf("Failed to communicate with qmstr-master server. %v\n", err)
+		Log.Printf("Failed to communicate with qmstr-master server. %v\n", err)
 		os.Exit(ReturnCodeServerCommunicationError)
 	}
 	if !resp.Success {
-		fmt.Println("Server responded unsuccessful")
+		Log.Println("Server responded unsuccessful")
 		os.Exit(ReturnCodeResponseFalseError)
 	}
 }
@@ -56,14 +58,14 @@ func stopMasterContainer() {
 	}
 	mID, _, err := docker.GetMasterInfo(ctx, cli)
 	if err != nil {
-		log.Fatal(err)
+		Log.Fatal(err)
 	}
 	d := time.Duration(2) * time.Second
 	err = cli.ContainerStop(ctx, mID, &d)
 	if err != nil {
 		err1 := cli.ContainerKill(ctx, mID, "SIGKILL")
 		if err1 != nil {
-			log.Fatal(fmt.Errorf("%v : %v", err1, err))
+			Log.Fatal(fmt.Errorf("%v : %v", err1, err))
 		}
 	}
 }
