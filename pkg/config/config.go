@@ -70,10 +70,10 @@ func ReadConfigFromFile(configfile string) (*MasterConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	return readConfig(data)
+	return ReadConfig(data)
 }
 
-func readConfig(data []byte) (*MasterConfig, error) {
+func ReadConfig(data []byte) (*MasterConfig, error) {
 	configuration := getDefaultConfig()
 	err := yaml.Unmarshal(data, configuration)
 	if err != nil {

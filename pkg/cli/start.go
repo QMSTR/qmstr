@@ -38,18 +38,28 @@ var configFile string
 var wait bool
 var debug bool
 
+func getConfig() (*config.MasterConfig, error) {
+	var err error
+	configFile, err = filepath.Abs(configFile)
+	if err != nil {
+		return nil, err
+	}
+
+	config, err := config.ReadConfigFromFile(configFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
+
 func startMaster(cmd *cobra.Command, args []string) {
 	wd, err := os.Getwd()
 	if err != nil {
 		Log.Fatalf("unable to determine current working directory")
 	}
 
-	configFile, err = filepath.Abs(configFile)
-	if err != nil {
-		Log.Fatalf("unable to get absolute config path")
-	}
-
-	config, err := config.ReadConfigFromFile(configFile)
+	config, err := getConfig()
 	if err != nil {
 		Log.Fatalf("failed to read configuration %v", err)
 	}
