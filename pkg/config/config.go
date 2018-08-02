@@ -57,7 +57,6 @@ type QmstrConfig struct {
 func getDefaultConfig() *QmstrConfig {
 	return &QmstrConfig{
 		Package: &MasterConfig{
-			// TODO make default output and cache dir platform independent
 			Server: &ServerConfig{DBWorkers: 2, RPCAddress: ":50051", DBAddress: "localhost:9080",
 				ExtraEnv: map[string]string{}, ExtraMount: map[string]string{},
 			},
