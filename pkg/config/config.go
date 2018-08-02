@@ -34,7 +34,6 @@ type ServerConfig struct {
 	RPCAddress string
 	DBAddress  string
 	DBWorkers  int
-	CacheDir   string
 	OutputDir  string
 	ImageName  string `yaml:"image"`
 	Debug      bool
@@ -60,7 +59,6 @@ func getDefaultConfig() *QmstrConfig {
 		Package: &MasterConfig{
 			// TODO make default output and cache dir platform independent
 			Server: &ServerConfig{DBWorkers: 2, RPCAddress: ":50051", DBAddress: "localhost:9080",
-				CacheDir: "/var/cache/qmstr", OutputDir: "/var/qmstr",
 				ExtraEnv: map[string]string{}, ExtraMount: map[string]string{},
 			},
 		},

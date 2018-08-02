@@ -17,3 +17,6 @@ const (
 	PhaseIDReport
 	PhaseIDFailure
 )
+
+const ServerCacheDir string = "/var/cache/qmstr"
+const ServerOutputDir string = "/var/qmstr"

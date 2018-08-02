@@ -86,15 +86,9 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 	}
 
 	config.Config["name"] = config.Name
+	config.Config["cachedir"] = filepath.Join(ServerCacheDir, config.Analyzer, config.PosixName)
+	config.Config["outputdir"] = filepath.Join(ServerOutputDir, config.Analyzer, config.PosixName)
 
-	// Set cachedir, if not overriden
-	if _, ok := config.Config["cachedir"]; !ok {
-		config.Config["cachedir"] = filepath.Join(phase.masterConfig.Server.CacheDir, config.Analyzer, config.PosixName)
-	}
-	// Set output dir, if not overriden
-	if _, ok := config.Config["outputdir"]; !ok {
-		config.Config["outputdir"] = filepath.Join(phase.masterConfig.Server.OutputDir, config.Analyzer, config.PosixName)
-	}
 	// Set path substitution, if not overriden
 	if config.PathSub == nil || len(config.PathSub) == 0 {
 		config.PathSub = phase.masterConfig.Server.PathSub
