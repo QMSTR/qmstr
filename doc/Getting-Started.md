@@ -172,8 +172,8 @@ The `quit` command makes the reporting results available in the
 `qmstr` subdirectory of the build directory (a different location may
 be specified in the configuration file):
 
-	> ls qmstr/HTML_Reporter/qmstr-html-reports.tar.bz2
-	qmstr-html-reports.tar.bz2
+	> ls qmstr/qmstr-reporter-html/qmstr-reports.tar.bz2
+	qmstr/qmstr-reporter-html/qmstr-reports.tar.bz2
 
 Once the master is shut down, all data that it collected during the
 build and analysis phases is destroyed. Any information that is
