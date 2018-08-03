@@ -51,7 +51,7 @@ the JSON-C source code first, in a specific revision that we know
 works with this tutorial:
 
 	> cd doc/tutorial
-	> git clone git@github.com:json-c/json-c.git
+	> git clone https://github.com/json-c/json-c.git
 	...
 	> cd json-c
 	> git reset --hard bf29aa0f
