@@ -7,6 +7,8 @@ echo "Installing protobuf compiler..."
 apt-get -yqq install protobuf-compiler
 echo "Installing Go protobuf interface..."
 apt-get -yqq install golang-goprotobuf-dev
+echo "Installing JSON-C dependencies..."
+apt-get -yqq build-dep json-c
 echo "Installing Docker..."
 apt-get -yqq install docker.io
 echo "Adding vagrant user to the docker group..."
