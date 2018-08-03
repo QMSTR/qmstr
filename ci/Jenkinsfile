@@ -13,6 +13,7 @@ pipeline {
     stages {
         stage('DocTest') {
             steps {
+	    	sh 'git clean -fxd'
                 sh 'vagrant up'
                 sh 'vagrant ssh -c /vagrant/ci/vagrant-test-documentation-driver.sh'
             }
