@@ -15,7 +15,7 @@ func main() {
 	flag.StringSliceVar(&pathSubstitution, "pathsub", nil, "Set path substitution e.g. old,new")
 	flag.Parse()
 
-	masterConfig, err := config.ReadConfigFromFile(*configFile)
+	masterConfig, err := config.ReadConfigFromFiles(*configFile)
 	if err != nil {
 		log.Fatalf("Failed to read configuration %v", err)
 	}

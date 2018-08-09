@@ -41,7 +41,7 @@ package:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfig([]byte(config))
+	_, err := ReadConfigFromBytes([]byte(config))
 	if err != nil {
 		t.Logf("Broken config %v", err)
 		t.Fail()
@@ -84,7 +84,7 @@ package:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfig([]byte(config))
+	_, err := ReadConfigFromBytes([]byte(config))
 	if err == nil || err.Error() != "1. reporter misconfigured Name invalid" {
 		t.Log(err)
 		t.Fail()
@@ -128,7 +128,7 @@ package:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfig([]byte(config))
+	_, err := ReadConfigFromBytes([]byte(config))
 	if err == nil || err.Error() != "2. analyzer misconfigured duplicate value of The Testalyzer in Name" {
 		t.Log(err)
 		t.Fail()
@@ -171,7 +171,7 @@ package:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfig([]byte(config))
+	_, err := ReadConfigFromBytes([]byte(config))
 	if err == nil || err.Error() != "1. analyzer misconfigured Analyzer invalid" {
 		t.Log(err)
 		t.Fail()
@@ -213,7 +213,7 @@ package:
     - config:
         tester: "Endocode"
 `
-	_, err := ReadConfig([]byte(config))
+	_, err := ReadConfigFromBytes([]byte(config))
 	if err == nil || err.Error() != "1. reporter misconfigured Name invalid" {
 		t.Log(err)
 		t.Fail()
@@ -257,7 +257,7 @@ package:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfig([]byte(config))
+	_, err := ReadConfigFromBytes([]byte(config))
 	if err == nil || err.Error() != "2. analyzer misconfigured duplicate value of The_Testalyzer in PosixName" {
 		t.Log(err)
 		t.Fail()
@@ -292,7 +292,7 @@ package:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfig([]byte(config))
+	_, err := ReadConfigFromBytes([]byte(config))
 	if err == nil || err.Error() != "Invalid RPC address" {
 		t.Log(err)
 		t.Fail()

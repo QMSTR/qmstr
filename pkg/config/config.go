@@ -64,26 +64,56 @@ func getDefaultConfig() *QmstrConfig {
 	}
 }
 
-func ReadConfigFromFile(configfile string) (*MasterConfig, error) {
-	log.Printf("Reading configuration from %s\n", configfile)
-	data, err := ConsumeFile(configfile)
+func ReadConfigFromFiles(configfiles ...string) (*MasterConfig, error) {
+	fileNotExistCount := 0
+	config := getDefaultConfig()
+	for _, configfile := range configfiles {
+		if _, err := os.Stat(configfile); os.IsNotExist(err) {
+			log.Printf("File %s not found", configfile)
+			fileNotExistCount++
+			continue
+		}
+
+		log.Printf("Reading configuration from %s\n", configfile)
+		data, err := ConsumeFile(configfile)
+		if err != nil {
+			return nil, err
+		}
+
+		readConfig(data, config)
+	}
+
+	if fileNotExistCount == len(configfiles) {
+		return nil, errors.New("No configuration file found")
+	}
+
+	return config.Package, nil
+}
+
+func ReadConfigFromBytes(data []byte) (*MasterConfig, error) {
+	config := getDefaultConfig()
+	err := readConfig(data, config)
 	if err != nil {
 		return nil, err
 	}
-	return ReadConfig(data)
+	return config.Package, err
 }
 
-func ReadConfig(data []byte) (*MasterConfig, error) {
-	configuration := getDefaultConfig()
+func readConfig(data []byte, configuration *QmstrConfig) error {
 	err := yaml.Unmarshal(data, configuration)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	err = validateConfig(configuration.Package)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return configuration.Package, nil
+	return nil
+}
+
+func SerializeConfig(config *MasterConfig) ([]byte, error) {
+	data, err := yaml.Marshal(QmstrConfig{Package: config})
+	return data, err
 }
 
 func ConsumeFile(filename string) ([]byte, error) {

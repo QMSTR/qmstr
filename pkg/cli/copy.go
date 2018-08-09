@@ -38,12 +38,12 @@ func copyResults() {
 		log.Fatal(err)
 	}
 
-	configdata, err := docker.GetMasterConfig(ctx, cli, mID)
+	configdata, err := docker.GetMasterConfig(ctx, cli, mID, internalConfigPath)
 	if err != nil {
 		Log.Fatalf("Can not load master configuration from container : %v", err)
 	}
 	Debug.Printf("Got config from master: %s", configdata)
-	config, err := config.ReadConfig(configdata)
+	config, err := config.ReadConfigFromBytes(configdata)
 	if err != nil {
 		Log.Fatalf("Can not read master configuration from container : %v", err)
 	}
