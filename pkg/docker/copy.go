@@ -1,12 +1,15 @@
 package docker
 
 import (
+	"archive/tar"
 	"bytes"
 	"context"
 	"io/ioutil"
+	"log"
 	"regexp"
 
 	"github.com/QMSTR/qmstr/pkg/master"
+	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/archive"
 )
@@ -27,8 +30,34 @@ func CopyResults(ctx context.Context, cli *client.Client, container string, dest
 	return archive.CopyTo(data, srcInfo, destinationPath)
 }
 
-func GetMasterConfig(ctx context.Context, cli *client.Client, container string) ([]byte, error) {
-	data, _, err := cli.CopyFromContainer(ctx, container, "/qmstr/qmstr.yaml")
+func WriteContainerFile(ctx context.Context, cli *client.Client, data []byte, container string, destination string) error {
+	var buf bytes.Buffer
+	tw := tar.NewWriter(&buf)
+
+	hdr := &tar.Header{
+		Name: destination,
+		Mode: 0664,
+		Size: int64(len(data)),
+	}
+	if err := tw.WriteHeader(hdr); err != nil {
+		return err
+	}
+	if _, err := tw.Write(data); err != nil {
+		return err
+	}
+	if err := tw.Close(); err != nil {
+		return err
+	}
+
+	log.Printf("Writing %d bytes to %s", hdr.Size, destination)
+	reader := bytes.NewReader(buf.Bytes())
+
+	err := cli.CopyToContainer(ctx, container, "/", reader, types.CopyToContainerOptions{})
+	return err
+}
+
+func GetMasterConfig(ctx context.Context, cli *client.Client, container string, containerConfigPath string) ([]byte, error) {
+	data, _, err := cli.CopyFromContainer(ctx, container, containerConfigPath)
 	if err != nil {
 		return nil, err
 	}

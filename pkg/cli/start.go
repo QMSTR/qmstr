@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/QMSTR/qmstr/pkg/config"
+	"github.com/QMSTR/qmstr/pkg/docker"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
@@ -29,9 +30,12 @@ const portCount = 1024
 const maxPort = minPort + portCount
 const containerBuildDir = "/buildroot"
 const proto = "tcp"
+const internalConfigPath = "/qmstr/qmstr.yaml"
+const globalHostConfigPath = "/etc/qmstr/qmstr.yaml"
 
 var hostPortRange = fmt.Sprintf("%d-%d", minPort, maxPort)
 var masterImageName = "qmstr/master"
+
 var internalMasterPort string
 
 var configFile string
@@ -45,7 +49,7 @@ func getConfig() (*config.MasterConfig, error) {
 		return nil, err
 	}
 
-	config, err := config.ReadConfigFromFile(configFile)
+	config, err := config.ReadConfigFromFiles(globalHostConfigPath, configFile)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +94,7 @@ func startMaster(cmd *cobra.Command, args []string) {
 		Log.Fatalf("Failed to create container network %v", err)
 	}
 
-	extraEnv := config.Server.ExtraEnv
-	extraMount := config.Server.ExtraMount
-
-	containerID, portBinding, err := startContainer(ctx, cli, wd, containerNetwork, extraEnv, extraMount)
+	containerID, portBinding, err := startContainer(ctx, cli, wd, containerNetwork, config)
 	if err != nil {
 		if containerID != "" {
 			cleanUpContainer(ctx, cli, containerID, verbose)
@@ -156,7 +157,6 @@ func getHostConfig(internalPort nat.Port, workdir string, network string, extraM
 		PortBindings: nat.PortMap{internalPort: portsbinds},
 		Mounts: []mount.Mount{
 			mount.Mount{Source: workdir, Target: containerBuildDir, Type: mount.TypeBind},
-			mount.Mount{Source: configFile, Target: "/qmstr/qmstr.yaml", Type: mount.TypeBind},
 		},
 		NetworkMode: container.NetworkMode(network),
 	}
@@ -193,7 +193,10 @@ func getContainerConfig(internalPort nat.Port, workdir string, extraEnv map[stri
 }
 
 func startContainer(ctx context.Context, cli *client.Client, workdir string, network string,
-	extraEnv map[string]string, extraMount map[string]string) (string, *nat.PortBinding, error) {
+	masterConfig *config.MasterConfig) (string, *nat.PortBinding, error) {
+
+	extraEnv := masterConfig.Server.ExtraEnv
+	extraMount := masterConfig.Server.ExtraMount
 
 	internalPort, err := nat.NewPort(proto, internalMasterPort)
 	if err != nil {
@@ -216,15 +219,25 @@ func startContainer(ctx context.Context, cli *client.Client, workdir string, net
 		extraMount[filepath.Join(gopathTarget, "src")] = fmt.Sprintf("%s/%s", gopath, "src")
 	}
 
-	config, err := getContainerConfig(internalPort, workdir, extraEnv)
+	containerConfig, err := getContainerConfig(internalPort, workdir, extraEnv)
 	if err != nil {
 		return "", nil, err
 	}
 	hostConf := getHostConfig(internalPort, workdir, network, extraMount)
 
-	resp, err := cli.ContainerCreate(ctx, config, hostConf, nil, "")
+	resp, err := cli.ContainerCreate(ctx, containerConfig, hostConf, nil, "")
 	if err != nil {
 		return "", nil, err
+	}
+
+	// copy config over
+	configData, err := config.SerializeConfig(masterConfig)
+	if err != nil {
+		return "", nil, fmt.Errorf("Failed to serialize configuration in order to pass it to qmstr-master: %v", err)
+	}
+	err = docker.WriteContainerFile(ctx, cli, configData, resp.ID, internalConfigPath)
+	if err != nil {
+		return "", nil, fmt.Errorf("Failed to write configuration to qmstr-master container: %v", err)
 	}
 
 	Debug.Printf("Start container %v", resp.ID)
