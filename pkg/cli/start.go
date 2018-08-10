@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/QMSTR/qmstr/pkg/master"
+
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/docker"
 	"github.com/docker/docker/api/types"
@@ -201,6 +203,10 @@ func startContainer(ctx context.Context, cli *client.Client, workdir string, net
 	internalPort, err := nat.NewPort(proto, internalMasterPort)
 	if err != nil {
 		return "", nil, err
+	}
+
+	if masterConfig.Server.CacheDir != "" {
+		extraMount[master.ServerCacheDir] = masterConfig.Server.CacheDir
 	}
 
 	user, err := user.Current()

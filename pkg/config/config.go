@@ -35,6 +35,7 @@ type ServerConfig struct {
 	DBAddress  string
 	DBWorkers  int
 	OutputDir  string
+	CacheDir   string
 	ImageName  string `yaml:"image"`
 	Debug      bool
 	ExtraEnv   map[string]string
