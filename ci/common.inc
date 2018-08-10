@@ -1,9 +1,11 @@
 function create_dirs() {
     if [ -n ${USERID} ]; then
         for i in /var/cache/qmstr /var/qmstr /var/lib/qmstr; do
-            echo "Creating dir $i to be owned by ${USERID}"
-            mkdir ${i}
-            chown ${USERID} ${i}
+            if [ ! -d "${i}" ]; then
+                echo "Creating dir $i to be owned by ${USERID}"
+                mkdir ${i}
+                chown ${USERID} ${i}
+            fi
         done
     fi
 }
