@@ -6,7 +6,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath "org.qmstr.gradle:qmstr-plugin:0.1"
+        classpath "org.qmstr.gradle:qmstr-plugin:0.2"
     }
 }
 
