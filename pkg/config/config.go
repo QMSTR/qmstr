@@ -158,7 +158,7 @@ func validateConfig(configuration *MasterConfig) error {
 		if reporter.PosixName == "" {
 			reporter.PosixName = posixFullyPortableFilename(reporter.Name)
 		}
-		err := validateFields(reporter, uniqueFields, "Name", "Reporter")
+		err := validateFields(reporter, uniqueFields, "Name", "Reporter", "PosixName")
 		if err != nil {
 			return fmt.Errorf("%d. reporter misconfigured %v", idx+1, err)
 		}
