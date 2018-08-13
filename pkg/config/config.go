@@ -44,11 +44,12 @@ type ServerConfig struct {
 }
 
 type MasterConfig struct {
-	Name      string
-	MetaData  map[string]string
-	Server    *ServerConfig
-	Analysis  []Analysis
-	Reporting []Reporting
+	Name        string
+	BuildConfig string
+	MetaData    map[string]string
+	Server      *ServerConfig
+	Analysis    []Analysis
+	Reporting   []Reporting
 }
 
 type QmstrConfig struct {
@@ -58,6 +59,7 @@ type QmstrConfig struct {
 func getDefaultConfig() *QmstrConfig {
 	return &QmstrConfig{
 		Package: &MasterConfig{
+			BuildConfig: "default",
 			Server: &ServerConfig{DBWorkers: 2, RPCAddress: ":50051", DBAddress: "localhost:9080",
 				ExtraEnv: map[string]string{}, ExtraMount: map[string]string{},
 			},
