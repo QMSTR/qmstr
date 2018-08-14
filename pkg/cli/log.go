@@ -34,15 +34,17 @@ func logMasterContainer(ctx context.Context, cli *client.Client, follow bool) er
 		return err
 	}
 	defer logReader.Close()
-	scanner := bufio.NewScanner(logReader)
-	for scanner.Scan() {
-		fmt.Printf("%s\n", scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		return err
-	}
 
-	return nil
+	bufLogReader := bufio.NewReader(logReader)
+	for err == nil {
+		var line []byte
+		line, _, err = bufLogReader.ReadLine()
+		fmt.Printf("%s\n", line)
+	}
+	if err.Error() == "EOF" {
+		err = nil
+	}
+	return err
 }
 
 var logsCmd = &cobra.Command{
