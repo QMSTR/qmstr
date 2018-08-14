@@ -25,7 +25,7 @@ func GetMasterInfo(ctx context.Context, cli *client.Client) (string, uint16, err
 		return "", 0, err
 	}
 
-	args, err := filters.ParseFlag("label=org.qmstr.image=master", filters.NewArgs())
+	args, err := filters.ParseFlag("label=org.qmstr.image", filters.NewArgs())
 	if err != nil {
 		return "", 0, err
 	}
