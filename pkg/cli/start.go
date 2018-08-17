@@ -43,6 +43,7 @@ var internalMasterPort string
 var configFile string
 var wait bool
 var debug bool
+var buildConfig string
 
 func getConfig() (*config.MasterConfig, error) {
 	var err error
@@ -68,6 +69,11 @@ func startMaster(cmd *cobra.Command, args []string) {
 	config, err := getConfig()
 	if err != nil {
 		Log.Fatalf("failed to read configuration %v", err)
+	}
+
+	// overwrite buildconfig if set via commandline
+	if buildConfig != "" {
+		config.BuildConfig = buildConfig
 	}
 
 	configuredImageName := config.Server.ImageName
@@ -307,4 +313,5 @@ func init() {
 	rootCmd.AddCommand(startCmd)
 	startCmd.Flags().BoolVar(&wait, "wait", false, "wait for qmstr-master")
 	startCmd.Flags().StringVarP(&configFile, "config", "c", "qmstr.yaml", "Path to qmstr configuration file")
+	startCmd.Flags().StringVar(&buildConfig, "buildconfig", "", "Set build configuration")
 }
