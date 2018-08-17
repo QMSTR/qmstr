@@ -9,4 +9,3 @@ weight = 1
 {{< proj-cmpl-header >}}
 
 {{< commit-list >}}
-

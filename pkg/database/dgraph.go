@@ -536,6 +536,7 @@ func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error)
 		getPackageNode(func: eq(nodeType, 5)) @recurse(loop: false) {
 			uid
 			session
+			buildConfig
 			nodeType
 			hash
 			name

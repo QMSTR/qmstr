@@ -18,13 +18,17 @@ func (r *HTMLReporter) CreatePackageLevelReports(bom *service.BOM, cserv service
 	revisionData := reporting.GetRevisionData(bom, packageData)
 	log.Printf("Using revision %v: %s", revisionData.VersionIdentifierShort, reporting.CommitMessageSummary(revisionData.Message))
 
-	dataDirectory := path.Join(r.workingDir, "data")
 	contentDirectory := path.Join(r.workingDir, "content")
 	packageContentDirectory := path.Join(contentDirectory, packageData.PackageName)
 	versionContentDirectory := path.Join(packageContentDirectory, revisionData.VersionIdentifier)
+	buildconfigContentDirectory := path.Join(versionContentDirectory, packageData.BuildConfig)
+
+	dataDirectory := path.Join(r.workingDir, "data")
 	packageDirectory := path.Join(dataDirectory, packageData.PackageName)
 	versionDirectory := path.Join(packageDirectory, revisionData.VersionIdentifier)
-	if err := os.MkdirAll(versionDirectory, os.ModePerm); err != nil {
+	buildconfigDirectory := path.Join(versionDirectory, packageData.BuildConfig)
+
+	if err := os.MkdirAll(buildconfigDirectory, os.ModePerm); err != nil {
 		return fmt.Errorf("error creating package metadata directory: %v", err)
 	}
 	packageJSON, err := json.Marshal(packageData)
@@ -36,8 +40,8 @@ func (r *HTMLReporter) CreatePackageLevelReports(bom *service.BOM, cserv service
 		return fmt.Errorf("error creating JSON package metadata file: %v", err)
 	}
 
-	// create content directories for package and version:
-	if err := os.MkdirAll(versionContentDirectory, os.ModePerm); err != nil {
+	// create content directories for package, version and build config:
+	if err := os.MkdirAll(buildconfigContentDirectory, os.ModePerm); err != nil {
 		return fmt.Errorf("error creating content directories: %v", err)
 	}
 	// generate top-level site data:
@@ -57,20 +61,41 @@ func (r *HTMLReporter) CreatePackageLevelReports(bom *service.BOM, cserv service
 			return fmt.Errorf("error creating package content: %v", err)
 		}
 	}
+
+	type VersionData struct {
+		reporting.RevisionData
+		BuildConfig string
+	}
+
+	versionData := VersionData{*revisionData, packageData.BuildConfig}
 	// generate content/<package>/<version>/_index.md
 	{
 		templatePath := path.Join(r.sharedDataDir, "templates", "version-index.md")
 		outputPath := path.Join(versionContentDirectory, "_index.md")
-		if err := applyTemplate(templatePath, revisionData, outputPath); err != nil {
+		if err := applyTemplate(templatePath, versionData, outputPath); err != nil {
 			return fmt.Errorf("error creating version index page: %v", err)
 		}
 	}
-	revisionJSON, err := json.Marshal(revisionData)
+	// generate content/<package>/<version>/<buildconfig>/_index.md
+	{
+		templatePath := path.Join(r.sharedDataDir, "templates", "buildconfig-index.md")
+		outputPath := path.Join(buildconfigContentDirectory, "_index.md")
+		if err := applyTemplate(templatePath, versionData, outputPath); err != nil {
+			return fmt.Errorf("error creating buildconfig index page: %v", err)
+		}
+	}
+
+	revisionJSON, err := json.Marshal(versionData)
 	if err != nil {
 		return fmt.Errorf("error generating JSON representation of revision metadata: %v", err)
 	}
 	versionDataFile := path.Join(versionDirectory, "data.json")
 	if err := ioutil.WriteFile(versionDataFile, revisionJSON, 0644); err != nil {
+		return fmt.Errorf("error creating JSON version data file: %v", err)
+	}
+
+	buildconfigDataFile := path.Join(buildconfigDirectory, "data.json")
+	if err := ioutil.WriteFile(buildconfigDataFile, revisionJSON, 0644); err != nil {
 		return fmt.Errorf("error creating JSON version data file: %v", err)
 	}
 

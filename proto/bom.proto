@@ -4,6 +4,7 @@ option java_package = "org.qmstr.grpc.service";
 
 message PackageInformation {
     string name = 1;
+    string buildConfig = 7;
     string vendor = 2;
     string configuration = 3;
 	string ocFossLiaison = 4;

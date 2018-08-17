@@ -1,5 +1,5 @@
 +++
-title = "{{{.VersionIdentifierShort}}}"
+title = "{{{.BuildConfig}}}"
 versionid = "{{{.VersionIdentifier}}}"
 package = "{{{.Package.PackageName}}}"
 author = "{{{.Author}}}"
@@ -11,4 +11,6 @@ weight = 1
 
 {{< version-cmpl-header >}}
 
-{{< buildconfig-list >}}
+{{< target-list >}}
+
+{{< authors >}}

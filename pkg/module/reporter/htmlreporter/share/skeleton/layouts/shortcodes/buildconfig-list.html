@@ -1,0 +1,7 @@
+<h2>Build configurations</h2>
+
+<ul>
+{{ range .Page.Sections }}
+    <li><a href="{{ .URL }}"> {{ .Title }} </a> </li>
+{{ end }}
+</ul>
