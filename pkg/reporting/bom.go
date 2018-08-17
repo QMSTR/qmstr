@@ -55,6 +55,7 @@ func getDataByInfoType(packageNode *service.PackageNode, infoType string) []stri
 func getPackageInfo(pkg *service.PackageNode) (*service.PackageInformation, error) {
 	packageInfo := service.PackageInformation{
 		Name:                pkg.GetName(),
+		BuildConfig:         pkg.GetBuildConfig(),
 		Vendor:              "Vendor",
 		OcFossLiaison:       "FossLiaison",
 		OcComplianceContact: "Compliance contact email"}
