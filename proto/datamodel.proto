@@ -49,6 +49,7 @@ message PackageNode {
     int32 nodeType = 4;
     repeated FileNode targets = 5;
     repeated InfoNode additionalInfo = 6;
+    string buildConfig = 7;
 }
 
 message Event {
