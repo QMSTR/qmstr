@@ -14,7 +14,6 @@ type RevisionData struct {
 	ChangeDateTime         string       // The change timestamp
 	Author                 string       // The author of the change
 	Message                string       // The commit message
-	Summary                string       // The short form of the commit message
 	Package                *PackageData // The package this version is associated with.
 }
 
@@ -29,6 +28,8 @@ func CommitMessageSummary(message string) string {
 	if len(summary) > 50 {
 		summary = fmt.Sprintf("%s...", summary[:47])
 	}
+	// escape double quotes
+	summary = strings.Replace(summary, `"`, `\"`, -1)
 	return summary
 }
 
@@ -50,7 +51,6 @@ func GetRevisionData(bom *service.BOM, packageData *PackageData) *RevisionData {
 		bom.VersionInfo.CommitDate,
 		bom.VersionInfo.Author.Name,
 		bom.VersionInfo.Message,
-		bom.VersionInfo.Summary,
 		packageData,
 	}
 }

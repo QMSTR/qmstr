@@ -23,7 +23,6 @@ message Revision {
     Person author = 4;
     string commitDate = 5;
     string authorDate = 6;
-    string summary = 7;
     string shortId = 8;
 }
 

@@ -303,12 +303,15 @@ func CreateReportsPackage(workingDir string, contentDir string, packagePath stri
 }
 
 func applyTemplate(templatePath string, data interface{}, target string) error {
+	funcMap := template.FuncMap{
+		"summary": reporting.CommitMessageSummary,
+	}
 
 	templateData, err := ioutil.ReadFile(templatePath)
 	if err != nil {
 		return fmt.Errorf("unable to read template file \"%s\"", templatePath)
 	}
-	t := template.Must(template.New(templatePath).Delims("{{{", "}}}").Parse(string(templateData)))
+	t := template.Must(template.New(templatePath).Funcs(funcMap).Delims("{{{", "}}}").Parse(string(templateData)))
 
 	targetFile, err := os.Create(target)
 	if err != nil {

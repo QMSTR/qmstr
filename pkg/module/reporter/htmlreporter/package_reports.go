@@ -16,7 +16,7 @@ import (
 func (r *HTMLReporter) CreatePackageLevelReports(bom *service.BOM, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
 	packageData := reporting.GetPackageData(bom, r.siteData)
 	revisionData := reporting.GetRevisionData(bom, packageData)
-	log.Printf("Using revision %v: %s", revisionData.VersionIdentifierShort, revisionData.Summary)
+	log.Printf("Using revision %v: %s", revisionData.VersionIdentifierShort, reporting.CommitMessageSummary(revisionData.Message))
 
 	dataDirectory := path.Join(r.workingDir, "data")
 	contentDirectory := path.Join(r.workingDir, "content")
