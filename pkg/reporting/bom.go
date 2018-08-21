@@ -107,9 +107,15 @@ func getRevisionInfo(packageNode *service.PackageNode) (*service.Revision, error
 					revisionData.Author.Email = dnode.Data
 				case "CommitMessage":
 					revisionData.Message = dnode.Data
+				case "Description":
+					if dnode.Data != "" {
+						revisionData.Id = dnode.Data
+					}
 				case "CommitID":
-					log.Printf("WARN: using CommitID instead of description this can be misleading as it does not cover not commited changes")
-					revisionData.Id = dnode.Data
+					if revisionData.Id == "" {
+						log.Printf("WARN: using CommitID instead of description this can be misleading as it does not cover uncommited changes")
+						revisionData.Id = dnode.Data
+					}
 				case "CommitterDate":
 					revisionData.CommitDate = dnode.Data
 				}

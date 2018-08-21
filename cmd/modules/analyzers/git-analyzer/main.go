@@ -93,14 +93,16 @@ func (ga *GitAnalyzer) Analyze(controlService service.ControlServiceClient, anal
 
 func (ga *GitAnalyzer) obtainDesc() {
 
-	descRes, err := ga.repo.DescribeWorkdir(&git.DescribeOptions{Strategy: git.DescribeAll})
+	descRes, err := ga.repo.DescribeWorkdir(&git.DescribeOptions{Strategy: git.DescribeAll, ShowCommitOidAsFallback: true})
 	if err != nil {
-		log.Fatalf("oh no %v", err)
+		log.Printf("Failed to describe workdir: %v", err)
+		return
 	}
 
 	desc, err := descRes.Format(&git.DescribeFormatOptions{AlwaysUseLongFormat: true, AbbreviatedSize: 7, DirtySuffix: "dirty"})
 	if err != nil {
-		log.Fatalf("oh no %v", err)
+		log.Printf("Failed to format description %v", err)
+		return
 	}
 
 	ga.revision.Description = desc
