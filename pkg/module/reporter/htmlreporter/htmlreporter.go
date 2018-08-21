@@ -304,7 +304,8 @@ func CreateReportsPackage(workingDir string, contentDir string, packagePath stri
 
 func applyTemplate(templatePath string, data interface{}, target string) error {
 	funcMap := template.FuncMap{
-		"summary": reporting.CommitMessageSummary,
+		"summary":   reporting.CommitMessageSummary,
+		"shortenId": reporting.ShortenedVersionIdentifier,
 	}
 
 	templateData, err := ioutil.ReadFile(templatePath)

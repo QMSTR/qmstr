@@ -1,5 +1,5 @@
 +++
-title = "{{{.VersionIdentifierShort}}}"
+title = "{{{shortenId .VersionIdentifier}}}"
 versionid = "{{{.VersionIdentifier}}}"
 package = "{{{.Package.PackageName}}}"
 author = "{{{.Author}}}"
@@ -7,7 +7,7 @@ summary = "{{{summary .Message}}}"
 weight = 1
 +++
 
-## {{{.Package.PackageName}}} @ {{{.VersionIdentifierShort}}}
+## {{{.Package.PackageName}}} @ {{{.VersionIdentifier}}}
 
 {{< version-cmpl-header >}}
 

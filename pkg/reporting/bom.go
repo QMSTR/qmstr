@@ -90,7 +90,6 @@ func getEmptyRevision() *service.Revision {
 		Committer:  &service.Person{Name: "Unknown committer", Email: "unknown@unknown.local"},
 		Id:         "unknown id",
 		Message:    "",
-		ShortId:    "unknown id",
 	}
 }
 
@@ -122,7 +121,6 @@ func getRevisionInfo(packageNode *service.PackageNode) (*service.Revision, error
 			}
 		}
 	}
-	revisionData.ShortId = ShortenedVersionIdentifier(revisionData.Id)
 	return revisionData, nil
 }
 

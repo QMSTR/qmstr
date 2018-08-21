@@ -7,7 +7,7 @@ summary = "{{{summary .Message}}}"
 weight = 1
 +++
 
-## {{{.Package.PackageName}}} @ {{{.VersionIdentifierShort}}}
+## {{{.Package.PackageName}}} @ {{{.VersionIdentifier}}}
 
 {{< version-cmpl-header >}}
 

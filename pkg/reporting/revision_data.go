@@ -9,12 +9,11 @@ import (
 
 // RevisionData contains metadata about a specific revision.
 type RevisionData struct {
-	VersionIdentifier      string       // Usually a Git hash, but any string can be used
-	VersionIdentifierShort string       // The short version of the version identifier
-	ChangeDateTime         string       // The change timestamp
-	Author                 string       // The author of the change
-	Message                string       // The commit message
-	Package                *PackageData // The package this version is associated with.
+	VersionIdentifier string       // Usually a Git hash, but any string can be used
+	ChangeDateTime    string       // The change timestamp
+	Author            string       // The author of the change
+	Message           string       // The commit message
+	Package           *PackageData // The package this version is associated with.
 }
 
 // CommitMessageSummary returns the summary of the commit message according to the usual guidelines
@@ -47,7 +46,6 @@ func ShortenedVersionIdentifier(message string) string {
 func GetRevisionData(bom *service.BOM, packageData *PackageData) *RevisionData {
 	return &RevisionData{
 		bom.VersionInfo.Id,
-		bom.VersionInfo.ShortId,
 		bom.VersionInfo.CommitDate,
 		bom.VersionInfo.Author.Name,
 		bom.VersionInfo.Message,
