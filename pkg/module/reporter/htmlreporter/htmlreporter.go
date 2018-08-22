@@ -3,6 +3,7 @@ package htmlreporter
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -23,6 +24,7 @@ const (
 	// ModuleName is used across QMSTR to reference this module
 	ModuleName         = "reporter-html"
 	themeDirectoryName = "theme"
+	cacheVersion       = "0.2"
 )
 
 // HTMLReporter is the context of the HTML reporter module
@@ -65,6 +67,8 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 
 	if cacheDir, ok := config["cachedir"]; ok {
 		r.cacheDir = cacheDir
+	} else {
+		return fmt.Errorf("no cache directory specified - it is required")
 	}
 
 	if enable, ok := config["warnings"]; ok && enable == "true" {
@@ -194,6 +198,51 @@ func CheckMinimumRequiredVersion(versionstring string) error {
 	return nil
 }
 
+func checkCache(cacheDir string, cacheversion string) error {
+	cacheVersionFileName := path.Join(cacheDir, ".cachever")
+	version, err := ioutil.ReadFile(cacheVersionFileName)
+	if err != nil {
+		return fmt.Errorf("could not read cache version file %s: %v", cacheVersionFileName, err)
+	}
+	if string(version) != cacheversion {
+		return errors.New("cache version mismatch")
+	}
+	return nil
+}
+
+func prepareCache(cacheDir string, workDir string) error {
+	err := checkCache(cacheDir, cacheVersion)
+	if err != nil {
+		log.Printf("invalid cache found: %v", err)
+		err = os.RemoveAll(cacheDir)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, folder := range []string{"content", "data"} {
+		cachePath := path.Join(cacheDir, folder)
+		// create the folder in the cache directory (it may exist, that is not an error):
+		if err := os.MkdirAll(cachePath, 0700); err != nil {
+			return fmt.Errorf("error creating folder \"%s\" in cache directory: %v", folder, err)
+		}
+		// symlink it to the temp working directory:
+		link := path.Join(workDir, folder)
+		if err := os.Symlink(cachePath, link); err != nil {
+			return fmt.Errorf("unable to link folder \"%s\" from the cache directory to the temporary working directory: %v", folder, err)
+		}
+	}
+
+	// write cache version file
+	cacheVersionFileName := path.Join(cacheDir, ".cachever")
+	err = ioutil.WriteFile(cacheVersionFileName, []byte(cacheVersion), 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write cache version file: %v", err)
+	}
+
+	return nil
+}
+
 //CreateHugoWorkingDirectory creates a temporary directory with the directory structure required to run Hugo
 func (r *HTMLReporter) CreateHugoWorkingDirectory(sharedDataDir string, baseURL string) (string, error) {
 	tmpWorkDir, err := ioutil.TempDir("", "qmstr-")
@@ -211,21 +260,8 @@ func (r *HTMLReporter) CreateHugoWorkingDirectory(sharedDataDir string, baseURL 
 	}
 
 	// save content and data in the cache directory:
-	if len(r.cacheDir) == 0 {
-		return "", fmt.Errorf("no cache directory specified - it is required")
-	}
-
-	for _, folder := range []string{"content", "data"} {
-		cachePath := path.Join(r.cacheDir, folder)
-		// create the folder in the cache directory (it may exist, that is not an error):
-		if err := os.MkdirAll(cachePath, 0700); err != nil {
-			return "", fmt.Errorf("error creating folder \"%s\" in cache directory: %v", folder, err)
-		}
-		// symlink it to the temp working directory:
-		link := path.Join(tmpWorkDir, folder)
-		if err := os.Symlink(cachePath, link); err != nil {
-			return "", fmt.Errorf("unable to link folder \"%s\" from the cache directory to the temporary working directory: %v", folder, err)
-		}
+	if err := prepareCache(r.cacheDir, tmpWorkDir); err != nil {
+		return "", fmt.Errorf("Failed to prepare cache : %v", err)
 	}
 
 	linksfromTo[path.Join(sharedDataDir, skeletonDir, "archetypes")] = "archetypes"
