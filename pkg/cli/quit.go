@@ -23,7 +23,9 @@ var quitCmd = &cobra.Command{
 	Long:  `Run quit if you want to quit qmstr.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !nocopy {
-			copyResults()
+			if err := copyResults(); err != nil {
+				Log.Fatalf("copying results failed: %v", err)
+			}
 		}
 		setUpServer()
 		quitServer()
