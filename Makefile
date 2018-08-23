@@ -31,6 +31,10 @@ ifdef http_proxy
 	DOCKER_PROXY = --build-arg http_proxy=$(http_proxy)
 endif
 
+ifdef https_proxy
+	DOCKER_PROXY += --build-arg https_proxy=$(https_proxy)
+endif
+
 .PHONY: all
 all: $(QMSTR_GO_BINARIES) $(QMSTR_GO_MODULES) $(QMSTR_PYTHON_MODULES)
 
