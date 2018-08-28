@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -79,7 +80,10 @@ func ReadConfigFromFiles(configfiles ...string) (*MasterConfig, error) {
 			return nil, err
 		}
 
-		readConfig(data, config)
+		if err := readConfig(data, config); err != nil {
+			return nil, fmt.Errorf("Failed to read config from %s: %v", configfile, err)
+		}
+
 	}
 
 	if fileNotExistCount == len(configfiles) {
