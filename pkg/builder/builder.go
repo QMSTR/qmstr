@@ -1,4 +1,4 @@
-package compiler
+package builder
 
 import (
 	"log"
@@ -8,21 +8,21 @@ import (
 	"github.com/QMSTR/qmstr/pkg/wrapper"
 )
 
-type Compiler interface {
+type Builder interface {
 	Analyze(commandline []string) (*pb.BuildMessage, error)
 }
 
-type GeneralCompiler struct {
+type GeneralBuilder struct {
 	logger *log.Logger
 	debug  bool
 }
 
-func GetCompiler(prog string, workDir string, logger *log.Logger, debug bool) Compiler {
+func GetBuilder(prog string, workDir string, logger *log.Logger, debug bool) Builder {
 	switch prog {
 	case "gcc", "g++":
-		return NewGccCompiler(workDir, logger, debug)
+		return NewGccBuilder(workDir, logger, debug)
 	default:
-		log.Printf("Compiler %s not available", prog)
+		log.Printf("Builder %s not available", prog)
 	}
 
 	return nil

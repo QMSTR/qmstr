@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/QMSTR/qmstr/pkg/compiler"
+	"github.com/QMSTR/qmstr/pkg/builder"
 	pb "github.com/QMSTR/qmstr/pkg/service"
 	"github.com/QMSTR/qmstr/pkg/wrapper"
 	"golang.org/x/net/context"
@@ -69,14 +69,14 @@ func main() {
 
 	w := wrapper.NewWrapper(commandLine, logger, debug)
 	w.Wrap()
-	compiler := compiler.GetCompiler(w.Program, workingDir, logger, debug)
-	buildMsg, err := compiler.Analyze(commandLine)
+	build := builder.GetBuilder(w.Program, workingDir, logger, debug)
+	buildMsg, err := build.Analyze(commandLine)
 	if err == nil {
-		send_result(buildMsg)
+		sendResult(buildMsg)
 	}
 }
 
-func send_result(buildmsg *pb.BuildMessage) error {
+func sendResult(buildmsg *pb.BuildMessage) error {
 	r, err := buildServiceClient.Build(context.Background(), buildmsg)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
