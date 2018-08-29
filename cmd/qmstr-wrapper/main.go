@@ -1,4 +1,3 @@
-//go:generate protoc -I ../../proto --go_out=plugins=grpc:../../pkg/service ../../proto/datamodel.proto ../../proto/analyzerservice.proto ../../proto/buildservice.proto ../../proto/controlservice.proto  ../../proto/reportservice.proto
 package main
 
 import (
@@ -7,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/QMSTR/qmstr/pkg/builder"
+	"github.com/QMSTR/qmstr/pkg/logging"
 	pb "github.com/QMSTR/qmstr/pkg/service"
 	"github.com/QMSTR/qmstr/pkg/wrapper"
 	"golang.org/x/net/context"
@@ -31,7 +30,7 @@ var address = "localhost:50051"
 
 func initLogging() {
 	var infoWriter io.Writer
-	infoWriter = wrapper.NewRemoteLogWriter(controlServiceClient)
+	infoWriter = logging.NewRemoteLogWriter(controlServiceClient)
 	logger = log.New(infoWriter, "", log.Ldate|log.Ltime)
 }
 
@@ -67,10 +66,12 @@ func main() {
 		logger.Printf("Wrapper running in %s", workingDir)
 	}
 
-	w := wrapper.NewWrapper(commandLine, logger, debug)
+	w, err := wrapper.NewWrapper(commandLine, workingDir, logger, debug)
+	if err != nil {
+		log.Fatalf("failed to create wrapper for %s: %v", commandLine, err)
+	}
 	w.Wrap()
-	build := builder.GetBuilder(w.Program, workingDir, logger, debug)
-	buildMsg, err := build.Analyze(commandLine)
+	buildMsg, err := w.Builder.Analyze(commandLine)
 	if err == nil {
 		sendResult(buildMsg)
 	}
