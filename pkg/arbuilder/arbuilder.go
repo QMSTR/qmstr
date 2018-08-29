@@ -19,6 +19,10 @@ func NewArBuilder(workDir string, logger *log.Logger, debug bool) *ArBuilder {
 	return &ArBuilder{[]string{}, "", workDir, builder.GeneralBuilder{logger, debug}}
 }
 
-func (g *ArBuilder) Analyze(commandline []string) (*service.BuildMessage, error) {
+func (a *ArBuilder) Analyze(commandline []string) (*service.BuildMessage, error) {
 	return nil, fmt.Errorf("failed to analyze \"%s\"", commandline)
+}
+
+func (a *ArBuilder) GetName() string {
+	return "GNU ar builder"
 }
