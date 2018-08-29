@@ -1,4 +1,4 @@
-package builder_test
+package gccbuilder_test
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/QMSTR/qmstr/pkg/builder"
+	builder "github.com/QMSTR/qmstr/pkg/gccbuilder"
 )
 
 func getTestCompiler() *builder.GccBuilder {

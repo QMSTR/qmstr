@@ -1,11 +1,14 @@
 package builder
 
 import (
+	"crypto/sha1"
+	"fmt"
+	"io"
 	"log"
+	"os"
 	"path/filepath"
 
 	pb "github.com/QMSTR/qmstr/pkg/service"
-	"github.com/QMSTR/qmstr/pkg/wrapper"
 )
 
 type Builder interface {
@@ -13,28 +16,44 @@ type Builder interface {
 }
 
 type GeneralBuilder struct {
-	logger *log.Logger
-	debug  bool
-}
-
-func GetBuilder(prog string, workDir string, logger *log.Logger, debug bool) Builder {
-	switch prog {
-	case "gcc", "g++":
-		return NewGccBuilder(workDir, logger, debug)
-	default:
-		log.Printf("Builder %s not available", prog)
-	}
-
-	return nil
+	Logger *log.Logger
+	Debug  bool
 }
 
 func NewFileNode(path string, fileType string) *pb.FileNode {
 	filename := filepath.Base(path)
-	hash, err := wrapper.Hash(path)
+	hash, err := hash(path)
 	broken := false
 	if err != nil {
 		hash = "nohash" + path
 		broken = true
 	}
 	return &pb.FileNode{NodeType: pb.NodeTypeFileNode, Name: filename, Type: fileType, Path: path, Hash: hash, Broken: broken}
+}
+
+func hash(fileName string) (string, error) {
+	h := sha1.New()
+	f, err := os.Open(fileName)
+	if err != nil {
+		return "", err
+	}
+	buf := make([]byte, 0, 4*1024)
+	for {
+		n, err := f.Read(buf[:cap(buf)])
+		buf = buf[:n]
+		if n == 0 {
+			if err == nil {
+				continue
+			}
+			if err == io.EOF {
+				break
+			}
+			return "", err
+		}
+		h.Write(buf)
+		if err != nil && err != io.EOF {
+			return "", err
+		}
+	}
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }

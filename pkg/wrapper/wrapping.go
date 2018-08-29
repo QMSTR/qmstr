@@ -10,6 +10,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"syscall"
+
+	"github.com/QMSTR/qmstr/pkg/builder"
+	"github.com/QMSTR/qmstr/pkg/gccbuilder"
 )
 
 // Wrapper represents a wrapper to call a program
@@ -18,17 +21,31 @@ type Wrapper struct {
 	Program         string
 	commandlineArgs []string
 	debug           bool
+	Builder         builder.Builder
 }
 
 // NewWrapper returns an instance of a Wrapper for the given command line
-func NewWrapper(commandline []string, logger *log.Logger, debug bool) *Wrapper {
+func NewWrapper(commandline []string, workdir string, logger *log.Logger, debug bool) (*Wrapper, error) {
 	// extract the compiler that was supposed to run
 	w := Wrapper{}
 	w.logger = logger
 	w.Program = filepath.Base(commandline[0])
 	//extract the arguments
 	w.commandlineArgs = commandline[1:]
-	return &w
+	b, err := getBuilder(w.Program, workdir, logger, debug)
+	if err != nil {
+		return nil, err
+	}
+	w.Builder = b
+	return &w, nil
+}
+
+func getBuilder(prog string, workDir string, logger *log.Logger, debug bool) (builder.Builder, error) {
+	switch prog {
+	case "gcc", "g++":
+		return gccbuilder.NewGccBuilder(workDir, logger, debug), nil
+	}
+	return nil, fmt.Errorf("Builder %s not available", prog)
 }
 
 // Wrap calls the actual program to be wrapped and preserves output and return value
