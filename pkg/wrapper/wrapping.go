@@ -55,10 +55,10 @@ func (w *Wrapper) Wrap() {
 		log.Fatal("This is not how you should invoke the qmstr-wrapper.\n\tSee https://github.com/QMSTR/qmstr for more information on how to use the QMSTR.")
 	}
 
-	// find and run actual compiler
+	// find and run actual program
 	actualProg, err := FindActualProgram(w.Program)
 	if err != nil {
-		log.Fatalf("Actual compiler was not found. %v", err)
+		log.Fatalf("Actual executable was not found. %v", err)
 	}
 	cmd := exec.Command(actualProg, w.commandlineArgs...)
 	var stdoutbuf, stderrbuf bytes.Buffer
