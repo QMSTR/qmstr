@@ -35,7 +35,8 @@ var (
 	// Debug receives log messages in verbose mode
 	Debug *golog.Logger
 	// Log is the standard logger
-	Log *golog.Logger
+	Log         *golog.Logger
+	wrappedCmds []string = []string{"gcc", "ar"}
 )
 
 func main() {
@@ -164,7 +165,6 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	envvars["gcc"] = []string{"CMAKE_LINKER", "CC"}
 
 	// create the symlinks to qmstr-wrapper in there
-	wrappedCmds := []string{"gcc"}
 	symlinks := make(map[string]string)
 	for _, cmd := range wrappedCmds {
 		symlink := path.Join(binDir, cmd)
