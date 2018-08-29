@@ -39,7 +39,6 @@ var (
 )
 
 func main() {
-	fmt.Fprintln(os.Stderr, "WARNING: \"easy mode\" is work in progress! We *think* it works :-)")
 	options.progName = os.Args[0]
 	flag.BoolVar(&options.keepTmpDirectories, "keep", false, "Keep the created directories instead of cleaning up.")
 	flag.BoolVar(&options.verbose, "verbose", false, "Enable diagnostic log output.")
