@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"syscall"
 
+	"github.com/QMSTR/qmstr/pkg/arbuilder"
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/gccbuilder"
 )
@@ -44,6 +45,8 @@ func getBuilder(prog string, workDir string, logger *log.Logger, debug bool) (bu
 	switch prog {
 	case "gcc", "g++":
 		return gccbuilder.NewGccBuilder(workDir, logger, debug), nil
+	case "ar":
+		return arbuilder.NewArBuilder(workDir, logger, debug), nil
 	}
 	return nil, fmt.Errorf("Builder %s not available", prog)
 }
