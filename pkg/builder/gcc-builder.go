@@ -1,4 +1,4 @@
-package compiler
+package builder
 
 import (
 	"errors"
@@ -86,7 +86,7 @@ var (
 	}
 )
 
-type GccCompiler struct {
+type GccBuilder struct {
 	Mode     mode
 	Input    []string
 	Output   []string
@@ -94,14 +94,14 @@ type GccCompiler struct {
 	LinkLibs []string
 	LibPath  []string
 	Args     []string
-	GeneralCompiler
+	GeneralBuilder
 }
 
-func NewGccCompiler(workDir string, logger *log.Logger, debug bool) *GccCompiler {
-	return &GccCompiler{Link, []string{}, []string{}, workDir, []string{}, []string{}, []string{}, GeneralCompiler{logger, debug}}
+func NewGccBuilder(workDir string, logger *log.Logger, debug bool) *GccBuilder {
+	return &GccBuilder{Link, []string{}, []string{}, workDir, []string{}, []string{}, []string{}, GeneralBuilder{logger, debug}}
 }
 
-func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
+func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 	if g.debug {
 		g.logger.Printf("Parsing commandline %v", commandline)
 	}
@@ -158,7 +158,7 @@ func (g *GccCompiler) Analyze(commandline []string) (*pb.BuildMessage, error) {
 	}
 }
 
-func (g *GccCompiler) cleanCmdLine(args []string) {
+func (g *GccBuilder) cleanCmdLine(args []string) {
 	clearIdxSet := map[int]struct{}{}
 	for idx, arg := range args {
 
@@ -235,7 +235,7 @@ func (g *GccCompiler) cleanCmdLine(args []string) {
 	g.Args = args
 }
 
-func (g *GccCompiler) parseCommandLine(args []string) {
+func (g *GccBuilder) parseCommandLine(args []string) {
 	if g.debug {
 		g.logger.Printf("Parsing arguments: %v", args)
 	}

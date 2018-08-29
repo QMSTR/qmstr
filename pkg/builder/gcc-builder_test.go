@@ -1,4 +1,4 @@
-package compiler_test
+package builder_test
 
 import (
 	"fmt"
@@ -6,17 +6,17 @@ import (
 	"os"
 	"testing"
 
-	"github.com/QMSTR/qmstr/pkg/compiler"
+	"github.com/QMSTR/qmstr/pkg/builder"
 )
 
-func getTestCompiler() *compiler.GccCompiler {
-	return compiler.NewGccCompiler("/tmp", log.New(os.Stdout, "TESTING ", log.LstdFlags), false)
+func getTestCompiler() *builder.GccBuilder {
+	return builder.NewGccBuilder("/tmp", log.New(os.Stdout, "TESTING ", log.LstdFlags), false)
 }
 
 func TestAssembleOnly(t *testing.T) {
 	gcc := getTestCompiler()
 	gcc.Analyze([]string{"gcc", "-c", "a.c"})
-	if gcc.Mode != compiler.Assemble {
+	if gcc.Mode != builder.Assemble {
 		t.Fail()
 	}
 }
@@ -24,7 +24,7 @@ func TestAssembleOnly(t *testing.T) {
 func TestCompileOnly(t *testing.T) {
 	gcc := getTestCompiler()
 	gcc.Analyze([]string{"gcc", "-S", "a.c"})
-	if gcc.Mode != compiler.Compile {
+	if gcc.Mode != builder.Compile {
 		t.Fail()
 	}
 }
@@ -32,7 +32,7 @@ func TestCompileOnly(t *testing.T) {
 func TestPreProcessorOnly(t *testing.T) {
 	gcc := getTestCompiler()
 	gcc.Analyze([]string{"gcc", "-E", "a.c"})
-	if gcc.Mode != compiler.Preproc {
+	if gcc.Mode != builder.Preproc {
 		t.Fail()
 	}
 }
