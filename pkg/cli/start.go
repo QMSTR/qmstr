@@ -68,7 +68,9 @@ func startMaster(cmd *cobra.Command, args []string) {
 
 	config, err := getConfig()
 	if err != nil {
-		Log.Fatalf("failed to read configuration %v", err)
+		Log.Printf("Failed to read configuration %v", err)
+		fmt.Printf("Failed to read configuration %v", err)
+		os.Exit(ReturnCodeResponseFalseError)
 	}
 
 	// overwrite buildconfig if set via commandline
