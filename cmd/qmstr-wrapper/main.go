@@ -74,6 +74,8 @@ func main() {
 	buildMsg, err := w.Builder.Analyze(commandLine)
 	if err == nil {
 		sendResult(buildMsg)
+	} else {
+		logger.Printf("%s failed for \"%s\": %v", w.Builder.GetName(), commandLine, err)
 	}
 }
 

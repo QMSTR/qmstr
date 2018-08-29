@@ -13,6 +13,7 @@ import (
 
 type Builder interface {
 	Analyze(commandline []string) (*pb.BuildMessage, error)
+	GetName() string
 }
 
 type GeneralBuilder struct {

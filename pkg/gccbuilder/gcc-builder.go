@@ -104,6 +104,10 @@ func NewGccBuilder(workDir string, logger *log.Logger, debug bool) *GccBuilder {
 	return &GccBuilder{Link, []string{}, []string{}, workDir, []string{}, []string{}, []string{}, builder.GeneralBuilder{logger, debug}}
 }
 
+func (g *GccBuilder) GetName() string {
+	return "GNU C compiler builder"
+}
+
 func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 	if g.Debug {
 		g.Logger.Printf("Parsing commandline %v", commandline)
