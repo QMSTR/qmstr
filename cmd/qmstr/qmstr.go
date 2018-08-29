@@ -127,6 +127,7 @@ func Run(payloadCmd []string) int {
 		exitCode, err := RunPayloadCommand(payloadCmd[0], payloadCmd[1:]...)
 		if err != nil {
 			Debug.Printf("payload command exited with non-zero exit code: %v", exitCode)
+			fmt.Print(err)
 		}
 		return exitCode
 	}
@@ -209,12 +210,14 @@ func RunPayloadCommand(command string, arguments ...string) (int, error) {
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
-	err := cmd.Run()
-	switch value := err.(type) {
-	case *exec.ExitError:
-		ws := value.Sys().(syscall.WaitStatus)
-		return ws.ExitStatus(), fmt.Errorf("command finished with error: %v", err)
-	default:
-		return 0, nil
+	if err := cmd.Run(); err != nil {
+		switch value := err.(type) {
+		case *exec.ExitError:
+			ws := value.Sys().(syscall.WaitStatus)
+			return ws.ExitStatus(), err
+		default:
+			return 1, err
+		}
 	}
+	return 0, nil
 }
