@@ -15,7 +15,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
-var queryType = "linkedtarget"
+var queryTypes = "linkedtarget"
 
 type PkgAnalyzer struct {
 	targetsSlice []string
@@ -43,54 +43,58 @@ func (pkganalyzer *PkgAnalyzer) Configure(configMap map[string]string) error {
 	}
 	pkganalyzer.targetsDir = configMap["targetdir"]
 
-	if typeSelector, ok := configMap["selector"]; ok {
-		queryType = typeSelector
+	if typeSelector, ok := configMap["selectors"]; ok {
+		queryTypes = typeSelector
 	}
 	return nil
 }
 
 // Analyze finds the targets in db which we are going to connect to the package node
 func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
-	queryNode := &service.FileNode{Type: queryType}
 
 	pkgNode, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
 	if err != nil {
 		return err
 	}
 
-	stream, err := controlService.GetFileNode(context.Background(), queryNode)
-	if err != nil {
-		log.Printf("Could not get file node %v", err)
-		return err
-	}
-
+	queryTypesArr := strings.Split(queryTypes, ";")
 	FileNodeMsgs := []*service.FileNodeMessage{}
 
-	for {
-		fileNode, err := stream.Recv()
-		if err == io.EOF {
-			break
+	for _, t := range queryTypesArr {
+		queryNode := &service.FileNode{Type: t}
+
+		stream, err := controlService.GetFileNode(context.Background(), queryNode)
+		if err != nil {
+			log.Printf("Could not get file node %v", err)
+			return err
 		}
 
-		for _, target := range pkganalyzer.targetsSlice {
-			re := regexp.MustCompile(filepath.Join(pkganalyzer.targetsDir, target))
-			if re.MatchString(fileNode.Path) {
-				log.Printf("Adding node %v to package targets.", fileNode.Path)
-				FileNodeMsgs = append(FileNodeMsgs, &service.FileNodeMessage{Token: token, Uid: pkgNode.Uid, Filenode: fileNode})
+		for {
+			fileNode, err := stream.Recv()
+			if err == io.EOF {
 				break
+			}
+
+			for _, target := range pkganalyzer.targetsSlice {
+				re := regexp.MustCompile(filepath.Join(pkganalyzer.targetsDir, target))
+				if re.MatchString(fileNode.Path) {
+					log.Printf("Adding node %v to package targets.", fileNode.Path)
+					FileNodeMsgs = append(FileNodeMsgs, &service.FileNodeMessage{Token: token, Uid: pkgNode.Uid, Filenode: fileNode})
+					break
+				}
 			}
 		}
 	}
 
-	send_stream, err := analysisService.SendFileNodes(context.Background())
+	sendStream, err := analysisService.SendFileNodes(context.Background())
 	if err != nil {
 		return err
 	}
 	for _, fnodeMsg := range FileNodeMsgs {
-		send_stream.Send(fnodeMsg)
+		sendStream.Send(fnodeMsg)
 	}
 
-	reply, err := send_stream.CloseAndRecv()
+	reply, err := sendStream.CloseAndRecv()
 	if err != nil {
 		return err
 	}
