@@ -12,7 +12,7 @@ defaultContentLanguageInSubdir= true
   description = "Quartermaster Report"
   author = "The Quartermaster Dev Team"
   showVisitedLinks = true
-  themeVariant = "green"
+  themeVariant = "mine"
 
 [outputs]
 home = [ "HTML", "RSS", "JSON"]
