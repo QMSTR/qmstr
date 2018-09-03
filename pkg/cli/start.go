@@ -47,6 +47,11 @@ var buildConfig string
 
 func getConfig() (*config.MasterConfig, error) {
 	var err error
+
+	if _, err := os.Stat(configFile); err != nil {
+		return nil, err
+	}
+
 	configFile, err = filepath.Abs(configFile)
 	if err != nil {
 		return nil, err
