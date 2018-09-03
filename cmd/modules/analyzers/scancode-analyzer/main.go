@@ -203,8 +203,15 @@ func (scanalyzer *ScancodeAnalyzer) detectLicenses(srcFilePath string) ([]*servi
 					},
 				}
 
-				spdxIdent := license["spdx_license_key"].(string)
+				name := license["short_name"].(string)
+				if name != "" {
+					tempDataNodes = append(tempDataNodes, &service.InfoNode_DataNode{
+						Type: "name",
+						Data: name,
+					})
+				}
 
+				spdxIdent := license["spdx_license_key"].(string)
 				if spdxIdent != "" {
 					tempDataNodes = append(tempDataNodes, &service.InfoNode_DataNode{
 						Type: "spdxIdentifier",
