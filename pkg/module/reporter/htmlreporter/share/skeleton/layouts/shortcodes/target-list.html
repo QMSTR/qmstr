@@ -10,13 +10,13 @@
     <table>
         <tr>
             <th>File</th>
-            <th>SPDX Identifier</th>
+            <th>License</th>
             <th>Authors</th>
         </tr>
         {{ range .sources }}
         <tr>
             <td>{{ .file }}</td>
-            <td>{{ .license.spdxIdentifier }}</td>
+            <td>{{ .license.name }}</td>
             <td>{{ delimit .authors ", " }}</td>
         </tr>
         {{ end }}
