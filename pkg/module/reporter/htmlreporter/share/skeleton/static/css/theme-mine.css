@@ -102,3 +102,27 @@ a:hover {
     border-color: var(--MENU-SECTION-HR-color);
 }
 
+.tooltip {
+	color: var(--MENU-HEADER-BG-color);
+	text-decoration: underline;
+	cursor: help;
+	position: relative;
+}
+
+.tooltip span[rel=tooltip] {
+	display: none;
+}
+
+.tooltip:hover span[rel=tooltip] {
+	display: block;
+	position: absolute;
+	bottom: 1em;
+	left: -6em;
+	width: 15em;
+	padding: 0.5em;
+	z-index: 100;
+	color:  var(--MAIN-TEXT-color);
+	background-color: var(--MENU-HEADER-BG-color);
+	border: solid 1px var(--MENU-HEADER-BORDER-color);
+	border-radius: 0.2em;
+}
