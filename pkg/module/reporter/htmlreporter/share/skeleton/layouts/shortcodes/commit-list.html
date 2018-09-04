@@ -6,9 +6,9 @@
     <th>Author</th>
     <th>Description</th>
   </tr>
-  {{ range .Page.Sections }}
+  {{ range sort .Page.Sections }}
   <tr>
-    <td><a href="{{ .URL }}">{{ substr .Params.title 0 8 | upper }}</a></td>
+    <td><a href="{{ .URL }}">{{ substr .Params.title 0 20 | upper }}</a></td>
     <td>{{ .Params.author }}</td>
     <td>{{ .Params.summary }}</td>
   </tr>
