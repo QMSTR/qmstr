@@ -3,6 +3,9 @@ package common
 import (
 	"os"
 	"path/filepath"
+	"strings"
+
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 func BuildCleanPath(base string, subpath string, abs bool) string {
@@ -40,4 +43,16 @@ func exists(file string) bool {
 		return true
 	}
 	return false
+}
+
+func SetRelativePath(node *service.FileNode, buildPath string, pathSub []*service.PathSubstitution) error {
+	for _, substitution := range pathSub {
+		node.Path = strings.Replace(node.Path, substitution.Old, substitution.New, 1)
+	}
+	relPath, err := filepath.Rel(buildPath, node.Path)
+	if err != nil {
+		return err
+	}
+	node.Path = relPath
+	return nil
 }

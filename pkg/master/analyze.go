@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
 	"github.com/QMSTR/qmstr/pkg/service"
@@ -139,12 +140,11 @@ func (phase *serverPhaseAnalysis) SendFileNodes(stream service.AnalysisService_S
 		}
 		fileNode := fileNodeReq.Filenode
 		fileNode.NodeType = service.NodeTypeFileNode
-		relPath, err := filepath.Rel(phase.masterConfig.Server.BuildPath, fileNode.Path)
+		err = common.SetRelativePath(fileNode, phase.masterConfig.Server.BuildPath, nil)
 		if err != nil {
 			return err
 		}
 
-		fileNode.Path = relPath
 		log.Printf("Adding file node %v to package targets.", fileNode.Path)
 		err = phase.db.AddFileNodes(fileNodeReq.Uid, fileNode)
 		if err != nil {

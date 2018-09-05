@@ -2,9 +2,8 @@ package master
 
 import (
 	"log"
-	"path/filepath"
-	"strings"
 
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
 	"github.com/QMSTR/qmstr/pkg/service"
@@ -34,15 +33,19 @@ func (phase *serverPhaseBuild) GetPhaseID() int32 {
 }
 
 func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
+	buildPath := phase.masterConfig.Server.BuildPath
+	pathSub := phase.masterConfig.Server.PathSub
 	for _, node := range in.FileNodes {
-		for _, substitution := range phase.masterConfig.Server.PathSub {
-			node.Path = strings.Replace(node.Path, substitution.Old, substitution.New, 1)
-		}
-		relPath, err := filepath.Rel(phase.masterConfig.Server.BuildPath, node.Path)
+		err := common.SetRelativePath(node, buildPath, pathSub)
 		if err != nil {
 			return nil, err
 		}
-		node.Path = relPath
+		for _, derNode := range node.DerivedFrom {
+			err := common.SetRelativePath(derNode, buildPath, pathSub)
+			if err != nil {
+				return nil, err
+			}
+		}
 		log.Printf("Adding file node %s", node.Path)
 		phase.db.AddFileNode(node)
 	}
