@@ -20,10 +20,11 @@ const (
 )
 
 var (
-	testnode     *service.FileNode
-	pkgNode      *service.PackageNode
-	tests        []string
-	testfunction func(*testing.T)
+	testnode        *service.FileNode
+	pkgNode         *service.PackageNode
+	tests           []string
+	testfunction    func(*testing.T)
+	expectedTargets []string
 )
 
 type TestAnalyzer struct{}
@@ -85,9 +86,11 @@ func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceC
 		if test == "TestPackageNode" {
 			testfunction = TestPackageNode
 		} else if test == "TestCalcBuildGraph" {
-			testfunction = TestCalcBuildGraph
+			expectedTargets = []string{"Calculator/calc", "Calculator/libcalc.so"}
+			testfunction = TestBuildGraph
 		} else if test == "TestCurlBuildGraph" {
-			testfunction = TestCurlBuildGraph
+			expectedTargets = []string{"curl/build/src/curl", "curl/build/lib/libcurl.so"}
+			testfunction = TestBuildGraph
 		} else {
 			log.Printf("Unknown test. Please check the test name provided in the configuration.")
 			os.Exit(master.ReturnAnalyzerFailed)
@@ -153,8 +156,7 @@ func TestPackageNode(t *testing.T) {
 	}
 }
 
-func TestCurlBuildGraph(t *testing.T) {
-	expectedTargets := []string{"/buildroot/curl/build/src/curl", "/buildroot/curl/build/lib/libcurl.so"}
+func TestBuildGraph(t *testing.T) {
 	if len(pkgNode.Targets) < 2 {
 		t.Logf("Package node '%v' is not connected to all the configured linked targets", pkgNode.Name)
 		t.Fail()
@@ -166,16 +168,5 @@ func TestCurlBuildGraph(t *testing.T) {
 				t.Fail()
 			}
 		}
-	}
-}
-
-func TestCalcBuildGraph(t *testing.T) {
-	expectedTarget := "/buildroot/Calculator/calc"
-	if len(pkgNode.Targets) < 1 {
-		t.Logf("Package node '%v' is not connected to any linked targets", pkgNode.Name)
-		t.Fail()
-	} else if pkgNode.Targets[0].Path != expectedTarget {
-		t.Logf("Package node %v is not connected to calc linked target", pkgNode.Name)
-		t.Fail()
 	}
 }
