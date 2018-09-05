@@ -78,7 +78,6 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 			for _, target := range pkganalyzer.targetsSlice {
 				re := regexp.MustCompile(filepath.Join(pkganalyzer.targetsDir, target))
 				if re.MatchString(fileNode.Path) {
-					log.Printf("Adding node %v to package targets.", fileNode.Path)
 					FileNodeMsgs = append(FileNodeMsgs, &service.FileNodeMessage{Token: token, Uid: pkgNode.Uid, Filenode: fileNode})
 					break
 				}
