@@ -8,7 +8,6 @@ import (
 	"math/rand"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/QMSTR/qmstr/pkg/config"
@@ -140,6 +139,13 @@ func (phase *serverPhaseAnalysis) SendFileNodes(stream service.AnalysisService_S
 		}
 		fileNode := fileNodeReq.Filenode
 		fileNode.NodeType = service.NodeTypeFileNode
+		relPath, err := filepath.Rel(phase.masterConfig.Server.BuildPath, fileNode.Path)
+		if err != nil {
+			return err
+		}
+
+		fileNode.Path = relPath
+		log.Printf("Adding file node %v to package targets.", fileNode.Path)
 		err = phase.db.AddFileNodes(fileNodeReq.Uid, fileNode)
 		if err != nil {
 			return err
@@ -159,9 +165,7 @@ func (phase *serverPhaseAnalysis) GetFileNode(in *service.FileNode, stream servi
 	}
 
 	for _, nodeFile := range nodeFiles {
-		for _, substitution := range phase.currentAnalyzer.PathSub {
-			nodeFile.Path = strings.Replace(nodeFile.Path, substitution.Old, substitution.New, 1)
-		}
+		nodeFile.Path = filepath.Join(phase.masterConfig.Server.BuildPath, nodeFile.Path)
 		stream.Send(nodeFile)
 	}
 	return nil

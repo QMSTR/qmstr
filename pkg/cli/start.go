@@ -81,6 +81,10 @@ func startMaster(cmd *cobra.Command, args []string) {
 		config.BuildConfig = buildConfig
 	}
 
+	if config.Server.BuildPath == "" {
+		config.Server.BuildPath = containerBuildDir
+	}
+
 	configuredImageName := config.Server.ImageName
 	if configuredImageName != "" {
 		Debug.Printf("using configured image %s", configuredImageName)

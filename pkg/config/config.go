@@ -37,6 +37,7 @@ type ServerConfig struct {
 	Debug      bool
 	ExtraEnv   map[string]string
 	ExtraMount map[string]string
+	BuildPath  string
 	PathSub    []*service.PathSubstitution
 }
 
