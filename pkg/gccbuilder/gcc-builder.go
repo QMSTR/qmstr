@@ -137,7 +137,7 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			g.Logger.Fatalf("Failed to collect dependencies: %v", err)
 		}
 		for _, actualLib := range actualLibs {
-			linkLib := builder.NewFileNode(actualLib, linkedTrg)
+			linkLib := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, actualLib, false), linkedTrg)
 			dependencies = append(dependencies, linkLib)
 		}
 		linkedTarget.DerivedFrom = dependencies
