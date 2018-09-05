@@ -16,9 +16,21 @@
         {{ range .sources }}
         <tr>
             <td>{{ .file }}</td>
-            <td><dfn class="tooltip"> {{ .license.name }}
+            <td><dfn class="tooltip"> 
+                {{ with .license.name }}
+                    {{ . }}
+                {{ else }}
+                    {{ .license.key }}
+                {{ end }}
                 <span rel="tooltip">
-                    <h6>{{ .license.name }}</h6>SPDX: {{ .license.spdxIdentifier }}
+                {{ with .license.name }}
+                    <h5>{{ . }}</h5>
+                {{ else }}
+                    <h5>{{ .license.key }}</h5>
+                {{ end }}
+                {{ with .license.spdxIdentifier }}
+                    SPDX: {{ . }}
+                {{ end }}
                 </span>
             </dfn></td>
             <td>{{ delimit .authors ", " }}</td>
