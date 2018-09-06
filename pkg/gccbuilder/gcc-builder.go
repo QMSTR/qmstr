@@ -66,6 +66,8 @@ var (
 		"-dumpversion":     struct{}{},
 		"-dM":              struct{}{},
 		"--version":        struct{}{},
+		"-undef":           struct{}{},
+		"-nostartfiles":    struct{}{},
 	}
 
 	stringArgs = map[string]struct{}{
