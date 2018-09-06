@@ -68,6 +68,7 @@ var (
 		"--version":        struct{}{},
 		"-undef":           struct{}{},
 		"-nostartfiles":    struct{}{},
+		"-remap":           struct{}{},
 	}
 
 	stringArgs = map[string]struct{}{
