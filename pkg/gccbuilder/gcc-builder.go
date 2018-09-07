@@ -178,8 +178,9 @@ func (g *GccBuilder) cleanCmdLine(args []string) {
 		}
 
 		// index string flags
-		if idx < len(args)-1 {
-			for key := range stringArgs {
+
+		for key := range stringArgs {
+			if idx < len(args)-1 {
 				if g.Debug {
 					g.Logger.Printf("Find %s string arg in %s with %s", key, fmt.Sprintf("%s %s ", arg, args[idx+1]), fmt.Sprintf("%s%s", key, stringArgsRE))
 				}
@@ -191,9 +192,9 @@ func (g *GccBuilder) cleanCmdLine(args []string) {
 					clearIdxSet[idx] = struct{}{}
 					clearIdxSet[idx+1] = struct{}{}
 				}
-				if strings.HasPrefix(arg, key) {
-					clearIdxSet[idx] = struct{}{}
-				}
+			}
+			if strings.HasPrefix(arg, key) {
+				clearIdxSet[idx] = struct{}{}
 			}
 		}
 
