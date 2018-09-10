@@ -326,11 +326,11 @@ func FindActualLibraries(libs []string, libpath []string) ([]string, error) {
 	switch runtime.GOOS {
 	case "linux":
 		libprefix = "lib"
-		libsuffix = []string{".so"}
+		libsuffix = []string{".so", ".a"}
 		syslibpath = []string{"/lib", "/usr/lib", "/usr/local/lib", "/lib64"}
 	case "darwin":
 		libprefix = "lib"
-		libsuffix = []string{".dylib", ".so"}
+		libsuffix = []string{".dylib", ".so", ".a"}
 		syslibpath = []string{"/usr/lib", "/usr/local/lib"}
 	case "windows":
 		libprefix = ""
