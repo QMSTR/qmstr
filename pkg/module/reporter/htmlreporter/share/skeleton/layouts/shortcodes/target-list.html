@@ -33,7 +33,7 @@
                 {{ end }}
                 </span>
             </dfn></td>
-            <td>{{ delimit .authors ", " }}</td>
+            <td>{{ with .authors }} {{ delimit . ", " }} {{ end }}</td>
         </tr>
         {{ end }}
     </table>
