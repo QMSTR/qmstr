@@ -178,7 +178,6 @@ func (g *GccBuilder) cleanCmdLine(args []string) {
 		}
 
 		// index string flags
-
 		for key := range stringArgs {
 			if idx < len(args)-1 {
 				if g.Debug {
