@@ -133,6 +133,10 @@ democontainer: container
 	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime $(DOCKER_PROXY) .
 	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target builder $(DOCKER_PROXY) .
 
+.PHONY: ratelimage
+ratelimage:
+	docker build -f ci/Dockerfile -t qmstr-ratel --target web $(DOCKER_PROXY) .
+
 .PHONY: pyqmstr-spdx-analyzer
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
 
