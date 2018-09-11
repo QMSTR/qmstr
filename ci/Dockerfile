@@ -89,8 +89,6 @@ RUN mkdir -p /go/bin
 COPY --from=builder /usr/local/bin/* /usr/local/bin/
 
 EXPOSE 50051
-# dgraph ratel web ui
-EXPOSE 8000
 
 VOLUME /buildroot
 
@@ -106,6 +104,19 @@ COPY ci/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
+# debug stage for container running ratel
+FROM ubuntu:18.04 as web
+
+RUN apt-get update
+RUN apt-get install -y socat
+COPY --from=runtime /usr/local/bin/dgraph-ratel /usr/local/bin/dgraph-ratel
+ADD ci/ratel-entrypoint.sh /entrypoint.sh
+
+EXPOSE 8000
+EXPOSE 8080
+
+CMD /entrypoint.sh
 
 # development container for the master and other tools, based on the runtime stage:
 # The $GOROOT/src directory can be mounted in as a volume, to allow testing of local changes.
