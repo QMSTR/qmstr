@@ -103,3 +103,19 @@ func TestCleanCommandlineStringArgs(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestLastFlagArg(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"gcc", "-c", "a.c", "b.c", "-DEXPORT_RPC_SYMBOLS"})
+	if fmt.Sprintf("%v", gcc.Args) != "[-c a.c b.c]" {
+		t.Fail()
+	}
+	gcc.Analyze([]string{"gcc", "-c", "a.c", "b.c", "-D", "EXPORT_RPC_SYMBOLS"})
+	if fmt.Sprintf("%v", gcc.Args) != "[-c a.c b.c]" {
+		t.Fail()
+	}
+	gcc.Analyze([]string{"gcc", "-c", "a.c", "b.c", "-D", "EXPORT_RPC_SYMBOLS=test"})
+	if fmt.Sprintf("%v", gcc.Args) != "[-c a.c b.c]" {
+		t.Fail()
+	}
+}
