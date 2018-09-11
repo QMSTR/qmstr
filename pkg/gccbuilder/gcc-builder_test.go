@@ -103,3 +103,19 @@ func TestCleanCommandlineStringArgs(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestLastArgFlag(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"gcc", "-DMACRO", "a.c", "b.c", "-DMACRO"})
+	if fmt.Sprintf("%v", gcc.Args) != "[a.c b.c]" {
+		t.Fail()
+	}
+	gcc.Analyze([]string{"gcc", "-D", "MACRO", "a.c", "b.c", "-D", "MACRO"})
+	if fmt.Sprintf("%v", gcc.Args) != "[a.c b.c]" {
+		t.Fail()
+	}
+	gcc.Analyze([]string{"gcc", "-D", "MACRO=test", "a.c", "b.c", "-D", "MACRO=test"})
+	if fmt.Sprintf("%v", gcc.Args) != "[a.c b.c]" {
+		t.Fail()
+	}
+}
