@@ -27,7 +27,7 @@ then
     exit 4
 fi
 
-ip=$(docker inspect --format '{{range .NetworkSettings.Networks}} {{.IPAddress}} {{end}}'  ${mastercontainer} | sed 's/\s*//g')
+ip=$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${mastercontainer})
 if [ -z "${ip}" ]
 then
     echo "ip not found" 1>&2
