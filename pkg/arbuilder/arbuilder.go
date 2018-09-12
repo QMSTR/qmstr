@@ -45,6 +45,10 @@ func NewArBuilder(workDir string, logger *log.Logger, debug bool) *ArBuilder {
 	return &ArBuilder{Undef, "", nil, []string{}, "", workDir, builder.GeneralBuilder{logger, debug}}
 }
 
+func (a *ArBuilder) GetPrefix() (string, error) {
+	return "", errors.New("ar not prefixed")
+}
+
 func (a *ArBuilder) Analyze(commandline []string) (*service.BuildMessage, error) {
 	if len(commandline) < 3 {
 		return nil, fmt.Errorf("failed to analyze \"%s\" too few arguments", commandline)

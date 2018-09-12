@@ -14,6 +14,7 @@ import (
 type Builder interface {
 	Analyze(commandline []string) (*pb.BuildMessage, error)
 	GetName() string
+	GetPrefix() (string, error)
 }
 
 type GeneralBuilder struct {

@@ -13,7 +13,6 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/arbuilder"
 	"github.com/QMSTR/qmstr/pkg/builder"
-	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/gccbuilder"
 )
 
@@ -66,7 +65,7 @@ func (w *Wrapper) Wrap() {
 	}
 
 	// setup next compiler wrapper
-	if prefix, ok := os.LookupEnv(common.QMSTRPREFIXENV); ok {
+	if prefix, err := w.Builder.GetPrefix(); err == nil {
 		w.logger.Printf("Using chained compiler wrapper %s", prefix)
 		w.commandlineArgs = append([]string{actualProg}, w.commandlineArgs...)
 		actualProg = prefix

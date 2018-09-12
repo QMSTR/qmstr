@@ -56,3 +56,20 @@ func SetRelativePath(node *service.FileNode, buildPath string, pathSub []*servic
 	node.Path = relPath
 	return nil
 }
+
+// FindExecutablesOnPath finds and returns all reachable executables for the given progname
+func FindExecutablesOnPath(progname string) []string {
+	var paths []string
+	path := os.Getenv("PATH")
+	for _, dir := range filepath.SplitList(path) {
+		if dir == "" {
+			// Unix shell semantics: path element "" means "."
+			dir = "."
+		}
+		path := filepath.Join(dir, progname)
+		if err := CheckExecutable(path); err == nil {
+			paths = append(paths, path)
+		}
+	}
+	return paths
+}
