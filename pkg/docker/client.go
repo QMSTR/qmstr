@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/user"
 
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
@@ -26,13 +27,12 @@ type ClientContainer struct {
 func RunClientContainer(ctx context.Context, cli *client.Client, clientConfig *ClientContainer) error {
 	log.Printf("connecting to master container %s", clientConfig.MasterContainerID)
 
-	const containerBuildDir = "/buildroot"
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("unable to determine current working directory")
 	}
 	hostConf := &container.HostConfig{
-		Mounts:      []mount.Mount{mount.Mount{Source: wd, Target: containerBuildDir, Type: mount.TypeBind}},
+		Mounts:      []mount.Mount{mount.Mount{Source: wd, Target: common.ContainerBuildDir, Type: mount.TypeBind}},
 		NetworkMode: container.NetworkMode(fmt.Sprintf("container:%s", clientConfig.MasterContainerID)),
 	}
 
