@@ -6,16 +6,12 @@ import (
 	"log"
 	"os"
 
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/logging"
 	pb "github.com/QMSTR/qmstr/pkg/service"
 	"github.com/QMSTR/qmstr/pkg/wrapper"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-)
-
-const (
-	addrEnv  = "QMSTR_MASTER"
-	debugEnv = "QMSTR_DEBUG"
 )
 
 var (
@@ -35,11 +31,11 @@ func initLogging() {
 }
 
 func main() {
-	_, debug = os.LookupEnv(debugEnv)
-	_, difAddress := os.LookupEnv(addrEnv)
+	_, debug = os.LookupEnv(common.QMSTRDEBUGENV)
+	_, difAddress := os.LookupEnv(common.QMSTRADDRENV)
 
 	if difAddress {
-		address = os.Getenv(addrEnv)
+		address = os.Getenv(common.QMSTRADDRENV)
 	}
 	// Set up server connection
 	conn, err := grpc.Dial(address, grpc.WithInsecure())

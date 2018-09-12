@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/master"
 
 	"github.com/QMSTR/qmstr/pkg/config"
@@ -127,7 +128,7 @@ func startMaster(cmd *cobra.Command, args []string) {
 		awaitServer()
 	}
 
-	fmt.Printf("export QMSTR_MASTER=%s\n", address)
+	fmt.Printf("export %s=%s\n", common.QMSTRADDRENV, address)
 	Debug.Println("Done.")
 }
 
