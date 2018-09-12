@@ -108,6 +108,15 @@ func NewGccBuilder(workDir string, logger *log.Logger, debug bool) *GccBuilder {
 	return &GccBuilder{Link, []string{}, []string{}, workDir, []string{}, []string{}, []string{}, builder.GeneralBuilder{logger, debug}}
 }
 
+func (a *GccBuilder) GetPrefix() (string, error) {
+	// setup ccache if possible
+	ccachePath := common.FindExecutablesOnPath("ccache")
+	if len(ccachePath) > 0 {
+		return ccachePath[0], nil
+	}
+	return "", errors.New("Ccache not found")
+}
+
 func (g *GccBuilder) GetName() string {
 	return "GNU C compiler builder"
 }

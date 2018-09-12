@@ -19,7 +19,7 @@ func FindActualProgram(prog string) (string, error) {
 		return "", fmt.Errorf("failed finding absolute path: %v", err)
 	}
 
-	paths := FindExecutablesOnPath(prog)
+	paths := common.FindExecutablesOnPath(prog)
 	countProgs := len(paths)
 	for i, path := range paths {
 		pathAbs, err := filepath.Abs(path)
@@ -41,21 +41,4 @@ func FindActualProgram(prog string) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("executable file %s not found in %v", prog, paths)
-}
-
-// FindExecutablesOnPath finds and returns all reachable executables for the given progname
-func FindExecutablesOnPath(progname string) []string {
-	var paths []string
-	path := os.Getenv("PATH")
-	for _, dir := range filepath.SplitList(path) {
-		if dir == "" {
-			// Unix shell semantics: path element "" means "."
-			dir = "."
-		}
-		path := filepath.Join(dir, progname)
-		if err := common.CheckExecutable(path); err == nil {
-			paths = append(paths, path)
-		}
-	}
-	return paths
 }

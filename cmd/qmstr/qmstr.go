@@ -13,8 +13,6 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/QMSTR/qmstr/pkg/wrapper"
-
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
 
@@ -154,15 +152,6 @@ func Run(payloadCmd []string) int {
 
 // SetupCompilerInstrumentation creates the QMSTR instrumentation symlinks in the given path
 func SetupCompilerInstrumentation(tmpWorkDir string) {
-	// setup ccache if possible
-	ccachePath := wrapper.FindExecutablesOnPath("ccache")
-	if len(ccachePath) == 0 {
-		Log.Printf("ccache not found")
-	} else {
-		Log.Printf("setting up ccache")
-		os.Setenv(common.QMSTRPREFIXENV, ccachePath[0])
-	}
-
 	executable, err := os.Executable()
 	if err != nil {
 		Log.Fatalf("unable to find myself: %v", err)
