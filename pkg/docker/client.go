@@ -20,6 +20,7 @@ type ClientContainer struct {
 	QmstrInternalPort uint16
 	Instdir           string
 	Cmd               []string
+	Env               []string
 }
 
 func RunClientContainer(ctx context.Context, cli *client.Client, clientConfig *ClientContainer) error {
@@ -41,11 +42,13 @@ func RunClientContainer(ctx context.Context, cli *client.Client, clientConfig *C
 	}
 	containerCmd = append(containerCmd, append([]string{"--"}, clientConfig.Cmd...)...)
 
+	clientConfig.Env = append([]string{fmt.Sprintf("QMSTR_MASTER=%s:%d", clientConfig.MasterContainerID[:12], clientConfig.QmstrInternalPort)}, clientConfig.Env...)
+
 	containerConf := &container.Config{
 		Image: clientConfig.Image,
 		Cmd:   containerCmd,
 		Tty:   true,
-		Env:   []string{fmt.Sprintf("QMSTR_MASTER=%s:%d", clientConfig.MasterContainerID[:12], clientConfig.QmstrInternalPort)},
+		Env:   clientConfig.Env,
 	}
 
 	user, err := user.Current()
