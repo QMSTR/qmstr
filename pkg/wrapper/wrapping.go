@@ -13,6 +13,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/arbuilder"
 	"github.com/QMSTR/qmstr/pkg/builder"
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/gccbuilder"
 )
 
@@ -61,8 +62,16 @@ func (w *Wrapper) Wrap() {
 	// find and run actual program
 	actualProg, err := FindActualProgram(w.Program)
 	if err != nil {
-		log.Fatalf("Actual executable was not found. %v", err)
+		log.Fatalf("actual executable was not found: %v", err)
 	}
+
+	// setup next compiler wrapper
+	if prefix, ok := os.LookupEnv(common.QMSTRPREFIXENV); ok {
+		w.logger.Printf("Using chained compiler wrapper %s", prefix)
+		w.commandlineArgs = append([]string{actualProg}, w.commandlineArgs...)
+		actualProg = prefix
+	}
+
 	cmd := exec.Command(actualProg, w.commandlineArgs...)
 	var stdoutbuf, stderrbuf bytes.Buffer
 	cmd.Stdout = &stdoutbuf
@@ -114,7 +123,7 @@ func (w *Wrapper) Wrap() {
 	go stdinHandler(stdin, stdinChannel)
 
 	if w.debug {
-		w.logger.Println("Starting wrapped program")
+		w.logger.Printf("Starting wrapped program [%s %s]\n", cmd.Path, cmd.Args[:])
 	}
 
 	err = cmd.Run()

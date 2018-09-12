@@ -13,6 +13,8 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/QMSTR/qmstr/pkg/wrapper"
+
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
 
@@ -152,6 +154,15 @@ func Run(payloadCmd []string) int {
 
 // SetupCompilerInstrumentation creates the QMSTR instrumentation symlinks in the given path
 func SetupCompilerInstrumentation(tmpWorkDir string) {
+	// setup ccache if possible
+	ccachePath := wrapper.FindExecutablesOnPath("ccache")
+	if len(ccachePath) == 0 {
+		Log.Printf("ccache not found")
+	} else {
+		Log.Printf("setting up ccache")
+		os.Setenv(common.QMSTRPREFIXENV, ccachePath[0])
+	}
+
 	executable, err := os.Executable()
 	if err != nil {
 		Log.Fatalf("unable to find myself: %v", err)
@@ -172,30 +183,25 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	}
 
 	// create a "bin" directory in the temporary directory
-	binDir := strings.TrimSpace(path.Join(tmpWorkDir, "bin"))
-	if err := os.Mkdir(binDir, 0700); err != nil {
-		Log.Fatalf("unable to create %v: %v", binDir, err)
+	binDir := strings.TrimSpace(filepath.Join(tmpWorkDir, "bin"))
+	if err := link(wrapperPath, binDir, wrappedCmds); err != nil {
+		Log.Fatalf("setting up instrumentation failed: %v", err)
 	}
 
+	// Setup environment variables
 	envvars := make(map[string][]string)
 	envvars["gcc"] = []string{"CMAKE_LINKER", "CC"}
 
-	// create the symlinks to qmstr-wrapper in there
-	symlinks := make(map[string]string)
-	for _, cmd := range wrappedCmds {
-		symlink := path.Join(binDir, cmd)
-		symlinks[symlink] = wrapperPath
+	files, err := ioutil.ReadDir(binDir)
+	for _, file := range files {
+		cmd := file.Name()
 		if envs, ok := envvars[cmd]; ok {
 			for _, envvar := range envs {
-				os.Setenv(envvar, symlink)
+				os.Setenv(envvar, filepath.Join(binDir, file.Name()))
 			}
 		}
 	}
-	for from, to := range symlinks {
-		if err := os.Symlink(to, from); err != nil {
-			Log.Fatalf("cannot symlink %s to %s: %v", from, to, err)
-		}
-	}
+
 	// extend the PATH variable to include the created bin/ directory
 	paths := filepath.SplitList(os.Getenv("PATH"))
 
@@ -206,6 +212,7 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 			paths[index] = fmt.Sprintf("\"%s\"", value)
 		}
 	}
+
 	paths = append([]string{binDir}, paths...)
 	separator := string(os.PathListSeparator)
 	newPath := strings.Join(paths, separator)
@@ -217,6 +224,26 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 		fmt.Printf("export PATH=%v\n", os.Getenv("PATH"))
 		fmt.Printf("export QMSTR_INSTRUMENTATION_HOME=%v\n", os.Getenv("QMSTR_INSTRUMENTATION_HOME"))
 	}
+}
+
+func link(source string, binDir string, targets []string) error {
+	if err := os.Mkdir(binDir, 0700); err != nil {
+		//Log.Fatalf("unable to create %v: %v", binDir, err)
+		return fmt.Errorf("unable to create %v: %v", binDir, err)
+	}
+
+	// create the symlinks to qmstr-wrapper in there
+	symlinks := make(map[string]string)
+	for _, cmd := range wrappedCmds {
+		symlink := path.Join(binDir, cmd)
+		symlinks[symlink] = source
+	}
+	for from, to := range symlinks {
+		if err := os.Symlink(to, from); err != nil {
+			fmt.Errorf("cannot symlink %s to %s: %v", from, to, err)
+		}
+	}
+	return nil
 }
 
 // RunPayloadCommand performs the payload command and returns it's exit code and/or an error

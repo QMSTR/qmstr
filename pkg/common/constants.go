@@ -6,11 +6,14 @@ const (
 	QMSTRADDRENV = "QMSTR_MASTER"
 	// QMSTRDEBUGENV is the name of the environment variable that defines if qmstr runs in debug mode
 	QMSTRDEBUGENV = "QMSTR_DEBUG"
-	CCACHEDIRENV  = "CCACHE_DIR"
+	// CCACHEDIRENV is the name of the environment variable that stores the path to the ccache cache directory
+	CCACHEDIRENV = "CCACHE_DIR"
+	// QMSTRPREFIXENV is the name of the environment variable that defines a possible next compiler wrapper to invoke
+	QMSTRPREFIXENV = "QMSTR_PREFIX"
 )
 
 // ContainerBuildDir is where the source code gets mounted in the qmstr-master container
 const ContainerBuildDir = "/buildroot"
 
-//
+// ContainerCcacheDir is where the cccache dir gets mountet to
 const ContainerCcacheDir = "/ccache"
