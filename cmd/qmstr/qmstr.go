@@ -202,7 +202,7 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	hasWhiteSpace, _ := regexp.Compile("\\s+")
 	for index, value := range paths {
 		if hasWhiteSpace.MatchString(value) {
-			Debug.Printf("NOTE - your PATH contains a element with whitespace in it: %v", value)
+			Debug.Printf("NOTE - your PATH contains an element with whitespace in it: %v", value)
 			paths[index] = fmt.Sprintf("\"%s\"", value)
 		}
 	}
