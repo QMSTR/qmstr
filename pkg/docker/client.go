@@ -22,6 +22,7 @@ type ClientContainer struct {
 	Instdir           string
 	Cmd               []string
 	Env               []string
+	Mount             []mount.Mount
 }
 
 func RunClientContainer(ctx context.Context, cli *client.Client, clientConfig *ClientContainer) error {
@@ -32,7 +33,7 @@ func RunClientContainer(ctx context.Context, cli *client.Client, clientConfig *C
 		log.Fatalf("unable to determine current working directory")
 	}
 	hostConf := &container.HostConfig{
-		Mounts:      []mount.Mount{mount.Mount{Source: wd, Target: common.ContainerBuildDir, Type: mount.TypeBind}},
+		Mounts:      append([]mount.Mount{mount.Mount{Source: wd, Target: common.ContainerBuildDir, Type: mount.TypeBind}}, clientConfig.Mount...),
 		NetworkMode: container.NetworkMode(fmt.Sprintf("container:%s", clientConfig.MasterContainerID)),
 	}
 

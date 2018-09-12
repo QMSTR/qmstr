@@ -13,6 +13,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
 
 	"github.com/QMSTR/qmstr/pkg/common"
@@ -71,7 +72,13 @@ func main() {
 
 		var env []string
 		if val, ok := os.LookupEnv(common.QMSTRDEBUGENV); ok {
-			env = []string{fmt.Sprintf("%s=%s", common.QMSTRDEBUGENV, val)}
+			env = append(env, fmt.Sprintf("%s=%s", common.QMSTRDEBUGENV, val))
+		}
+
+		var mountpoints []mount.Mount
+		if val, ok := os.LookupEnv(common.CCACHEDIRENV); ok {
+			env = append(env, fmt.Sprintf("%s=%s", common.CCACHEDIRENV, common.ContainerCcacheDir))
+			mountpoints = append(mountpoints, mount.Mount{Type: mount.TypeBind, Source: val, Target: common.ContainerCcacheDir})
 		}
 
 		err = docker.RunClientContainer(ctx, cli, &docker.ClientContainer{
@@ -81,6 +88,7 @@ func main() {
 			QmstrInternalPort: intPort,
 			Instdir:           options.instdir,
 			Env:               env,
+			Mount:             mountpoints,
 		})
 		if err != nil {
 			Log.Fatalf("Build container failed: %v", err)
