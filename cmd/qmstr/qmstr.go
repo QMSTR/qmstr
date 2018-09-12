@@ -67,12 +67,14 @@ func main() {
 		if err != nil {
 			Log.Fatalf("Unable to find qmstr-master container")
 		}
+
 		err = docker.RunClientContainer(ctx, cli, &docker.ClientContainer{
 			Image:             options.container,
 			Cmd:               flag.Args(),
 			MasterContainerID: masterContainerID,
 			QmstrInternalPort: intPort,
 			Instdir:           options.instdir,
+			Env:               []string{},
 		})
 		if err != nil {
 			Log.Fatalf("Build container failed: %v", err)
