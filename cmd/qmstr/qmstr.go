@@ -15,6 +15,7 @@ import (
 
 	"github.com/docker/docker/client"
 
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/docker"
 
 	flag "github.com/spf13/pflag"
@@ -68,13 +69,18 @@ func main() {
 			Log.Fatalf("Unable to find qmstr-master container")
 		}
 
+		var env []string
+		if val, ok := os.LookupEnv(common.QMSTRDEBUGENV); ok {
+			env = []string{fmt.Sprintf("%s=%s", common.QMSTRDEBUGENV, val)}
+		}
+
 		err = docker.RunClientContainer(ctx, cli, &docker.ClientContainer{
 			Image:             options.container,
 			Cmd:               flag.Args(),
 			MasterContainerID: masterContainerID,
 			QmstrInternalPort: intPort,
 			Instdir:           options.instdir,
-			Env:               []string{},
+			Env:               env,
 		})
 		if err != nil {
 			Log.Fatalf("Build container failed: %v", err)
