@@ -88,16 +88,16 @@ checkpep8: $(PYTHON_FILES) venv
 autopep8: $(PYTHON_FILES) venv
 	venv/bin/autopep8 -i $(filter-out venv, $^)
 
-.PHONY: go_module_test
-go_module_test: $(GOPROTO)
+.go_module_test: $(GOPROTO)
 	go test $(GO_MODULE_PKGS)
+	@touch .go_module_test
 
-.PHONY: go_qmstr_test
-go_qmstr_test: $(GOPROTO)
+.go_qmstr_test: $(GOPROTO)
 	go test $(GO_PKGS)
+	@touch .go_qmstr_test
 
 .PHONY: gotest
-gotest: go_qmstr_test go_module_test
+gotest: .go_qmstr_test .go_module_test
 
 $(GOMETALINTER):
 	go get -u github.com/alecthomas/gometalinter
@@ -125,10 +125,10 @@ $(PROTOC_GEN_GO_SRC): vendor
 $(PROTOC_GEN_GO): $(PROTOC_GEN_GO_SRC) 
 	(cd $(PROTOC_GEN_GO_SRC) && go install)
 
-$(QMSTR_GO_BINARIES): $(GOPROTO) go_qmstr_test
+$(QMSTR_GO_BINARIES): $(GOPROTO) .go_qmstr_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/$(subst $(OUTDIR),,$@)
 
-$(QMSTR_GO_MODULES): go_proto go_module_test
+$(QMSTR_GO_MODULES): $(GOPROTO) .go_module_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/modules/$(subst $(OUTDIR),,$@)
 
 .PHONY: container master
