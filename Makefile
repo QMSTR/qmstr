@@ -1,7 +1,7 @@
-PROTO_PYTHON_FILES := $(shell find python/ -type f -name '*_pb2*.py' -printf '%p ')
-PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
 PROTO_FILES := $(shell ls proto/*.proto)
+PROTO_PYTHON_FILES := $(patsubst proto%,python/pyqmstr/pyqmstr/service%,$(PROTO_FILES:.proto=_pb2.py)) $(patsubst proto%,python/pyqmstr/pyqmstr/service%,$(PROTO_FILES:.proto=_pb2_grpc.py))
 GOPROTO := $(patsubst proto%,pkg/service%,$(PROTO_FILES:proto=pb.go))
+PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
 GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
 GO_PATH := $(shell go env GOPATH)
@@ -56,10 +56,13 @@ requirements.txt:
 .PHONY: go_proto
 go_proto: $(GOPROTO)
 
-$(GOPROTO): $(PROTO_FILES) $(PROTOC_GEN_GO)
+pkg/service/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
 	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
 
-python_proto: venv
+.PHONY: python_proto
+python_proto: $(PROTO_PYTHON_FILES)
+
+python/pyqmstr/pyqmstr/service/%_pb2.py python/pyqmstr/pyqmstr/service/%_pb2_grpc.py : venv proto/%.proto
 	@mkdir python/pyqmstr/service || true
 	venv/bin/python -m grpc_tools.protoc -Iproto --python_out=./python/pyqmstr/pyqmstr/service --grpc_python_out=./python/pyqmstr/pyqmstr/service proto/*.proto
 
@@ -148,7 +151,7 @@ ratelimage:
 .PHONY: pyqmstr-spdx-analyzer
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
 
-$(QMSTR_PYTHON_SPDX_ANALYZER): python_proto
+$(QMSTR_PYTHON_SPDX_ANALYZER): $(PROTO_PYTHON_FILES)
 	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer 'grpcio==${GRPCIO_VERSION}' -v -e spdxanalyzer.__main__:main -o $@
 
 python_modules: $(QMSTR_PYTHON_MODULES)
