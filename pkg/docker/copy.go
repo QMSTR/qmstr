@@ -30,6 +30,31 @@ func CopyResults(ctx context.Context, cli *client.Client, container string, dest
 	return archive.CopyTo(data, srcInfo, destinationPath)
 }
 
+func CreateContainerDir(ctx context.Context, cli *client.Client, container string, dirName string, uid int, gid int, mode int64) error {
+	var buf bytes.Buffer
+	tw := tar.NewWriter(&buf)
+
+	hdr := &tar.Header{
+		Typeflag: tar.TypeDir,
+		Name:     dirName,
+		Mode:     mode,
+		Uid:      uid,
+		Gid:      gid,
+	}
+	if err := tw.WriteHeader(hdr); err != nil {
+		return err
+	}
+
+	if err := tw.Close(); err != nil {
+		return err
+	}
+
+	reader := bytes.NewReader(buf.Bytes())
+
+	err := cli.CopyToContainer(ctx, container, "/", reader, types.CopyToContainerOptions{})
+	return err
+}
+
 func WriteContainerFile(ctx context.Context, cli *client.Client, data []byte, container string, destination string) error {
 	var buf bytes.Buffer
 	tw := tar.NewWriter(&buf)

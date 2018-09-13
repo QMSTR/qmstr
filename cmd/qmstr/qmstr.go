@@ -81,6 +81,7 @@ func main() {
 			mountpoints = append(mountpoints, mount.Mount{Type: mount.TypeBind, Source: val, Target: common.ContainerCcacheDir})
 		}
 
+		Log.Printf("starting build container")
 		err = docker.RunClientContainer(ctx, cli, &docker.ClientContainer{
 			Image:             options.container,
 			Cmd:               flag.Args(),

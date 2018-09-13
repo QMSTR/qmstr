@@ -31,6 +31,7 @@ func NewWrapper(commandline []string, workdir string, logger *log.Logger, debug 
 	w := Wrapper{}
 	w.logger = logger
 	w.Program = filepath.Base(commandline[0])
+	w.debug = debug
 	//extract the arguments
 	w.commandlineArgs = commandline[1:]
 	b, err := getBuilder(w.Program, workdir, logger, debug)

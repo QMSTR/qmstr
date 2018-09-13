@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/user"
+	"strconv"
 
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/docker/docker/api/types"
@@ -43,7 +44,9 @@ func RunClientContainer(ctx context.Context, cli *client.Client, clientConfig *C
 	}
 	containerCmd = append(containerCmd, append([]string{"--"}, clientConfig.Cmd...)...)
 
-	clientConfig.Env = append([]string{fmt.Sprintf("QMSTR_MASTER=%s:%d", clientConfig.MasterContainerID[:12], clientConfig.QmstrInternalPort)}, clientConfig.Env...)
+	clientConfig.Env = append(
+		[]string{fmt.Sprintf("QMSTR_MASTER=%s:%d", clientConfig.MasterContainerID[:12], clientConfig.QmstrInternalPort)},
+		clientConfig.Env...)
 
 	containerConf := &container.Config{
 		Image: clientConfig.Image,
@@ -55,11 +58,28 @@ func RunClientContainer(ctx context.Context, cli *client.Client, clientConfig *C
 	user, err := user.Current()
 	if err == nil {
 		containerConf.User = user.Uid
+		containerConf.Env = append(containerConf.Env, fmt.Sprintf("HOME=%s", common.ContainerQmstrHomeDir))
 	}
 
 	resp, err := cli.ContainerCreate(ctx, containerConf, hostConf, nil, "")
 	if err != nil {
 		return err
+	}
+
+	if user != nil {
+		// fake home dir
+		log.Printf("faking home dir for user %s", user.Uid)
+		uid, err := strconv.Atoi(user.Uid)
+		if err != nil {
+			return fmt.Errorf("invalid uid: %v", err)
+		}
+		gid, err := strconv.Atoi(user.Gid)
+		if err != nil {
+			return fmt.Errorf("invalid gid: %v", err)
+		}
+		if err := CreateContainerDir(ctx, cli, resp.ID, common.ContainerQmstrHomeDir, uid, gid, 0755); err != nil {
+			return fmt.Errorf("faking home dir failed: %v", err)
+		}
 	}
 
 	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
