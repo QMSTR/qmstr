@@ -44,7 +44,7 @@ ifdef https_proxy
 endif
 
 .PHONY: all
-all: $(QMSTR_GO_BINARIES) $(QMSTR_GO_MODULES) $(QMSTR_PYTHON_MODULES)
+all: install_qmstr_client_gopath democontainer
 
 generate: go_proto python_proto
 
