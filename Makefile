@@ -1,6 +1,6 @@
 PROTO_FILES := $(shell ls proto/*.proto)
 PROTO_PYTHON_FILES := $(patsubst proto%,python/pyqmstr/pyqmstr/service%,$(PROTO_FILES:.proto=_pb2.py)) $(patsubst proto%,python/pyqmstr/pyqmstr/service%,$(PROTO_FILES:.proto=_pb2_grpc.py))
-GOPROTO := $(patsubst proto%,pkg/service%,$(PROTO_FILES:proto=pb.go))
+GO_PROTO := $(patsubst proto%,pkg/service%,$(PROTO_FILES:proto=pb.go))
 PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
 GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
@@ -54,7 +54,7 @@ requirements.txt:
 	echo autopep8 >> requirements.txt
 
 .PHONY: go_proto
-go_proto: $(GOPROTO)
+go_proto: $(GO_PROTO)
 
 pkg/service/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
 	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
@@ -69,7 +69,7 @@ python/pyqmstr/pyqmstr/service/%_pb2.py python/pyqmstr/pyqmstr/service/%_pb2_grp
 .PHONY: clean
 clean:
 	@rm -f $(PROTO_PYTHON_FILES) || true
-	@rm -f $(GOPROTO) || true
+	@rm -f $(GO_PROTO) || true
 	@rm -r out || true
 	@rm -fr venv || true
 	@rm requirements.txt || true
@@ -88,11 +88,11 @@ checkpep8: $(PYTHON_FILES) venv
 autopep8: $(PYTHON_FILES) venv
 	venv/bin/autopep8 -i $(filter-out venv, $^)
 
-.go_module_test: $(GOPROTO)
+.go_module_test: $(GO_PROTO)
 	go test $(GO_MODULE_PKGS)
 	@touch .go_module_test
 
-.go_qmstr_test: $(GOPROTO)
+.go_qmstr_test: $(GO_PROTO)
 	go test $(GO_PKGS)
 	@touch .go_qmstr_test
 
@@ -125,10 +125,10 @@ $(PROTOC_GEN_GO_SRC): vendor
 $(PROTOC_GEN_GO): $(PROTOC_GEN_GO_SRC) 
 	(cd $(PROTOC_GEN_GO_SRC) && go install)
 
-$(QMSTR_GO_BINARIES): $(GOPROTO) .go_qmstr_test
+$(QMSTR_GO_BINARIES): $(GO_PROTO) .go_qmstr_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/$(subst $(OUTDIR),,$@)
 
-$(QMSTR_GO_MODULES): $(GOPROTO) .go_module_test
+$(QMSTR_GO_MODULES): $(GO_PROTO) .go_module_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/modules/$(subst $(OUTDIR),,$@)
 
 .PHONY: container master
