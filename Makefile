@@ -1,5 +1,7 @@
 PROTO_PYTHON_FILES := $(shell find python/ -type f -name '*_pb2*.py' -printf '%p ')
 PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
+PROTO_FILES := $(shell ls proto/*.proto)
+GOPROTO := $(patsubst proto%,pkg/service%,$(PROTO_FILES:proto=pb.go))
 GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
 GO_PATH := $(shell go env GOPATH)
@@ -51,7 +53,10 @@ requirements.txt:
 	echo pex >> requirements.txt
 	echo autopep8 >> requirements.txt
 
-go_proto: $(PROTOC_GEN_GO)
+.PHONY: go_proto
+go_proto: $(GOPROTO)
+
+$(GOPROTO): $(PROTO_FILES) $(PROTOC_GEN_GO)
 	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
 
 python_proto: venv
@@ -60,11 +65,12 @@ python_proto: venv
 
 .PHONY: clean
 clean:
-	@rm $(PROTO_PYTHON_FILES) || true
-	@rm pkg/service/*.pb.go || true
+	@rm -f $(PROTO_PYTHON_FILES) || true
+	@rm -f $(GOPROTO) || true
 	@rm -r out || true
 	@rm -fr venv || true
 	@rm requirements.txt || true
+	@rm -fr vendor || true
 
 .PHONY: cleanall
 cleanall: clean
@@ -105,14 +111,16 @@ govet: gotest
 $(GODEP):
 	go get -u -v github.com/golang/dep/cmd/dep
 
-.PHONY: godep
-godep: $(GODEP)
-	${GO_BIN}/dep ensure
+Gopkg.lock: $(GODEP) Gopkg.toml
+	${GO_BIN}/dep ensure --no-vendor
 
-$(PROTOC_GEN_GO_SRC): godep
+vendor: Gopkg.lock
+	${GO_BIN}/dep ensure --vendor-only
+
+$(PROTOC_GEN_GO_SRC): vendor
 
 $(PROTOC_GEN_GO): $(PROTOC_GEN_GO_SRC) 
-	(cd ${PROTOC_GEN_GO_SRC} && go install)
+	(cd $(PROTOC_GEN_GO_SRC) && go install)
 
 $(QMSTR_GO_BINARIES): go_proto go_qmstr_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/$(subst $(OUTDIR),,$@)
