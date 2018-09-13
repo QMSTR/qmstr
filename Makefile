@@ -4,6 +4,8 @@ GO_PROTO := $(patsubst proto%,pkg/service%,$(PROTO_FILES:proto=pb.go))
 PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
 GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
+# this is intended to be a recursively expanded variable
+GO_SRCS = $(shell find cmd -name '*.go') $(shell find pkg -name '*.go') 
 GO_PATH := $(shell go env GOPATH)
 GO_BIN := $(GO_PATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
@@ -74,6 +76,7 @@ clean:
 	@rm -fr venv || true
 	@rm requirements.txt || true
 	@rm -fr vendor || true
+	@rm .go_module_test .go_qmstr_test || true
 
 .PHONY: cleanall
 cleanall: clean
@@ -125,10 +128,10 @@ $(PROTOC_GEN_GO_SRC): vendor
 $(PROTOC_GEN_GO): $(PROTOC_GEN_GO_SRC) 
 	(cd $(PROTOC_GEN_GO_SRC) && go install)
 
-$(QMSTR_GO_BINARIES): $(GO_PROTO) .go_qmstr_test
+$(QMSTR_GO_BINARIES): $(GO_PROTO) $(GO_SRCS) .go_qmstr_test 
 	go build -o $@ github.com/QMSTR/qmstr/cmd/$(subst $(OUTDIR),,$@)
 
-$(QMSTR_GO_MODULES): $(GO_PROTO) .go_module_test
+$(QMSTR_GO_MODULES): $(GO_PROTO) $(GO_SRCS) .go_module_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/modules/$(subst $(OUTDIR),,$@)
 
 .PHONY: container master
