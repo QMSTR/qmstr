@@ -4,8 +4,12 @@ GO_PROTO := $(patsubst proto%,pkg/service%,$(PROTO_FILES:proto=pb.go))
 PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
 GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
-# this is intended to be a recursively expanded variable
+
+# those are intended to be a recursively expanded variables
 GO_SRCS = $(shell find cmd -name '*.go') $(shell find pkg -name '*.go') 
+FILTER = $(foreach v,$(2),$(if $(findstring $(1),$(v)),$(v),))
+GO_MODULE_SRCS = $(call FILTER,module,$(GO_SRCS))
+
 GO_PATH := $(shell go env GOPATH)
 GO_BIN := $(GO_PATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
@@ -91,11 +95,11 @@ checkpep8: $(PYTHON_FILES) venv
 autopep8: $(PYTHON_FILES) venv
 	venv/bin/autopep8 -i $(filter-out venv, $^)
 
-.go_module_test: $(GO_PROTO)
+.go_module_test: $(GO_MODULE_SRCS)
 	go test $(GO_MODULE_PKGS)
 	@touch .go_module_test
 
-.go_qmstr_test: $(GO_PROTO)
+.go_qmstr_test: $(GO_SRCS)
 	go test $(GO_PKGS)
 	@touch .go_qmstr_test
 
