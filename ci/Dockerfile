@@ -3,6 +3,48 @@ ARG DGRAPH_VERSION=1.0.6
 ARG HUGO_VERSION=0.39
 ARG SCANCODE_VERSION=2.9.1
 
+# this stage contains all 3rd party dependencies
+FROM ubuntu:18.04 as runtimebase
+
+LABEL org.qmstr.image runtime
+
+# install runtime deps
+RUN apt-get update && \
+    apt-get install -y software-properties-common curl autoconf git libgit2-dev libio-captureoutput-perl python python-pip protobuf-compiler && \
+    rm -rf /var/lib/apt/lists/*
+
+ARG HUGO_VERSION
+RUN curl -L --output /tmp/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.deb
+RUN dpkg -i /tmp/hugo.deb
+RUN rm /tmp/hugo.deb
+
+# install ninka
+RUN mkdir /ninka && \
+    git clone https://github.com/dmgerman/ninka.git /ninka && \
+    cd /ninka/comments && make && make install && \
+    rm /usr/local/man/man1 && \
+    cd /ninka && perl Makefile.PL && make && make install && \
+    rm -fr /ninka
+
+# install scancode
+ARG SCANCODE_VERSION
+RUN pip install -U scancode-toolkit==${SCANCODE_VERSION}
+# newest fingerprints version 6.0.0 suffers unicodedecodeerrors
+RUN pip uninstall -y fingerprints
+RUN pip install fingerprints==0.5.4
+
+# install dgraph
+ARG DGRAPH_VERSION
+RUN curl -L --output /tmp/dgraph.sha256 https://github.com/dgraph-io/dgraph/releases/download/v"${DGRAPH_VERSION}"/dgraph-checksum-linux-amd64.sha256
+RUN curl -L --output /tmp/dgraph.tar.gz https://github.com/dgraph-io/dgraph/releases/download/v"${DGRAPH_VERSION}"/dgraph-linux-amd64.tar.gz
+RUN temp_dir=$(mktemp -d 2>/dev/null) && \
+    tar -C $temp_dir -xzf /tmp/dgraph.tar.gz && \
+    sed -e s#/usr/local/bin#${temp_dir}# /tmp/dgraph.sha256 | sha256sum -c - && \
+    mv ${temp_dir}/* /usr/local/bin/ && \
+    rmdir ${temp_dir}
+RUN rm /tmp/dgraph*
+
+
 # Create a container that only builds the software to be installed into the master container:
 FROM ubuntu:18.04 as builder
 LABEL org.qmstr.image builder
@@ -31,6 +73,7 @@ COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
 WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
 RUN make install_qmstr_all
 
+
 # separate stage just to run the master unit tests:
 FROM builder as master_unit_tests
 
@@ -40,50 +83,14 @@ WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
 CMD make gotest
 
 # the runtime stage contains all the elements needed to run the master and the analysis tools:
-FROM ubuntu:18.04 as runtime
+FROM runtimebase as runtime
 
 LABEL org.qmstr.image runtime
-
-# install runtime deps
-RUN apt-get update && \
-    apt-get install -y software-properties-common curl autoconf git libgit2-dev libio-captureoutput-perl python python-pip protobuf-compiler && \
-    rm -rf /var/lib/apt/lists/*
-
-ARG HUGO_VERSION
-RUN curl -L --output /tmp/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.deb
-RUN dpkg -i /tmp/hugo.deb
-RUN rm /tmp/hugo.deb
 
 # init html reporter data
 COPY --from=builder /go/src/github.com/QMSTR/qmstr /tmp/qmstr
 RUN /tmp/qmstr/cmd/modules/reporters/qmstr-reporter-html/setup.sh /usr/share/qmstr /tmp/qmstr
 RUN rm -fr /tmp/qmstr
-
-# install ninka
-RUN mkdir /ninka && \
-    git clone https://github.com/dmgerman/ninka.git /ninka && \
-    cd /ninka/comments && make && make install && \
-    rm /usr/local/man/man1 && \
-    cd /ninka && perl Makefile.PL && make && make install && \
-    rm -fr /ninka
-
-# install scancode
-ARG SCANCODE_VERSION
-RUN pip install -U scancode-toolkit==${SCANCODE_VERSION}
-# newest fingerprints version 6.0.0 suffers unicodedecodeerrors
-RUN pip uninstall -y fingerprints
-RUN pip install fingerprints==0.5.4
-
-# install dgraph
-ARG DGRAPH_VERSION
-RUN curl -L --output /tmp/dgraph.sha256 https://github.com/dgraph-io/dgraph/releases/download/v"${DGRAPH_VERSION}"/dgraph-checksum-linux-amd64.sha256
-RUN curl -L --output /tmp/dgraph.tar.gz https://github.com/dgraph-io/dgraph/releases/download/v"${DGRAPH_VERSION}"/dgraph-linux-amd64.tar.gz
-RUN temp_dir=$(mktemp -d 2>/dev/null) && \
-    tar -C $temp_dir -xzf /tmp/dgraph.tar.gz && \
-    sed -e s#/usr/local/bin#${temp_dir}# /tmp/dgraph.sha256 | sha256sum -c - && \
-    mv ${temp_dir}/* /usr/local/bin/ && \
-    rmdir ${temp_dir}
-RUN rm /tmp/dgraph*
 
 ADD ci/common.inc /common.inc
 
