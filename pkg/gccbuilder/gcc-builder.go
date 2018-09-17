@@ -91,24 +91,29 @@ var (
 		"-isystem": struct{}{},
 		"-include": struct{}{},
 	}
+
+	staticLibPattern = regexp.MustCompile("-static-lib(\\w+)")
 )
 
 type GccBuilder struct {
-	Mode     mode
-	Input    []string
-	Output   []string
-	WorkDir  string
-	LinkLibs []string
-	LibPath  []string
-	Args     []string
+	Mode       mode
+	Input      []string
+	Output     []string
+	WorkDir    string
+	LinkLibs   []string
+	LibPath    []string
+	Args       []string
+	staticLink bool
+	StaticLibs map[string]struct{}
+	ActualLibs map[string]string
 	builder.GeneralBuilder
 }
 
 func NewGccBuilder(workDir string, logger *log.Logger, debug bool) *GccBuilder {
-	return &GccBuilder{Link, []string{}, []string{}, workDir, []string{}, []string{}, []string{}, builder.GeneralBuilder{logger, debug}}
+	return &GccBuilder{Link, []string{}, []string{}, workDir, []string{}, []string{}, []string{}, false, map[string]struct{}{}, map[string]string{}, builder.GeneralBuilder{logger, debug}}
 }
 
-func (a *GccBuilder) GetPrefix() (string, error) {
+func (g *GccBuilder) GetPrefix() (string, error) {
 	// setup ccache if possible
 	ccachePath := common.FindExecutablesOnPath("ccache")
 	if len(ccachePath) > 0 {
@@ -129,7 +134,11 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 
 	switch g.Mode {
 	case Link:
-		g.Logger.Printf("gcc linking")
+		if g.staticLink {
+			g.Logger.Printf("gcc linking statically")
+		} else {
+			g.Logger.Printf("gcc linking")
+		}
 		fileNodes := []*pb.FileNode{}
 		linkedTarget := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[0], false), linkedTrg)
 		dependencies := []*pb.FileNode{}
@@ -145,11 +154,11 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			}
 			dependencies = append(dependencies, inputFileNode)
 		}
-		actualLibs, err := FindActualLibraries(g.LinkLibs, g.LibPath)
+		err := g.FindActualLibraries()
 		if err != nil {
 			g.Logger.Fatalf("Failed to collect dependencies: %v", err)
 		}
-		for _, actualLib := range actualLibs {
+		for _, actualLib := range g.ActualLibs {
 			linkLib := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, actualLib, false), linkedTrg)
 			dependencies = append(dependencies, linkLib)
 		}
@@ -227,6 +236,15 @@ func (g *GccBuilder) cleanCmdLine(args []string) {
 		for key := range boolArgs {
 			if strings.HasPrefix(arg, key) {
 				clearIdxSet[idx] = struct{}{}
+				// use static libraries when linking statically and incrementally
+				if arg == "-static" || arg == "-r" {
+					g.staticLink = true
+				}
+				staticLib := staticLibPattern.FindAllStringSubmatch(arg, 1)
+				if staticLib != nil {
+					g.StaticLibs[staticLib[0][1]] = struct{}{}
+				}
+
 			}
 		}
 
@@ -345,11 +363,10 @@ const (
 )
 
 // FindActualLibraries discovers the actual libraries on the path
-func FindActualLibraries(libs []string, libpath []string) ([]string, error) {
-	actualLibPaths := []string{}
+func (g *GccBuilder) FindActualLibraries() error {
 	libpathvar, present := os.LookupEnv(libPathVar)
 	if present && libpathvar != "" {
-		libpath = append([]string{libpathvar}, libpath...)
+		g.LibPath = append([]string{libpathvar}, g.LibPath...)
 	}
 	var libprefix string
 	var libsuffix []string
@@ -368,31 +385,39 @@ func FindActualLibraries(libs []string, libpath []string) ([]string, error) {
 		libsuffix = []string{".dll"}
 		syslibpath = []string{""}
 	}
-	for _, lib := range libs {
-		for _, dir := range append(libpath, syslibpath...) {
-			if dir == "" {
-				// Unix shell semantics: path element "" means "."
-				dir = "."
-			}
-			err := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
-				for _, suffix := range libsuffix {
+
+	for _, dir := range append(g.LibPath, syslibpath...) {
+		if dir == "" {
+			// Unix shell semantics: path element "" means "."
+			dir = "."
+		}
+		filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
+			for _, lib := range g.LinkLibs {
+				// is lib located
+				if _, ok := g.ActualLibs[lib]; ok {
+					continue
+				}
+				var suffixes []string
+				// forced static lib or linking statically
+				if _, ok := g.StaticLibs[lib]; ok || g.staticLink {
+					suffixes = []string{".a"}
+				} else {
+					suffixes = libsuffix
+				}
+
+				for _, suffix := range suffixes {
 					if f.Name() == fmt.Sprintf("%s%s%s", libprefix, lib, suffix) {
-						actualLibPaths = append(actualLibPaths, path)
-						return fmt.Errorf("Found %s", path)
+						g.ActualLibs[lib] = path
 					}
 				}
-				return nil
-
-			})
-			if err != nil {
-				break
 			}
-		}
+			return nil
+		})
 	}
 
-	if len(actualLibPaths) == len(libs) {
-		return actualLibPaths, nil
+	if len(g.ActualLibs) == len(g.LinkLibs) {
+		return nil
 	}
 
-	return actualLibPaths, fmt.Errorf("Missing libraries from %v in %v", libs, actualLibPaths)
+	return fmt.Errorf("Missing libraries from %v in %v", g.LinkLibs, g.ActualLibs)
 }

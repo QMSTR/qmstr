@@ -119,3 +119,14 @@ func TestLastArgFlag(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestForcedStaticLib(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"gcc", "-static-libgcc", "-o", "out", "a.c", "-lgcc"})
+	if gcc.Output[0] != "out" {
+		t.Fail()
+	}
+	if _, ok := gcc.StaticLibs["gcc"]; !ok {
+		t.Fail()
+	}
+}
