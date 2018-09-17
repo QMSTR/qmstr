@@ -253,11 +253,13 @@ func (scanalyzer *ScancodeAnalyzer) detectCopyrights(srcFilePath string) (*servi
 					})
 				}
 			}
-			copyrightInfoNode := &service.InfoNode{
-				Type:      "copyright",
-				DataNodes: copyrights,
+			if len(copyrights) > 0 {
+				copyrightInfoNode := &service.InfoNode{
+					Type:      "copyright",
+					DataNodes: copyrights,
+				}
+				return copyrightInfoNode, nil
 			}
-			return copyrightInfoNode, nil
 		}
 	}
 	return nil, fmt.Errorf("No copyright info found for %s", srcFilePath)
