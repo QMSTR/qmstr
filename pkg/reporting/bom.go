@@ -141,7 +141,7 @@ func getTargetsInfo(packageNode *service.PackageNode) []*service.Target {
 func getSources(filenode *service.FileNode) []*service.Source {
 	retSources := []*service.Source{}
 	for _, depNode := range filenode.DerivedFrom {
-		if depNode.Type == "sourcecode" {
+		if depNode.Type == "sourcecode" && len(depNode.DerivedFrom) == 0 {
 			tmpSource := &service.Source{
 				File:    depNode.Path,
 				License: getLicense(depNode),
