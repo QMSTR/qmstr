@@ -29,9 +29,6 @@ RUN mkdir /ninka && \
 # install scancode
 ARG SCANCODE_VERSION
 RUN pip install -U scancode-toolkit==${SCANCODE_VERSION}
-# newest fingerprints version 6.0.0 suffers unicodedecodeerrors
-RUN pip uninstall -y fingerprints
-RUN pip install fingerprints==0.5.4
 
 # install dgraph
 ARG DGRAPH_VERSION
