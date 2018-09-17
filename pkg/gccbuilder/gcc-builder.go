@@ -173,6 +173,23 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			fileNodes = append(fileNodes, targetFile)
 		}
 		return &pb.BuildMessage{FileNodes: fileNodes}, nil
+	case Compile:
+		g.Logger.Printf("gcc compile - skipping assemble and link")
+		fileNodes := []*pb.FileNode{}
+		if g.Debug {
+			g.Logger.Printf("This is our input %v", g.Input)
+			g.Logger.Printf("This is our output %v", g.Output)
+		}
+		for idx, inFile := range g.Input {
+			if g.Debug {
+				g.Logger.Printf("This is the source file %s indexed %d", inFile, idx)
+			}
+			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), src)
+			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), src)
+			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
+			fileNodes = append(fileNodes, targetFile)
+		}
+		return &pb.BuildMessage{FileNodes: fileNodes}, nil
 	default:
 		return nil, errors.New("Mode not implemented")
 	}
@@ -312,6 +329,11 @@ func (g *GccBuilder) parseCommandLine(args []string) {
 		case Assemble:
 			for _, input := range g.Input {
 				objectname := strings.TrimSuffix(input, filepath.Ext(input)) + ".o"
+				g.Output = append(g.Output, objectname)
+			}
+		case Compile:
+			for _, input := range g.Input {
+				objectname := strings.TrimSuffix(input, filepath.Ext(input)) + ".s"
 				g.Output = append(g.Output, objectname)
 			}
 		}
