@@ -21,13 +21,13 @@ import (
 )
 
 var quitServer chan interface{}
-var phaseMap map[int32]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase
+var phaseMap map[service.Phase]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase
 
 func init() {
-	phaseMap = map[int32]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase{
-		PhaseIDBuild:    newBuildPhase,
-		PhaseIDAnalysis: newAnalysisPhase,
-		PhaseIDReport:   newReportPhase,
+	phaseMap = map[service.Phase]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase{
+		service.Phase_BUILD:    newBuildPhase,
+		service.Phase_ANALYSIS: newAnalysisPhase,
+		service.Phase_REPORT:   newReportPhase,
 	}
 }
 
@@ -107,7 +107,7 @@ func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage
 	return &service.SwitchPhaseResponse{Success: true}, nil
 }
 
-func (s *server) switchPhase(requestedPhase int32) error {
+func (s *server) switchPhase(requestedPhase service.Phase) error {
 	if !atomic.CompareAndSwapInt64(&s.pendingPhaseSwitch, 0, 1) {
 		errMsg := "denied there is a pending phase transition"
 		log.Println(errMsg)
@@ -210,7 +210,7 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 		return masterRun, err
 	}
 
-	serverImpl.switchPhase(PhaseIDBuild)
+	serverImpl.switchPhase(service.Phase_BUILD)
 
 	quitServer = make(chan interface{})
 	go func() {

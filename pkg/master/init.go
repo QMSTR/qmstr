@@ -48,6 +48,6 @@ func (phase *serverPhaseInit) Shutdown() error {
 	return nil
 }
 
-func (phase *serverPhaseInit) GetPhaseID() int32 {
-	return PhaseIDInit
+func (phase *serverPhaseInit) GetPhaseID() service.Phase {
+	return service.Phase_INIT
 }

@@ -70,8 +70,8 @@ func (phase *serverPhaseAnalysis) Shutdown() error {
 	return nil
 }
 
-func (phase *serverPhaseAnalysis) GetPhaseID() int32 {
-	return PhaseIDAnalysis
+func (phase *serverPhaseAnalysis) GetPhaseID() service.Phase {
+	return service.Phase_ANALYSIS
 }
 
 func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
