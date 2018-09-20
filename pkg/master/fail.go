@@ -27,6 +27,6 @@ func (phase *serverPhaseFailure) Shutdown() error {
 	return errors.New("shutdown not possible failure phase is terminal")
 }
 
-func (phase *serverPhaseFailure) GetPhaseID() int32 {
-	return PhaseIDFailure
+func (phase *serverPhaseFailure) GetPhaseID() service.Phase {
+	return service.Phase_FAIL
 }

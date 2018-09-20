@@ -9,7 +9,7 @@ import (
 )
 
 type serverPhase interface {
-	GetPhaseID() int32
+	GetPhaseID() service.Phase
 	getName() string
 	Activate() error
 	Shutdown() error
