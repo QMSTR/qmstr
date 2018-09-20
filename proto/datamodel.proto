@@ -56,3 +56,11 @@ message Event {
     string class = 1;
     string message = 2;
 }
+
+enum Phase {
+    INIT = 0;
+    BUILD = 1;
+    ANALYSIS = 2;
+    REPORT = 3;
+    FAIL = 4;
+}
