@@ -120,6 +120,7 @@ func (s *server) switchPhase(requestedPhase service.Phase) error {
 	}
 	if phaseCtor, ok := phaseMap[requestedPhase]; ok {
 		log.Printf("Switching to phase %d", requestedPhase)
+		defer s.persistPhase()
 		s.publishEvent(&service.Event{Class: string(EventPhase), Message: fmt.Sprintf("Switching to phase %d", requestedPhase)})
 		err := s.currentPhase.Shutdown()
 		if err != nil {
@@ -233,4 +234,16 @@ func logModuleError(moduleName string, output []byte) {
 		buffer.WriteString(fmt.Sprintf("\t--> %s\n", s.Text()))
 	}
 	log.Println(buffer.String())
+}
+
+func (s *server) persistPhase() error {
+	if s.pendingPhaseSwitch != 0 {
+		return errors.New("Can not persist phase while switching")
+	}
+	_, err := s.currentPhase.getDataBase()
+	if err != nil {
+		return err
+	}
+	//db.AddQmstrStateNode()
+	return nil
 }

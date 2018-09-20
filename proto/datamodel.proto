@@ -57,6 +57,11 @@ message Event {
     string message = 2;
 }
 
+message QmstrStatusNode {
+    string qmstrStatusNodeType = 1;
+    Phase phase = 2;
+}
+
 enum Phase {
     INIT = 0;
     BUILD = 1;
