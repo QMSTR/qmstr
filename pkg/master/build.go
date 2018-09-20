@@ -47,7 +47,7 @@ func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildRe
 			}
 		}
 		log.Printf("Adding file node %s", node.Path)
-		phase.db.AddFileNode(node)
+		phase.db.AddBuildFileNode(node)
 	}
 	return &service.BuildResponse{Success: true}, nil
 }
