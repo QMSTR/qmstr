@@ -11,7 +11,7 @@ integrate Quartermaster into their development setup to monitor
 compliance and reproduce test results. This tutorial will begin to
 explain the basics and building blocks of Quartermaster from the
 perspective of a software developer. The CI operator and open source
-office perspetive will be covered in later articles.
+office perspective will be covered in later articles.
 
 ## Prerequisites
 
@@ -46,7 +46,7 @@ then add Quartermaster instrumentation in a second step.
 
 This tutorial will use the JSON-C library as the
 project under analysis. The files referenced in the following steps
-are locatedd in the [tutorial](tutorial/) subdirectory. Let's retrieve
+are located in the [tutorial](tutorial/) subdirectory. Let's retrieve
 the JSON-C source code first, in a specific revision that we know
 works with this tutorial:
 
