@@ -6,7 +6,7 @@ GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
 
 # those are intended to be a recursively expanded variables
-GO_SRCS = $(shell find cmd -name '*.go') $(shell find pkg -name '*.go') 
+GO_SRCS = $(shell find cmd -name '*.go') $(shell find pkg -name '*.go')
 FILTER = $(foreach v,$(2),$(if $(findstring $(1),$(v)),$(v),))
 GO_MODULE_SRCS = $(call FILTER,module,$(GO_SRCS))
 
@@ -129,31 +129,31 @@ vendor: Gopkg.lock
 
 $(PROTOC_GEN_GO_SRC): vendor
 
-$(PROTOC_GEN_GO): $(PROTOC_GEN_GO_SRC) 
+$(PROTOC_GEN_GO): $(PROTOC_GEN_GO_SRC)
 	(cd $(PROTOC_GEN_GO_SRC) && go install)
 
-$(QMSTR_GO_BINARIES): $(GO_PROTO) $(GO_SRCS) .go_qmstr_test 
+$(QMSTR_GO_BINARIES): $(GO_PROTO) $(GO_SRCS) .go_qmstr_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/$(subst $(OUTDIR),,$@)
 
 $(QMSTR_GO_MODULES): $(GO_PROTO) $(GO_SRCS) .go_module_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/modules/$(subst $(OUTDIR),,$@)
 
 .PHONY: container master
-master container: ci/Dockerfile
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master $(DOCKER_PROXY) .
+master container: docker/Dockerfile
+	docker build -f docker/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master $(DOCKER_PROXY) .
 
 .PHONY: devcontainer
 devcontainer: container
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_DEV} --target dev $(DOCKER_PROXY) .
+	docker build -f docker/Dockerfile -t ${CONTAINER_TAG_DEV} --target dev $(DOCKER_PROXY) .
 
 .PHONY: democontainer
 democontainer: container
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime $(DOCKER_PROXY) .
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target builder $(DOCKER_PROXY) .
+	docker build -f docker/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime $(DOCKER_PROXY) .
+	docker build -f docker/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target builder $(DOCKER_PROXY) .
 
 .PHONY: ratelimage
 ratelimage:
-	docker build -f ci/Dockerfile -t qmstr-ratel --target web $(DOCKER_PROXY) .
+	docker build -f docker/Dockerfile -t qmstr-ratel --target web $(DOCKER_PROXY) .
 
 .PHONY: pyqmstr-spdx-analyzer
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)

@@ -6,7 +6,7 @@
 set -e
 
 # test that we are in the correct location
-if [ ! -f ci/test-documentation.sh ]; then
+if [ ! -f docker/test-documentation.sh ]; then
     echo "Start this script from the repository root!"
     exit 2
 fi
