@@ -16,5 +16,5 @@ mkdir -p $BASEDIR
 cd $BASEDIR
 ln -sf /vagrant qmstr
 cd qmstr/
-./ci/test-documentation.sh
+./docker/test-documentation.sh
 

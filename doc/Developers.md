@@ -34,32 +34,32 @@ Or if you dare:
 
 ## Build and run the Quartermaster master process
 
-Quartermaster uses a multi-stage [Dockerfile](ci/Dockerfile) to create various setups based on a common configuration. The DGraph database process and the Quartermaster master are executed in the container.
+Quartermaster uses a multi-stage [Dockerfile](docker/Dockerfile) to create various setups based on a common configuration. The DGraph database process and the Quartermaster master are executed in the container.
 
 ### Performing a clean build: builder
 
 The `builder` stage compiles the Quartermaster toolchain in a clean Go environment. It does not contain any runtime dependencies.
 
-	% docker build -f ci/Dockerfile -t qmstr/build --target builder .
+	% docker build -f docker/Dockerfile -t qmstr/build --target builder .
 
 ### Running the unit tests
 
 The `master_unit_tests` stage is a minimal extension of `builder` that adds an entry point to execute the master unit tests.
 
-	% docker build -f ci/Dockerfile -t qmstr/master_unit_tests --target master_unit_tests .
+	% docker build -f docker/Dockerfile -t qmstr/master_unit_tests --target master_unit_tests .
 	% docker run --rm -it qmstr/master_unit_tests
 
 ### Dependencies for analysis and reporting: `runtime`
 
 The `runtime` stage contains a full operating system environment and the default tools that Quartermaster uses to perform analysis of the build graph and to create reports.
 
-	% docker build -f ci/Dockerfile -t qmstr/runtime --target runtime .
+	% docker build -f docker/Dockerfile -t qmstr/runtime --target runtime .
 
 ### Build and run the "official" Quartermaster master container
 
 The master container contains all analysis and reporting dependencies, and the compiled Quartermaster toolchain, but no development environment. It is the default way to run a Quartermaster master process.
 
-	% docker build -f ci/Dockerfile -t qmstr/master --target master .
+	% docker build -f docker/Dockerfile -t qmstr/master --target master .
 	% docker run -it -p 50051:50051 -v <build_path>:/buildroot qmstr/master
 
 ...where `build_path` is the path to the source files you are about to compile.
@@ -68,7 +68,7 @@ The master container contains all analysis and reporting dependencies, and the c
 
 The development container is a combination of the runtime environment with a source volume to test local changes. It uses a volume to pass in source code under development, and builds the source code in it's entrypoint script.
 
-	% docker build -f ci/Dockerfile -t qmstr/dev --target dev .
+	% docker build -f docker/Dockerfile -t qmstr/dev --target dev .
 	% docker run -it -p 50051:50051 -v $HOME/Go/src:/go/src <build_path>:/buildroot qmstr/dev
 
 ...where `build_path` is the path to the source files you are about to compile.

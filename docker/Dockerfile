@@ -89,7 +89,7 @@ COPY --from=builder /go/src/github.com/QMSTR/qmstr /tmp/qmstr
 RUN /tmp/qmstr/cmd/modules/reporters/qmstr-reporter-html/setup.sh /usr/share/qmstr /tmp/qmstr
 RUN rm -fr /tmp/qmstr
 
-ADD ci/common.inc /common.inc
+ADD docker/common.inc /common.inc
 
 # copy qmstr installation from previous stage
 RUN mkdir -p /go/bin
@@ -107,7 +107,7 @@ LABEL org.qmstr.image master
 ENV GOPATH /go
 ENV PATH ${GOPATH}/bin:$PATH
 
-COPY ci/docker-entrypoint.sh /docker-entrypoint.sh
+COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
@@ -118,7 +118,7 @@ FROM ubuntu:18.04 as web
 RUN apt-get update
 RUN apt-get install -y socat
 COPY --from=runtime /usr/local/bin/dgraph-ratel /usr/local/bin/dgraph-ratel
-ADD ci/ratel-entrypoint.sh /entrypoint.sh
+ADD docker/ratel-entrypoint.sh /entrypoint.sh
 
 EXPOSE 8000
 EXPOSE 8080
@@ -149,6 +149,6 @@ VOLUME /go/src
 COPY --from=builder /root/.pex/build /root/.pex/build
 RUN rm /root/.pex/build/*qmstr*
 
-COPY ci/dev-entrypoint.sh /dev-entrypoint.sh
+COPY docker/dev-entrypoint.sh /dev-entrypoint.sh
 RUN chmod +x /dev-entrypoint.sh
 ENTRYPOINT [ "/dev-entrypoint.sh" ]
