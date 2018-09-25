@@ -69,15 +69,19 @@ var (
 	StaticLibPattern = regexp.MustCompile("-static-lib(\\w+)")
 
 	LinkBoolArgs = map[string]struct{}{
-		"-P":            struct{}{},
-		"-E":            struct{}{},
-		"-F":            struct{}{},
-		"-g":            struct{}{},
-		"-r":            struct{}{},
-		"-i":            struct{}{},
-		"-q":            struct{}{},
-		"-static":       struct{}{},
-		"--emit-relocs": struct{}{},
+		"-P":                 struct{}{},
+		"-E":                 struct{}{},
+		"-F":                 struct{}{},
+		"-g":                 struct{}{},
+		"-r":                 struct{}{},
+		"-i":                 struct{}{},
+		"-q":                 struct{}{},
+		"-static":            struct{}{},
+		"--emit-relocs":      struct{}{},
+		"--whole-archive":    struct{}{},
+		"--no-whole-archive": struct{}{},
+		"--start-group":      struct{}{},
+		"--end-group":        struct{}{},
 	}
 
 	LinkStringArgs = map[string]struct{}{
