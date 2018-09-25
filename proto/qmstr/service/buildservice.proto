@@ -2,7 +2,7 @@ syntax = "proto3";
 package service;
 option java_package = "org.qmstr.grpc.service";
 
-import weak "datamodel.proto";
+import weak "qmstr/service/datamodel.proto";
 
 message BuildMessage {
   repeated FileNode fileNodes = 1;

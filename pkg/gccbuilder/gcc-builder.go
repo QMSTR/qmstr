@@ -13,7 +13,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
-	pb "github.com/QMSTR/qmstr/pkg/service"
+	pb "github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/spf13/pflag"
 )
 

@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 
 	"github.com/QMSTR/qmstr/pkg/reporting"
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 // CreatePackageLevelReports creates the top level report about the package.
