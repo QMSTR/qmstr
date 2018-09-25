@@ -20,6 +20,8 @@ const (
 	src       = "sourcecode"
 )
 
+const mode = "Link"
+
 type LdBuilder struct {
 	Input      []string
 	Output     []string
@@ -88,7 +90,7 @@ func (ld *LdBuilder) parseCommandLine(args []string) {
 	}
 
 	// remove all flags we don't care about but that would break parsing
-	ld.processFlags(args)
+	ld.Args = builder.CleanCmdLine(args, ld.Logger, ld.Debug, ld.staticLink, ld.StaticLibs, mode)
 
 	ldFlags := pflag.NewFlagSet("ld", pflag.ContinueOnError)
 	ldFlags.StringP("output", "o", undef, "output")
