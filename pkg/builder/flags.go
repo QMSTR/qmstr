@@ -20,7 +20,6 @@ var (
 		"-MD":               struct{}{},
 		"-MMD":              struct{}{},
 		"-MP":               struct{}{},
-		"-m":                struct{}{},
 		"-v":                struct{}{},
 		"-g":                struct{}{},
 		"-pg":               struct{}{},
@@ -50,6 +49,7 @@ var (
 		"-Q":                     struct{}{},
 		"-T":                     struct{}{},
 		"-U":                     struct{}{},
+		"-m":                     struct{}{},
 		"-x":                     struct{}{},
 		"-MF":                    struct{}{},
 		"-MT":                    struct{}{},
@@ -75,10 +75,13 @@ var (
 		"-g":            struct{}{},
 		"-r":            struct{}{},
 		"-i":            struct{}{},
-		"-m":            struct{}{},
 		"-q":            struct{}{},
+		"-static":       struct{}{},
 		"--emit-relocs": struct{}{},
 	}
 
-	LinkStringArgs = map[string]struct{}{}
+	LinkStringArgs = map[string]struct{}{
+		"-T": struct{}{},
+		"-m": struct{}{},
+	}
 )
