@@ -38,7 +38,7 @@ var (
 	Debug *golog.Logger
 	// Log is the standard logger
 	Log         *golog.Logger
-	wrappedCmds []string = []string{"gcc", "ar"}
+	wrappedCmds = []string{"gcc", "ar", "ld"}
 )
 
 func main() {
