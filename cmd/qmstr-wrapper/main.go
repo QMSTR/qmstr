@@ -8,7 +8,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/logging"
-	pb "github.com/QMSTR/qmstr/pkg/service"
+	pb "github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/QMSTR/qmstr/pkg/wrapper"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"

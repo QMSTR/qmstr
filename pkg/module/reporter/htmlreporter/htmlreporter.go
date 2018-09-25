@@ -15,7 +15,7 @@ import (
 	"text/template"
 
 	"github.com/QMSTR/qmstr/pkg/reporting"
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	version "github.com/hashicorp/go-version"
 )
 

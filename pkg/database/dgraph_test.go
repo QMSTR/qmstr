@@ -3,7 +3,7 @@ package database
 import (
 	"testing"
 
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 func TestVarNameCalculation(t *testing.T) {

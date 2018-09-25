@@ -12,7 +12,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/analysis"
 	"github.com/QMSTR/qmstr/pkg/master"
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 var queryTypes = "linkedtarget"
