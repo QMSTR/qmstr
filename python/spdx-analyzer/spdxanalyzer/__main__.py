@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
 import argparse
-from pyqmstr.service.datamodel_pb2 import FileNode, InfoNode
-from pyqmstr.service.controlservice_pb2 import PackageRequest
-from pyqmstr.service.analyzerservice_pb2 import InfoNodeMessage
-from pyqmstr.module.module import QMSTR_Analyzer
+from qmstr.service.datamodel_pb2 import FileNode, InfoNode
+from qmstr.service.controlservice_pb2 import PackageRequest
+from qmstr.service.analyzerservice_pb2 import InfoNodeMessage
+from qmstr.module.module import QMSTR_Analyzer
 from spdx.document import License
 import logging
 import sys

@@ -9,7 +9,7 @@ import (
 
 	goflag "flag"
 
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	flag "github.com/spf13/pflag"
 	"google.golang.org/grpc"
 )

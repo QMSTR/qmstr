@@ -1,7 +1,7 @@
 package reporting
 
 import (
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 // PackageData is the package metadata that the report will visualize.

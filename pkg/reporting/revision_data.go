@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 // RevisionData contains metadata about a specific revision.
