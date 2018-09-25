@@ -63,7 +63,7 @@ requirements.txt:
 .PHONY: go_proto
 go_proto: $(GO_PROTO)
 
-pkg/service/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
+pkg/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
 	protoc -I proto --go_out=plugins=grpc:pkg proto/qmstr/service/*.proto
 
 .PHONY: python_proto
@@ -160,7 +160,7 @@ ratelimage:
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
 
 $(QMSTR_PYTHON_SPDX_ANALYZER): $(PROTO_PYTHON_FILES)
-	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer 'grpcio==${GRPCIO_VERSION}' protobuf -e spdxanalyzer.__main__:main -o $@
+	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer 'grpcio==${GRPCIO_VERSION}' protobuf -e spdxanalyzer.__main__:main --python=venv/bin/python3 --disable-cache -o $@
 
 python_modules: $(QMSTR_PYTHON_MODULES)
 

@@ -16,13 +16,13 @@ class SpdxAnalyzer(QMSTR_Analyzer):
 
     @staticmethod
     def is_primitive(attr):
-        primitive = (int, str, bool, unicode, float)
+        primitive = (int, str, bool, float)
         return isinstance(attr, primitive)
 
     @staticmethod
     def __stringify(t):
         if SpdxAnalyzer.is_primitive(t):
-            return unicode(t)
+            return t
         if isinstance(t, list):
             return ",".join(map(lambda x: SpdxAnalyzer.__stringify(x), t))
         if isinstance(t, tuple):
@@ -77,11 +77,10 @@ class SpdxAnalyzer(QMSTR_Analyzer):
 
         stream_resp = self.cserv.GetFileNode(query_node)
 
-
         for node in stream_resp:
             logging.info("Analyze node {}".format(node.path))
-            filtered_files = filter(
-                lambda f: node.path.endswith(f.name), self.doc.files)
+            filtered_files = list(filter(
+                lambda f: node.path.endswith(f.name), self.doc.files))
             if not filtered_files:
                 logging.warn(
                     "File {} not found in SPDX document".format(node.path))
@@ -89,7 +88,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
             spdx_doc_file_info = filtered_files[0]
             if not isinstance(spdx_doc_file_info.conc_lics, License):
                 continue
-            
+
             data_nodes = []
             logging.info("Concluded license {}".format(
                 spdx_doc_file_info.conc_lics))
@@ -101,12 +100,12 @@ class SpdxAnalyzer(QMSTR_Analyzer):
                 type="name",
                 data=spdx_doc_file_info.conc_lics.full_name
             ))
-        
+
             info_node = InfoNode(
                 type="license",
                 dataNodes=data_nodes
             )
-        
+
             info_nodes = []
             info_nodes.append(InfoNodeMessage(
                 uid=node.uid,

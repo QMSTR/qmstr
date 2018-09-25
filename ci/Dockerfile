@@ -10,7 +10,7 @@ LABEL org.qmstr.image runtime
 
 # install runtime deps
 RUN apt-get update && \
-    apt-get install -y software-properties-common curl autoconf git libgit2-dev libio-captureoutput-perl python python-pip protobuf-compiler && \
+    apt-get install -y software-properties-common curl autoconf git libgit2-dev libio-captureoutput-perl python python-pip python3-distutils protobuf-compiler && \
     rm -rf /var/lib/apt/lists/*
 
 ARG HUGO_VERSION
