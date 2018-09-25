@@ -2,11 +2,8 @@ package gccbuilder
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"path/filepath"
-	"regexp"
-	"sort"
 	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/builder"
@@ -140,99 +137,13 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 	}
 }
 
-func (g *GccBuilder) cleanCmdLine(args []string) {
-	clearIdxSet := map[int]struct{}{}
-	for idx, arg := range args {
-
-		if g.Debug {
-			g.Logger.Printf("%d - %s", idx, arg)
-		}
-
-		// index string flags
-		for key := range stringArgs {
-			if idx < len(args)-1 {
-				if g.Debug {
-					g.Logger.Printf("Find %s string arg in %s with %s", key, fmt.Sprintf("%s %s ", arg, args[idx+1]), fmt.Sprintf("%s%s", key, stringArgsRE))
-				}
-				re := regexp.MustCompile(fmt.Sprintf("%s%s", key, stringArgsRE))
-				if re.MatchString(fmt.Sprintf("%s %s ", arg, args[idx+1])) {
-					if g.Debug {
-						g.Logger.Printf("Found %v string arg", args[idx:idx+1])
-					}
-					clearIdxSet[idx] = struct{}{}
-					clearIdxSet[idx+1] = struct{}{}
-				}
-			}
-			if strings.HasPrefix(arg, key) {
-				clearIdxSet[idx] = struct{}{}
-			}
-		}
-
-		// index bool flags
-		for key := range boolArgs {
-			if strings.HasPrefix(arg, key) {
-				clearIdxSet[idx] = struct{}{}
-				// use static libraries when linking statically and incrementally
-				if arg == "-static" || arg == "-r" {
-					g.staticLink = true
-				}
-				staticLib := staticLibPattern.FindAllStringSubmatch(arg, 1)
-				if staticLib != nil {
-					g.StaticLibs[staticLib[0][1]] = struct{}{}
-				}
-
-			}
-		}
-
-		// fix long arguments to pass through pflags
-		for key := range fixPosixArgs {
-			if key == arg {
-				args[idx] = fmt.Sprintf("-%s", arg)
-			}
-		}
-	}
-
-	clear := []int{}
-	for k := range clearIdxSet {
-		clear = append(clear, k)
-	}
-	sort.Sort(sort.IntSlice(clear))
-
-	if g.Debug {
-		g.Logger.Printf("To be cleaned %v", clear)
-	}
-	initialArgsSize := len(args)
-	for _, idx := range clear {
-		if g.Debug {
-			g.Logger.Printf("Clearing %d", idx)
-		}
-		offset := initialArgsSize - len(args)
-		offsetIdx := idx - offset
-		if g.Debug {
-			g.Logger.Printf("Actually clearing %d", offsetIdx)
-		}
-		if initialArgsSize-1 == idx {
-			if g.Debug {
-				g.Logger.Printf("Cut last arg")
-			}
-			args = args[:offsetIdx]
-		} else {
-			args = append(args[:offsetIdx], args[offsetIdx+1:]...)
-		}
-		if g.Debug {
-			g.Logger.Printf("new slice is %v", args)
-		}
-	}
-	g.Args = args
-}
-
 func (g *GccBuilder) parseCommandLine(args []string) {
 	if g.Debug {
 		g.Logger.Printf("Parsing arguments: %v", args)
 	}
 
 	// remove all flags we don't care about but that would break parsing
-	g.cleanCmdLine(args)
+	g.Args = builder.CleanCmdLine(args, g.Logger, g.Debug, g.staticLink, g.StaticLibs, undef)
 
 	gccFlags := pflag.NewFlagSet("gcc", pflag.ContinueOnError)
 	gccFlags.BoolP("assemble", "c", false, "do not link")
