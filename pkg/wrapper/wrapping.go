@@ -14,6 +14,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/arbuilder"
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/gccbuilder"
+	"github.com/QMSTR/qmstr/pkg/ldbuilder"
 )
 
 // Wrapper represents a wrapper to call a program
@@ -48,6 +49,8 @@ func getBuilder(prog string, workDir string, logger *log.Logger, debug bool) (bu
 		return gccbuilder.NewGccBuilder(workDir, logger, debug), nil
 	case "ar":
 		return arbuilder.NewArBuilder(workDir, logger, debug), nil
+	case "ld":
+		return ldbuilder.NewLdBuilder(workDir, logger, debug), nil
 	}
 	return nil, fmt.Errorf("Builder %s not available", prog)
 }
