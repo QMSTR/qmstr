@@ -9,7 +9,7 @@ import (
 	"sync/atomic"
 	"text/template"
 
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 // AddBuildFileNode adds a node to the insert queue in build phase

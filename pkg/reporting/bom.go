@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 func GetBOM(pkg *service.PackageNode, enableWarnings bool, enableErrors bool) (*service.BOM, error) {

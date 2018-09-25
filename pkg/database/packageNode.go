@@ -6,7 +6,7 @@ import (
 	"errors"
 	"log"
 
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 func (db *DataBase) AddPackageNode(pNode *service.PackageNode) (string, error) {

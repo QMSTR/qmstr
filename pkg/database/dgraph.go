@@ -15,7 +15,7 @@ import (
 
 	"encoding/json"
 
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	client "github.com/dgraph-io/dgo"
 	"github.com/dgraph-io/dgo/protos/api"
 
