@@ -4,10 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"sort"
 	"strings"
 
@@ -159,7 +157,7 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			}
 			dependencies = append(dependencies, inputFileNode)
 		}
-		err := g.FindActualLibraries()
+		err := builder.FindActualLibraries(g.ActualLibs, g.LinkLibs, g.LibPath, g.staticLink, g.StaticLibs)
 		if err != nil {
 			g.Logger.Fatalf("Failed to collect dependencies: %v", err)
 		}
@@ -361,68 +359,4 @@ func (g *GccBuilder) parseCommandLine(args []string) {
 			}
 		}
 	}
-}
-
-const (
-	libPathVar = "LIBRARY_PATH"
-)
-
-// FindActualLibraries discovers the actual libraries on the path
-func (g *GccBuilder) FindActualLibraries() error {
-	libpathvar, present := os.LookupEnv(libPathVar)
-	if present && libpathvar != "" {
-		g.LibPath = append([]string{libpathvar}, g.LibPath...)
-	}
-	var libprefix string
-	var libsuffix []string
-	var syslibpath []string
-	switch runtime.GOOS {
-	case "linux":
-		libprefix = "lib"
-		libsuffix = []string{".so", ".a"}
-		syslibpath = []string{"/lib", "/usr/lib", "/usr/local/lib", "/lib64"}
-	case "darwin":
-		libprefix = "lib"
-		libsuffix = []string{".dylib", ".so", ".a"}
-		syslibpath = []string{"/usr/lib", "/usr/local/lib"}
-	case "windows":
-		libprefix = ""
-		libsuffix = []string{".dll"}
-		syslibpath = []string{""}
-	}
-
-	for _, dir := range append(g.LibPath, syslibpath...) {
-		if dir == "" {
-			// Unix shell semantics: path element "" means "."
-			dir = "."
-		}
-		filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
-			for _, lib := range g.LinkLibs {
-				// is lib located
-				if _, ok := g.ActualLibs[lib]; ok {
-					continue
-				}
-				var suffixes []string
-				// forced static lib or linking statically
-				if _, ok := g.StaticLibs[lib]; ok || g.staticLink {
-					suffixes = []string{".a"}
-				} else {
-					suffixes = libsuffix
-				}
-
-				for _, suffix := range suffixes {
-					if f.Name() == fmt.Sprintf("%s%s%s", libprefix, lib, suffix) {
-						g.ActualLibs[lib] = path
-					}
-				}
-			}
-			return nil
-		})
-	}
-
-	if len(g.ActualLibs) == len(g.LinkLibs) {
-		return nil
-	}
-
-	return fmt.Errorf("Missing libraries from %v in %v", g.LinkLibs, g.ActualLibs)
 }
