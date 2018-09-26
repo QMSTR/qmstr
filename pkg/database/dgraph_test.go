@@ -30,5 +30,27 @@ func TestFillType(t *testing.T) {
 	if pkgNode.Targets[0].FileNodeType != "_" {
 		t.Fail()
 	}
+}
 
+func TestCheckSchema(t *testing.T) {
+	const schema = `data:string @index(hash) .
+hash:string @index(exact) .
+name:string @index(hash) .
+path:string @index(trigram) .
+type:string @index(hash) .
+phase:int .
+session:string .
+dataNodes:uid @reverse .
+buildConfig:string .
+dataNodeType:string @index(hash) .
+fileNodeType:string @index(hash) .
+infoNodeType:string @index(hash) .
+additionalInfo:uid .
+packageNodeType:string @index(hash) .
+analyzerNodeType:string @index(hash) .
+qmstrStateNodeType:string .
+	`
+	if !CheckSchema(schema) {
+		t.Fail()
+	}
 }

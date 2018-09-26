@@ -2,17 +2,55 @@ package docker
 
 import (
 	"archive/tar"
+	"bufio"
 	"bytes"
 	"context"
+	"io"
 	"io/ioutil"
 	"log"
+	"os"
 	"regexp"
 
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/archive"
 )
+
+func CopyGraphExport(ctx context.Context, cli *client.Client, container string, destinationPath string) error {
+	data, _, err := cli.CopyFromContainer(ctx, container, common.ContainerGraphExportDir)
+	if err != nil {
+		return err
+	}
+	defer data.Close()
+
+	fo, err := os.Create(destinationPath)
+	if err != nil {
+		return err
+	}
+	defer fo.Close()
+
+	w := bufio.NewWriter(fo)
+	buf := make([]byte, 1024)
+	for {
+		n, err := data.Read(buf)
+		if err != nil && err != io.EOF {
+			return err
+		}
+		if n == 0 {
+			break
+		}
+		if _, err := w.Write(buf[:n]); err != nil {
+			return err
+		}
+	}
+
+	if err = w.Flush(); err != nil {
+		return err
+	}
+	return nil
+}
 
 func CopyResults(ctx context.Context, cli *client.Client, container string, destinationPath string) error {
 	data, stat, err := cli.CopyFromContainer(ctx, container, master.ServerOutputDir)
