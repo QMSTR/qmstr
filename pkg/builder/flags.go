@@ -76,6 +76,7 @@ var (
 		"-r":                 struct{}{},
 		"-i":                 struct{}{},
 		"-q":                 struct{}{},
+		"-pie":               struct{}{},
 		"-static":            struct{}{},
 		"--emit-relocs":      struct{}{},
 		"--whole-archive":    struct{}{},
