@@ -1,6 +1,7 @@
 package database
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"errors"
@@ -23,17 +24,17 @@ import (
 )
 
 const schema = `
-path: string @index(trigram) .
-hash: string @index(exact) .
-type: string @index(hash) .
-name: string @index(hash) .
-dataNodes: uid @reverse .
-data: string @index(hash) .
-packageNodeType: string @index(hash) .
-fileNodeType: string @index(hash) .
-infoNodeType: string @index(hash) .
-dataNodeType: string @index(hash) .
-analyzerNodeType: string @index(hash) .
+path:string @index(trigram) .
+hash:string @index(exact) .
+type:string @index(hash) .
+name:string @index(hash) .
+dataNodes:uid @reverse .
+data:string @index(hash) .
+packageNodeType:string @index(hash) .
+fileNodeType:string @index(hash) .
+infoNodeType:string @index(hash) .
+dataNodeType:string @index(hash) .
+analyzerNodeType:string @index(hash) .
 `
 
 type DataBase struct {
@@ -41,6 +42,17 @@ type DataBase struct {
 	insertQueue chan *service.FileNode
 	insertMutex *sync.Mutex
 	pending     uint64
+}
+
+func CheckSchema(checkSchema string) bool {
+	scanner := bufio.NewScanner(strings.NewReader(schema))
+	for scanner.Scan() {
+		if !strings.Contains(checkSchema, scanner.Text()) {
+			log.Printf("Required schema not found: %s", scanner.Text())
+			return false
+		}
+	}
+	return true
 }
 
 // Setup connects to dgraph and returns the instance

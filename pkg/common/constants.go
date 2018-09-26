@@ -18,3 +18,6 @@ const ContainerCcacheDir = "/ccache"
 
 // ContainerQmstrHomeDir is the HOME dir of the user running a client container
 const ContainerQmstrHomeDir = "/home/qmstruser"
+
+const ContainerGraphExportDir = "/var/qmstr/export"
+const ContainerGraphImportPath = "/var/qmstr/qmstr.import.tar"
