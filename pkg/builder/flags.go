@@ -87,5 +87,6 @@ var (
 	LinkStringArgs = map[string]struct{}{
 		"-T": struct{}{},
 		"-m": struct{}{},
+		"-z": struct{}{},
 	}
 )
