@@ -3,7 +3,7 @@ package database
 import "github.com/QMSTR/qmstr/pkg/qmstr/service"
 
 func (db *DataBase) GetAnalyzerByName(name string) (*service.Analyzer, error) {
-	ret := map[string][]*service.Analyzer{}
+	var ret map[string][]*service.Analyzer
 
 	q := `query AnalyzerByName($AnaName: string){
 		  getAnalyzerByType(func: has(analyzerNodeType)) @filter(eq(name, $AnaName)) {
@@ -15,7 +15,7 @@ func (db *DataBase) GetAnalyzerByName(name string) (*service.Analyzer, error) {
 
 	vars := map[string]string{"$AnaName": name}
 
-	err := db.queryAnalyzer(q, vars, &ret)
+	err := db.queryNodes(q, vars, &ret)
 	if err != nil {
 		return nil, err
 	}

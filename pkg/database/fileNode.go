@@ -66,7 +66,7 @@ func (db *DataBase) AddFileNodes(nodeID string, filenodes ...*service.FileNode) 
 // GetFileNodeUid returns the UID of the node if exists otherwise ""
 func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 
-	ret := map[string][]*service.FileNode{}
+	var ret map[string][]*service.FileNode
 
 	q := `query Node($Hash: string){
 		  hasNode(func: eq(hash, $Hash)) {
@@ -88,7 +88,7 @@ func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 }
 
 func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool) ([]*service.FileNode, error) {
-	ret := map[string][]*service.FileNode{}
+	var ret map[string][]*service.FileNode
 
 	q := `query FileNodeByFileNode($Filter: string){
 		getFileNodeByFileNode(func: has(fileNodeType)) {{.Type}} {{.Recurse}}{
@@ -136,8 +136,7 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 // GetFileNodeByHash returns the file node for the file with the provided checksum
 func (db *DataBase) GetFileNodeByHash(hash string, recursive bool) (*service.FileNode, error) {
 
-	//ret := map[string][]*service.FileNode{}
-	var ret map[string][]interface{}
+	var ret map[string][]*service.FileNode
 
 	q := `query NodeByHash($Hash: string){
 		  getNodeByHash(func: eq(hash, $Hash)) {
@@ -158,16 +157,16 @@ func (db *DataBase) GetFileNodeByHash(hash string, recursive bool) (*service.Fil
 
 	vars := map[string]string{"$Hash": hash}
 
-	err := db.queryAnyNodes(q, vars, &ret)
+	err := db.queryNodes(q, vars, &ret)
 	if err != nil {
 		return nil, err
 	}
 
-	return ret["getNodeByHash"][0].(*service.FileNode), nil
+	return ret["getNodeByHash"][0], nil
 }
 
 func (db *DataBase) GetFileNodesByType(filetype string, recursive bool) ([]*service.FileNode, error) {
-	ret := map[string][]*service.FileNode{}
+	var ret map[string][]*service.FileNode
 
 	q := `query FileNodeByType($FileType: string){
 		  getFileNodeByType(func: has(fileNodeType)) {{.Filter}} {{.Recurse}}{

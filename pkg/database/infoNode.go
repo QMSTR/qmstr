@@ -130,7 +130,7 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 		runeDataNodeMap[getVarName(idx)] = datanode
 	}
 
-	ret := map[string][]*service.InfoNode{}
+	var ret map[string]interface{}
 
 	q := `query InfoNodeByDataNode($InfoType: string) {
 				{{range $var, $data := .}}
@@ -161,13 +161,15 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 
 	vars := map[string]string{"$InfoType": infonodetype}
 
-	err = db.queryInfoNodes(queryString, vars, &ret)
+	err = db.queryNodes(queryString, vars, &ret)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(ret["getInfoByData"]) > 0 {
-		retInfoNode = ret["getInfoByData"][0]
+	infoNodes := ret["getInfoByData"].([]*service.InfoNode)
+
+	if len(infoNodes) > 0 {
+		retInfoNode = infoNodes[0]
 	}
 
 	if retInfoNode == nil {
