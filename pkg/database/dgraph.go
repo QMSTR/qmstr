@@ -214,7 +214,7 @@ func getVarName(index int) string {
 
 func (db *DataBase) GetNodesByType(valuetype string, recursive bool, namefilter string) ([]*service.FileNode, error) {
 
-	ret := map[string][]*service.FileNode{}
+	var ret map[string]interface{}
 
 	q := `query NodeByType($Type: string, $Name: string){
 		  getNodeByType(func: eq(type, $Type)) {{.Filter}} {{.Recurse}}{
@@ -252,34 +252,10 @@ func (db *DataBase) GetNodesByType(valuetype string, recursive bool, namefilter 
 		return nil, err
 	}
 
-	return ret["getNodeByType"], nil
+	return ret["getNodeByType"].([]*service.FileNode), nil
 }
 
-func (db *DataBase) queryPackage(query string, queryVars map[string]string, resultMap *map[string][]*service.PackageNode) error {
-	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
-	if err != nil {
-		return fmt.Errorf("Could not query for package node with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
-	}
-
-	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
-		return fmt.Errorf("Could not unmashal query response: %v", err)
-	}
-	return nil
-}
-
-func (db *DataBase) queryNodes(query string, queryVars map[string]string, resultMap *map[string][]*service.FileNode) error {
-	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
-	if err != nil {
-		return fmt.Errorf("Could not query for filenode with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
-	}
-
-	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
-		return fmt.Errorf("Could not unmashal query response: %v", err)
-	}
-	return nil
-}
-
-func (db *DataBase) queryAnyNodes(query string, queryVars map[string]string, resultMap *map[string][]interface{}) error {
+func (db *DataBase) queryNodes(query string, queryVars map[string]string, resultMap interface{}) error {
 	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
 	if err != nil {
 		return fmt.Errorf("Could not query for node with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
@@ -291,21 +267,10 @@ func (db *DataBase) queryAnyNodes(query string, queryVars map[string]string, res
 	return nil
 }
 
-func (db *DataBase) queryAnalyzer(query string, queryVars map[string]string, resultMap *map[string][]*service.Analyzer) error {
-	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
+func (db *DataBase) queryNodesSimple(query string, resultMap interface{}) error {
+	resp, err := db.client.NewTxn().Query(context.Background(), query)
 	if err != nil {
-		return fmt.Errorf("Could not query for analyzer with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
-	}
-
-	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
-		return fmt.Errorf("Could not unmashal query response: %v", err)
-	}
-	return nil
-}
-func (db *DataBase) queryInfoNodes(query string, queryVars map[string]string, resultMap *map[string][]*service.InfoNode) error {
-	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), query, queryVars)
-	if err != nil {
-		return fmt.Errorf("Could not query for info node with: \n\n%s\n\nVars:\n\n%v\n\nError: %v", query, queryVars, err)
+		return fmt.Errorf("Could not query for node with: \n\n%s\n\nError: %v", query, err)
 	}
 
 	if err = json.Unmarshal(resp.Json, resultMap); err != nil {
