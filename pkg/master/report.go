@@ -10,7 +10,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
 	"github.com/QMSTR/qmstr/pkg/reporting"
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 type serverPhaseReport struct {
@@ -48,8 +48,8 @@ func (phase *serverPhaseReport) Shutdown() error {
 	return nil
 }
 
-func (phase *serverPhaseReport) GetPhaseID() int32 {
-	return PhaseIDReport
+func (phase *serverPhaseReport) GetPhaseID() service.Phase {
+	return service.Phase_REPORT
 }
 
 func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequest) (*service.ReporterConfigResponse, error) {

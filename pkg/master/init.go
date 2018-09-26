@@ -5,7 +5,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 type serverPhaseInit struct {
@@ -30,9 +30,9 @@ func (phase *serverPhaseInit) Activate() error {
 
 func (phase *serverPhaseInit) initPackage(session string) error {
 	rootPackageNode := &service.PackageNode{Name: phase.masterConfig.Name, BuildConfig: phase.masterConfig.BuildConfig}
-	tmpInfoNode := &service.InfoNode{Type: "metadata", NodeType: service.NodeTypeInfoNode}
+	tmpInfoNode := &service.InfoNode{Type: "metadata"}
 	for key, val := range phase.masterConfig.MetaData {
-		tmpInfoNode.DataNodes = append(tmpInfoNode.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val, NodeType: service.NodeTypeDataNode})
+		tmpInfoNode.DataNodes = append(tmpInfoNode.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val})
 	}
 
 	if len(tmpInfoNode.DataNodes) > 0 {
@@ -48,6 +48,6 @@ func (phase *serverPhaseInit) Shutdown() error {
 	return nil
 }
 
-func (phase *serverPhaseInit) GetPhaseID() int32 {
-	return PhaseIDInit
+func (phase *serverPhaseInit) GetPhaseID() service.Phase {
+	return service.Phase_INIT
 }

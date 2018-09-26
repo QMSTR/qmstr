@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	pb "github.com/QMSTR/qmstr/pkg/service"
+	pb "github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/spf13/cobra"
 )
 

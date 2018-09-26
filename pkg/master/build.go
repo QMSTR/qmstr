@@ -6,7 +6,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 type serverPhaseBuild struct {
@@ -28,8 +28,8 @@ func (phase *serverPhaseBuild) Shutdown() error {
 	return nil
 }
 
-func (phase *serverPhaseBuild) GetPhaseID() int32 {
-	return PhaseIDBuild
+func (phase *serverPhaseBuild) GetPhaseID() service.Phase {
+	return service.Phase_BUILD
 }
 
 func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
@@ -47,7 +47,7 @@ func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildRe
 			}
 		}
 		log.Printf("Adding file node %s", node.Path)
-		phase.db.AddFileNode(node)
+		phase.db.AddBuildFileNode(node)
 	}
 	return &service.BuildResponse{Success: true}, nil
 }

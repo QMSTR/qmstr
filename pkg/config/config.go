@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	yaml "gopkg.in/yaml.v2"
 )
 

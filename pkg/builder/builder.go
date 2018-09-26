@@ -8,11 +8,11 @@ import (
 	"os"
 	"path/filepath"
 
-	pb "github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 type Builder interface {
-	Analyze(commandline []string) (*pb.BuildMessage, error)
+	Analyze(commandline []string) (*service.BuildMessage, error)
 	GetName() string
 	GetPrefix() (string, error)
 }
@@ -22,7 +22,7 @@ type GeneralBuilder struct {
 	Debug  bool
 }
 
-func NewFileNode(path string, fileType string) *pb.FileNode {
+func NewFileNode(path string, fileType string) *service.FileNode {
 	filename := filepath.Base(path)
 	hash, err := hash(path)
 	broken := false
@@ -30,7 +30,7 @@ func NewFileNode(path string, fileType string) *pb.FileNode {
 		hash = "nohash" + path
 		broken = true
 	}
-	return &pb.FileNode{NodeType: pb.NodeTypeFileNode, Name: filename, Type: fileType, Path: path, Hash: hash, Broken: broken}
+	return &service.FileNode{Name: filename, Type: fileType, Path: path, Hash: hash, Broken: broken}
 }
 
 func hash(fileName string) (string, error) {

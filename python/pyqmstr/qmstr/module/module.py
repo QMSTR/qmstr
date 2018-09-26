@@ -1,8 +1,8 @@
 import grpc
-from pyqmstr.service.analyzerservice_pb2 import AnalyzerConfigRequest
-from pyqmstr.service.analyzerservice_pb2_grpc import AnalysisServiceStub
-from pyqmstr.service.controlservice_pb2 import PackageRequest
-from pyqmstr.service.controlservice_pb2_grpc import ControlServiceStub
+from qmstr.service.analyzerservice_pb2 import AnalyzerConfigRequest
+from qmstr.service.analyzerservice_pb2_grpc import AnalysisServiceStub
+from qmstr.service.controlservice_pb2 import PackageRequest
+from qmstr.service.controlservice_pb2_grpc import ControlServiceStub
 import logging
 
 

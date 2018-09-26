@@ -4,7 +4,7 @@ import (
 	"errors"
 	"log"
 
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 type serverPhaseFailure struct {
@@ -15,6 +15,7 @@ type serverPhaseFailure struct {
 func (server *server) enterFailureServerPhase(cause error) {
 	server.publishEvent(&service.Event{Class: string(EventPhase), Message: "Entering failure phase"})
 	server.currentPhase = &serverPhaseFailure{genericServerPhase{Name: "Fail"}, cause}
+	server.pendingPhaseSwitch = 0
 	log.Printf("Server entered failure phase due to %v\n", cause)
 }
 
@@ -27,6 +28,6 @@ func (phase *serverPhaseFailure) Shutdown() error {
 	return errors.New("shutdown not possible failure phase is terminal")
 }
 
-func (phase *serverPhaseFailure) GetPhaseID() int32 {
-	return PhaseIDFailure
+func (phase *serverPhaseFailure) GetPhaseID() service.Phase {
+	return service.Phase_FAIL
 }

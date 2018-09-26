@@ -4,8 +4,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/QMSTR/qmstr/pkg/master"
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )
@@ -43,11 +42,11 @@ func awaitServer() {
 			Debug.Println("retrying")
 			continue
 		}
-		if res.PhaseID == master.PhaseIDFailure {
+		if res.PhaseID == service.Phase_FAIL {
 			Log.Println("qmstr master is in failure state")
 			os.Exit(ReturnCodeServerFailureError)
 		}
-		if res.PhaseID > master.PhaseIDInit {
+		if res.PhaseID > service.Phase_INIT {
 			return
 		}
 	}

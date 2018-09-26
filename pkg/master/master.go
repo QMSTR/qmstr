@@ -16,18 +16,18 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"google.golang.org/grpc"
 )
 
 var quitServer chan interface{}
-var phaseMap map[int32]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase
+var phaseMap map[service.Phase]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase
 
 func init() {
-	phaseMap = map[int32]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase{
-		PhaseIDBuild:    newBuildPhase,
-		PhaseIDAnalysis: newAnalysisPhase,
-		PhaseIDReport:   newReportPhase,
+	phaseMap = map[service.Phase]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase{
+		service.Phase_BUILD:    newBuildPhase,
+		service.Phase_ANALYSIS: newAnalysisPhase,
+		service.Phase_REPORT:   newReportPhase,
 	}
 }
 
@@ -107,7 +107,7 @@ func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage
 	return &service.SwitchPhaseResponse{Success: true}, nil
 }
 
-func (s *server) switchPhase(requestedPhase int32) error {
+func (s *server) switchPhase(requestedPhase service.Phase) error {
 	if !atomic.CompareAndSwapInt64(&s.pendingPhaseSwitch, 0, 1) {
 		errMsg := "denied there is a pending phase transition"
 		log.Println(errMsg)
@@ -120,6 +120,7 @@ func (s *server) switchPhase(requestedPhase int32) error {
 	}
 	if phaseCtor, ok := phaseMap[requestedPhase]; ok {
 		log.Printf("Switching to phase %d", requestedPhase)
+		defer s.persistPhase()
 		s.publishEvent(&service.Event{Class: string(EventPhase), Message: fmt.Sprintf("Switching to phase %d", requestedPhase)})
 		err := s.currentPhase.Shutdown()
 		if err != nil {
@@ -210,7 +211,7 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 		return masterRun, err
 	}
 
-	serverImpl.switchPhase(PhaseIDBuild)
+	serverImpl.switchPhase(service.Phase_BUILD)
 
 	quitServer = make(chan interface{})
 	go func() {
@@ -233,4 +234,16 @@ func logModuleError(moduleName string, output []byte) {
 		buffer.WriteString(fmt.Sprintf("\t--> %s\n", s.Text()))
 	}
 	log.Println(buffer.String())
+}
+
+func (s *server) persistPhase() error {
+	if s.pendingPhaseSwitch != 0 {
+		return errors.New("Can not persist phase while switching")
+	}
+	_, err := s.currentPhase.getDataBase()
+	if err != nil {
+		return err
+	}
+	//db.AddQmstrStateNode()
+	return nil
 }

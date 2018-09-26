@@ -2,7 +2,7 @@ syntax = "proto3";
 package service;
 option java_package = "org.qmstr.grpc.service";
 
-import weak "datamodel.proto";
+import weak "qmstr/service/datamodel.proto";
 
 message LogMessage {
   bytes msg = 1;
@@ -21,7 +21,7 @@ message QuitResponse {
 }
 
 message SwitchPhaseMessage {
-  int32 phase = 1;
+  Phase phase = 1;
 }
 
 message SwitchPhaseResponse {
@@ -40,7 +40,7 @@ message StatusMessage {
 
 message StatusResponse {
   string phase = 1;
-  int32 phaseID = 2;
+  Phase phaseID = 2;
   bool switching = 3;
   string error = 4;
 }

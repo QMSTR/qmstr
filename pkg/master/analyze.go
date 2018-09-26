@@ -13,7 +13,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 type serverPhaseAnalysis struct {
@@ -70,8 +70,8 @@ func (phase *serverPhaseAnalysis) Shutdown() error {
 	return nil
 }
 
-func (phase *serverPhaseAnalysis) GetPhaseID() int32 {
-	return PhaseIDAnalysis
+func (phase *serverPhaseAnalysis) GetPhaseID() service.Phase {
+	return service.Phase_ANALYSIS
 }
 
 func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
@@ -114,7 +114,6 @@ func (phase *serverPhaseAnalysis) SendInfoNodes(stream service.AnalysisService_S
 			return errors.New("wrong token supplied")
 		}
 		infoNode := infoNodeReq.Infonode
-		infoNode.NodeType = service.NodeTypeInfoNode
 		infoNode.Analyzer = []*service.Analyzer{phase.currentAnalyzer}
 		err = phase.db.AddInfoNodes(infoNodeReq.Uid, infoNode)
 		if err != nil {
@@ -139,14 +138,13 @@ func (phase *serverPhaseAnalysis) SendFileNodes(stream service.AnalysisService_S
 			return errors.New("wrong token supplied")
 		}
 		fileNode := fileNodeReq.Filenode
-		fileNode.NodeType = service.NodeTypeFileNode
 		err = common.SetRelativePath(fileNode, phase.masterConfig.Server.BuildPath, nil)
 		if err != nil {
 			return err
 		}
 
 		log.Printf("Adding file node %v to package targets.", fileNode.Path)
-		err = phase.db.AddFileNodes(fileNodeReq.Uid, fileNode)
+		err = phase.db.AddPackageFileNodes(fileNodeReq.Uid, fileNode)
 		if err != nil {
 			return err
 		}

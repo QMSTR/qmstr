@@ -2,7 +2,7 @@ syntax = "proto3";
 package service;
 option java_package = "org.qmstr.grpc.service";
 
-import weak "bom.proto";
+import weak "qmstr/service/bom.proto";
 
 message ReporterConfigRequest {
   int32 reporterID = 1;
