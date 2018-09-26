@@ -13,8 +13,9 @@ func (db *DataBase) AddPackageNode(pNode *service.PackageNode) (string, error) {
 	log.Printf("Adding package [%v] node to the graph", pNode)
 	return dbInsert(db.client, pNode)
 }
+
 func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error) {
-	ret := map[string][]*service.PackageNode{}
+	var ret map[string][]*service.PackageNode
 
 	q := `query PackageNode($Session: string) {
 		getPackageNode(func: has(packageNodeType)) @recurse(loop: false) {
@@ -34,16 +35,18 @@ func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error)
 
 	vars := map[string]string{"$Session": session}
 
-	err := db.queryPackage(q, vars, &ret)
+	err := db.queryNodes(q, vars, &ret)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(ret["getPackageNode"]) < 1 {
+	pkgNodes := ret["getPackageNode"]
+
+	if len(pkgNodes) < 1 {
 		return nil, errors.New("No package node found")
 	}
 
-	return ret["getPackageNode"][0], nil
+	return pkgNodes[0], nil
 
 }
 
