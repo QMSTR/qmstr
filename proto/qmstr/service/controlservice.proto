@@ -49,6 +49,14 @@ message EventMessage {
   string class = 1;
 }
 
+message ExportRequest {
+  bool wait = 1;
+}
+
+message ExportResponse {
+  string path = 1;
+}
+
 service ControlService {
   rpc Log(LogMessage) returns (LogResponse) {}
   rpc Quit(QuitMessage) returns (QuitResponse) {}
@@ -57,4 +65,5 @@ service ControlService {
   rpc GetFileNode(FileNode) returns (stream FileNode) {}
   rpc Status(StatusMessage) returns (StatusResponse) {}
   rpc SubscribeEvents(EventMessage) returns (stream Event) {}
+  rpc ExportGraph(ExportRequest) returns (ExportResponse) {}
 }

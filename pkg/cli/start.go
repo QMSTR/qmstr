@@ -45,6 +45,7 @@ var configFile string
 var wait bool
 var debug bool
 var buildConfig string
+var seed string
 
 func getConfig() (*config.MasterConfig, error) {
 	var err error
@@ -238,7 +239,11 @@ func startContainer(ctx context.Context, cli *client.Client, workdir string, net
 		}
 		extraEnv["GOPATH"] = gopathTarget
 		extraEnv["QMSTR_DEBUG"] = "true"
-		extraMount[filepath.Join(gopathTarget, "src")] = fmt.Sprintf("%s/%s", gopath, "src")
+		extraMount[filepath.Join(gopathTarget, "src")] = filepath.Join(gopath, "src")
+	}
+
+	if seed != "" {
+		extraMount[common.ContainerGraphImportPath] = filepath.Join(workdir, seed)
 	}
 
 	containerConfig, err := getContainerConfig(internalPort, workdir, extraEnv)
@@ -324,4 +329,5 @@ func init() {
 	startCmd.Flags().BoolVar(&wait, "wait", false, "wait for qmstr-master")
 	startCmd.Flags().StringVarP(&configFile, "config", "c", "qmstr.yaml", "Path to qmstr configuration file")
 	startCmd.Flags().StringVar(&buildConfig, "buildconfig", "", "Set build configuration")
+	startCmd.Flags().StringVar(&seed, "seed", "", "Replay dgraph export on init")
 }

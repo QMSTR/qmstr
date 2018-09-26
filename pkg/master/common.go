@@ -2,7 +2,13 @@ package master
 
 import (
 	"errors"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
 
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
@@ -25,14 +31,25 @@ type serverPhase interface {
 	GetFileNode(*service.FileNode, service.ControlService_GetFileNodeServer) error
 	GetBOM(*service.BOMRequest) (*service.BOM, error)
 	GetInfoData(*service.InfoDataRequest) (*service.InfoDataResponse, error)
+	ExportGraph(*service.ExportRequest) (*service.ExportResponse, error)
+	requestExport() (string, error)
+	getPostInitPhase() service.Phase
 }
 
 type genericServerPhase struct {
-	Name         string
-	db           *database.DataBase
-	session      string
-	masterConfig *config.MasterConfig
-	server       *server
+	Name          string
+	db            *database.DataBase
+	session       string
+	masterConfig  *config.MasterConfig
+	server        *server
+	postInitPhase *service.Phase
+}
+
+func (gsp *genericServerPhase) getPostInitPhase() service.Phase {
+	if gsp.postInitPhase == nil {
+		return service.Phase_BUILD
+	}
+	return *gsp.postInitPhase
 }
 
 func (gsp *genericServerPhase) getDataBase() (*database.DataBase, error) {
@@ -97,4 +114,42 @@ func (gsp *genericServerPhase) GetBOM(in *service.BOMRequest) (*service.BOM, err
 
 func (gsp *genericServerPhase) GetInfoData(in *service.InfoDataRequest) (*service.InfoDataResponse, error) {
 	return nil, errors.New("Wrong phase")
+}
+
+func (gsp *genericServerPhase) ExportGraph(in *service.ExportRequest) (*service.ExportResponse, error) {
+	path, err := gsp.requestExport()
+	if err != nil {
+		return nil, err
+	}
+	return &service.ExportResponse{Path: path}, nil
+}
+
+func (gsp *genericServerPhase) requestExport() (string, error) {
+	// clean the dir
+	if err := os.RemoveAll(common.ContainerGraphExportDir); err != nil {
+		return "", fmt.Errorf("failed to clean the export dir: %v", err)
+	}
+	// create dir
+	if err := os.Mkdir(common.ContainerGraphExportDir, os.ModePerm); err != nil {
+		return "", fmt.Errorf("failed to create the export dir: %v", err)
+	}
+
+	resp, err := http.Get("http://localhost:8080/admin/export")
+	if err != nil {
+		return "", fmt.Errorf("failed sending export request to dgraph: %v", err)
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed reading dgraph response: %v", err)
+	}
+
+	if resp.StatusCode >= 400 {
+		return "", fmt.Errorf("failed to export graph dgraph answered: [%d] %s", resp.StatusCode, body)
+	}
+
+	log.Printf("dgraph export: %s", body)
+
+	return "", nil
 }

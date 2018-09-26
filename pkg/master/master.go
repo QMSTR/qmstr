@@ -85,6 +85,10 @@ func (s *server) GetInfoData(ctx context.Context, in *service.InfoDataRequest) (
 	return s.currentPhase.GetInfoData(in)
 }
 
+func (s *server) ExportGraph(ctx context.Context, in *service.ExportRequest) (*service.ExportResponse, error) {
+	return s.currentPhase.ExportGraph(in)
+}
+
 func (s *server) Status(ctx context.Context, in *service.StatusMessage) (*service.StatusResponse, error) {
 	resp := service.StatusResponse{}
 	resp.PhaseID = s.currentPhase.GetPhaseID()
@@ -120,6 +124,7 @@ func (s *server) switchPhase(requestedPhase service.Phase) error {
 	}
 	if phaseCtor, ok := phaseMap[requestedPhase]; ok {
 		log.Printf("Switching to phase %d", requestedPhase)
+		defer s.persistPhase()
 		s.publishEvent(&service.Event{Class: string(EventPhase), Message: fmt.Sprintf("Switching to phase %d", requestedPhase)})
 		err := s.currentPhase.Shutdown()
 		if err != nil {
@@ -210,7 +215,7 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 		return masterRun, err
 	}
 
-	serverImpl.switchPhase(service.Phase_BUILD)
+	serverImpl.switchPhase(serverImpl.currentPhase.getPostInitPhase())
 
 	quitServer = make(chan interface{})
 	go func() {
@@ -233,4 +238,19 @@ func logModuleError(moduleName string, output []byte) {
 		buffer.WriteString(fmt.Sprintf("\t--> %s\n", s.Text()))
 	}
 	log.Println(buffer.String())
+}
+
+func (s *server) persistPhase() error {
+	if s.pendingPhaseSwitch != 0 {
+		return errors.New("Can not persist phase while switching")
+	}
+	db, err := s.currentPhase.getDataBase()
+	if err != nil {
+		return err
+	}
+
+	if _, err := db.AddQmstrStateNode(&service.QmstrStateNode{Phase: s.currentPhase.GetPhaseID(), Session: s.currentPhase.getSession()}); err != nil {
+		return err
+	}
+	return nil
 }
