@@ -13,6 +13,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/arbuilder"
 	"github.com/QMSTR/qmstr/pkg/builder"
+	"github.com/QMSTR/qmstr/pkg/gnubuilder/asbuilder"
 	"github.com/QMSTR/qmstr/pkg/gnubuilder/gccbuilder"
 	"github.com/QMSTR/qmstr/pkg/gnubuilder/ldbuilder"
 )
@@ -51,6 +52,8 @@ func getBuilder(prog string, workDir string, logger *log.Logger, debug bool) (bu
 		return arbuilder.NewArBuilder(workDir, logger, debug), nil
 	case "ld":
 		return ldbuilder.NewLdBuilder(workDir, logger, debug), nil
+	case "as":
+		return asbuilder.NewAsBuilder(workDir, logger, debug), nil
 	}
 	return nil, fmt.Errorf("Builder %s not available", prog)
 }
