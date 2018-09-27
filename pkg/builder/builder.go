@@ -112,7 +112,7 @@ func CleanCmdLine(args []string, logger *log.Logger, debug bool, staticLink bool
 			if strings.HasPrefix(arg, key) {
 				clearIdxSet[idx] = struct{}{}
 				// use static libraries when linking statically and incrementally
-				if arg == "-static" || arg == "-r" {
+				if arg == "-static" || arg == "-r" || arg == "--no-dynamic-linker" {
 					staticLink = true
 				}
 				staticLib := StaticLibPattern.FindAllStringSubmatch(arg, 1)
