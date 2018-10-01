@@ -30,6 +30,9 @@ func CleanCmdLine(args []string, logger *log.Logger, debug bool, staticLink bool
 		case "Link":
 			stringArgs = LinkStringArgs
 			booleanArgs = LinkBoolArgs
+		case "Assemble":
+			stringArgs = AssembleStringArgs
+			booleanArgs = AssembleBoolArgs
 		default:
 			stringArgs = StringArgs
 			booleanArgs = BoolArgs
