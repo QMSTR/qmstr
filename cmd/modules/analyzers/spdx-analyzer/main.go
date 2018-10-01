@@ -68,7 +68,7 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 			if _, ok := analysis.SpdxLicenses[licenseNode.DataNodes[0].Data]; !ok {
 				log.Printf("Found invalid spdx license identifier %v.", licenseNode.DataNodes[0].Data)
 				log.Println("Adding warning node...")
-				warningNode := analysis.CreateWarningNode(fmt.Sprintf("File %v contains an invalid SPDX license identifier: %v", fileNode.Path, spdxIdent))
+				warningNode := service.CreateWarningNode(fmt.Sprintf("File %v contains an invalid SPDX license identifier: %v", fileNode.Path, spdxIdent))
 				infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: warningNode, Uid: fileNode.Uid})
 			}
 

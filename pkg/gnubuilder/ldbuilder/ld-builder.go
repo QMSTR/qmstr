@@ -2,6 +2,7 @@ package ldbuilder
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"path/filepath"
 
@@ -50,7 +51,9 @@ func (ld *LdBuilder) GetName() string {
 }
 
 func (ld *LdBuilder) Analyze(commandline []string) (*service.BuildMessage, error) {
-	ld.parseCommandLine(commandline[1:])
+	if err := ld.parseCommandLine(commandline[1:]); err != nil {
+		return nil, fmt.Errorf("Failed to parse commandline: %v", err)
+	}
 
 	if ld.staticLink {
 		ld.Logger.Printf("ld linking statically")
@@ -85,7 +88,7 @@ func (ld *LdBuilder) Analyze(commandline []string) (*service.BuildMessage, error
 	return &service.BuildMessage{FileNodes: fileNodes}, nil
 }
 
-func (ld *LdBuilder) parseCommandLine(args []string) {
+func (ld *LdBuilder) parseCommandLine(args []string) error {
 	if ld.Debug {
 		ld.Logger.Printf("Parsing arguments: %v", args)
 	}
@@ -103,7 +106,7 @@ func (ld *LdBuilder) parseCommandLine(args []string) {
 	}
 	err := ldFlags.Parse(ld.Args)
 	if err != nil {
-		ld.Logger.Fatalf("Unrecoverable commandline parsing error: %s", err)
+		return fmt.Errorf("Unrecoverable commandline parsing error: %v", err)
 	}
 
 	ld.Input = ldFlags.Args()
@@ -114,8 +117,9 @@ func (ld *LdBuilder) parseCommandLine(args []string) {
 		// no output defined
 		if len(ld.Input) == 0 {
 			// No input no output
-			return
+			return nil
 		}
 		ld.Output = []string{"a.out"}
 	}
+	return nil
 }
