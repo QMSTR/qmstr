@@ -13,8 +13,8 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/arbuilder"
 	"github.com/QMSTR/qmstr/pkg/builder"
-	"github.com/QMSTR/qmstr/pkg/gccbuilder"
-	"github.com/QMSTR/qmstr/pkg/ldbuilder"
+	"github.com/QMSTR/qmstr/pkg/gnubuilder/gccbuilder"
+	"github.com/QMSTR/qmstr/pkg/gnubuilder/ldbuilder"
 )
 
 // Wrapper represents a wrapper to call a program
