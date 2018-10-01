@@ -82,24 +82,3 @@ func (a *Analyzer) RunAnalyzerModule() error {
 	}
 	return nil
 }
-
-func CreateInfoNode(infoType string, dataNodes ...*service.InfoNode_DataNode) *service.InfoNode {
-	return &service.InfoNode{
-		Type:      infoType,
-		DataNodes: dataNodes,
-	}
-}
-
-func CreateWarningNode(warning string) *service.InfoNode {
-	return CreateInfoNode("warning", &service.InfoNode_DataNode{
-		Type: "warning_message",
-		Data: warning,
-	})
-}
-
-func CreateErrorNode(errorMes string) *service.InfoNode {
-	return CreateInfoNode("error", &service.InfoNode_DataNode{
-		Type: "error_message",
-		Data: errorMes,
-	})
-}
