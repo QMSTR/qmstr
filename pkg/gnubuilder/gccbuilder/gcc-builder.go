@@ -8,7 +8,8 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
-	pb "github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/gnubuilder"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/spf13/pflag"
 )
 
@@ -59,7 +60,7 @@ func (g *GccBuilder) GetName() string {
 	return "GNU C compiler builder"
 }
 
-func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
+func (g *GccBuilder) Analyze(commandline []string) (*service.BuildMessage, error) {
 	if g.Debug {
 		g.Logger.Printf("Parsing commandline %v", commandline)
 	}
@@ -72,11 +73,11 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 		} else {
 			g.Logger.Printf("gcc linking")
 		}
-		fileNodes := []*pb.FileNode{}
+		fileNodes := []*service.FileNode{}
 		linkedTarget := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[0], false), linkedTrg)
-		dependencies := []*pb.FileNode{}
+		dependencies := []*service.FileNode{}
 		for _, inFile := range g.Input {
-			inputFileNode := &pb.FileNode{}
+			inputFileNode := &service.FileNode{}
 			ext := filepath.Ext(inFile)
 			if ext == ".o" {
 				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), obj)
@@ -87,7 +88,7 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			}
 			dependencies = append(dependencies, inputFileNode)
 		}
-		err := builder.FindActualLibraries(g.ActualLibs, g.LinkLibs, g.LibPath, g.staticLink, g.StaticLibs)
+		err := gnubuilder.FindActualLibraries(g.ActualLibs, g.LinkLibs, g.LibPath, g.staticLink, g.StaticLibs)
 		if err != nil {
 			g.Logger.Fatalf("Failed to collect dependencies: %v", err)
 		}
@@ -97,10 +98,10 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 		}
 		linkedTarget.DerivedFrom = dependencies
 		fileNodes = append(fileNodes, linkedTarget)
-		return &pb.BuildMessage{FileNodes: fileNodes}, nil
+		return &service.BuildMessage{FileNodes: fileNodes}, nil
 	case Assemble:
 		g.Logger.Printf("gcc assembling - skipping link")
-		fileNodes := []*pb.FileNode{}
+		fileNodes := []*service.FileNode{}
 		if g.Debug {
 			g.Logger.Printf("This is our input %v", g.Input)
 			g.Logger.Printf("This is our output %v", g.Output)
@@ -111,13 +112,13 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			}
 			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), src)
 			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), obj)
-			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
+			targetFile.DerivedFrom = []*service.FileNode{sourceFile}
 			fileNodes = append(fileNodes, targetFile)
 		}
-		return &pb.BuildMessage{FileNodes: fileNodes}, nil
+		return &service.BuildMessage{FileNodes: fileNodes}, nil
 	case Compile:
 		g.Logger.Printf("gcc compile - skipping assemble and link")
-		fileNodes := []*pb.FileNode{}
+		fileNodes := []*service.FileNode{}
 		if g.Debug {
 			g.Logger.Printf("This is our input %v", g.Input)
 			g.Logger.Printf("This is our output %v", g.Output)
@@ -128,10 +129,10 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			}
 			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), src)
 			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), src)
-			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
+			targetFile.DerivedFrom = []*service.FileNode{sourceFile}
 			fileNodes = append(fileNodes, targetFile)
 		}
-		return &pb.BuildMessage{FileNodes: fileNodes}, nil
+		return &service.BuildMessage{FileNodes: fileNodes}, nil
 	default:
 		return nil, errors.New("Mode not implemented")
 	}
@@ -143,7 +144,7 @@ func (g *GccBuilder) parseCommandLine(args []string) {
 	}
 
 	// remove all flags we don't care about but that would break parsing
-	g.Args = builder.CleanCmdLine(args, g.Logger, g.Debug, g.staticLink, g.StaticLibs, undef)
+	g.Args = gnubuilder.CleanCmdLine(args, g.Logger, g.Debug, g.staticLink, g.StaticLibs, undef)
 
 	gccFlags := pflag.NewFlagSet("gcc", pflag.ContinueOnError)
 	gccFlags.BoolP("assemble", "c", false, "do not link")

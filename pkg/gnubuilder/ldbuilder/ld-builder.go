@@ -7,6 +7,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
+	"github.com/QMSTR/qmstr/pkg/gnubuilder"
 	"github.com/spf13/pflag"
 
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
@@ -71,7 +72,7 @@ func (ld *LdBuilder) Analyze(commandline []string) (*service.BuildMessage, error
 		}
 		dependencies = append(dependencies, inputFileNode)
 	}
-	err := builder.FindActualLibraries(ld.ActualLibs, ld.LinkLibs, ld.LibPath, ld.staticLink, ld.StaticLibs)
+	err := gnubuilder.FindActualLibraries(ld.ActualLibs, ld.LinkLibs, ld.LibPath, ld.staticLink, ld.StaticLibs)
 	if err != nil {
 		ld.Logger.Fatalf("Failed to collect dependencies: %v", err)
 	}
@@ -90,7 +91,7 @@ func (ld *LdBuilder) parseCommandLine(args []string) {
 	}
 
 	// remove all flags we don't care about but that would break parsing
-	ld.Args = builder.CleanCmdLine(args, ld.Logger, ld.Debug, ld.staticLink, ld.StaticLibs, mode)
+	ld.Args = gnubuilder.CleanCmdLine(args, ld.Logger, ld.Debug, ld.staticLink, ld.StaticLibs, mode)
 
 	ldFlags := pflag.NewFlagSet("ld", pflag.ContinueOnError)
 	ldFlags.StringP("output", "o", undef, "output")

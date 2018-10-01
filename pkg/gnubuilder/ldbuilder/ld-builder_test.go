@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/QMSTR/qmstr/pkg/ldbuilder"
+	"github.com/QMSTR/qmstr/pkg/gnubuilder/ldbuilder"
 )
 
 func getTestBuilder() *ldbuilder.LdBuilder {
