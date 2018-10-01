@@ -77,6 +77,23 @@ func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest)
 	return node, nil
 }
 
+func (s *server) SendBuildError(ctx context.Context, in *service.InfoNode) (*service.BuildResponse, error) {
+	db, err := s.currentPhase.getDataBase()
+	if err != nil {
+		return nil, err
+	}
+	node, err := db.GetPackageNode(s.currentPhase.getSession())
+	if err != nil {
+		return nil, err
+	}
+
+	if err := db.AddInfoNodes(node.Uid, in); err != nil {
+		return nil, err
+	}
+
+	return &service.BuildResponse{Success: true}, nil
+}
+
 func (s *server) GetFileNode(in *service.FileNode, stream service.ControlService_GetFileNodeServer) error {
 	return s.currentPhase.GetFileNode(in, stream)
 }

@@ -2,21 +2,22 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
 
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/logging"
-	pb "github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/QMSTR/qmstr/pkg/wrapper"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
 
 var (
-	buildServiceClient   pb.BuildServiceClient
-	controlServiceClient pb.ControlServiceClient
+	buildServiceClient   service.BuildServiceClient
+	controlServiceClient service.ControlServiceClient
 	logger               *log.Logger
 	conn                 *grpc.ClientConn
 	debug                bool
@@ -43,8 +44,8 @@ func main() {
 		log.Fatalf("Failed to connect to master: %v", err)
 	}
 	defer conn.Close()
-	buildServiceClient = pb.NewBuildServiceClient(conn)
-	controlServiceClient = pb.NewControlServiceClient(conn)
+	buildServiceClient = service.NewBuildServiceClient(conn)
+	controlServiceClient = service.NewControlServiceClient(conn)
 
 	initLogging()
 
@@ -72,10 +73,23 @@ func main() {
 		sendResult(buildMsg)
 	} else {
 		logger.Printf("%s failed for \"%s\": %v", w.Builder.GetName(), commandLine, err)
+		sendBuildError(fmt.Sprintf("Failed to analyze build [%s] due to %v", commandLine, err))
 	}
 }
 
-func sendResult(buildmsg *pb.BuildMessage) error {
+func sendBuildError(errMsg string) error {
+	errNode := service.CreateErrorNode(errMsg)
+	r, err := buildServiceClient.SendBuildError(context.Background(), errNode)
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	if !r.Success {
+		return errors.New("Server failure")
+	}
+	return nil
+}
+
+func sendResult(buildmsg *service.BuildMessage) error {
 	r, err := buildServiceClient.Build(context.Background(), buildmsg)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)

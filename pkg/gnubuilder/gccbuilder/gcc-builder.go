@@ -2,6 +2,7 @@ package gccbuilder
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"path/filepath"
 	"strings"
@@ -9,7 +10,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/gnubuilder"
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	pb "github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/spf13/pflag"
 )
 
@@ -60,11 +61,13 @@ func (g *GccBuilder) GetName() string {
 	return "GNU C compiler builder"
 }
 
-func (g *GccBuilder) Analyze(commandline []string) (*service.BuildMessage, error) {
+func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 	if g.Debug {
 		g.Logger.Printf("Parsing commandline %v", commandline)
 	}
-	g.parseCommandLine(commandline[1:])
+	if err := g.parseCommandLine(commandline[1:]); err != nil {
+		return nil, fmt.Errorf("Failed to parse commandline: %v", err)
+	}
 
 	switch g.Mode {
 	case Link:
@@ -73,11 +76,11 @@ func (g *GccBuilder) Analyze(commandline []string) (*service.BuildMessage, error
 		} else {
 			g.Logger.Printf("gcc linking")
 		}
-		fileNodes := []*service.FileNode{}
+		fileNodes := []*pb.FileNode{}
 		linkedTarget := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[0], false), linkedTrg)
-		dependencies := []*service.FileNode{}
+		dependencies := []*pb.FileNode{}
 		for _, inFile := range g.Input {
-			inputFileNode := &service.FileNode{}
+			inputFileNode := &pb.FileNode{}
 			ext := filepath.Ext(inFile)
 			if ext == ".o" {
 				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), obj)
@@ -98,10 +101,10 @@ func (g *GccBuilder) Analyze(commandline []string) (*service.BuildMessage, error
 		}
 		linkedTarget.DerivedFrom = dependencies
 		fileNodes = append(fileNodes, linkedTarget)
-		return &service.BuildMessage{FileNodes: fileNodes}, nil
+		return &pb.BuildMessage{FileNodes: fileNodes}, nil
 	case Assemble:
 		g.Logger.Printf("gcc assembling - skipping link")
-		fileNodes := []*service.FileNode{}
+		fileNodes := []*pb.FileNode{}
 		if g.Debug {
 			g.Logger.Printf("This is our input %v", g.Input)
 			g.Logger.Printf("This is our output %v", g.Output)
@@ -112,13 +115,13 @@ func (g *GccBuilder) Analyze(commandline []string) (*service.BuildMessage, error
 			}
 			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), src)
 			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), obj)
-			targetFile.DerivedFrom = []*service.FileNode{sourceFile}
+			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
 			fileNodes = append(fileNodes, targetFile)
 		}
-		return &service.BuildMessage{FileNodes: fileNodes}, nil
+		return &pb.BuildMessage{FileNodes: fileNodes}, nil
 	case Compile:
 		g.Logger.Printf("gcc compile - skipping assemble and link")
-		fileNodes := []*service.FileNode{}
+		fileNodes := []*pb.FileNode{}
 		if g.Debug {
 			g.Logger.Printf("This is our input %v", g.Input)
 			g.Logger.Printf("This is our output %v", g.Output)
@@ -129,16 +132,18 @@ func (g *GccBuilder) Analyze(commandline []string) (*service.BuildMessage, error
 			}
 			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), src)
 			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), src)
-			targetFile.DerivedFrom = []*service.FileNode{sourceFile}
+			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
 			fileNodes = append(fileNodes, targetFile)
 		}
-		return &service.BuildMessage{FileNodes: fileNodes}, nil
+		return &pb.BuildMessage{FileNodes: fileNodes}, nil
+	case PrintOnly:
+		return nil, errors.New("print only; nothing produced")
 	default:
 		return nil, errors.New("Mode not implemented")
 	}
 }
 
-func (g *GccBuilder) parseCommandLine(args []string) {
+func (g *GccBuilder) parseCommandLine(args []string) error {
 	if g.Debug {
 		g.Logger.Printf("Parsing arguments: %v", args)
 	}
@@ -162,7 +167,7 @@ func (g *GccBuilder) parseCommandLine(args []string) {
 	}
 	err := gccFlags.Parse(g.Args)
 	if err != nil {
-		g.Logger.Fatalf("Unrecoverable commandline parsing error: %s", err)
+		return fmt.Errorf("Unrecoverable commandline parsing error: %v", err)
 	}
 
 	g.Input = gccFlags.Args()
@@ -189,7 +194,7 @@ func (g *GccBuilder) parseCommandLine(args []string) {
 			if len(g.Input) == 0 {
 				// No input no output
 				g.Mode = PrintOnly
-				return
+				return nil
 			}
 			g.Output = []string{"a.out"}
 		case Assemble:
@@ -204,4 +209,5 @@ func (g *GccBuilder) parseCommandLine(args []string) {
 			}
 		}
 	}
+	return nil
 }
