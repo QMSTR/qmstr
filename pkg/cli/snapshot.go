@@ -2,8 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"os"
-	"path"
 
 	"github.com/QMSTR/qmstr/pkg/docker"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
@@ -11,6 +9,8 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )
+
+var snapshotFile string
 
 var snapshotCmd = &cobra.Command{
 	Use:   "snapshot",
@@ -30,6 +30,7 @@ var snapshotCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(snapshotCmd)
+	snapshotCmd.Flags().StringVarP(&snapshotFile, "out", "O", "qmstr-snapshot.tar", "Output filename")
 }
 
 func exportGraph() error {
@@ -51,9 +52,5 @@ func copyExport() error {
 		return fmt.Errorf("failed to obtain qmstr-master info %v", err)
 	}
 
-	outdir, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("unable to determine current working directory: %v", err)
-	}
-	return docker.CopyGraphExport(ctx, cli, mID, path.Join(outdir, "qmstr-snapshot.tar"))
+	return docker.CopyGraphExport(ctx, cli, mID, snapshotFile)
 }
