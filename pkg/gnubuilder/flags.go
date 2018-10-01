@@ -111,4 +111,10 @@ var (
 		"--sysroot":    struct{}{},
 		"--hash-style": struct{}{},
 	}
+
+	AssembleStringArgs = map[string]struct{}{}
+
+	AssembleBoolArgs = map[string]struct{}{
+		"--32": struct{}{},
+		"--64": struct{}{}}
 )
