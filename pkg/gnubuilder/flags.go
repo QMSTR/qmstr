@@ -57,6 +57,7 @@ var (
 		"-install_name":          struct{}{},
 		"-compatibility_version": struct{}{},
 		"-current_version":       struct{}{},
+		"--param":                struct{}{},
 	}
 
 	StringArgsRE = "\\s+\\S+={0,1}\\S*\\s"
@@ -76,19 +77,38 @@ var (
 		"-r":                  struct{}{},
 		"-i":                  struct{}{},
 		"-q":                  struct{}{},
+		"-v":                  struct{}{},
 		"-pie":                struct{}{},
 		"-static":             struct{}{},
+		"-shared":             struct{}{},
+		"-nostdlib":           struct{}{},
 		"--emit-relocs":       struct{}{},
 		"--whole-archive":     struct{}{},
 		"--no-whole-archive":  struct{}{},
+		"--no-undefined":      struct{}{},
 		"--start-group":       struct{}{},
 		"--end-group":         struct{}{},
 		"--no-dynamic-linker": struct{}{},
+		"-dynamic-linker":     struct{}{},
+		"--push-state":        struct{}{},
+		"--pop-state":         struct{}{},
+		"--build-id":          struct{}{},
+		"--eh-frame-hdr":      struct{}{},
+		"--help":              struct{}{},
+		"--as-needed":         struct{}{},
+		"--gc-sections":       struct{}{},
+		"--no-gc-sections":    struct{}{},
 	}
 
 	LinkStringArgs = map[string]struct{}{
-		"-T": struct{}{},
-		"-m": struct{}{},
-		"-z": struct{}{},
+		"-B":           struct{}{},
+		"-T":           struct{}{},
+		"-m":           struct{}{},
+		"-z":           struct{}{},
+		"-plugin":      struct{}{},
+		"-h":           struct{}{},
+		"-soname":      struct{}{},
+		"--sysroot":    struct{}{},
+		"--hash-style": struct{}{},
 	}
 )
