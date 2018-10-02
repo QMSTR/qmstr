@@ -9,8 +9,8 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
-	"github.com/QMSTR/qmstr/pkg/reporting"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/reporting"
 )
 
 type serverPhaseReport struct {
@@ -29,16 +29,16 @@ func (phase *serverPhaseReport) Activate() error {
 		reporterName := reporterConfig.Reporter
 
 		log.Printf("Running reporter %s ...\n", reporterName)
-		phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: fmt.Sprintf("Running reporter %s", reporterName)})
+		phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Running reporter %s", reporterName)})
 		cmd := exec.Command(reporterName, "--rserv", phase.masterConfig.Server.RPCAddress, "--rid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			logModuleError(reporterName, out)
 			errMsg := fmt.Sprintf("Reporter %s failed: %v", reporterName, err)
-			phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: errMsg})
+			phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: errMsg})
 			return errors.New(errMsg)
 		}
-		phase.server.publishEvent(&service.Event{Class: string(EventModule), Message: fmt.Sprintf("Reporter %s successfully finished", reporterName)})
+		phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Reporter %s successfully finished", reporterName)})
 		log.Printf("Reporter %s finished successfully: %s\n", reporterName, out)
 	}
 	return nil

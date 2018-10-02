@@ -93,7 +93,7 @@ func Setup(dbAddr string, queueWorkers int) (*DataBase, error) {
 	return db, nil
 }
 
-func (db *DataBase) AwaitBuildComplete() {
+func (db *DataBase) Sync() {
 	// TODO replace busy waiting with proper signaling
 	log.Println("Waiting for inserts")
 	for {
@@ -104,6 +104,10 @@ func (db *DataBase) AwaitBuildComplete() {
 		log.Printf("Pending inserts %d", pendingInserts)
 		time.Sleep(2 * time.Second)
 	}
+}
+
+func (db *DataBase) CloseInsertQueue() {
+	db.Sync()
 	close(db.insertQueue)
 }
 
