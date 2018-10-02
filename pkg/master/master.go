@@ -37,7 +37,7 @@ type server struct {
 	analysisDone       bool
 	currentPhase       serverPhase
 	pendingPhaseSwitch int64
-	eventChannels      map[EventClass][]chan *service.Event
+	eventChannels      map[service.EventClass][]chan *service.Event
 	eventMutex         *sync.RWMutex
 }
 
@@ -142,7 +142,7 @@ func (s *server) switchPhase(requestedPhase service.Phase) error {
 	if phaseCtor, ok := phaseMap[requestedPhase]; ok {
 		log.Printf("Switching to phase %d", requestedPhase)
 		defer s.persistPhase()
-		s.publishEvent(&service.Event{Class: string(EventPhase), Message: fmt.Sprintf("Switching to phase %d", requestedPhase)})
+		s.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: fmt.Sprintf("Switching to phase %d", requestedPhase)})
 		err := s.currentPhase.Shutdown()
 		if err != nil {
 			// switch to failure phase
@@ -159,11 +159,11 @@ func (s *server) switchPhase(requestedPhase service.Phase) error {
 		s.pendingPhaseSwitch = 0
 		err = s.currentPhase.Activate()
 		if err != nil {
-			s.publishEvent(&service.Event{Class: string(EventPhase), Message: "Entering failure phase"})
+			s.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: "Entering failure phase"})
 			s.enterFailureServerPhase(err)
 			return err
 		}
-		s.publishEvent(&service.Event{Class: string(EventPhase), Message: fmt.Sprintf("Switched to phase %d", requestedPhase)})
+		s.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: fmt.Sprintf("Switched to phase %d", requestedPhase)})
 		return nil
 	}
 	return fmt.Errorf("Invalid phase requested %d", requestedPhase)
@@ -205,10 +205,10 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 		analysisClosed: make(chan bool),
 		analysisDone:   false,
 		currentPhase:   newInitServerPhase(session, masterConfig),
-		eventChannels: map[EventClass][]chan *service.Event{
-			EventAll:    []chan *service.Event{},
-			EventModule: []chan *service.Event{},
-			EventPhase:  []chan *service.Event{},
+		eventChannels: map[service.EventClass][]chan *service.Event{
+			service.EventClass_ALL:    []chan *service.Event{},
+			service.EventClass_MODULE: []chan *service.Event{},
+			service.EventClass_PHASE:  []chan *service.Event{},
 		},
 		eventMutex: &sync.RWMutex{},
 	}

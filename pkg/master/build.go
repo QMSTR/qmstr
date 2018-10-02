@@ -24,7 +24,7 @@ func (phase *serverPhaseBuild) Activate() error {
 }
 
 func (phase *serverPhaseBuild) Shutdown() error {
-	phase.db.AwaitBuildComplete()
+	phase.db.CloseInsertQueue()
 	return nil
 }
 
@@ -50,4 +50,13 @@ func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildRe
 		phase.db.AddBuildFileNode(node)
 	}
 	return &service.BuildResponse{Success: true}, nil
+}
+
+func (phase *serverPhaseBuild) ExportGraph(in *service.ExportRequest) (*service.ExportResponse, error) {
+	phase.db.Sync()
+	err := phase.requestExport()
+	if err != nil {
+		return nil, err
+	}
+	return &service.ExportResponse{Success: true}, nil
 }

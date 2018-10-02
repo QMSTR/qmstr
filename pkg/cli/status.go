@@ -4,7 +4,6 @@ import (
 	"io"
 	"os"
 
-	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -54,7 +53,7 @@ func getStatus() {
 }
 
 func printEvents() error {
-	stream, err := controlServiceClient.SubscribeEvents(context.Background(), &service.EventMessage{Class: string(master.EventAll)})
+	stream, err := controlServiceClient.SubscribeEvents(context.Background(), &service.EventMessage{Class: service.EventClass_ALL})
 	if err != nil {
 		Log.Printf("Could not subscribe to events %v", err)
 		return err

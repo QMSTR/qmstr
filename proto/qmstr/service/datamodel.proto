@@ -53,8 +53,14 @@ message PackageNode {
 }
 
 message Event {
-    string class = 1;
+    EventClass class = 1;
     string message = 2;
+}
+
+enum EventClass {
+    ALL = 0;
+    PHASE = 1;
+    MODULE = 2;
 }
 
 message QmstrStateNode {
