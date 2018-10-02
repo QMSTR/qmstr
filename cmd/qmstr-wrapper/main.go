@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/logging"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
@@ -69,19 +70,29 @@ func main() {
 	}
 	w.Wrap()
 	buildMsg, err := w.Builder.Analyze(commandLine)
-	if err == nil {
+	switch err {
+	case nil:
 		if buildMsg != nil {
 			sendResult(buildMsg)
 		}
-	} else {
+	case builder.ErrBuilderModeNotImplemented:
+		logger.Printf("WARNING for %s: \"%s\": %v", w.Builder.GetName(), commandLine, err)
+		sendBuildException(service.ExceptionType_WARNING, fmt.Sprintf("Warning while analyzing [%s]: %v", commandLine, err))
+	default:
 		logger.Printf("%s failed for \"%s\": %v", w.Builder.GetName(), commandLine, err)
-		sendBuildError(fmt.Sprintf("Failed to analyze build [%s] due to %v", commandLine, err))
+		sendBuildException(service.ExceptionType_ERROR, fmt.Sprintf("Failed to analyze build [%s] due to %v", commandLine, err))
 	}
 }
 
-func sendBuildError(errMsg string) error {
-	errNode := service.CreateErrorNode(errMsg)
-	r, err := buildServiceClient.SendBuildError(context.Background(), errNode)
+func sendBuildException(exType service.ExceptionType, msg string) error {
+	var exNode *service.InfoNode
+	switch exType {
+	case service.ExceptionType_ERROR:
+		exNode = service.CreateErrorNode(msg)
+	case service.ExceptionType_WARNING:
+		exNode = service.CreateWarningNode(msg)
+	}
+	r, err := buildServiceClient.SendBuildError(context.Background(), exNode)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
