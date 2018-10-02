@@ -32,7 +32,7 @@ type serverPhase interface {
 	GetBOM(*service.BOMRequest) (*service.BOM, error)
 	GetInfoData(*service.InfoDataRequest) (*service.InfoDataResponse, error)
 	ExportGraph(*service.ExportRequest) (*service.ExportResponse, error)
-	requestExport() (string, error)
+	requestExport() error
 	getPostInitPhase() service.Phase
 }
 
@@ -117,39 +117,39 @@ func (gsp *genericServerPhase) GetInfoData(in *service.InfoDataRequest) (*servic
 }
 
 func (gsp *genericServerPhase) ExportGraph(in *service.ExportRequest) (*service.ExportResponse, error) {
-	path, err := gsp.requestExport()
+	err := gsp.requestExport()
 	if err != nil {
 		return nil, err
 	}
-	return &service.ExportResponse{Path: path}, nil
+	return &service.ExportResponse{Success: true}, nil
 }
 
-func (gsp *genericServerPhase) requestExport() (string, error) {
+func (gsp *genericServerPhase) requestExport() error {
 	// clean the dir
 	if err := os.RemoveAll(common.ContainerGraphExportDir); err != nil {
-		return "", fmt.Errorf("failed to clean the export dir: %v", err)
+		return fmt.Errorf("failed to clean the export dir: %v", err)
 	}
 	// create dir
 	if err := os.Mkdir(common.ContainerGraphExportDir, os.ModePerm); err != nil {
-		return "", fmt.Errorf("failed to create the export dir: %v", err)
+		return fmt.Errorf("failed to create the export dir: %v", err)
 	}
 
 	resp, err := http.Get("http://localhost:8080/admin/export")
 	if err != nil {
-		return "", fmt.Errorf("failed sending export request to dgraph: %v", err)
+		return fmt.Errorf("failed sending export request to dgraph: %v", err)
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("failed reading dgraph response: %v", err)
+		return fmt.Errorf("failed reading dgraph response: %v", err)
 	}
 
 	if resp.StatusCode >= 400 {
-		return "", fmt.Errorf("failed to export graph dgraph answered: [%d] %s", resp.StatusCode, body)
+		return fmt.Errorf("failed to export graph dgraph answered: [%d] %s", resp.StatusCode, body)
 	}
 
 	log.Printf("dgraph export: %s", body)
 
-	return "", nil
+	return nil
 }

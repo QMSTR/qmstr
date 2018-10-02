@@ -13,7 +13,7 @@ type serverPhaseFailure struct {
 }
 
 func (server *server) enterFailureServerPhase(cause error) {
-	server.publishEvent(&service.Event{Class: string(EventPhase), Message: "Entering failure phase"})
+	server.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: "Entering failure phase"})
 	server.currentPhase = &serverPhaseFailure{genericServerPhase{Name: "Fail"}, cause}
 	server.pendingPhaseSwitch = 0
 	log.Printf("Server entered failure phase due to %v\n", cause)

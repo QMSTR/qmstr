@@ -46,7 +46,7 @@ message StatusResponse {
 }
 
 message EventMessage {
-  string class = 1;
+  EventClass class = 1;
 }
 
 message ExportRequest {
@@ -54,7 +54,7 @@ message ExportRequest {
 }
 
 message ExportResponse {
-  string path = 1;
+  bool success = 1;
 }
 
 service ControlService {
