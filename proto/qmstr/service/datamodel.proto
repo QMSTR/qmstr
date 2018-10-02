@@ -77,3 +77,8 @@ enum Phase {
     REPORT = 3;
     FAIL = 4;
 }
+
+enum ExceptionType {
+    ERROR = 0;
+    WARNING = 1;
+}

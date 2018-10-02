@@ -140,7 +140,7 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 		log.Println("print only; nothing produced")
 		return nil, nil
 	default:
-		return nil, errors.New("Mode not implemented")
+		return nil, builder.ErrBuilderModeNotImplemented
 	}
 }
 
