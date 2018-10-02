@@ -8,7 +8,13 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/pkg/errors"
+
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+)
+
+var (
+	ErrBuilderModeNotImplemented = errors.New("Mode not implemented")
 )
 
 type Builder interface {
