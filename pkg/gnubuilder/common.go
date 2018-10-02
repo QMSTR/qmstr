@@ -136,13 +136,22 @@ func FindActualLibraries(actualLibs map[string]string, linkLibs []string, libPat
 		syslibpath = []string{""}
 	}
 
+	// eliminate duplicated libs
+	linkLibsSet := map[string]struct{}{}
+	for _, lib := range linkLibs {
+		linkLibsSet[lib] = struct{}{}
+	}
+
 	for _, dir := range append(libPath, syslibpath...) {
 		if dir == "" {
 			// Unix shell semantics: path element "" means "."
 			dir = "."
 		}
 		filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
-			for _, lib := range linkLibs {
+			if err != nil {
+				return err
+			}
+			for lib := range linkLibsSet {
 				// is lib located
 				if _, ok := actualLibs[lib]; ok {
 					continue
@@ -165,7 +174,7 @@ func FindActualLibraries(actualLibs map[string]string, linkLibs []string, libPat
 		})
 	}
 
-	if len(actualLibs) == len(linkLibs) {
+	if len(actualLibs) == len(linkLibsSet) {
 		return nil
 	}
 
