@@ -70,7 +70,9 @@ func main() {
 	w.Wrap()
 	buildMsg, err := w.Builder.Analyze(commandLine)
 	if err == nil {
-		sendResult(buildMsg)
+		if buildMsg != nil {
+			sendResult(buildMsg)
+		}
 	} else {
 		logger.Printf("%s failed for \"%s\": %v", w.Builder.GetName(), commandLine, err)
 		sendBuildError(fmt.Sprintf("Failed to analyze build [%s] due to %v", commandLine, err))

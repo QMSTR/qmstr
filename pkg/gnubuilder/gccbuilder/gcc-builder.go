@@ -137,7 +137,8 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 		}
 		return &pb.BuildMessage{FileNodes: fileNodes}, nil
 	case PrintOnly:
-		return nil, errors.New("print only; nothing produced")
+		log.Println("print only; nothing produced")
+		return nil, nil
 	default:
 		return nil, errors.New("Mode not implemented")
 	}
