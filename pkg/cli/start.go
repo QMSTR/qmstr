@@ -327,6 +327,7 @@ var startCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(startCmd)
 	startCmd.Flags().BoolVar(&wait, "wait", false, "wait for qmstr-master")
+	startCmd.Flags().IntVarP(&timeout, "timeout", "t", 60, "timeout after the specified time (seconds). Used after the wait flag")
 	startCmd.Flags().StringVarP(&configFile, "config", "c", "qmstr.yaml", "Path to qmstr configuration file")
 	startCmd.Flags().StringVar(&buildConfig, "buildconfig", "", "Set build configuration")
 	startCmd.Flags().StringVar(&seed, "seed", "", "Replay dgraph export on init")
