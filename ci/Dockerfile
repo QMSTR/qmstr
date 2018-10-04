@@ -68,6 +68,8 @@ ADD Makefile ${GOPATH}/src/github.com/QMSTR/qmstr/Makefile
 COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
 
 WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
+RUN make $GOPATH/bin/dep
+RUN touch ${GOPATH}/src/github.com/QMSTR/qmstr/Gopkg.*
 RUN make install_qmstr_all
 
 
