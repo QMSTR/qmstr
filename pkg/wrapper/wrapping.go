@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 	"syscall"
 
+	"github.com/QMSTR/qmstr/pkg/objcopybuilder"
+
 	"github.com/QMSTR/qmstr/pkg/arbuilder"
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/gnubuilder/asbuilder"
@@ -54,6 +56,8 @@ func getBuilder(prog string, workDir string, logger *log.Logger, debug bool) (bu
 		return ldbuilder.NewLdBuilder(workDir, logger, debug), nil
 	case "as":
 		return asbuilder.NewAsBuilder(workDir, logger, debug), nil
+	case "objcopy":
+		return objcopybuilder.NewObjcopyBuilder(workDir, logger, debug), nil
 	}
 	return nil, fmt.Errorf("Builder %s not available", prog)
 }
