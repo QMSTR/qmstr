@@ -15,6 +15,7 @@ import (
 
 var (
 	ErrBuilderModeNotImplemented = errors.New("Mode not implemented")
+	ErrNoTargetsProvided         = errors.New("No targets provided")
 )
 
 type Builder interface {
@@ -64,4 +65,23 @@ func hash(fileName string) (string, error) {
 		}
 	}
 	return fmt.Sprintf("%x", h.Sum(nil)), nil
+}
+
+func CleanCmd(commandline []string, cleanIdx []int, debug bool, logger *log.Logger) []string {
+	for i, ci := range cleanIdx {
+		realIdx := ci - i
+		if debug {
+			logger.Printf("Clearing argument: %v", commandline[realIdx])
+		}
+		if realIdx == len(commandline)-1 {
+			commandline = commandline[:realIdx-1]
+			break
+		}
+		rest := commandline[realIdx+1:]
+		commandline = append(commandline[:realIdx], rest...)
+		if debug {
+			logger.Printf("new slice is %v", commandline)
+		}
+	}
+	return commandline
 }
