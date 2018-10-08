@@ -54,7 +54,7 @@ func (a *ArBuilder) Analyze(commandline []string) (*service.BuildMessage, error)
 		return nil, fmt.Errorf("failed to analyze \"%s\" too few arguments", commandline)
 	}
 
-	commandline, err := processFlags(commandline)
+	commandline, err := a.processFlags(commandline)
 	if err != nil {
 		if err.Error() == "noop" {
 			os.Exit(0)
@@ -128,10 +128,10 @@ func (a *ArBuilder) getResultMessage() (*service.BuildMessage, error) {
 	return nil, errors.New("Command not supported")
 }
 
-func processFlags(commandline []string) ([]string, error) {
+func (a *ArBuilder) processFlags(commandline []string) ([]string, error) {
 	cleanIdx := []int{}
-	for idx, a := range commandline {
-		switch a {
+	for idx, arg := range commandline {
+		switch arg {
 		case "--help", "--version":
 			return nil, errors.New("noop")
 		case "--target", "--plugin":
@@ -141,24 +141,17 @@ func processFlags(commandline []string) ([]string, error) {
 			cleanIdx = append(cleanIdx, idx)
 			continue
 		}
-		if strings.HasPrefix(a, "@") {
+		if strings.HasPrefix(arg, "@") {
 			return nil, errors.New("Reading commandline options from file is not supported")
 		}
-		if strings.HasPrefix(a, "--target=") || strings.HasPrefix(a, "--plugin=") {
+		if strings.HasPrefix(arg, "--target=") || strings.HasPrefix(arg, "--plugin=") {
 			cleanIdx = append(cleanIdx, idx)
 			continue
 		}
 	}
-	for i, ci := range cleanIdx {
-		realIdx := ci - i
-		if realIdx == len(commandline)-1 {
-			commandline = commandline[:realIdx-1]
-			break
-		}
-		rest := commandline[realIdx+1:]
-		commandline = append(commandline[:realIdx], rest...)
-		fmt.Println(commandline)
-	}
+
+	commandline = builder.CleanCmd(commandline, cleanIdx, a.Debug, a.Logger)
+
 	return commandline, nil
 }
 
