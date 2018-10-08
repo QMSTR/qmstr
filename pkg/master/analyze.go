@@ -46,6 +46,7 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		phase.currentAnalyzer.TrustLevel = anaConfig.TrustLevel
 
 		log.Printf("Running analyzer %s ...\n", analyzerName)
+		phase.db.OpenInsertQueue()
 		phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Running analyzer %s", analyzerName)})
 		cmd := exec.Command(analyzerName, "--aserv", phase.masterConfig.Server.RPCAddress, "--aid", fmt.Sprintf("%d", idx))
 		out, err := cmd.CombinedOutput()
@@ -53,8 +54,10 @@ func (phase *serverPhaseAnalysis) Activate() error {
 			logModuleError(analyzerName, out)
 			errMsg := fmt.Sprintf("Analyzer %s failed", analyzerName)
 			phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: errMsg})
+			phase.db.CloseInsertQueue()
 			return errors.New(errMsg)
 		}
+		phase.db.CloseInsertQueue()
 		phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Analyzer %s successfully finished", analyzerName)})
 		log.Printf("Analyzer %s finished successfully: %s\n", analyzerName, out)
 	}
