@@ -20,6 +20,7 @@ func newBuildPhase(session string, masterConfig *config.MasterConfig, db *databa
 }
 
 func (phase *serverPhaseBuild) Activate() error {
+	phase.db.OpenInsertQueue()
 	return nil
 }
 
