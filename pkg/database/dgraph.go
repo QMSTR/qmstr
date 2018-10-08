@@ -37,11 +37,19 @@ dataNodeType:string @index(hash) .
 analyzerNodeType:string @index(hash) .
 `
 
+type insertQueueState int8
+
+const (
+	openQueue insertQueueState = iota
+	closeQueue
+)
+
 type DataBase struct {
-	client      *client.Dgraph
-	insertQueue chan *service.FileNode
-	insertMutex *sync.Mutex
-	pending     uint64
+	client       *client.Dgraph
+	insertQueue  chan *service.FileNode
+	insertMutex  *sync.Mutex
+	pending      uint64
+	queueWorkers uint16
 }
 
 func CheckSchema(checkSchema string) bool {
@@ -71,9 +79,9 @@ func Setup(dbAddr string, queueWorkers int) (*DataBase, error) {
 	}
 
 	db := &DataBase{
-		client:      client.NewDgraphClient(api.NewDgraphClient(conn)),
-		insertQueue: make(chan *service.FileNode, 1000),
-		insertMutex: &sync.Mutex{},
+		client:       client.NewDgraphClient(api.NewDgraphClient(conn)),
+		insertMutex:  &sync.Mutex{},
+		queueWorkers: uint16(queueWorkers),
 	}
 
 	for {
@@ -85,11 +93,6 @@ func Setup(dbAddr string, queueWorkers int) (*DataBase, error) {
 			break
 		}
 	}
-
-	for i := 0; i < queueWorkers; i++ {
-		go queueWorker(db)
-	}
-
 	return db, nil
 }
 
@@ -108,11 +111,31 @@ func (db *DataBase) Sync() {
 
 func (db *DataBase) CloseInsertQueue() {
 	db.Sync()
+	db.insertMutex.Lock()
+	defer db.insertMutex.Unlock()
+	if db.insertQueue == nil {
+		return
+	}
 	close(db.insertQueue)
+	db.insertQueue = nil
+	log.Println("Closed insert queue")
+}
+
+func (db *DataBase) OpenInsertQueue() {
+	db.insertMutex.Lock()
+	defer db.insertMutex.Unlock()
+	if db.insertQueue == nil {
+		db.insertQueue = make(chan *service.FileNode, 1000)
+		log.Println("Opened insert queue")
+
+		for i := uint16(0); i < db.queueWorkers; i++ {
+			go db.queueWorker()
+		}
+	}
 }
 
 // the queueWorker runs in a go routine and inserts the nodes from the insert queue into the database
-func queueWorker(db *DataBase) {
+func (db *DataBase) queueWorker() {
 	for {
 		node := <-db.insertQueue
 		if node == nil {
