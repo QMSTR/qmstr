@@ -2,6 +2,7 @@ package asbuilder
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"path/filepath"
 	"strings"
@@ -23,15 +24,15 @@ const (
 )
 
 type AsBuilder struct {
-	Input   []string
-	Output  []string
+	Input   string
+	Output  string
 	WorkDir string
 	Args    []string
 	builder.GeneralBuilder
 }
 
 func NewAsBuilder(workDir string, logger *log.Logger, debug bool) *AsBuilder {
-	return &AsBuilder{[]string{}, []string{}, workDir, []string{}, builder.GeneralBuilder{logger, debug}}
+	return &AsBuilder{"", "", workDir, []string{}, builder.GeneralBuilder{logger, debug}}
 }
 
 func (as *AsBuilder) GetPrefix() (string, error) {
@@ -43,7 +44,9 @@ func (as *AsBuilder) GetName() string {
 }
 
 func (as *AsBuilder) Analyze(commandline []string) (*service.BuildMessage, error) {
-	as.parseCommandLine(commandline[1:])
+	if err := as.parseCommandLine(commandline[1:]); err != nil {
+		return nil, fmt.Errorf("Failed to parse commandline: %v", err)
+	}
 
 	as.Logger.Printf("as assembling")
 	fileNodes := []*service.FileNode{}
@@ -51,19 +54,18 @@ func (as *AsBuilder) Analyze(commandline []string) (*service.BuildMessage, error
 		as.Logger.Printf("This is our input %v", as.Input)
 		as.Logger.Printf("This is our output %v", as.Output)
 	}
-	for idx, inFile := range as.Input {
-		if as.Debug {
-			as.Logger.Printf("This is the source file %s indexed %d", inFile, idx)
-		}
-		sourceFile := builder.NewFileNode(common.BuildCleanPath(as.WorkDir, inFile, false), src)
-		targetFile := builder.NewFileNode(common.BuildCleanPath(as.WorkDir, as.Output[idx], false), obj)
-		targetFile.DerivedFrom = []*service.FileNode{sourceFile}
-		fileNodes = append(fileNodes, targetFile)
+	if as.Debug {
+		as.Logger.Printf("This is the source file %s", as.Input)
 	}
+	sourceFile := builder.NewFileNode(common.BuildCleanPath(as.WorkDir, as.Input, false), src)
+	targetFile := builder.NewFileNode(common.BuildCleanPath(as.WorkDir, as.Output, false), obj)
+	targetFile.DerivedFrom = []*service.FileNode{sourceFile}
+	fileNodes = append(fileNodes, targetFile)
+
 	return &service.BuildMessage{FileNodes: fileNodes}, nil
 }
 
-func (as *AsBuilder) parseCommandLine(args []string) {
+func (as *AsBuilder) parseCommandLine(args []string) error {
 	if as.Debug {
 		as.Logger.Printf("Parsing arguments: %v", args)
 	}
@@ -77,19 +79,23 @@ func (as *AsBuilder) parseCommandLine(args []string) {
 	if as.Debug {
 		as.Logger.Printf("Parsing cleaned commandline: %v", as.Args)
 	}
+
 	err := asFlags.Parse(as.Args)
 	if err != nil {
-		as.Logger.Fatalf("Unrecoverable commandline parsing error: %s", err)
+		return fmt.Errorf("Unrecoverable commandline parsing error: %s", err)
 	}
 
-	as.Input = asFlags.Args()
+	args = asFlags.Args()
+	if len(args) != 1 {
+		return fmt.Errorf("Commandline should have just 1 input file. Inputs: %v", args)
+	}
+	as.Input = args[0]
 
 	if output, err := asFlags.GetString("output"); err == nil && output != undef {
-		as.Output = []string{output}
+		as.Output = output
 	} else {
-		for _, input := range as.Input {
-			objectname := strings.TrimSuffix(input, filepath.Ext(input)) + ".o"
-			as.Output = append(as.Output, objectname)
-		}
+		objectname := strings.TrimSuffix(as.Input, filepath.Ext(as.Input)) + ".o"
+		as.Output = objectname
 	}
+	return nil
 }
