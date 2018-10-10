@@ -13,10 +13,10 @@ import (
 )
 
 // AddBuildFileNode adds a node to the insert queue in build phase
-func (db *DataBase) AddBuildFileNode(node *service.FileNode) {
+func (db *DataBase) AddFileNode(node *service.FileNode) {
 	atomic.AddUint64(&db.pending, 1)
 	for _, dep := range node.DerivedFrom {
-		db.AddBuildFileNode(dep)
+		db.AddFileNode(dep)
 	}
 	db.insertQueue <- node
 }
