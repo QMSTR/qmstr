@@ -1,14 +1,16 @@
 package gnubuilder
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"regexp"
 	"runtime"
 	"sort"
 	"strings"
+
+	"github.com/spf13/afero"
 )
 
 const (
@@ -115,28 +117,38 @@ func CleanCmdLine(args []string, logger *log.Logger, debug bool, staticLink bool
 	return args
 }
 
+func GetOsLibFixes() (prefix string, dSuffixes []string, sSuffixes []string, err error) {
+	switch runtime.GOOS {
+	case "linux":
+		return "lib", []string{".so"}, []string{".a"}, nil
+	case "darwin":
+		return "lib", []string{".dylib", ".so"}, []string{".a"}, nil
+	case "windows":
+		return "", []string{".dll"}, []string{".lib"}, nil
+	}
+	return "", nil, nil, errors.New("Platform not supported")
+}
+
+func GetSysLibPath() []string {
+	switch runtime.GOOS {
+	case "linux":
+		return []string{"/lib", "/usr/lib", "/usr/local/lib", "/lib64"}
+	case "darwin":
+		return []string{"/usr/lib", "/usr/local/lib"}
+	}
+	return []string{""}
+}
+
 // FindActualLibraries discovers the actual libraries on the path
-func FindActualLibraries(actualLibs map[string]string, linkLibs []string, libPath []string, staticLink bool, staticLibs map[string]struct{}) error {
+func FindActualLibraries(afs afero.Fs, actualLibs map[string]string, linkLibs []string, libPath []string, staticLink bool, staticLibs map[string]struct{}) error {
+	aferofs := &afero.Afero{Fs: afs}
 	libpathvar, present := os.LookupEnv(libPathVar)
 	if present && libpathvar != "" {
 		libPath = append([]string{libpathvar}, libPath...)
 	}
-	var libprefix string
-	var libsuffix []string
-	var syslibpath []string
-	switch runtime.GOOS {
-	case "linux":
-		libprefix = "lib"
-		libsuffix = []string{".so", ".a"}
-		syslibpath = []string{"/lib", "/usr/lib", "/usr/local/lib", "/lib64"}
-	case "darwin":
-		libprefix = "lib"
-		libsuffix = []string{".dylib", ".so", ".a"}
-		syslibpath = []string{"/usr/lib", "/usr/local/lib"}
-	case "windows":
-		libprefix = ""
-		libsuffix = []string{".dll"}
-		syslibpath = []string{""}
+	libprefix, libsuffix, staticSuffixes, err := GetOsLibFixes()
+	if err != nil {
+		return fmt.Errorf("could not search for libraries: %v", err)
 	}
 
 	// eliminate duplicated libs
@@ -145,12 +157,12 @@ func FindActualLibraries(actualLibs map[string]string, linkLibs []string, libPat
 		linkLibsSet[lib] = struct{}{}
 	}
 
-	for _, dir := range append(libPath, syslibpath...) {
+	for _, dir := range libPath {
 		if dir == "" {
 			// Unix shell semantics: path element "" means "."
 			dir = "."
 		}
-		filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
+		aferofs.Walk(dir, func(path string, f os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
@@ -162,9 +174,9 @@ func FindActualLibraries(actualLibs map[string]string, linkLibs []string, libPat
 				var suffixes []string
 				// forced static lib or linking statically
 				if _, ok := staticLibs[lib]; ok || staticLink {
-					suffixes = []string{".a"}
+					suffixes = staticSuffixes
 				} else {
-					suffixes = libsuffix
+					suffixes = append(libsuffix, staticSuffixes...)
 				}
 
 				for _, suffix := range suffixes {

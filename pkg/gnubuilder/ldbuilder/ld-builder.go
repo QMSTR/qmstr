@@ -25,20 +25,32 @@ const (
 const mode = "Link"
 
 type LdBuilder struct {
-	Input      []string
-	Output     []string
-	WorkDir    string
-	LinkLibs   []string
-	LibPath    []string
-	Args       []string
-	ActualLibs map[string]string
-	staticLink bool
-	StaticLibs map[string]struct{}
+	Input       []string
+	Output      []string
+	WorkDir     string
+	LinkLibs    []string
+	LibPath     []string
+	SysLibsPath []string
+	Args        []string
+	ActualLibs  map[string]string
+	staticLink  bool
+	StaticLibs  map[string]struct{}
 	builder.GeneralBuilder
 }
 
 func NewLdBuilder(workDir string, logger *log.Logger, debug bool) *LdBuilder {
-	return &LdBuilder{[]string{}, []string{}, workDir, []string{}, []string{}, []string{}, map[string]string{}, false, map[string]struct{}{}, builder.GeneralBuilder{logger, debug}}
+	return &LdBuilder{
+		Input:          []string{},
+		Output:         []string{},
+		WorkDir:        workDir,
+		LinkLibs:       []string{},
+		LibPath:        []string{},
+		SysLibsPath:    gnubuilder.GetSysLibPath(),
+		Args:           []string{},
+		ActualLibs:     map[string]string{},
+		staticLink:     false,
+		StaticLibs:     map[string]struct{}{},
+		GeneralBuilder: builder.NewGeneralBuilder(logger, debug)}
 }
 
 //TODO use ccache
@@ -75,7 +87,7 @@ func (ld *LdBuilder) Analyze(commandline []string) (*service.BuildMessage, error
 		}
 		dependencies = append(dependencies, inputFileNode)
 	}
-	err := gnubuilder.FindActualLibraries(ld.ActualLibs, ld.LinkLibs, ld.LibPath, ld.staticLink, ld.StaticLibs)
+	err := gnubuilder.FindActualLibraries(ld.Afs, ld.ActualLibs, ld.LinkLibs, append(ld.LibPath, ld.SysLibsPath...), ld.staticLink, ld.StaticLibs)
 	if err != nil {
 		ld.Logger.Fatalf("Failed to collect dependencies: %v", err)
 	}
