@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/pkg/errors"
+	"github.com/spf13/afero"
 
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
@@ -27,6 +28,11 @@ type Builder interface {
 type GeneralBuilder struct {
 	Logger *log.Logger
 	Debug  bool
+	Afs    afero.Fs
+}
+
+func NewGeneralBuilder(logger *log.Logger, debug bool) GeneralBuilder {
+	return GeneralBuilder{Logger: logger, Debug: debug, Afs: afero.NewOsFs()}
 }
 
 func NewFileNode(path string, fileType string) *service.FileNode {

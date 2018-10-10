@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/afero"
+
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/gnubuilder"
@@ -37,6 +39,7 @@ type GccBuilder struct {
 	WorkDir    string
 	LinkLibs   []string
 	LibPath    []string
+	SysLibPath []string
 	Args       []string
 	staticLink bool
 	StaticLibs map[string]struct{}
@@ -45,7 +48,19 @@ type GccBuilder struct {
 }
 
 func NewGccBuilder(workDir string, logger *log.Logger, debug bool) *GccBuilder {
-	return &GccBuilder{Link, []string{}, []string{}, workDir, []string{}, []string{}, []string{}, false, map[string]struct{}{}, map[string]string{}, builder.GeneralBuilder{logger, debug}}
+	return &GccBuilder{
+		Mode:           Link,
+		Input:          []string{},
+		Output:         []string{},
+		WorkDir:        workDir,
+		LinkLibs:       []string{},
+		LibPath:        []string{},
+		Args:           []string{},
+		SysLibPath:     gnubuilder.GetSysLibPath(),
+		staticLink:     false,
+		StaticLibs:     map[string]struct{}{},
+		ActualLibs:     map[string]string{},
+		GeneralBuilder: builder.GeneralBuilder{Logger: logger, Debug: debug, Afs: afero.NewOsFs()}}
 }
 
 func (g *GccBuilder) GetPrefix() (string, error) {
@@ -91,7 +106,7 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			}
 			dependencies = append(dependencies, inputFileNode)
 		}
-		err := gnubuilder.FindActualLibraries(g.ActualLibs, g.LinkLibs, g.LibPath, g.staticLink, g.StaticLibs)
+		err := gnubuilder.FindActualLibraries(g.Afs, g.ActualLibs, g.LinkLibs, append(g.LibPath, g.SysLibPath...), g.staticLink, g.StaticLibs)
 		if err != nil {
 			g.Logger.Fatalf("Failed to collect dependencies: %v", err)
 		}

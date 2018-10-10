@@ -32,7 +32,7 @@ type AsBuilder struct {
 }
 
 func NewAsBuilder(workDir string, logger *log.Logger, debug bool) *AsBuilder {
-	return &AsBuilder{"", "", workDir, []string{}, builder.GeneralBuilder{logger, debug}}
+	return &AsBuilder{"", "", workDir, []string{}, builder.NewGeneralBuilder(logger, debug)}
 }
 
 func (as *AsBuilder) GetPrefix() (string, error) {

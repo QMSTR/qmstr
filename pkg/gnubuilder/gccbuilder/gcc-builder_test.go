@@ -4,13 +4,37 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/QMSTR/qmstr/pkg/gnubuilder"
+
+	"github.com/spf13/afero"
 
 	builder "github.com/QMSTR/qmstr/pkg/gnubuilder/gccbuilder"
 )
 
 func getTestCompiler() *builder.GccBuilder {
-	return builder.NewGccBuilder("/tmp", log.New(os.Stdout, "TESTING ", log.LstdFlags), false)
+	builder := builder.NewGccBuilder("/tmp", log.New(os.Stdout, "TESTING ", log.LstdFlags), false)
+	builder.Afs = afero.NewMemMapFs()
+	return builder
+}
+
+func fakeLibFile(builder *builder.GccBuilder, name string, static bool) error {
+	libDir := gnubuilder.GetSysLibPath()[0]
+	pre, dsuf, ssuf, err := gnubuilder.GetOsLibFixes()
+	if err != nil {
+		return err
+	}
+	var suf string
+	if static {
+		suf = ssuf[0]
+	} else {
+		suf = dsuf[0]
+	}
+	libpath := filepath.Join(libDir, fmt.Sprintf("%s%s%s", pre, name, suf))
+	_, err = builder.Afs.Create(libpath)
+	return err
 }
 
 func TestAssembleOnly(t *testing.T) {
@@ -122,6 +146,10 @@ func TestLastArgFlag(t *testing.T) {
 
 func TestForcedStaticLib(t *testing.T) {
 	gcc := getTestCompiler()
+	err := fakeLibFile(gcc, "gcc", true)
+	if err != nil {
+		t.Fail()
+	}
 	gcc.Analyze([]string{"gcc", "-static-libgcc", "-o", "out", "a.c", "-lgcc"})
 	if gcc.Output[0] != "out" {
 		t.Fail()
