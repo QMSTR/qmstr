@@ -125,9 +125,9 @@ func (phase *serverPhaseAnalysis) SendInfoNodes(stream service.AnalysisService_S
 	}
 }
 
-func (phase *serverPhaseAnalysis) SendFileNodes(stream service.AnalysisService_SendFileNodesServer) error {
+func (phase *serverPhaseAnalysis) SendPackageNode(stream service.AnalysisService_SendPackageNodeServer) error {
 	for {
-		fileNodeReq, err := stream.Recv()
+		pkgNodeReq, err := stream.Recv()
 		if err == io.EOF {
 			return stream.SendAndClose(&service.SendResponse{
 				Success: true,
@@ -136,21 +136,21 @@ func (phase *serverPhaseAnalysis) SendFileNodes(stream service.AnalysisService_S
 		if err != nil {
 			return err
 		}
-		if fileNodeReq.Token != phase.currentToken {
-			log.Println("Analyzer supplied wrong token")
+		if pkgNodeReq.Token != phase.currentToken {
+			log.Println("Analyzer supplied wr2ong token")
 			return errors.New("wrong token supplied")
 		}
-		fileNode := fileNodeReq.Filenode
-		err = common.SetRelativePath(fileNode, phase.masterConfig.Server.BuildPath, nil)
-		if err != nil {
-			return err
+		pkgNode := pkgNodeReq.Packagenode
+
+		for _, target := range pkgNode.Targets {
+			err = common.SetRelativePath(target, phase.masterConfig.Server.BuildPath, nil)
+			if err != nil {
+				return err
+			}
+			log.Printf("Adding file node %v to package targets.", target.Path)
 		}
 
-		log.Printf("Adding file node %v to package targets.", fileNode.Path)
-		err = phase.db.AddPackageFileNodes(fileNodeReq.Uid, fileNode)
-		if err != nil {
-			return err
-		}
+		phase.db.AddPackageNode(pkgNode)
 	}
 }
 

@@ -24,8 +24,12 @@ message InfoNodeMessage {
 
 message FileNodeMessage {
     int64 token = 1;
-    string uid = 2;
-    FileNode filenode = 3;
+    FileNode filenode = 2;
+}
+
+message PackageNodeMessage {
+    int64 token = 1;
+    PackageNode packagenode = 2;
 }
 
 message SendResponse {
@@ -35,5 +39,6 @@ message SendResponse {
 service AnalysisService {
     rpc GetAnalyzerConfig(AnalyzerConfigRequest) returns (AnalyzerConfigResponse) {}
     rpc SendInfoNodes(stream InfoNodeMessage) returns (SendResponse) {}
-    rpc SendFileNodes(stream FileNodeMessage) returns (SendResponse) {}
+    rpc SendFileNode(stream FileNodeMessage) returns (SendResponse) {}
+    rpc SendPackageNode(stream PackageNodeMessage) returns (SendResponse) {}
 }
