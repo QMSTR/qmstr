@@ -27,7 +27,7 @@ type ObjcopyBuilder struct {
 }
 
 func NewObjcopyBuilder(workDir string, logger *log.Logger, debug bool) *ObjcopyBuilder {
-	return &ObjcopyBuilder{[]string{}, workDir, []string{}, "", "", "", builder.GeneralBuilder{logger, debug}}
+	return &ObjcopyBuilder{[]string{}, workDir, []string{}, "", "", "", builder.NewGeneralBuilder(logger, debug)}
 }
 
 func (o *ObjcopyBuilder) GetPrefix() (string, error) {

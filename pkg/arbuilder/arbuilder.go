@@ -42,7 +42,7 @@ type ArBuilder struct {
 }
 
 func NewArBuilder(workDir string, logger *log.Logger, debug bool) *ArBuilder {
-	return &ArBuilder{Undef, "", nil, []string{}, "", workDir, builder.GeneralBuilder{logger, debug}}
+	return &ArBuilder{Undef, "", nil, []string{}, "", workDir, builder.NewGeneralBuilder(logger, debug)}
 }
 
 func (a *ArBuilder) GetPrefix() (string, error) {
