@@ -46,7 +46,7 @@ const (
 
 type DataBase struct {
 	client       *client.Dgraph
-	insertQueue  chan *service.FileNode
+	insertQueue  chan interface{}
 	insertMutex  *sync.Mutex
 	pending      uint64
 	queueWorkers uint16
@@ -125,7 +125,7 @@ func (db *DataBase) OpenInsertQueue() {
 	db.insertMutex.Lock()
 	defer db.insertMutex.Unlock()
 	if db.insertQueue == nil {
-		db.insertQueue = make(chan *service.FileNode, 1000)
+		db.insertQueue = make(chan interface{}, 1000)
 		log.Println("Opened insert queue")
 
 		for i := uint16(0); i < db.queueWorkers; i++ {
@@ -141,45 +141,98 @@ func (db *DataBase) queueWorker() {
 		if node == nil {
 			return
 		}
-		ready := true
-		for idx, dep := range node.DerivedFrom {
-			if dep.Uid == "" {
-				// missing dep
-				ready = false
-				// look up dep in db
-				uid, err := db.GetFileNodeUid(dep.Hash)
-				if err != nil {
-					panic(err)
-				}
-				// found uid
-				if uid != "" {
-					node.DerivedFrom[idx].Uid = uid
-				}
+
+		nodeType := reflect.TypeOf(node)
+		switch nodeType {
+		case reflect.TypeOf((*service.PackageNode)(nil)):
+			db.insertPkgNode(node.(*service.PackageNode))
+		case reflect.TypeOf((*service.FileNode)(nil)):
+			db.insertFileNode(node.(*service.FileNode))
+		default:
+			log.Printf("Wrong node type %s trying to be inserted in the database", nodeType.String())
+		}
+	}
+}
+
+func (db *DataBase) insertFileNode(node *service.FileNode) {
+	ready := true
+	for idx, dep := range node.DerivedFrom {
+		if dep.Uid == "" {
+			// missing dep
+			ready = false
+			// look up dep in db
+			uid, err := db.GetFileNodeUid(dep.Hash)
+			if err != nil {
+				panic(err)
+			}
+			// found uid
+			if uid != "" {
+				node.DerivedFrom[idx].Uid = uid
 			}
 		}
-
-		if !ready {
-			// put node back to queue
-			go func() { db.insertQueue <- node }()
-			continue
-		}
-
-		// we are ready to insert the node
-		db.insertMutex.Lock()
-		uid, err := db.GetFileNodeUid(node.Hash)
-		if err != nil {
-			panic(err)
-		}
-		if uid != "" {
-			node.Uid = uid
-		}
-		uid, err = dbInsert(db.client, node)
-		if err != nil {
-			panic(err)
-		}
-		atomic.AddUint64(&db.pending, ^uint64(0))
-		db.insertMutex.Unlock()
 	}
+
+	if !ready {
+		// put node back to queue
+		go func() { db.insertQueue <- node }()
+		return
+	}
+
+	// we are ready to insert the node
+	db.insertMutex.Lock()
+	uid, err := db.GetFileNodeUid(node.Hash)
+	if err != nil {
+		panic(err)
+	}
+	if uid != "" {
+		node.Uid = uid
+	}
+	_, err = dbInsert(db.client, node)
+	if err != nil {
+		panic(err)
+	}
+	atomic.AddUint64(&db.pending, ^uint64(0))
+	db.insertMutex.Unlock()
+}
+
+func (db *DataBase) insertPkgNode(node *service.PackageNode) {
+	ready := true
+	for idx, dep := range node.Targets {
+		if dep.Uid == "" {
+			// missing dep
+			ready = false
+			// look up dep in db
+			uid, err := db.GetFileNodeUid(dep.Hash)
+			if err != nil {
+				panic(err)
+			}
+			// found uid
+			if uid != "" {
+				node.Targets[idx].Uid = uid
+			}
+		}
+	}
+
+	if !ready {
+		// put node back to queue
+		go func() { db.insertQueue <- node }()
+		return
+	}
+
+	// we are ready to insert the node
+	db.insertMutex.Lock()
+	packageNode, err := db.GetPackageNode(node.Session)
+	if err == nil {
+		node.Uid = packageNode.Uid
+		node.Targets = append(packageNode.Targets, node.Targets...)
+	}
+
+	_, err = dbInsert(db.client, node)
+	if err != nil {
+		panic(err)
+	}
+	atomic.AddUint64(&db.pending, ^uint64(0))
+	db.insertMutex.Unlock()
 }
 
 func fixTypeField(field *reflect.Value) error {
