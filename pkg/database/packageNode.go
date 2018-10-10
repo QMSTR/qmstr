@@ -14,7 +14,7 @@ import (
 func (db *DataBase) AddPackageNode(node *service.PackageNode) {
 	atomic.AddUint64(&db.pending, 1)
 	for _, dep := range node.Targets {
-		db.AddBuildFileNode(dep)
+		db.AddFileNode(dep)
 	}
 	db.insertQueue <- node
 }
