@@ -58,8 +58,7 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 	}
 
 	queryTypesArr := strings.Split(queryTypes, ";")
-	FileNodeMsgs := []*service.FileNodeMessage{}
-
+	PackageNodeMsgs := []*service.PackageNodeMessage{}
 	for _, t := range queryTypesArr {
 		queryNode := &service.FileNode{Type: t}
 
@@ -78,18 +77,19 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 			for _, target := range pkganalyzer.targetsSlice {
 				re := regexp.MustCompile(filepath.Join(pkganalyzer.targetsDir, target))
 				if re.MatchString(fileNode.Path) {
-					FileNodeMsgs = append(FileNodeMsgs, &service.FileNodeMessage{Token: token, Uid: pkgNode.Uid, Filenode: fileNode})
+					pkgNode.Targets = append(pkgNode.Targets, fileNode)
 					break
 				}
 			}
 		}
 	}
 
-	sendStream, err := analysisService.SendFileNodes(context.Background())
+	PackageNodeMsgs = append(PackageNodeMsgs, &service.PackageNodeMessage{Token: token, Packagenode: pkgNode})
+	sendStream, err := analysisService.SendPackageNode(context.Background())
 	if err != nil {
 		return err
 	}
-	for _, fnodeMsg := range FileNodeMsgs {
+	for _, fnodeMsg := range PackageNodeMsgs {
 		sendStream.Send(fnodeMsg)
 	}
 
