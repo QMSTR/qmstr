@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -30,7 +31,6 @@ func (mpanalyzer *MissingPiecesAnalyzer) Configure(configMap map[string]string) 
 			return fmt.Errorf("File %s not found", inputfile)
 		}
 
-		log.Printf("Reading configuration from %s\n", inputfile)
 		f, err := os.Open(inputfile)
 		if err != nil {
 			return err
@@ -48,6 +48,23 @@ func (mpanalyzer *MissingPiecesAnalyzer) Configure(configMap map[string]string) 
 }
 
 func (mpanalyzer *MissingPiecesAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
+	fileNodeMesgs := []*service.FileNodeMessage{}
+
+	sendStream, err := analysisService.SendFileNode(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, fnodeMsg := range fileNodeMesgs {
+		sendStream.Send(fnodeMsg)
+	}
+
+	reply, err := sendStream.CloseAndRecv()
+	if err != nil {
+		return err
+	}
+	if reply.Success {
+		log.Println("Missing Pieces Analyzer sent FileNodes")
+	}
 	return nil
 }
 
