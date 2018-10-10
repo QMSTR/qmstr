@@ -34,7 +34,10 @@ func (phase *serverPhaseInit) Activate() error {
 	phase.db = db
 
 	if !snapshotAvailable() {
-		return phase.initPackage(phase.session)
+		phase.db.OpenInsertQueue()
+		phase.initPackage(phase.session)
+		phase.db.CloseInsertQueue()
+		return nil
 	}
 
 	if err := importSnapshot(); err != nil {
@@ -115,7 +118,7 @@ func importSnapshot() error {
 	return nil
 }
 
-func (phase *serverPhaseInit) initPackage(session string) error {
+func (phase *serverPhaseInit) initPackage(session string) {
 	rootPackageNode := &service.PackageNode{Name: phase.masterConfig.Name, BuildConfig: phase.masterConfig.BuildConfig}
 	tmpInfoNode := &service.InfoNode{Type: "metadata"}
 	for key, val := range phase.masterConfig.MetaData {
@@ -127,8 +130,7 @@ func (phase *serverPhaseInit) initPackage(session string) error {
 	}
 
 	rootPackageNode.Session = session
-	_, err := phase.db.AddPackageNode(rootPackageNode)
-	return err
+	phase.db.AddPackageNode(rootPackageNode)
 }
 
 func (phase *serverPhaseInit) Shutdown() error {

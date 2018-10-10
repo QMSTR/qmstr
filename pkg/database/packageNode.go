@@ -5,13 +5,18 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"sync/atomic"
 
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
-func (db *DataBase) AddPackageNode(pNode *service.PackageNode) (string, error) {
-	log.Printf("Adding package [%v] node to the graph", pNode)
-	return dbInsert(db.client, pNode)
+// AddPackageNode adds a node to the insert queue
+func (db *DataBase) AddPackageNode(node *service.PackageNode) {
+	atomic.AddUint64(&db.pending, 1)
+	for _, dep := range node.Targets {
+		db.AddBuildFileNode(dep)
+	}
+	db.insertQueue <- node
 }
 
 func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error) {
