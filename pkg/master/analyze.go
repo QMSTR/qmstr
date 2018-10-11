@@ -143,16 +143,7 @@ func (phase *serverPhaseAnalysis) SendFileNode(stream service.AnalysisService_Se
 			return errors.New("wrong token supplied")
 		}
 		fileNode := fileNodeReq.Filenode
-		err = common.SetRelativePath(fileNode, buildPath, pathSub)
-		if err != nil {
-			return err
-		}
-		for _, derivedNode := range fileNode.DerivedFrom {
-			err = common.SetRelativePath(derivedNode, phase.masterConfig.Server.BuildPath, nil)
-			if err != nil {
-				return err
-			}
-		}
+		common.SanitizeFileNode(fileNode, buildPath, pathSub)
 		log.Printf("Adding file node %v", fileNode.Path)
 		phase.db.AddFileNode(fileNode)
 	}
