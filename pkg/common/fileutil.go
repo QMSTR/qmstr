@@ -52,6 +52,9 @@ func SetRelativePath(node *service.FileNode, buildPath string, pathSub []*servic
 	for _, substitution := range pathSub {
 		node.Path = strings.Replace(node.Path, substitution.Old, substitution.New, 1)
 	}
+	if !filepath.IsAbs(node.Path) {
+		return nil
+	}
 	relPath, err := filepath.Rel(buildPath, node.Path)
 	if err != nil {
 		return err
@@ -102,4 +105,23 @@ func Hash(fileName string) (string, error) {
 		}
 	}
 	return fmt.Sprintf("%x", h.Sum(nil)), nil
+}
+
+func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathSubstitution) error {
+	if err := SetRelativePath(f, base, pathSub); err != nil {
+		return err
+	}
+	if f.Hash == "" {
+		hash, err := Hash(filepath.Join(base, f.Path))
+		if err != nil {
+			return err
+		}
+		f.Hash = hash
+	}
+	for _, d := range f.DerivedFrom {
+		if err := SanitizeFileNode(d, base, pathSub); err != nil {
+			return err
+		}
+	}
+	return nil
 }
