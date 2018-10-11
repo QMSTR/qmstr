@@ -1,6 +1,9 @@
 package common
 
 import (
+	"crypto/sha1"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -72,4 +75,31 @@ func FindExecutablesOnPath(progname string) []string {
 		}
 	}
 	return paths
+}
+
+func Hash(fileName string) (string, error) {
+	h := sha1.New()
+	f, err := os.Open(fileName)
+	if err != nil {
+		return "", err
+	}
+	buf := make([]byte, 0, 4*1024)
+	for {
+		n, err := f.Read(buf[:cap(buf)])
+		buf = buf[:n]
+		if n == 0 {
+			if err == nil {
+				continue
+			}
+			if err == io.EOF {
+				break
+			}
+			return "", err
+		}
+		h.Write(buf)
+		if err != nil && err != io.EOF {
+			return "", err
+		}
+	}
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
