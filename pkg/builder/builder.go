@@ -40,7 +40,7 @@ func (gb *GeneralBuilder) SetStdinChannel(stdin chan []byte) {
 
 func NewFileNode(path string, fileType string) *service.FileNode {
 	filename := filepath.Base(path)
-	hash, err := common.Hash(path)
+	hash, err := common.HashFile(path)
 	broken := false
 	if err != nil {
 		hash = "nohash" + path
