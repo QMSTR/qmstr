@@ -80,15 +80,19 @@ func FindExecutablesOnPath(progname string) []string {
 	return paths
 }
 
-func Hash(fileName string) (string, error) {
-	h := sha1.New()
+func HashFile(fileName string) (string, error) {
 	f, err := os.Open(fileName)
 	if err != nil {
 		return "", err
 	}
+	return Hash(f)
+}
+
+func Hash(r io.Reader) (string, error) {
+	h := sha1.New()
 	buf := make([]byte, 0, 4*1024)
 	for {
-		n, err := f.Read(buf[:cap(buf)])
+		n, err := r.Read(buf[:cap(buf)])
 		buf = buf[:n]
 		if n == 0 {
 			if err == nil {
@@ -112,7 +116,7 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 		return err
 	}
 	if f.Hash == "" {
-		hash, err := Hash(filepath.Join(base, f.Path))
+		hash, err := HashFile(filepath.Join(base, f.Path))
 		if err != nil {
 			return err
 		}
