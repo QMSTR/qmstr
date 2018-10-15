@@ -14,7 +14,8 @@ message BuildResponse {
 
 message PushFileMessage {
   string name = 1;
-  bytes data = 2;
+  string hash = 2;
+  bytes data = 3;
 }
 
 service BuildService {
