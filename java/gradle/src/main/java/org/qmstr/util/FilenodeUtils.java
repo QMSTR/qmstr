@@ -31,7 +31,6 @@ public class FilenodeUtils {
                 .setPath(filepath.toString())
                 .setHash(checksum != null ? checksum : "nohash"+filepath.toString())
                 .setBroken(checksum == null)
-                .setNodeType(1)
                 .setType(type)
                 .build();
 
