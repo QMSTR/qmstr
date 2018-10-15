@@ -31,7 +31,7 @@ apply plugin: "maven"
 group = "org.qmstr.gradle"
 version = "0.2"
 
-def grpcVersion = '1.10.0'
+def grpcVersion = '1.15.0'
 def nettyTcNativeVersion = '2.0.7.Final'
 
 dependencies {
