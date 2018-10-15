@@ -18,6 +18,7 @@ var (
 
 type Builder interface {
 	Analyze(commandline []string) (*service.BuildMessage, error)
+	GetPushFile() (*service.PushFileMessage, error)
 	GetName() string
 	GetPrefix() (string, error)
 	SetStdinChannel(chan []byte)
@@ -36,6 +37,10 @@ func NewGeneralBuilder(logger *log.Logger, debug bool) GeneralBuilder {
 
 func (gb *GeneralBuilder) SetStdinChannel(stdin chan []byte) {
 	gb.StdinChannel = stdin
+}
+
+func (gb *GeneralBuilder) GetPushFile() (*service.PushFileMessage, error) {
+	return nil, errors.New("No file to push")
 }
 
 func NewFileNode(path string, fileType string) *service.FileNode {
