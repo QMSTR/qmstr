@@ -1,6 +1,7 @@
 package gccbuilder
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"log"
@@ -76,7 +77,7 @@ func (g *GccBuilder) GetName() string {
 	return "GNU C compiler builder"
 }
 
-func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
+func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 	if g.Debug {
 		g.Logger.Printf("Parsing commandline %v", commandline)
 	}
@@ -116,7 +117,7 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 		}
 		linkedTarget.DerivedFrom = dependencies
 		fileNodes = append(fileNodes, linkedTarget)
-		return &pb.BuildMessage{FileNodes: fileNodes}, nil
+		return fileNodes, nil
 	case Assemble:
 		g.Logger.Printf("gcc assembling - skipping link")
 		fileNodes := []*pb.FileNode{}
@@ -133,7 +134,7 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
 			fileNodes = append(fileNodes, targetFile)
 		}
-		return &pb.BuildMessage{FileNodes: fileNodes}, nil
+		return fileNodes, nil
 	case Compile:
 		g.Logger.Printf("gcc compile - skipping assemble and link")
 		fileNodes := []*pb.FileNode{}
@@ -150,7 +151,7 @@ func (g *GccBuilder) Analyze(commandline []string) (*pb.BuildMessage, error) {
 			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
 			fileNodes = append(fileNodes, targetFile)
 		}
-		return &pb.BuildMessage{FileNodes: fileNodes}, nil
+		return fileNodes, nil
 	case PrintOnly:
 		log.Println("print only; nothing produced")
 		return nil, nil
@@ -226,4 +227,19 @@ func (g *GccBuilder) parseCommandLine(args []string) error {
 		}
 	}
 	return nil
+}
+
+func (g *GccBuilder) GetPushFile() (*pb.PushFileMessage, error) {
+	// handle piped code
+	if g.Input[0] == "-" && g.StdinChannel != nil {
+		g.Logger.Println("Reading data from stdin channel")
+		data := <-g.StdinChannel
+		g.Logger.Printf("Read data %s from stdin channel", data)
+		checksum, err := common.Hash(bytes.NewReader(data))
+		if err != nil {
+			return nil, fmt.Errorf("failed to capture code from standard input: %v", err)
+		}
+		return &pb.PushFileMessage{Hash: checksum, Name: checksum, Data: data}, nil
+	}
+	return g.GeneralBuilder.GetPushFile()
 }
