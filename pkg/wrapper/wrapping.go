@@ -93,11 +93,23 @@ func (w *Wrapper) Wrap() {
 		w.logger.Panic(err)
 	}
 
-	stdinChannel := make(chan []byte, 1024)
-	stdinHandler := func(stdin io.WriteCloser, c chan []byte) {
+	go func() {
+		c := make(chan []byte, 1024)
 		defer stdin.Close()
 		tee := io.TeeReader(os.Stdin, stdin)
 		r := bufio.NewReader(tee)
+
+		// test if data is present
+		data, err := r.Peek(1024)
+		if err != nil {
+			w.logger.Printf("Peeked error: %v", err)
+		}
+		w.logger.Printf("Peeked %d bytes from stdin: %s\n", len(data), data)
+		if len(data) == 0 {
+			return
+		}
+		w.Builder.SetStdinChannel(c)
+
 		nBytes, nChunks := int64(0), int64(0)
 		buf := make([]byte, 0, 1024)
 		for {
@@ -128,9 +140,7 @@ func (w *Wrapper) Wrap() {
 				w.logger.Fatal(err)
 			}
 		}
-	}
-
-	go stdinHandler(stdin, stdinChannel)
+	}()
 
 	if w.debug {
 		w.logger.Printf("Starting wrapped program [%s %s]\n", cmd.Path, cmd.Args[:])
