@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/analysis"
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
@@ -77,7 +78,13 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 			for _, target := range pkganalyzer.targetsSlice {
 				re := regexp.MustCompile(filepath.Join(pkganalyzer.targetsDir, target))
 				if re.MatchString(fileNode.Path) {
-					pkgNode.Targets = append(pkgNode.Targets, fileNode)
+					hash, err := common.Hash(fileNode.Path)
+					if err != nil {
+						return err
+					}
+					if hash == fileNode.Hash {
+						pkgNode.Targets = append(pkgNode.Targets, fileNode)
+					}
 					break
 				}
 			}
