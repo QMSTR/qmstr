@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -113,22 +114,26 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 		return err
 	}
 	if f.Hash == "" {
+		log.Printf("No hash for file %s", f.Path)
 		var hash string
 		var err error
 		if f.Path == parentPath {
+			log.Println("Override detected")
 			hash, err = db.GetFileNodeHashByPath(f.Path)
 			if err != nil {
 				return fmt.Errorf("Corrupted data provided. File does not exist: %v", err)
 			}
+			log.Printf("Found original hash %s in database\n", hash)
 		} else {
 			hash, err = Hash(filepath.Join(base, f.Path))
 			if err != nil {
 				return err
 			}
+			log.Printf("Calculated hash %s\n", hash)
 		}
 		f.Hash = hash
-
 	}
+
 	for _, d := range f.DerivedFrom {
 		if err := SanitizeFileNode(d, base, pathSub, db, f.Path); err != nil {
 			return err

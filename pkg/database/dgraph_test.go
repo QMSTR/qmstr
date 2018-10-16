@@ -36,7 +36,7 @@ func TestCheckSchema(t *testing.T) {
 	const schema = `data:string @index(hash) .
 hash:string @index(exact) .
 name:string @index(hash) .
-path:string @index(trigram) .
+path:string @index(hash, trigram) .
 type:string @index(hash) .
 phase:int .
 session:string .
