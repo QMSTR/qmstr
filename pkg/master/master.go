@@ -41,8 +41,8 @@ type server struct {
 	eventMutex         *sync.RWMutex
 }
 
-func (s *server) Build(ctx context.Context, in *service.BuildMessage) (*service.BuildResponse, error) {
-	return s.currentPhase.Build(in)
+func (s *server) Build(stream service.BuildService_BuildServer) error {
+	return s.currentPhase.Build(stream)
 }
 
 func (s *server) PushFile(ctx context.Context, in *service.PushFileMessage) (*service.BuildResponse, error) {

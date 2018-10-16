@@ -62,7 +62,7 @@ func (ld *LdBuilder) GetName() string {
 	return "GNU ld linker"
 }
 
-func (ld *LdBuilder) Analyze(commandline []string) (*service.BuildMessage, error) {
+func (ld *LdBuilder) Analyze(commandline []string) ([]*service.FileNode, error) {
 	if err := ld.parseCommandLine(commandline[1:]); err != nil {
 		return nil, fmt.Errorf("Failed to parse commandline: %v", err)
 	}
@@ -97,7 +97,7 @@ func (ld *LdBuilder) Analyze(commandline []string) (*service.BuildMessage, error
 	}
 	linkedTarget.DerivedFrom = dependencies
 	fileNodes = append(fileNodes, linkedTarget)
-	return &service.BuildMessage{FileNodes: fileNodes}, nil
+	return fileNodes, nil
 }
 
 func (ld *LdBuilder) parseCommandLine(args []string) error {

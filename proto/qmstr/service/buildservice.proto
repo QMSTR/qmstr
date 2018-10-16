@@ -4,10 +4,6 @@ option java_package = "org.qmstr.grpc.service";
 
 import weak "qmstr/service/datamodel.proto";
 
-message BuildMessage {
-  repeated FileNode fileNodes = 1;
-}
-
 message BuildResponse {
   bool success = 1;
 }
@@ -19,7 +15,7 @@ message PushFileMessage {
 }
 
 service BuildService {
-  rpc Build(BuildMessage) returns (BuildResponse) {}
+  rpc Build(stream FileNode) returns (BuildResponse) {}
   rpc SendBuildError(InfoNode) returns (BuildResponse) {}
   rpc PushFile(PushFileMessage) returns (BuildResponse) {}
 }

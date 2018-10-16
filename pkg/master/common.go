@@ -23,7 +23,7 @@ type serverPhase interface {
 	getSession() string
 	getError() string
 	getMasterConfig() *config.MasterConfig
-	Build(*service.BuildMessage) (*service.BuildResponse, error)
+	Build(service.BuildService_BuildServer) error
 	GetAnalyzerConfig(*service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error)
 	GetReporterConfig(*service.ReporterConfigRequest) (*service.ReporterConfigResponse, error)
 	SendInfoNodes(service.AnalysisService_SendInfoNodesServer) error
@@ -77,8 +77,8 @@ func (gsp *genericServerPhase) getName() string {
 	return gsp.Name
 }
 
-func (gsp *genericServerPhase) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
-	return nil, errors.New("Wrong phase")
+func (gsp *genericServerPhase) Build(stream service.BuildService_BuildServer) error {
+	return errors.New("Wrong phase")
 }
 
 func (gsp *genericServerPhase) PushFile(in *service.PushFileMessage) (*service.BuildResponse, error) {

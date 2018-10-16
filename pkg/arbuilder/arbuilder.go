@@ -49,7 +49,7 @@ func (a *ArBuilder) GetPrefix() (string, error) {
 	return "", errors.New("ar not prefixed")
 }
 
-func (a *ArBuilder) Analyze(commandline []string) (*service.BuildMessage, error) {
+func (a *ArBuilder) Analyze(commandline []string) ([]*service.FileNode, error) {
 	if len(commandline) < 3 {
 		return nil, fmt.Errorf("failed to analyze \"%s\" too few arguments", commandline)
 	}
@@ -94,7 +94,7 @@ func (a *ArBuilder) Analyze(commandline []string) (*service.BuildMessage, error)
 	a.Output = a.CommandLineArgs[0]
 	a.Input = a.CommandLineArgs[1:]
 
-	msg, err := a.getResultMessage()
+	msg, err := a.getResults()
 	if err != nil {
 		return nil, fmt.Errorf("Failed to generate result message: %v", err)
 	}
@@ -102,7 +102,7 @@ func (a *ArBuilder) Analyze(commandline []string) (*service.BuildMessage, error)
 	return msg, nil
 }
 
-func (a *ArBuilder) getResultMessage() (*service.BuildMessage, error) {
+func (a *ArBuilder) getResults() ([]*service.FileNode, error) {
 	if a.Command == Replace || a.Command == QuickAppend {
 		a.Logger.Printf("archiving")
 		fileNodes := []*service.FileNode{}
@@ -123,7 +123,7 @@ func (a *ArBuilder) getResultMessage() (*service.BuildMessage, error) {
 		}
 		linkedTarget.DerivedFrom = dependencies
 		fileNodes = append(fileNodes, linkedTarget)
-		return &service.BuildMessage{FileNodes: fileNodes}, nil
+		return fileNodes, nil
 	}
 	return nil, errors.New("Command not supported")
 }

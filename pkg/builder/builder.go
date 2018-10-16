@@ -14,10 +14,11 @@ import (
 var (
 	ErrBuilderModeNotImplemented = errors.New("Mode not implemented")
 	ErrNoTargetsProvided         = errors.New("No targets provided")
+	ErrNoPushFile                = errors.New("No file to push")
 )
 
 type Builder interface {
-	Analyze(commandline []string) (*service.BuildMessage, error)
+	Analyze(commandline []string) ([]*service.FileNode, error)
 	GetPushFile() (*service.PushFileMessage, error)
 	GetName() string
 	GetPrefix() (string, error)
@@ -40,7 +41,7 @@ func (gb *GeneralBuilder) SetStdinChannel(stdin chan []byte) {
 }
 
 func (gb *GeneralBuilder) GetPushFile() (*service.PushFileMessage, error) {
-	return nil, errors.New("No file to push")
+	return nil, ErrNoPushFile
 }
 
 func NewFileNode(path string, fileType string) *service.FileNode {

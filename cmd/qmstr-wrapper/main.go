@@ -69,11 +69,48 @@ func main() {
 		log.Fatalf("failed to create wrapper for %s: %v", commandLine, err)
 	}
 	w.Wrap()
-	buildMsg, err := w.Builder.Analyze(commandLine)
+
+	fileNodes, err := w.Builder.Analyze(commandLine)
 	switch err {
 	case nil:
-		if buildMsg != nil {
-			sendResult(buildMsg)
+		stream, err := buildServiceClient.Build(context.Background())
+		defer func() {
+			res, err := stream.CloseAndRecv()
+			if err != nil {
+				log.Fatalf("Failed to close the filenode stream: %v", err)
+			}
+			if !res.Success {
+				log.Fatalln("Server filenode stream failed")
+			}
+		}()
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		for _, fileNode := range fileNodes {
+			pushFileMsg, err := w.Builder.GetPushFile()
+			if err != nil {
+				if err != builder.ErrNoPushFile {
+					errMsg := fmt.Sprintf("%s failed to get file for upload: %v", w.Builder.GetName(), err)
+					sendBuildException(service.ExceptionType_ERROR, errMsg)
+					logger.Println(errMsg)
+				}
+			}
+			if pushFileMsg != nil {
+				err := pushFile(pushFileMsg)
+				if err != nil {
+					errMsg := fmt.Sprintf("%s failed to upload file", pushFileMsg.Hash)
+					sendBuildException(service.ExceptionType_ERROR, errMsg)
+					logger.Println(errMsg)
+				}
+				for _, dep := range fileNode.DerivedFrom {
+					if dep.Name == "-" {
+						dep.Hash = pushFileMsg.Hash
+					}
+				}
+			}
+			if err := stream.Send(fileNode); err != nil {
+				log.Fatalf("Failed to send filenode to server")
+			}
 		}
 	case builder.ErrBuilderModeNotImplemented:
 		logger.Printf("WARNING for %s: \"%s\": %v", w.Builder.GetName(), commandLine, err)
@@ -82,6 +119,18 @@ func main() {
 		logger.Printf("%s failed for \"%s\": %v", w.Builder.GetName(), commandLine, err)
 		sendBuildException(service.ExceptionType_ERROR, fmt.Sprintf("Failed to analyze build [%s] due to %v", commandLine, err))
 	}
+
+}
+
+func pushFile(pushMsg *service.PushFileMessage) error {
+	r, err := buildServiceClient.PushFile(context.Background(), pushMsg)
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	if !r.Success {
+		return errors.New("Server failure")
+	}
+	return nil
 }
 
 func sendBuildException(exType service.ExceptionType, msg string) error {
@@ -93,17 +142,6 @@ func sendBuildException(exType service.ExceptionType, msg string) error {
 		exNode = service.CreateWarningNode(msg)
 	}
 	r, err := buildServiceClient.SendBuildError(context.Background(), exNode)
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	if !r.Success {
-		return errors.New("Server failure")
-	}
-	return nil
-}
-
-func sendResult(buildmsg *service.BuildMessage) error {
-	r, err := buildServiceClient.Build(context.Background(), buildmsg)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}

@@ -43,7 +43,7 @@ func (as *AsBuilder) GetName() string {
 	return "GNU as assember"
 }
 
-func (as *AsBuilder) Analyze(commandline []string) (*service.BuildMessage, error) {
+func (as *AsBuilder) Analyze(commandline []string) ([]*service.FileNode, error) {
 	if err := as.parseCommandLine(commandline[1:]); err != nil {
 		return nil, fmt.Errorf("Failed to parse commandline: %v", err)
 	}
@@ -62,7 +62,7 @@ func (as *AsBuilder) Analyze(commandline []string) (*service.BuildMessage, error
 	targetFile.DerivedFrom = []*service.FileNode{sourceFile}
 	fileNodes = append(fileNodes, targetFile)
 
-	return &service.BuildMessage{FileNodes: fileNodes}, nil
+	return fileNodes, nil
 }
 
 func (as *AsBuilder) parseCommandLine(args []string) error {
