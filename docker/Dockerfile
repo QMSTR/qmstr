@@ -8,6 +8,8 @@ FROM ubuntu:18.04 as runtimebase
 
 LABEL org.qmstr.image runtime
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # install runtime deps
 RUN apt-get update && apt-get install -y \
     software-properties-common curl autoconf git libgit2-dev libio-captureoutput-perl python python-pip python3-distutils protobuf-compiler && \
@@ -47,6 +49,8 @@ FROM ubuntu:18.04 as builder
 LABEL org.qmstr.image builder
 ENV GOPATH /go
 ENV PATH ${GOPATH}/bin:$PATH
+ENV DEBIAN_FRONTEND=noninteractive
+
 # install golang
 RUN apt-get update && apt-get install -y \
     curl golang autoconf git libgit2-dev libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
@@ -107,6 +111,8 @@ ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
 # debug stage for container running ratel
 FROM ubuntu:18.04 as web
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y socat
 COPY --from=runtime /usr/local/bin/dgraph-ratel /usr/local/bin/dgraph-ratel
