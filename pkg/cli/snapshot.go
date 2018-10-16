@@ -78,6 +78,7 @@ func copyExport() error {
 				}
 			default:
 				snapshotFile = strings.TrimSuffix(snapshotFile, filepath.Ext(snapshotFile)) + "1" + filepath.Ext(snapshotFile)
+				Log.Printf("Creating new file: %s", snapshotFile)
 			}
 		}
 	}
