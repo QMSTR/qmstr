@@ -12,7 +12,13 @@ message BuildResponse {
   bool success = 1;
 }
 
+message PushFileMessage {
+  string name = 1;
+  bytes data = 2;
+}
+
 service BuildService {
   rpc Build(BuildMessage) returns (BuildResponse) {}
   rpc SendBuildError(InfoNode) returns (BuildResponse) {}
+  rpc PushFile(PushFileMessage) returns (BuildResponse) {}
 }

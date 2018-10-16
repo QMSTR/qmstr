@@ -45,6 +45,10 @@ func (s *server) Build(ctx context.Context, in *service.BuildMessage) (*service.
 	return s.currentPhase.Build(in)
 }
 
+func (s *server) PushFile(ctx context.Context, in *service.PushFileMessage) (*service.BuildResponse, error) {
+	return s.currentPhase.PushFile(in)
+}
+
 func (s *server) GetAnalyzerConfig(ctx context.Context, in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
 	return s.currentPhase.GetAnalyzerConfig(in)
 }

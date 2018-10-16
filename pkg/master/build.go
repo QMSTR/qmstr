@@ -53,6 +53,10 @@ func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildRe
 	return &service.BuildResponse{Success: true}, nil
 }
 
+func (phase *serverPhaseBuild) PushFile(in *service.PushFileMessage) (*service.BuildResponse, error) {
+	return nil, nil
+}
+
 func (phase *serverPhaseBuild) ExportGraph(in *service.ExportRequest) (*service.ExportResponse, error) {
 	phase.db.Sync()
 	err := phase.requestExport()
