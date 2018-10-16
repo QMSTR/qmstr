@@ -143,7 +143,7 @@ func (phase *serverPhaseAnalysis) SendFileNode(stream service.AnalysisService_Se
 			return errors.New("wrong token supplied")
 		}
 		fileNode := fileNodeReq.Filenode
-		common.SanitizeFileNode(fileNode, buildPath, pathSub)
+		common.SanitizeFileNode(fileNode, buildPath, pathSub, phase.db, "")
 		log.Printf("Adding file node %v", fileNode.Path)
 		phase.db.AddFileNode(fileNode)
 	}
