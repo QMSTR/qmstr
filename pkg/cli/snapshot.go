@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/docker"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/docker/docker/client"
@@ -11,6 +12,7 @@ import (
 )
 
 var snapshotFile string
+var forceOverride bool
 
 var snapshotCmd = &cobra.Command{
 	Use:   "snapshot",
@@ -31,6 +33,7 @@ var snapshotCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(snapshotCmd)
 	snapshotCmd.Flags().StringVarP(&snapshotFile, "out", "O", "qmstr-snapshot.tar", "Output filename")
+	snapshotCmd.Flags().BoolVarP(&forceOverride, "force", "f", false, "force override snapshot")
 }
 
 func exportGraph() error {
@@ -52,5 +55,11 @@ func copyExport() error {
 		return fmt.Errorf("failed to obtain qmstr-master info %v", err)
 	}
 
+	//file already exists
+	if common.IsFileExist(snapshotFile) {
+		if !forceOverride {
+			return fmt.Errorf("snapshot %s already exists; use -f to overwrite", snapshotFile)
+		}
+	}
 	return docker.CopySnapshot(ctx, cli, mID, snapshotFile)
 }
