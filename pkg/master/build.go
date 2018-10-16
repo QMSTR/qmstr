@@ -1,6 +1,7 @@
 package master
 
 import (
+	"io"
 	"log"
 
 	"github.com/QMSTR/qmstr/pkg/common"
@@ -33,24 +34,24 @@ func (phase *serverPhaseBuild) GetPhaseID() service.Phase {
 	return service.Phase_BUILD
 }
 
-func (phase *serverPhaseBuild) Build(in *service.BuildMessage) (*service.BuildResponse, error) {
+func (phase *serverPhaseBuild) Build(stream service.BuildService_BuildServer) error {
 	buildPath := phase.masterConfig.Server.BuildPath
 	pathSub := phase.masterConfig.Server.PathSub
-	for _, node := range in.FileNodes {
-		err := common.SetRelativePath(node, buildPath, pathSub)
+	for {
+		fileNode, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&service.BuildResponse{
+				Success: true,
+			})
+		}
 		if err != nil {
-			return nil, err
+			return err
 		}
-		for _, derNode := range node.DerivedFrom {
-			err := common.SetRelativePath(derNode, buildPath, pathSub)
-			if err != nil {
-				return nil, err
-			}
-		}
-		log.Printf("Adding file node %s", node.Path)
-		phase.db.AddFileNode(node)
+
+		common.SanitizeFileNode(fileNode, buildPath, pathSub, phase.db, "")
+		log.Printf("Adding file node %s", fileNode.Path)
+		phase.db.AddFileNode(fileNode)
 	}
-	return &service.BuildResponse{Success: true}, nil
 }
 
 func (phase *serverPhaseBuild) PushFile(in *service.PushFileMessage) (*service.BuildResponse, error) {

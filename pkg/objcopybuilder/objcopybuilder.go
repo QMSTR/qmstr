@@ -38,7 +38,7 @@ func (o *ObjcopyBuilder) GetName() string {
 	return "objcopy builder"
 }
 
-func (o *ObjcopyBuilder) Analyze(commandline []string) (*service.BuildMessage, error) {
+func (o *ObjcopyBuilder) Analyze(commandline []string) ([]*service.FileNode, error) {
 	o.Logger.Printf("Objcopy copying binary file")
 
 	if o.Debug {
@@ -54,7 +54,7 @@ func (o *ObjcopyBuilder) Analyze(commandline []string) (*service.BuildMessage, e
 	inputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, o.Input, false), "binary file")
 	outputTarget.DerivedFrom = []*service.FileNode{inputTarget}
 
-	return &service.BuildMessage{FileNodes: []*service.FileNode{outputTarget}}, nil
+	return []*service.FileNode{outputTarget}, nil
 }
 
 func (o *ObjcopyBuilder) processFlags(args []string) error {

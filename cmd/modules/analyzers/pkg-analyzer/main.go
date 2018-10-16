@@ -52,7 +52,6 @@ func (pkganalyzer *PkgAnalyzer) Configure(configMap map[string]string) error {
 
 // Analyze finds the targets in db which we are going to connect to the package node
 func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
-
 	pkgNode, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
 	if err != nil {
 		return err
@@ -78,7 +77,7 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 			for _, target := range pkganalyzer.targetsSlice {
 				re := regexp.MustCompile(filepath.Join(pkganalyzer.targetsDir, target))
 				if re.MatchString(fileNode.Path) {
-					hash, err := common.Hash(fileNode.Path)
+					hash, err := common.HashFile(fileNode.Path)
 					if err != nil {
 						return err
 					}
