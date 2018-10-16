@@ -206,3 +206,27 @@ func (db *DataBase) GetFileNodesByType(filetype string, recursive bool) ([]*serv
 
 	return ret["getFileNodeByType"], nil
 }
+
+//
+func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {
+
+	var ret map[string][]*service.FileNode
+
+	q := `query Node($Path: string){
+		  hasNode(func: eq(path, $Path)) {
+			hash
+		  }}`
+
+	vars := map[string]string{"$Path": path}
+
+	err := db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return "", err
+	}
+
+	// no node with such path
+	if len(ret["hasNode"]) == 0 {
+		return "", errors.New("No node with such path")
+	}
+	return ret["hasNode"][0].Hash, nil
+}

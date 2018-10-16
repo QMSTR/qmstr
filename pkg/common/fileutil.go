@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/QMSTR/qmstr/pkg/database"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
@@ -107,19 +108,29 @@ func Hash(fileName string) (string, error) {
 	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
 
-func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathSubstitution) error {
+func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathSubstitution, db *database.DataBase, parentPath string) error {
 	if err := SetRelativePath(f, base, pathSub); err != nil {
 		return err
 	}
 	if f.Hash == "" {
-		hash, err := Hash(filepath.Join(base, f.Path))
-		if err != nil {
-			return err
+		var hash string
+		var err error
+		if f.Path == parentPath {
+			hash, err = db.GetFileNodeHashByPath(f.Path)
+			if err != nil {
+				return fmt.Errorf("Corrupted data provided. File does not exist: %v", err)
+			}
+		} else {
+			hash, err = Hash(filepath.Join(base, f.Path))
+			if err != nil {
+				return err
+			}
 		}
 		f.Hash = hash
+
 	}
 	for _, d := range f.DerivedFrom {
-		if err := SanitizeFileNode(d, base, pathSub); err != nil {
+		if err := SanitizeFileNode(d, base, pathSub, db, f.Path); err != nil {
 			return err
 		}
 	}
