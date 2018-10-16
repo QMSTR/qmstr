@@ -93,8 +93,7 @@ func (w *Wrapper) Wrap() {
 		w.logger.Panic(err)
 	}
 
-	stdinChannel := make(chan []byte, 1024)
-	stdinHandler := func(stdin io.WriteCloser, c chan []byte) {
+	stdinHandler := func(stdin io.WriteCloser, c *chan []byte) {
 		defer stdin.Close()
 		tee := io.TeeReader(os.Stdin, stdin)
 		r := bufio.NewReader(tee)
@@ -120,7 +119,7 @@ func (w *Wrapper) Wrap() {
 			if w.debug {
 				w.logger.Println("Writing data to channel")
 			}
-			c <- buf
+			*c <- buf
 			if w.debug {
 				w.logger.Printf("data: %s", buf)
 			}
@@ -130,7 +129,7 @@ func (w *Wrapper) Wrap() {
 		}
 	}
 
-	go stdinHandler(stdin, stdinChannel)
+	go stdinHandler(stdin, w.Builder.GetStdinChannel())
 
 	if w.debug {
 		w.logger.Printf("Starting wrapped program [%s %s]\n", cmd.Path, cmd.Args[:])

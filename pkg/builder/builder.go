@@ -20,21 +20,27 @@ type Builder interface {
 	Analyze(commandline []string) (*service.BuildMessage, error)
 	GetName() string
 	GetPrefix() (string, error)
+	GetStdinChannel() *chan []byte
 }
 
 type GeneralBuilder struct {
-	Logger *log.Logger
-	Debug  bool
-	Afs    afero.Fs
+	Logger       *log.Logger
+	Debug        bool
+	Afs          afero.Fs
+	StdinChannel chan []byte
 }
 
 func NewGeneralBuilder(logger *log.Logger, debug bool) GeneralBuilder {
-	return GeneralBuilder{Logger: logger, Debug: debug, Afs: afero.NewOsFs()}
+	return GeneralBuilder{Logger: logger, Debug: debug, Afs: afero.NewOsFs(), StdinChannel: make(chan []byte, 1024)}
+}
+
+func (gb *GeneralBuilder) GetStdinChannel() *chan []byte {
+	return &gb.StdinChannel
 }
 
 func NewFileNode(path string, fileType string) *service.FileNode {
 	filename := filepath.Base(path)
-	hash, err := common.Hash(path)
+	hash, err := common.HashFile(path)
 	broken := false
 	if err != nil {
 		hash = "nohash" + path
