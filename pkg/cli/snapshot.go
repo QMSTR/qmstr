@@ -1,7 +1,11 @@
 package cli
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/docker"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
@@ -11,6 +15,7 @@ import (
 )
 
 var snapshotFile string
+var forceOverride bool
 
 var snapshotCmd = &cobra.Command{
 	Use:   "snapshot",
@@ -31,6 +36,7 @@ var snapshotCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(snapshotCmd)
 	snapshotCmd.Flags().StringVarP(&snapshotFile, "out", "O", "qmstr-snapshot.tar", "Output filename")
+	snapshotCmd.Flags().BoolVarP(&forceOverride, "force", "f", false, "force override snapshot")
 }
 
 func exportGraph() error {
@@ -52,5 +58,28 @@ func copyExport() error {
 		return fmt.Errorf("failed to obtain qmstr-master info %v", err)
 	}
 
+	//file already exists
+	if _, err := os.Stat(snapshotFile); !os.IsNotExist(err) {
+		if forceOverride {
+			if err = os.Remove(snapshotFile); err != nil {
+				return fmt.Errorf("couldn't remove file: %s, %v", snapshotFile, err)
+			}
+		} else {
+			reader := bufio.NewReader(os.Stdin)
+			Log.Printf("File %s already exists. Would you like to override it? [y/N]", snapshotFile)
+			answer, _, err := reader.ReadRune()
+			if err != nil {
+				return err
+			}
+			switch answer {
+			case 'y', 'Y':
+				if err = os.Remove(snapshotFile); err != nil {
+					return fmt.Errorf("couldn't remove file: %s, %v", snapshotFile, err)
+				}
+			default:
+				snapshotFile = strings.TrimSuffix(snapshotFile, filepath.Ext(snapshotFile)) + "1" + filepath.Ext(snapshotFile)
+			}
+		}
+	}
 	return docker.CopyGraphExport(ctx, cli, mID, snapshotFile)
 }
