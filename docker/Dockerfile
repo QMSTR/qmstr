@@ -70,15 +70,6 @@ COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
 WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
 RUN make install_qmstr_all
 
-
-# separate stage just to run the master unit tests:
-FROM builder as master_unit_tests
-
-LABEL org.qmstr.image master_unit_tests
-
-WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
-CMD make gotest
-
 # the runtime stage contains all the elements needed to run the master and the analysis tools:
 FROM runtimebase as runtime
 

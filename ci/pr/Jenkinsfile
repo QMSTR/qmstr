@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('test') {
+            steps {
+                make gotest
+            }
+        }
+        stage('checkpep8') {
+            steps {
+                make checkpep8
+            }
+        }
+        stage('golint') {
+            steps {
+                make golint
+            }
+        }
+        stage('govet') {
+            steps {
+                make govet
+            }
+        }
+    }
+}
