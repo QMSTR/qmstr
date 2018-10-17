@@ -24,7 +24,7 @@ import (
 )
 
 const schema = `
-path:string @index(hash, trigram) .
+path:string @index(hash,trigram) .
 hash:string @index(exact) .
 type:string @index(hash) .
 name:string @index(hash) .
