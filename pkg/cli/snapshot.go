@@ -59,7 +59,7 @@ func copyExport() error {
 	}
 
 	//file already exists
-	if _, err := os.Stat(snapshotFile); !os.IsNotExist(err) {
+	if _, err := os.Stat(snapshotFile); err == nil {
 		if forceOverride {
 			if err = os.Remove(snapshotFile); err != nil {
 				return fmt.Errorf("couldn't remove file: %s, %v", snapshotFile, err)
