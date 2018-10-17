@@ -110,8 +110,8 @@ func (s *server) GetInfoData(ctx context.Context, in *service.InfoDataRequest) (
 	return s.currentPhase.GetInfoData(in)
 }
 
-func (s *server) ExportGraph(ctx context.Context, in *service.ExportRequest) (*service.ExportResponse, error) {
-	return s.currentPhase.ExportGraph(in)
+func (s *server) ExportSnapshot(ctx context.Context, in *service.ExportRequest) (*service.ExportResponse, error) {
+	return s.currentPhase.ExportSnapshot(in)
 }
 
 func (s *server) Status(ctx context.Context, in *service.StatusMessage) (*service.StatusResponse, error) {

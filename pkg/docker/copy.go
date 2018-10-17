@@ -18,7 +18,7 @@ import (
 	"github.com/docker/docker/pkg/archive"
 )
 
-func CopyGraphExport(ctx context.Context, cli *client.Client, container string, destinationPath string) error {
+func CopySnapshot(ctx context.Context, cli *client.Client, container string, destinationPath string) error {
 	data, _, err := cli.CopyFromContainer(ctx, container, common.ContainerGraphExportDir)
 	if err != nil {
 		return err

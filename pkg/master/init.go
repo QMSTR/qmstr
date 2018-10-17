@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/common"
@@ -54,6 +55,7 @@ func (phase *serverPhaseInit) Activate() error {
 
 func snapshotAvailable() bool {
 	_, err := os.Stat(common.ContainerGraphImportPath)
+	// TODO fix exist check
 	return !os.IsNotExist(err)
 }
 
@@ -103,6 +105,25 @@ func importSnapshot() error {
 			os.Rename(rdfFile.Name(), rdfFile.Name()+".gz")
 			rdf = true
 			continue
+		}
+		if strings.Contains(hdr.Name, common.ContainerPushFilesDirName) {
+			targetDir := filepath.Join(common.ContainerBuildDir, common.ContainerPushFilesDirName)
+			switch hdr.Typeflag {
+			case tar.TypeDir:
+				if err := os.MkdirAll(targetDir, os.ModePerm); err != nil {
+					return err
+				}
+			case tar.TypeReg:
+				dest, err := os.Create(filepath.Join(targetDir, filepath.Base(hdr.Name)))
+				if err != nil {
+					return err
+				}
+				_, err = io.Copy(dest, tr)
+				if err != nil {
+					return err
+				}
+				dest.Close()
+			}
 		}
 	}
 
