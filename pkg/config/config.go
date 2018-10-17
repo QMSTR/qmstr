@@ -69,7 +69,7 @@ func ReadConfigFromFiles(configfiles ...string) (*MasterConfig, error) {
 	fileNotExistCount := 0
 	config := getDefaultConfig()
 	for _, configfile := range configfiles {
-		if _, err := os.Stat(configfile); os.IsNotExist(err) {
+		if _, err := os.Stat(configfile); err != nil {
 			log.Printf("File %s not found", configfile)
 			fileNotExistCount++
 			continue

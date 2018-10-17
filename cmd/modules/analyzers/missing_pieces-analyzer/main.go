@@ -27,7 +27,7 @@ func main() {
 
 func (mpanalyzer *MissingPiecesAnalyzer) Configure(configMap map[string]string) error {
 	if inputfile, ok := configMap["inputfile"]; ok {
-		if _, err := os.Stat(inputfile); os.IsNotExist(err) {
+		if _, err := os.Stat(inputfile); err != nil {
 			return fmt.Errorf("File %s not found", inputfile)
 		}
 

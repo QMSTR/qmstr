@@ -54,7 +54,10 @@ func (phase *serverPhaseInit) Activate() error {
 
 func snapshotAvailable() bool {
 	_, err := os.Stat(common.ContainerGraphImportPath)
-	return !os.IsNotExist(err)
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func importSnapshot() error {
