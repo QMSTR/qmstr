@@ -34,9 +34,9 @@ func init() {
 }
 
 func exportGraph() error {
-	_, err := controlServiceClient.ExportGraph(context.Background(), &service.ExportRequest{Wait: true})
+	_, err := controlServiceClient.ExportSnapshot(context.Background(), &service.ExportRequest{Wait: true})
 	if err != nil {
-		return fmt.Errorf("Failed to export graph: %v", err)
+		return fmt.Errorf("Failed to export snapshot: %v", err)
 	}
 	return nil
 }
@@ -52,5 +52,5 @@ func copyExport() error {
 		return fmt.Errorf("failed to obtain qmstr-master info %v", err)
 	}
 
-	return docker.CopyGraphExport(ctx, cli, mID, snapshotFile)
+	return docker.CopySnapshot(ctx, cli, mID, snapshotFile)
 }

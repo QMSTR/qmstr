@@ -65,5 +65,5 @@ service ControlService {
   rpc GetFileNode(FileNode) returns (stream FileNode) {}
   rpc Status(StatusMessage) returns (StatusResponse) {}
   rpc SubscribeEvents(EventMessage) returns (stream Event) {}
-  rpc ExportGraph(ExportRequest) returns (ExportResponse) {}
+  rpc ExportSnapshot(ExportRequest) returns (ExportResponse) {}
 }

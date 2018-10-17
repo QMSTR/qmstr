@@ -3,10 +3,12 @@ package master
 import (
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/config"
@@ -32,7 +34,7 @@ type serverPhase interface {
 	GetFileNode(*service.FileNode, service.ControlService_GetFileNodeServer) error
 	GetBOM(*service.BOMRequest) (*service.BOM, error)
 	GetInfoData(*service.InfoDataRequest) (*service.InfoDataResponse, error)
-	ExportGraph(*service.ExportRequest) (*service.ExportResponse, error)
+	ExportSnapshot(*service.ExportRequest) (*service.ExportResponse, error)
 	requestExport() error
 	getPostInitPhase() service.Phase
 	PushFile(*service.PushFileMessage) (*service.PushFileResponse, error)
@@ -126,11 +128,55 @@ func (gsp *genericServerPhase) GetInfoData(in *service.InfoDataRequest) (*servic
 	return nil, errors.New("Wrong phase")
 }
 
-func (gsp *genericServerPhase) ExportGraph(in *service.ExportRequest) (*service.ExportResponse, error) {
+func (gsp *genericServerPhase) ExportSnapshot(in *service.ExportRequest) (*service.ExportResponse, error) {
 	err := gsp.requestExport()
 	if err != nil {
 		return nil, err
 	}
+	pushedFilesDir := filepath.Join(common.ContainerBuildDir, common.ContainerPushFilesDirName)
+	fi, err := os.Stat(pushedFilesDir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			log.Printf("No pushed files for export found.")
+			return &service.ExportResponse{Success: true}, nil
+		} else {
+			return nil, err
+		}
+	}
+	if fi.IsDir() {
+		pushExportDir := filepath.Join(common.ContainerGraphExportDir, common.ContainerPushFilesDirName)
+		if err := os.MkdirAll(pushExportDir, os.ModePerm); err != nil {
+			return nil, err
+		}
+
+		err := filepath.Walk(pushedFilesDir, func(path string, info os.FileInfo, err error) error {
+			if info.IsDir() {
+				return nil
+			}
+			log.Printf("Exporting %s", path)
+			src, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer src.Close()
+			dest, err := os.Create(filepath.Join(pushExportDir, filepath.Base(path)))
+			if err != nil {
+				return err
+			}
+			defer dest.Close()
+
+			// TODO verify copied version
+			_, err = io.Copy(dest, src)
+			if err != nil {
+				return err
+			}
+			return nil
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &service.ExportResponse{Success: true}, nil
 }
 
