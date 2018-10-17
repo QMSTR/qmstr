@@ -6,13 +6,13 @@
 set -e
 
 # test that we are in the correct location
-if [ ! -f ci/test-documentation.sh ]; then
+if [ ! -f ci/doc/test-documentation.sh ]; then
     echo "Start this script from the repository root!"
     exit 2
 fi
 
 # test the Markdown files under doc/
-FILES="doc/Installation.md doc/Getting-Started.md"
+FILES="ci/doc/Installation.md ci/doc/Getting-Started.md"
 # test the README:
 FILES="$FILES README.md"
 # Aaaand go...:

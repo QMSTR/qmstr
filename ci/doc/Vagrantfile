@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
     config.vm.network "private_network", type: "dhcp"
     config.vm.synced_folder ".", "/vagrant", type: "nfs"
   end
-  config.vm.provision :shell, path: "ci/vagrant-bootstrap.sh"
+  config.vm.provision :shell, path: "ci/doc/vagrant-bootstrap.sh"
 
   config.vm.provider "virtualbox" do |v|
     v.memory = 2048
