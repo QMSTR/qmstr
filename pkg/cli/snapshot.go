@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/docker"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
@@ -81,7 +82,7 @@ func copyExport() error {
 				if err != nil {
 					return err
 				}
-				snapshotFile = newFileName
+				snapshotFile = strings.Replace(newFileName, "\n", "", -1)
 				Log.Printf("Creating new snapshot: %s", snapshotFile)
 			}
 		}
