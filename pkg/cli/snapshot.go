@@ -4,8 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/docker"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
@@ -77,8 +75,14 @@ func copyExport() error {
 					return fmt.Errorf("couldn't remove file: %s, %v", snapshotFile, err)
 				}
 			default:
-				snapshotFile = strings.TrimSuffix(snapshotFile, filepath.Ext(snapshotFile)) + "1" + filepath.Ext(snapshotFile)
-				Log.Printf("Creating new file: %s", snapshotFile)
+				reader = bufio.NewReader(os.Stdin)
+				Log.Print("Please provide a different snapshot name (followed by the 'tar' extension)")
+				newFileName, err := reader.ReadString('\n')
+				if err != nil {
+					return err
+				}
+				snapshotFile = newFileName
+				Log.Printf("Creating new snapshot: %s", snapshotFile)
 			}
 		}
 	}
