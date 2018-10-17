@@ -21,3 +21,6 @@ const ContainerQmstrHomeDir = "/home/qmstruser"
 
 const ContainerGraphExportDir = "/var/qmstr/export"
 const ContainerGraphImportPath = "/var/qmstr/qmstr.import.tar"
+
+// ContainerPushFilesDirName is the name of the directory where pushed files will be stored
+const ContainerPushFilesDirName = "QMSTR_pushedfiles"

@@ -96,7 +96,7 @@ func main() {
 				}
 			}
 			if pushFileMsg != nil {
-				err := pushFile(pushFileMsg)
+				remotePath, err := pushFile(pushFileMsg)
 				if err != nil {
 					errMsg := fmt.Sprintf("%s failed to upload file", pushFileMsg.Hash)
 					sendBuildException(service.ExceptionType_ERROR, errMsg)
@@ -105,6 +105,7 @@ func main() {
 				for _, dep := range fileNode.DerivedFrom {
 					if dep.Name == "-" {
 						dep.Hash = pushFileMsg.Hash
+						dep.Path = remotePath
 					}
 				}
 			}
@@ -122,15 +123,12 @@ func main() {
 
 }
 
-func pushFile(pushMsg *service.PushFileMessage) error {
+func pushFile(pushMsg *service.PushFileMessage) (string, error) {
 	r, err := buildServiceClient.PushFile(context.Background(), pushMsg)
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
-	if !r.Success {
-		return errors.New("Server failure")
-	}
-	return nil
+	return r.Path, nil
 }
 
 func sendBuildException(exType service.ExceptionType, msg string) error {
