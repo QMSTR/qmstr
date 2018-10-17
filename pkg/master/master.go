@@ -45,7 +45,7 @@ func (s *server) Build(stream service.BuildService_BuildServer) error {
 	return s.currentPhase.Build(stream)
 }
 
-func (s *server) PushFile(ctx context.Context, in *service.PushFileMessage) (*service.BuildResponse, error) {
+func (s *server) PushFile(ctx context.Context, in *service.PushFileMessage) (*service.PushFileResponse, error) {
 	return s.currentPhase.PushFile(in)
 }
 
