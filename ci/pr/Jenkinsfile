@@ -4,22 +4,22 @@ pipeline {
     stages {
         stage('test') {
             steps {
-                make gotest
+                sh 'make gotest'
             }
         }
         stage('checkpep8') {
             steps {
-                make checkpep8
+                sh 'make checkpep8'
             }
         }
         stage('golint') {
             steps {
-                make golint
+                sh 'make golint'
             }
         }
         stage('govet') {
             steps {
-                make govet
+                sh 'make govet'
             }
         }
     }
