@@ -153,7 +153,7 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 		}
 		return fileNodes, nil
 	case PrintOnly:
-		log.Println("print only; nothing produced")
+		g.Logger.Println("print only; nothing produced")
 		return nil, nil
 	default:
 		return nil, builder.ErrBuilderModeNotImplemented
