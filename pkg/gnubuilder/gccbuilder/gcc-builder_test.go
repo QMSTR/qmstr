@@ -40,7 +40,7 @@ func fakeLibFile(builder *builder.GccBuilder, name string, static bool) error {
 func TestAssembleOnly(t *testing.T) {
 	gcc := getTestCompiler()
 	gcc.Analyze([]string{"gcc", "-c", "a.c"})
-	if gcc.Mode != builder.Assemble {
+	if gcc.Mode != gnubuilder.ModeAssemble {
 		t.Fail()
 	}
 }
@@ -48,7 +48,7 @@ func TestAssembleOnly(t *testing.T) {
 func TestCompileOnly(t *testing.T) {
 	gcc := getTestCompiler()
 	gcc.Analyze([]string{"gcc", "-S", "a.c"})
-	if gcc.Mode != builder.Compile {
+	if gcc.Mode != gnubuilder.ModeCompile {
 		t.Fail()
 	}
 }
@@ -56,7 +56,7 @@ func TestCompileOnly(t *testing.T) {
 func TestPreProcessorOnly(t *testing.T) {
 	gcc := getTestCompiler()
 	gcc.Analyze([]string{"gcc", "-E", "a.c"})
-	if gcc.Mode != builder.Preproc {
+	if gcc.Mode != gnubuilder.ModePreproc {
 		t.Fail()
 	}
 }

@@ -100,3 +100,11 @@ func TestForcedStaticLib(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestNoOutput(t *testing.T) {
+	ld := getTestBuilder()
+	ld.Analyze([]string{"ld", "-m", "elf_x86_64", "-v"})
+	if ld.Mode != gnubuilder.ModePrintOnly {
+		t.Fail()
+	}
+}

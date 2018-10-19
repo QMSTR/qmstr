@@ -22,8 +22,6 @@ const (
 	src       = "sourcecode"
 )
 
-const mode = "Link"
-
 type LdBuilder struct {
 	Input       []string
 	Output      []string
@@ -35,6 +33,7 @@ type LdBuilder struct {
 	ActualLibs  map[string]string
 	staticLink  bool
 	StaticLibs  map[string]struct{}
+	Mode        gnubuilder.Mode
 	builder.GeneralBuilder
 }
 
@@ -50,6 +49,7 @@ func NewLdBuilder(workDir string, logger *log.Logger, debug bool) *LdBuilder {
 		ActualLibs:     map[string]string{},
 		staticLink:     false,
 		StaticLibs:     map[string]struct{}{},
+		Mode:           gnubuilder.ModeLink,
 		GeneralBuilder: builder.NewGeneralBuilder(logger, debug)}
 }
 
@@ -65,6 +65,14 @@ func (ld *LdBuilder) GetName() string {
 func (ld *LdBuilder) Analyze(commandline []string) ([]*service.FileNode, error) {
 	if err := ld.parseCommandLine(commandline[1:]); err != nil {
 		return nil, fmt.Errorf("Failed to parse commandline: %v", err)
+	}
+
+	switch ld.Mode {
+	case gnubuilder.ModePrintOnly:
+		ld.Logger.Println("print only; nothing produced")
+		return nil, nil
+	case gnubuilder.ModePreproc, gnubuilder.ModeCompile, gnubuilder.ModeAssemble, gnubuilder.ModeUndef:
+		return nil, builder.ErrBuilderModeNotSupported
 	}
 
 	if ld.staticLink {
@@ -106,7 +114,7 @@ func (ld *LdBuilder) parseCommandLine(args []string) error {
 	}
 
 	// remove all flags we don't care about but that would break parsing
-	ld.Args = gnubuilder.CleanCmdLine(args, ld.Logger, ld.Debug, ld.staticLink, ld.StaticLibs, mode)
+	ld.Args = gnubuilder.CleanCmdLine(args, ld.Logger, ld.Debug, ld.staticLink, ld.StaticLibs, gnubuilder.ModeLink)
 
 	ldFlags := pflag.NewFlagSet("ld", pflag.ContinueOnError)
 	ldFlags.StringP("output", "o", undef, "output")
@@ -129,9 +137,10 @@ func (ld *LdBuilder) parseCommandLine(args []string) error {
 		// no output defined
 		if len(ld.Input) == 0 {
 			// No input no output
-			return nil
+			ld.Mode = gnubuilder.ModePrintOnly
+		} else {
+			ld.Output = []string{"a.out"}
 		}
-		ld.Output = []string{"a.out"}
 	}
 	return nil
 }

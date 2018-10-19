@@ -17,7 +17,18 @@ const (
 	libPathVar = "LIBRARY_PATH"
 )
 
-func CleanCmdLine(args []string, logger *log.Logger, debug bool, staticLink bool, staticLibs map[string]struct{}, mode string) []string {
+type Mode int
+
+const (
+	ModeLink Mode = iota
+	ModePreproc
+	ModeCompile
+	ModeAssemble
+	ModePrintOnly
+	ModeUndef
+)
+
+func CleanCmdLine(args []string, logger *log.Logger, debug bool, staticLink bool, staticLibs map[string]struct{}, mode Mode) []string {
 	clearIdxSet := map[int]struct{}{}
 	for idx, arg := range args {
 
@@ -29,10 +40,10 @@ func CleanCmdLine(args []string, logger *log.Logger, debug bool, staticLink bool
 		stringArgs := map[string]struct{}{}
 		booleanArgs := map[string]struct{}{}
 		switch mode {
-		case "Link":
+		case ModeLink:
 			stringArgs = LinkStringArgs
 			booleanArgs = LinkBoolArgs
-		case "Assemble":
+		case ModeAssemble:
 			stringArgs = AssembleStringArgs
 			booleanArgs = AssembleBoolArgs
 		default:

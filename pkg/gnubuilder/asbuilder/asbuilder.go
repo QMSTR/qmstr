@@ -15,7 +15,6 @@ import (
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
-const mode = "Assemble"
 const undef = "undef"
 
 const (
@@ -71,7 +70,7 @@ func (as *AsBuilder) parseCommandLine(args []string) error {
 	}
 
 	// remove all flags we don't care about but that would break parsing
-	as.Args = gnubuilder.CleanCmdLine(args, as.Logger, as.Debug, false, map[string]struct{}{}, mode)
+	as.Args = gnubuilder.CleanCmdLine(args, as.Logger, as.Debug, false, map[string]struct{}{}, gnubuilder.ModeAssemble)
 
 	asFlags := pflag.NewFlagSet("as", pflag.ContinueOnError)
 	asFlags.StringP("output", "o", undef, "output")

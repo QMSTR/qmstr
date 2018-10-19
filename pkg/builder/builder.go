@@ -13,6 +13,7 @@ import (
 
 var (
 	ErrBuilderModeNotImplemented = errors.New("Mode not implemented")
+	ErrBuilderModeNotSupported   = errors.New("Mode not supported")
 	ErrNoTargetsProvided         = errors.New("No targets provided")
 	ErrNoPushFile                = errors.New("No file to push")
 )

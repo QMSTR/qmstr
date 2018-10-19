@@ -17,15 +17,6 @@ import (
 	"github.com/spf13/pflag"
 )
 
-type mode int
-
-const (
-	Link mode = iota
-	Preproc
-	Compile
-	Assemble
-	PrintOnly
-)
 const undef = "undef"
 const (
 	linkedTrg = "linkedtarget"
@@ -34,7 +25,7 @@ const (
 )
 
 type GccBuilder struct {
-	Mode       mode
+	Mode       gnubuilder.Mode
 	Input      []string
 	Output     []string
 	WorkDir    string
@@ -50,7 +41,7 @@ type GccBuilder struct {
 
 func NewGccBuilder(workDir string, logger *log.Logger, debug bool) *GccBuilder {
 	return &GccBuilder{
-		Mode:           Link,
+		Mode:           gnubuilder.ModeLink,
 		Input:          []string{},
 		Output:         []string{},
 		WorkDir:        workDir,
@@ -86,7 +77,7 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 	}
 
 	switch g.Mode {
-	case Link:
+	case gnubuilder.ModeLink:
 		if g.staticLink {
 			g.Logger.Printf("gcc linking statically")
 		} else {
@@ -118,7 +109,7 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 		linkedTarget.DerivedFrom = dependencies
 		fileNodes = append(fileNodes, linkedTarget)
 		return fileNodes, nil
-	case Assemble:
+	case gnubuilder.ModeAssemble:
 		g.Logger.Printf("gcc assembling - skipping link")
 		fileNodes := []*pb.FileNode{}
 		if g.Debug {
@@ -135,7 +126,7 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			fileNodes = append(fileNodes, targetFile)
 		}
 		return fileNodes, nil
-	case Compile:
+	case gnubuilder.ModeCompile:
 		g.Logger.Printf("gcc compile - skipping assemble and link")
 		fileNodes := []*pb.FileNode{}
 		if g.Debug {
@@ -152,7 +143,7 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			fileNodes = append(fileNodes, targetFile)
 		}
 		return fileNodes, nil
-	case PrintOnly:
+	case gnubuilder.ModePrintOnly:
 		g.Logger.Println("print only; nothing produced")
 		return nil, nil
 	default:
@@ -166,7 +157,7 @@ func (g *GccBuilder) parseCommandLine(args []string) error {
 	}
 
 	// remove all flags we don't care about but that would break parsing
-	g.Args = gnubuilder.CleanCmdLine(args, g.Logger, g.Debug, g.staticLink, g.StaticLibs, undef)
+	g.Args = gnubuilder.CleanCmdLine(args, g.Logger, g.Debug, g.staticLink, g.StaticLibs, gnubuilder.ModeUndef)
 
 	gccFlags := pflag.NewFlagSet("gcc", pflag.ContinueOnError)
 	gccFlags.BoolP("assemble", "c", false, "do not link")
@@ -190,13 +181,13 @@ func (g *GccBuilder) parseCommandLine(args []string) error {
 	g.Input = gccFlags.Args()
 
 	if ok, err := gccFlags.GetBool("assemble"); ok && err == nil {
-		g.Mode = Assemble
+		g.Mode = gnubuilder.ModeAssemble
 	}
 	if ok, err := gccFlags.GetBool("compile"); ok && err == nil {
-		g.Mode = Compile
+		g.Mode = gnubuilder.ModeCompile
 	}
 	if ok, err := gccFlags.GetBool("preprocess"); ok && err == nil {
-		g.Mode = Preproc
+		g.Mode = gnubuilder.ModePreproc
 	}
 	if g.Debug {
 		g.Logger.Printf("Mode set to: %v", g.Mode)
@@ -207,19 +198,19 @@ func (g *GccBuilder) parseCommandLine(args []string) error {
 	} else {
 		// no output defined
 		switch g.Mode {
-		case Link:
+		case gnubuilder.ModeLink:
 			if len(g.Input) == 0 {
 				// No input no output
-				g.Mode = PrintOnly
+				g.Mode = gnubuilder.ModePrintOnly
 				return nil
 			}
 			g.Output = []string{"a.out"}
-		case Assemble:
+		case gnubuilder.ModeAssemble:
 			for _, input := range g.Input {
 				objectname := strings.TrimSuffix(input, filepath.Ext(input)) + ".o"
 				g.Output = append(g.Output, objectname)
 			}
-		case Compile:
+		case gnubuilder.ModeCompile:
 			for _, input := range g.Input {
 				objectname := strings.TrimSuffix(input, filepath.Ext(input)) + ".s"
 				g.Output = append(g.Output, objectname)
