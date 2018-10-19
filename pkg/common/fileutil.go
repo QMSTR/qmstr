@@ -39,8 +39,8 @@ func CheckExecutable(file string) error {
 	return os.ErrPermission
 }
 
-// exists checks if file exists and is not a directory
-func exists(file string) bool {
+// IsFileExist checks if file IsFileExist and is not a directory
+func IsFileExist(file string) bool {
 	if d, err := os.Stat(file); err == nil {
 		if d.IsDir() {
 			return false
