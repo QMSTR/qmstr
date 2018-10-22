@@ -130,6 +130,7 @@ func getTargetsInfo(packageNode *service.PackageNode) []*service.Target {
 		tmpTarget := &service.Target{
 			Name:         target.Name,
 			Sha1:         target.Hash,
+			Path:         target.Path,
 			Sources:      getSources(target),
 			Dependencies: getDependencies(target),
 		}

@@ -45,6 +45,7 @@ message Dependency {
 message Target {
     string name = 1;
     string sha1 = 2;
+    string path = 3;
     repeated Source sources = 4;
     repeated Dependency dependencies = 5;
 }
