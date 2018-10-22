@@ -1,8 +1,8 @@
 {{ $data := index .Site.Data .Page.Params.package .Page.Params.versionid "data" }}
 <!-- <h2>{{ substr .Page.Params.versionid 0 8 | upper }} ({{ .Page.Params.author }})</h2> -->
-<h3>Targets</h3>
+<h3>Targets:</h3>
 {{ range $data.Package.Targets }}
-    <p> Filename <b>{{ .name }}</b></p>
+    <p> Filename: <b>{{ .path }}</b></p>
     SHA-1: {{ .sha1 }} <br/>
     Declared license: {{ $data.Package.LicenseDeclared }}<br/>
     <p>
