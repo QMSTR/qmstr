@@ -11,12 +11,13 @@ import (
 	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/analysis"
+	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
-var queryTypes = "linkedtarget"
+var queryType = builder.TARGET
 
 type PkgAnalyzer struct {
 	targetsSlice []string
@@ -43,10 +44,6 @@ func (pkganalyzer *PkgAnalyzer) Configure(configMap map[string]string) error {
 		return errors.New("Misconfigured package analyzer")
 	}
 	pkganalyzer.targetsDir = configMap["targetdir"]
-
-	if typeSelector, ok := configMap["selectors"]; ok {
-		queryTypes = typeSelector
-	}
 	return nil
 }
 
@@ -57,35 +54,32 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 		return err
 	}
 
-	queryTypesArr := strings.Split(queryTypes, ";")
 	PackageNodeMsgs := []*service.PackageNodeMessage{}
-	for _, t := range queryTypesArr {
-		queryNode := &service.FileNode{Type: t}
+	queryNode := &service.FileNode{Type: queryType}
 
-		stream, err := controlService.GetFileNode(context.Background(), queryNode)
-		if err != nil {
-			log.Printf("Could not get file node %v", err)
-			return err
+	stream, err := controlService.GetFileNode(context.Background(), queryNode)
+	if err != nil {
+		log.Printf("Could not get file node %v", err)
+		return err
+	}
+
+	for {
+		fileNode, err := stream.Recv()
+		if err == io.EOF {
+			break
 		}
 
-		for {
-			fileNode, err := stream.Recv()
-			if err == io.EOF {
-				break
-			}
-
-			for _, target := range pkganalyzer.targetsSlice {
-				re := regexp.MustCompile(filepath.Join(pkganalyzer.targetsDir, target))
-				if re.MatchString(fileNode.Path) {
-					hash, err := common.HashFile(fileNode.Path)
-					if err != nil {
-						return err
-					}
-					if hash == fileNode.Hash {
-						pkgNode.Targets = append(pkgNode.Targets, fileNode)
-					}
-					break
+		for _, target := range pkganalyzer.targetsSlice {
+			re := regexp.MustCompile(filepath.Join(pkganalyzer.targetsDir, target))
+			if re.MatchString(fileNode.Path) {
+				hash, err := common.HashFile(fileNode.Path)
+				if err != nil {
+					return err
 				}
+				if hash == fileNode.Hash {
+					pkgNode.Targets = append(pkgNode.Targets, fileNode)
+				}
+				break
 			}
 		}
 	}

@@ -10,13 +10,14 @@ import (
 	"regexp"
 
 	"github.com/QMSTR/qmstr/pkg/analysis"
+	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
 var spdxPattern = regexp.MustCompile(`SPDX-License-Identifier: (.+)\s*`)
 
-const queryType = "sourcecode"
+const queryType = builder.SOURCE
 
 type SpdxAnalyzer struct{}
 

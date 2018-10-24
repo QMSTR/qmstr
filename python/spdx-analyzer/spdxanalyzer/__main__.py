@@ -69,7 +69,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         self._process_packagenode()
 
     def _process_filenodes(self):
-        const_type = "sourcecode"
+        const_type = "source"
 
         query_node = FileNode(
             type=const_type

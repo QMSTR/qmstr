@@ -10,13 +10,14 @@ import (
 	"testing"
 
 	"github.com/QMSTR/qmstr/pkg/analysis"
+	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/QMSTR/qmstr/pkg/tester"
 )
 
 const (
-	queryType = "sourcecode"
+	queryType = builder.SOURCE
 )
 
 var (
@@ -113,37 +114,37 @@ func (testanalyzer *TestAnalyzer) PostAnalyze() error {
 }
 
 func TestGraphIntegrity(t *testing.T) {
-	if testnode.Type == "linkedtarget" {
+	if testnode.Type == builder.TARGET {
 		if len(testnode.DerivedFrom) == 0 {
 			t.Logf("Broken linked target %s. There are no derived nodes.", testnode.Name)
 			t.Fail()
 		}
 		for _, node := range testnode.DerivedFrom {
 			// TODO: better log messages
-			if node.Type == "library" {
+			if node.Type == builder.TARGET {
 				for _, objectfile := range node.DerivedFrom {
-					if objectfile.Type != "objectfile" || objectfile.DerivedFrom[0].Type != "sourcefile" {
+					if objectfile.Type != builder.INTERMEDIATE || objectfile.DerivedFrom[0].Type != builder.SOURCE {
 						t.Logf("Broken library node %s.", node.Name)
 						t.Fail()
 					}
 				}
-			} else if node.Type == "objectfile" && node.DerivedFrom[0].Type != "sourcefile" {
+			} else if node.Type == builder.INTERMEDIATE && node.DerivedFrom[0].Type != builder.SOURCE {
 				t.Logf("Broken object file %s .There is no source file connected to it.", node.Name)
 				t.Fail()
 			}
 		}
-	} else if testnode.Type == "library" {
+	} else if testnode.Type == builder.TARGET {
 		if len(testnode.DerivedFrom) == 0 {
 			t.Logf("Broken library %s. There are no derived nodes.", testnode.Name)
 			t.Fail()
 		}
 		for _, objectfile := range testnode.DerivedFrom {
-			if objectfile.Type != "objectfile" || objectfile.DerivedFrom[0].Type != "sourcefile" {
+			if objectfile.Type != builder.INTERMEDIATE || objectfile.DerivedFrom[0].Type != builder.SOURCE {
 				t.Logf("Broken library node %s.", testnode.Name)
 				t.Fail()
 			}
 		}
-	} else if testnode.Type == "objectfile" && testnode.DerivedFrom[0].Type != "sourcefile" {
+	} else if testnode.Type == builder.INTERMEDIATE && testnode.DerivedFrom[0].Type != builder.SOURCE {
 		t.Logf("Broken object file %s .There is no source file connected to it.", testnode.Name)
 		t.Fail()
 	}

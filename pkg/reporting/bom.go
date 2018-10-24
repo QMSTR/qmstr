@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
@@ -141,7 +142,7 @@ func getTargetsInfo(packageNode *service.PackageNode) []*service.Target {
 func getSources(filenode *service.FileNode) []*service.Source {
 	retSources := []*service.Source{}
 	for _, depNode := range filenode.DerivedFrom {
-		if depNode.Type == "sourcecode" && len(depNode.DerivedFrom) == 0 {
+		if depNode.Type == builder.SOURCE && len(depNode.DerivedFrom) == 0 {
 			tmpSource := &service.Source{
 				File:    depNode.Path,
 				License: getLicense(depNode),
@@ -159,7 +160,7 @@ func getDependencies(filenode *service.FileNode) []*service.Dependency {
 	retDeps := []*service.Dependency{}
 	for _, depNode := range filenode.DerivedFrom {
 		switch depNode.Type {
-		case "linkedtarget", "jarfile":
+		case builder.TARGET:
 			tmpDep := &service.Dependency{
 				Filepath: depNode.Path,
 				Name:     depNode.Name,
