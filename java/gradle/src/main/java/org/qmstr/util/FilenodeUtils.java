@@ -157,13 +157,13 @@ public class FilenodeUtils {
         String[] filenameArr = filename.split("\\.");
         String ext = filenameArr[filenameArr.length-1];
         if (ext.equals("class")) {
-            return "classfile";
+            return "intermediate";
         }
         if (ext.equals("java")) {
-            return "sourcecode";
+            return "source";
         }
         if (ext.equals("jar")) {
-            return "jarfile";
+            return "target";
         }
         return "";
     }
