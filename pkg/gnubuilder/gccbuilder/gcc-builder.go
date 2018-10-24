@@ -18,11 +18,6 @@ import (
 )
 
 const undef = "undef"
-const (
-	linkedTrg = "linkedtarget"
-	obj       = "objectfile"
-	src       = "sourcecode"
-)
 
 type GccBuilder struct {
 	Mode       gnubuilder.Mode
@@ -84,17 +79,17 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			g.Logger.Printf("gcc linking")
 		}
 		fileNodes := []*pb.FileNode{}
-		linkedTarget := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[0], false), linkedTrg)
+		linkedTarget := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[0], false), builder.TARGET)
 		dependencies := []*pb.FileNode{}
 		for _, inFile := range g.Input {
 			inputFileNode := &pb.FileNode{}
 			ext := filepath.Ext(inFile)
 			if ext == ".o" {
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), obj)
+				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), builder.INTERMEDIATE)
 			} else if ext == ".c" {
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), src)
+				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), builder.SOURCE)
 			} else {
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), linkedTrg)
+				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), builder.TARGET)
 			}
 			dependencies = append(dependencies, inputFileNode)
 		}
@@ -103,7 +98,7 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			g.Logger.Fatalf("Failed to collect dependencies: %v", err)
 		}
 		for _, actualLib := range g.ActualLibs {
-			linkLib := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, actualLib, false), linkedTrg)
+			linkLib := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, actualLib, false), builder.TARGET)
 			dependencies = append(dependencies, linkLib)
 		}
 		linkedTarget.DerivedFrom = dependencies
@@ -120,8 +115,8 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			if g.Debug {
 				g.Logger.Printf("This is the source file %s indexed %d", inFile, idx)
 			}
-			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), src)
-			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), obj)
+			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), builder.SOURCE)
+			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), builder.INTERMEDIATE)
 			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
 			fileNodes = append(fileNodes, targetFile)
 		}
@@ -137,8 +132,8 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			if g.Debug {
 				g.Logger.Printf("This is the source file %s indexed %d", inFile, idx)
 			}
-			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), src)
-			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), src)
+			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), builder.SOURCE)
+			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), builder.SOURCE)
 			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
 			fileNodes = append(fileNodes, targetFile)
 		}

@@ -50,8 +50,8 @@ func (o *ObjcopyBuilder) Analyze(commandline []string) ([]*service.FileNode, err
 		return nil, err
 	}
 
-	outputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, o.Output, false), "binaryfile")
-	inputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, o.Input, false), "binaryfile")
+	outputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, o.Output, false), builder.TARGET)
+	inputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, o.Input, false), builder.TARGET)
 	outputTarget.DerivedFrom = []*service.FileNode{inputTarget}
 
 	return []*service.FileNode{outputTarget}, nil

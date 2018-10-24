@@ -17,11 +17,6 @@ import (
 
 const undef = "undef"
 
-const (
-	obj = "objectfile"
-	src = "sourcecode"
-)
-
 type AsBuilder struct {
 	Input   string
 	Output  string
@@ -56,8 +51,8 @@ func (as *AsBuilder) Analyze(commandline []string) ([]*service.FileNode, error) 
 	if as.Debug {
 		as.Logger.Printf("This is the source file %s", as.Input)
 	}
-	sourceFile := builder.NewFileNode(common.BuildCleanPath(as.WorkDir, as.Input, false), src)
-	targetFile := builder.NewFileNode(common.BuildCleanPath(as.WorkDir, as.Output, false), obj)
+	sourceFile := builder.NewFileNode(common.BuildCleanPath(as.WorkDir, as.Input, false), builder.SOURCE)
+	targetFile := builder.NewFileNode(common.BuildCleanPath(as.WorkDir, as.Output, false), builder.INTERMEDIATE)
 	targetFile.DerivedFrom = []*service.FileNode{sourceFile}
 	fileNodes = append(fileNodes, targetFile)
 

@@ -11,6 +11,15 @@ import (
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
 
+const (
+	// SOURCE is the file type of the source code files
+	SOURCE = "source"
+	// INTERMEDIATE is the file type of the intermediate files
+	INTERMEDIATE = "intermediate"
+	// TARGET is the file type of all the target files (e.g libraries, binaries etc)
+	TARGET = "target"
+)
+
 var (
 	ErrBuilderModeNotImplemented = errors.New("Mode not implemented")
 	ErrBuilderModeNotSupported   = errors.New("Mode not supported")

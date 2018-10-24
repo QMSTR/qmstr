@@ -16,12 +16,6 @@ import (
 
 const undef = "undef"
 
-const (
-	linkedTrg = "linkedtarget"
-	obj       = "objectfile"
-	src       = "sourcecode"
-)
-
 type LdBuilder struct {
 	Input       []string
 	Output      []string
@@ -81,17 +75,17 @@ func (ld *LdBuilder) Analyze(commandline []string) ([]*service.FileNode, error) 
 		ld.Logger.Printf("ld linking")
 	}
 	fileNodes := []*service.FileNode{}
-	linkedTarget := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, ld.Output[0], false), linkedTrg)
+	linkedTarget := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, ld.Output[0], false), builder.TARGET)
 	dependencies := []*service.FileNode{}
 	for _, inFile := range ld.Input {
 		inputFileNode := &service.FileNode{}
 		ext := filepath.Ext(inFile)
 		if ext == ".o" {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), obj)
+			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), builder.INTERMEDIATE)
 		} else if ext == ".c" {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), src)
+			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), builder.SOURCE)
 		} else {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), linkedTrg)
+			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), builder.TARGET)
 		}
 		dependencies = append(dependencies, inputFileNode)
 	}
@@ -100,7 +94,7 @@ func (ld *LdBuilder) Analyze(commandline []string) ([]*service.FileNode, error) 
 		ld.Logger.Fatalf("Failed to collect dependencies: %v", err)
 	}
 	for _, actualLib := range ld.ActualLibs {
-		linkLib := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, actualLib, false), linkedTrg)
+		linkLib := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, actualLib, false), builder.TARGET)
 		dependencies = append(dependencies, linkLib)
 	}
 	linkedTarget.DerivedFrom = dependencies
