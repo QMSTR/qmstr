@@ -25,6 +25,7 @@ const (
 )
 
 type GccBuilder struct {
+	Builder    string
 	Mode       gnubuilder.Mode
 	Input      []string
 	Output     []string
@@ -41,6 +42,7 @@ type GccBuilder struct {
 
 func NewGccBuilder(workDir string, logger *log.Logger, debug bool) *GccBuilder {
 	return &GccBuilder{
+		Builder:        "",
 		Mode:           gnubuilder.ModeLink,
 		Input:          []string{},
 		Output:         []string{},
@@ -65,7 +67,12 @@ func (g *GccBuilder) GetPrefix() (string, error) {
 }
 
 func (g *GccBuilder) GetName() string {
-	return "GNU C compiler builder"
+	switch g.Builder {
+	case "gcc":
+		return "GNU C compiler builder"
+	default:
+		return "GNU C++ compiler builder"
+	}
 }
 
 func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
@@ -76,12 +83,14 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 		return nil, fmt.Errorf("Failed to parse commandline: %v", err)
 	}
 
+	g.Builder = commandline[0]
+
 	switch g.Mode {
 	case gnubuilder.ModeLink:
 		if g.staticLink {
-			g.Logger.Printf("gcc linking statically")
+			g.Logger.Printf("%s linking statically", g.Builder)
 		} else {
-			g.Logger.Printf("gcc linking")
+			g.Logger.Printf("%s linking", g.Builder)
 		}
 		fileNodes := []*pb.FileNode{}
 		linkedTarget := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[0], false), linkedTrg)
@@ -91,7 +100,7 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			ext := filepath.Ext(inFile)
 			if ext == ".o" {
 				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), obj)
-			} else if ext == ".c" {
+			} else if ext == ".c" || ext == ".cc" || ext == ".cpp" || ext == ".c++" || ext == ".cp" || ext == ".cxx" {
 				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), src)
 			} else {
 				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), linkedTrg)
@@ -110,7 +119,7 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 		fileNodes = append(fileNodes, linkedTarget)
 		return fileNodes, nil
 	case gnubuilder.ModeAssemble:
-		g.Logger.Printf("gcc assembling - skipping link")
+		g.Logger.Printf("%s assembling - skipping link", g.Builder)
 		fileNodes := []*pb.FileNode{}
 		if g.Debug {
 			g.Logger.Printf("This is our input %v", g.Input)
@@ -127,7 +136,7 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 		}
 		return fileNodes, nil
 	case gnubuilder.ModeCompile:
-		g.Logger.Printf("gcc compile - skipping assemble and link")
+		g.Logger.Printf("%s compile - skipping assemble and link", g.Builder)
 		fileNodes := []*pb.FileNode{}
 		if g.Debug {
 			g.Logger.Printf("This is our input %v", g.Input)

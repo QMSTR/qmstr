@@ -45,6 +45,14 @@ func TestAssembleOnly(t *testing.T) {
 	}
 }
 
+func TestCppAssembleOnly(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"g++", "-c", "a.cpp"})
+	if gcc.Mode != gnubuilder.ModeAssemble {
+		t.Fail()
+	}
+}
+
 func TestCompileOnly(t *testing.T) {
 	gcc := getTestCompiler()
 	gcc.Analyze([]string{"gcc", "-S", "a.c"})
@@ -53,6 +61,13 @@ func TestCompileOnly(t *testing.T) {
 	}
 }
 
+func TestCppCompileOnly(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"g++", "-S", "a.cpp"})
+	if gcc.Mode != gnubuilder.ModeCompile {
+		t.Fail()
+	}
+}
 func TestPreProcessorOnly(t *testing.T) {
 	gcc := getTestCompiler()
 	gcc.Analyze([]string{"gcc", "-E", "a.c"})
@@ -61,10 +76,25 @@ func TestPreProcessorOnly(t *testing.T) {
 	}
 }
 
+func TestCppPreProcessorOnly(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"g++", "-E", "a.cpp"})
+	if gcc.Mode != gnubuilder.ModePreproc {
+		t.Fail()
+	}
+}
 func TestSingleInput(t *testing.T) {
 	gcc := getTestCompiler()
 	gcc.Analyze([]string{"gcc", "a.c"})
 	if gcc.Input[0] != "a.c" {
+		t.Fail()
+	}
+}
+
+func TestCppSingleInput(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"g++", "a.cpp"})
+	if gcc.Input[0] != "a.cpp" {
 		t.Fail()
 	}
 }
@@ -77,9 +107,33 @@ func TestMultiInput(t *testing.T) {
 	}
 }
 
+func TestCppMultiInput(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"g++", "a.cpp", "b.cpp"})
+	if gcc.Input[0] != "a.cpp" || gcc.Input[1] != "b.cpp" {
+		t.Fail()
+	}
+}
+
+func TestCppMultiExtInput(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"g++", "a.c++", "b.cp", "c.cxx", "d.cc"})
+	if gcc.Input[0] != "a.c++" || gcc.Input[1] != "b.cp" || gcc.Input[2] != "c.cxx" || gcc.Input[3] != "d.cc" {
+		t.Fail()
+	}
+}
+
 func TestDefaultLinkOutput(t *testing.T) {
 	gcc := getTestCompiler()
 	gcc.Analyze([]string{"gcc", "a.c"})
+	if gcc.Output[0] != "a.out" {
+		t.Fail()
+	}
+}
+
+func TestDefaultCppLinkOutput(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"g++", "a.cpp"})
 	if gcc.Output[0] != "a.out" {
 		t.Fail()
 	}
@@ -101,6 +155,14 @@ func TestDefaultMultiAssembleOutput(t *testing.T) {
 	}
 }
 
+func TestDefaultCppMultiAssembleOutput(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"g++", "-c", "a.cpp", "b.cpp"})
+	if gcc.Output[0] != "a.o" || gcc.Output[1] != "b.o" {
+		t.Fail()
+	}
+}
+
 func TestDefinedOutput(t *testing.T) {
 	gcc := getTestCompiler()
 	gcc.Analyze([]string{"gcc", "-o", "outProg", "a.c", "b.c"})
@@ -108,6 +170,17 @@ func TestDefinedOutput(t *testing.T) {
 		t.Fail()
 	}
 	if gcc.Input[0] != "a.c" || gcc.Input[1] != "b.c" {
+		t.Fail()
+	}
+}
+
+func TestCppDefinedOutput(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"g++", "-o", "outProg", "a.c++", "b.c++"})
+	if gcc.Output[0] != "outProg" {
+		t.Fail()
+	}
+	if gcc.Input[0] != "a.c++" || gcc.Input[1] != "b.c++" {
 		t.Fail()
 	}
 }
@@ -124,6 +197,22 @@ func TestCleanCommandlineStringArgs(t *testing.T) {
 	}
 	gcc.Analyze([]string{"gcc", "-D", "MACRO=test", "a.c", "b.c"})
 	if fmt.Sprintf("%v", gcc.Args) != "[a.c b.c]" {
+		t.Fail()
+	}
+}
+
+func TestCppCleanCommandlineStringArgs(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"g++", "-DMACRO", "a.cxx", "b.cxx"})
+	if fmt.Sprintf("%v", gcc.Args) != "[a.cxx b.cxx]" {
+		t.Fail()
+	}
+	gcc.Analyze([]string{"g++", "-D", "MACRO", "a.cp", "b.cp"})
+	if fmt.Sprintf("%v", gcc.Args) != "[a.cp b.cp]" {
+		t.Fail()
+	}
+	gcc.Analyze([]string{"g++", "-D", "MACRO=test", "a.cc", "b.cc"})
+	if fmt.Sprintf("%v", gcc.Args) != "[a.cc b.cc]" {
 		t.Fail()
 	}
 }
