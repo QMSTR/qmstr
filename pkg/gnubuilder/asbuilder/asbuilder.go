@@ -74,6 +74,7 @@ func (as *AsBuilder) parseCommandLine(args []string) error {
 
 	asFlags := pflag.NewFlagSet("as", pflag.ContinueOnError)
 	asFlags.StringP("output", "o", undef, "output")
+	asFlags.StringSliceP("includepath", "I", []string{}, "include path")
 
 	if as.Debug {
 		as.Logger.Printf("Parsing cleaned commandline: %v", as.Args)

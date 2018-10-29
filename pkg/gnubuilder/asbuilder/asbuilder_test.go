@@ -36,3 +36,16 @@ func TestCleanCmdBoolArgs(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestCmdFlagArgs(t *testing.T) {
+	as := getTestCompiler()
+	as.Analyze([]string{"as", "-I", "..", "a.s", "-o", "a.o"})
+	if len(as.Args) != 5 {
+		t.Logf("Arguments: %v", as.Args)
+		t.Fail()
+	}
+	if as.Input != "a.s" && as.Output != "a.o" {
+		t.Logf("Input: %s and output: %s ", as.Input, as.Output)
+		t.Fail()
+	}
+}
