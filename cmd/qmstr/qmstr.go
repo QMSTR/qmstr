@@ -181,6 +181,7 @@ func SetupCompilerInstrumentation(tmpWorkDir string) {
 	// Setup environment variables
 	envvars := make(map[string][]string)
 	envvars["gcc"] = []string{"CMAKE_LINKER", "CC"}
+	envvars["g++"] = []string{"CXX"}
 
 	files, err := ioutil.ReadDir(binDir)
 	for _, file := range files {
