@@ -4,8 +4,14 @@ option java_package = "org.qmstr.grpc.service";
 
 message FileNode {
     string uid = 1;
-    string fileNodeType =2;
-    string type = 3;
+    string fileNodeType = 2;
+    enum Type {
+        UNDEF = 0;
+        SOURCE = 1;
+        INTERMEDIATE = 2;
+        TARGET = 3;
+    }
+    Type fileType = 3;
     string path = 4;
     string name = 5;
     string hash = 6;
