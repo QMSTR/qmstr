@@ -137,6 +137,11 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 		}
 		f.Hash = hash
 	}
+	fileParts := strings.Split(f.Path, "/")
+	// catch tmp files
+	if fileParts[0] == ".." && f.FileType == service.FileNode_SOURCE {
+		f.FileType = service.FileNode_INTERMEDIATE
+	}
 
 	for _, d := range f.DerivedFrom {
 		if err := SanitizeFileNode(d, base, pathSub, db, f.Path); err != nil {
