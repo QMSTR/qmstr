@@ -16,8 +16,6 @@ import (
 
 var spdxPattern = regexp.MustCompile(`SPDX-License-Identifier: (.+)\s*`)
 
-const queryType = "sourcecode"
-
 type SpdxAnalyzer struct{}
 
 func main() {
@@ -33,7 +31,7 @@ func (spdxalizer *SpdxAnalyzer) Configure(configMap map[string]string) error {
 }
 
 func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
-	queryNode := &service.FileNode{Type: queryType}
+	queryNode := &service.FileNode{FileType: service.FileNode_SOURCE}
 
 	stream, err := controlService.GetFileNode(context.Background(), queryNode)
 	if err != nil {

@@ -1,13 +1,12 @@
 package database
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"log"
+	"strconv"
 	"sync/atomic"
-	"text/template"
 
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
@@ -87,50 +86,28 @@ func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 	return ret["hasNode"][0].Uid, nil
 }
 
-func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool) ([]*service.FileNode, error) {
+func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode) ([]*service.FileNode, error) {
 	var ret map[string][]*service.FileNode
 
-	q := `query FileNodeByFileNode($Filter: string){
-		getFileNodeByFileNode(func: has(fileNodeType)) {{.Type}} {{.Recurse}}{
+	q := `query FileNodeByFileNode($Type: string){
+		getFileNodeByFileNode(func: eq(fileType, $Type)) @recurse(loop: false){
 		  uid
 		  hash
 		  path
 		  derivedFrom
 		}}`
 
-	queryTmpl, err := template.New("filenodesbyfilenode").Parse(q)
-
-	type QueryParams struct {
-		Recurse string
-		Type    string
-		Filter  string
-	}
-
-	qp := QueryParams{}
-
-	if recursive {
-		qp.Recurse = "@recurse(loop: false)"
-	}
-	if filenode.Type != "" {
-		qp.Type = "@filter(eq(type, $Filter))"
-		qp.Filter = filenode.Type
-	}
-
-	var b bytes.Buffer
-	err = queryTmpl.Execute(&b, qp)
-	if err != nil {
-		panic(err)
-	}
-
-	vars := map[string]string{"$Filter": qp.Filter}
-
-	err = db.queryNodes(b.String(), vars, &ret)
+	//get the int value from the enumeration
+	t := service.FileNode_Type_value[filenode.FileType.String()]
+	nt := int(t)
+	//convert it to string to query it
+	vars := map[string]string{"$Type": strconv.Itoa(nt)}
+	err := db.queryNodes(q, vars, &ret)
 	if err != nil {
 		return nil, err
 	}
 
 	return ret["getFileNodeByFileNode"], nil
-
 }
 
 // GetFileNodeByHash returns the file node for the file with the provided checksum

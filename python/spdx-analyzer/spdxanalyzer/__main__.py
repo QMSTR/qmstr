@@ -69,12 +69,10 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         self._process_packagenode()
 
     def _process_filenodes(self):
-        const_type = "sourcecode"
 
         query_node = FileNode(
-            type=const_type
+            fileType=FileNode.SOURCE
         )
-
         stream_resp = self.cserv.GetFileNode(query_node)
 
         for node in stream_resp:
