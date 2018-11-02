@@ -75,8 +75,8 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 				}
 				if hash == fileNode.Hash {
 					pkgNode.Targets = append(pkgNode.Targets, fileNode)
+					break
 				}
-				break
 			}
 		}
 	}
