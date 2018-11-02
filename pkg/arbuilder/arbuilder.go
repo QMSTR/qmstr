@@ -106,18 +106,18 @@ func (a *ArBuilder) getResults() ([]*service.FileNode, error) {
 	if a.Command == Replace || a.Command == QuickAppend {
 		a.Logger.Printf("archiving")
 		fileNodes := []*service.FileNode{}
-		linkedTarget := builder.NewFileNode(common.BuildCleanPath(a.WorkDir, a.Output, false), "ar archive")
+		linkedTarget := builder.NewFileNode(common.BuildCleanPath(a.WorkDir, a.Output, false), service.FileNode_TARGET)
 		dependencies := []*service.FileNode{}
 		for _, inFile := range a.Input {
 			inputFileNode := &service.FileNode{}
 			ext := filepath.Ext(inFile)
 			switch ext {
 			case ".o":
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), "objectfile")
+				inputFileNode = builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), service.FileNode_INTERMEDIATE)
 			case ".a":
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), "ar archive")
+				inputFileNode = builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), service.FileNode_TARGET)
 			default:
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), "arbitrary file")
+				inputFileNode = builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), service.FileNode_INTERMEDIATE)
 			}
 			dependencies = append(dependencies, inputFileNode)
 		}

@@ -142,7 +142,7 @@ func getTargetsInfo(packageNode *service.PackageNode) []*service.Target {
 func getSources(filenode *service.FileNode) []*service.Source {
 	retSources := []*service.Source{}
 	for _, depNode := range filenode.DerivedFrom {
-		if depNode.Type == "sourcecode" && len(depNode.DerivedFrom) == 0 {
+		if depNode.FileType == service.FileNode_SOURCE {
 			tmpSource := &service.Source{
 				File:    depNode.Path,
 				License: getLicense(depNode),
@@ -159,8 +159,8 @@ func getSources(filenode *service.FileNode) []*service.Source {
 func getDependencies(filenode *service.FileNode) []*service.Dependency {
 	retDeps := []*service.Dependency{}
 	for _, depNode := range filenode.DerivedFrom {
-		switch depNode.Type {
-		case "linkedtarget", "jarfile":
+		switch depNode.FileType {
+		case service.FileNode_TARGET:
 			tmpDep := &service.Dependency{
 				Filepath: depNode.Path,
 				Name:     depNode.Name,
