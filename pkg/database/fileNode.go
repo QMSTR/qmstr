@@ -142,48 +142,6 @@ func (db *DataBase) GetFileNodeByHash(hash string, recursive bool) (*service.Fil
 	return ret["getNodeByHash"][0], nil
 }
 
-func (db *DataBase) GetFileNodesByType(filetype string, recursive bool) ([]*service.FileNode, error) {
-	var ret map[string][]*service.FileNode
-
-	q := `query FileNodeByType($FileType: string){
-		  getFileNodeByType(func: has(fileNodeType)) {{.Filter}} {{.Recurse}}{
-			uid
-			hash
-			path
-			derivedFrom
-		  }}`
-
-	queryTmpl, err := template.New("filenodesbytype").Parse(q)
-
-	type QueryParams struct {
-		Recurse string
-		Filter  string
-	}
-
-	qp := QueryParams{}
-	if recursive {
-		qp.Recurse = "@recurse(loop: false)"
-	}
-	if filetype != "" {
-		qp.Filter = "@filter(eq(type, $FileType))"
-	}
-
-	var b bytes.Buffer
-	err = queryTmpl.Execute(&b, qp)
-	if err != nil {
-		panic(err)
-	}
-
-	vars := map[string]string{"$FileType": filetype}
-
-	err = db.queryNodes(b.String(), vars, &ret)
-	if err != nil {
-		return nil, err
-	}
-
-	return ret["getFileNodeByType"], nil
-}
-
 //
 func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {
 
