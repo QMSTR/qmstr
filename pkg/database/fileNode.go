@@ -89,7 +89,7 @@ func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode) ([]*service.FileNode, error) {
 	var ret map[string][]*service.FileNode
 
-	q := `query FileNodeByFileNode($Type: string){
+	q := `query FileNodeByFileNode($Type: int){
 		getFileNodeByFileNode(func: eq(fileType, $Type)) @recurse(loop: false){
 		  uid
 		  hash
