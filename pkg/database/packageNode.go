@@ -32,6 +32,7 @@ func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error)
 			type
 			targets
 			derivedFrom
+			fileType
 			path
 			additionalInfo
 			dataNodes
