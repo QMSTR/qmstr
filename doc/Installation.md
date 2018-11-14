@@ -21,6 +21,15 @@ written in Python. The Gradle integration is written in Java. The
 Quartermaster build system uses a Makefile to implement the different
 steps required to build these modules in their specific ways.
 
+## Prerequisites
+
+Quartermaster leverages Protobuf & GRPC for the master - client
+communication. The `protoc` Protobuf  compiler needs to be installed
+and also th Go protobuf library and generator. The later can be
+installed with
+
+	> go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
+
 ## Installing the clients
 
 The main entry point into the installation tasks for Quartermaster is
