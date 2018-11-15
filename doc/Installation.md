@@ -25,12 +25,75 @@ steps required to build these modules in their specific ways.
 
 Quartermaster leverages Protobuf & GRPC for the master - client
 communication. The `protoc` Protobuf  compiler needs to be installed
-and also th Go protobuf library and generator. The later can be
+and also the Go protobuf library and generator. The later can be
 installed with
 
 	> go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
 
+### Host machine preparation:
+Install The depencencies:
+
+  - If you are running an Ubuntu machine:
+
+    > sudo apt update 
+    
+    > sudo apt install golang protobuf-compiler
+
+    - Install Docker: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+  - If you are running a Fedora machine:
+
+    > sudo dnf install golang protobuf-compiler
+
+  - Install Docker: https://docs.docker.com/install/linux/docker-ce/fedora/
+
+
+Add user to the docker group:
+  - Create new group if it does not exist.
+
+  > sudo groupadd docker
+
+  -  Add current user to the group
+
+  > sudo gpasswd -a $USER docker
+
+  - Reload shell. For that log out and log back or execute the next command:
+
+  > newgrp docker
+
+  More information in:
+  https://linoxide.com/linux-how-to/use-docker-without-sudo-ubuntu/
+
+Install The `protoc` Protobuf  compiler:
+
+	> go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
+
+Make $GOPATH/bin part of you $PATH, for that edit the ~/.bashrc file and
+add the next at the end of it:
+
+        # Make $GOPATH/bin part of you $PATH
+        export GOPATH="${HOME}/go"
+        export PATH="${PATH}:${GOPATH}/bin"
+
+If that doesn't work try the next:
+
+        # Make $GOPATH/bin part of you $PATH
+        export PATH="${PATH}:${HOME}/go/bin"
+
 ## Installing the clients
+
+Get the sources:
+
+> go get -u github.com/QMSTR/qmstr
+
+> cd ~/go/src/github.com/QMSTR/qmstr
+
+* Note: If you are running `go get -u github.com/QMSTR/qmstr` on the Ci it
+might crash and obtain the next error message:
+`Package github.com/QMSTR/qmstr: no Go files in /home/go/src/github.com/QMSTR/qmstr`
+If that's the case try the next:
+
+> go get -u github.com/QMSTR/qmstr || true
 
 The main entry point into the installation tasks for Quartermaster is
 the Makefile in the main repository. The default installation installs
@@ -58,6 +121,23 @@ perform analysis and create reports are included in the master
 container.
 
 For other make targets, inspect the Makefile.
+
+### Further notes:
+
+If the steps above didn't work try the next:
+
+  > make
+
+  > make install_qmstr_client
+
+It might happen that when `make` is executed it will need superuser
+privileges and it might happen that when executing `sudo make` the
+sources won't be found within a know GOPATH/src in that case do the next:
+
+  > sudo -E make
+
+If that still doesn't work, change the lines that you added to make
+$GOPATH/bin part of you $PATH in ~/.bashrc file to /etc/profile file.
 
 ## Master installation
 
