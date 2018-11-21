@@ -98,6 +98,7 @@ var (
 		"--as-needed":         struct{}{},
 		"--gc-sections":       struct{}{},
 		"--no-gc-sections":    struct{}{},
+		"--noexecstack":       struct{}{},
 	}
 
 	LinkStringArgs = map[string]struct{}{
@@ -115,6 +116,8 @@ var (
 	AssembleStringArgs = map[string]struct{}{}
 
 	AssembleBoolArgs = map[string]struct{}{
-		"--32": struct{}{},
-		"--64": struct{}{}}
+		"--32":          struct{}{},
+		"--64":          struct{}{},
+		"--noexecstack": struct{}{},
+	}
 )
