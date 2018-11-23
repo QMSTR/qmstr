@@ -33,7 +33,9 @@ public class QmstrCompileTask extends QmstrTask {
             SourceSetOutput outDirs = set.getOutput();
             set.getAllJava().forEach(js -> {
                     Set<Datamodel.FileNode> nodes = FilenodeUtils.processSourceFile(js, sourceDirs, outDirs);
-                    nodes.forEach(node -> bsc.SendBuildMessage(node));
+                    if (!nodes.isEmpty()) {
+                        bsc.SendBuildFileNodes(nodes);
+                    }
             });
         });
 
