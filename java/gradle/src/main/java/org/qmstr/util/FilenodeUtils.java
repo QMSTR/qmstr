@@ -3,6 +3,7 @@ package org.qmstr.util;
 import org.gradle.api.artifacts.PublishArtifact;
 import org.gradle.api.file.FileCollection;
 import org.qmstr.grpc.service.Datamodel;
+import org.qmstr.grpc.service.Datamodel.FileNode.Type;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,7 +24,7 @@ public class FilenodeUtils {
 
     private static final String[] SUPPORTEDFILES = new String[]{"java", "class", "jar"};
 
-    public static Datamodel.FileNode getFileNode(String path, String checksum, String type) {
+    public static Datamodel.FileNode getFileNode(String path, String checksum, Datamodel.FileNode.Type type) {
         Path filepath = Paths.get(path);
 
         return Datamodel.FileNode.newBuilder()
@@ -31,12 +32,12 @@ public class FilenodeUtils {
                 .setPath(filepath.toString())
                 .setHash(checksum != null ? checksum : "nohash"+filepath.toString())
                 .setBroken(checksum == null)
-                .setType(type)
+                .setFileType(type)
                 .build();
 
     }
 
-    public static Datamodel.FileNode getFileNode(Path filepath, String type) {
+    public static Datamodel.FileNode getFileNode(Path filepath, Datamodel.FileNode.Type type) {
         String checksum = Hash.getChecksum(filepath.toFile());
         String path = filepath.toString();
 
@@ -153,19 +154,19 @@ public class FilenodeUtils {
         return Arrays.stream(SUPPORTEDFILES).anyMatch(sf -> sf.equals(filenameArr[idx]));
     }
 
-    private static String getTypeByFile(String filename) {
+    private static Datamodel.FileNode.Type getTypeByFile(String filename) {
         String[] filenameArr = filename.split("\\.");
         String ext = filenameArr[filenameArr.length-1];
         if (ext.equals("class")) {
-            return "classfile";
+            return Type.INTERMEDIATE;
         }
         if (ext.equals("java")) {
-            return "sourcecode";
+            return Type.SOURCE;
         }
         if (ext.equals("jar")) {
-            return "jarfile";
+            return Type.TARGET;
         }
-        return "";
+        return Type.UNDEF;
     }
 
     private static String getHash(JarFile jarfile, JarEntry jarEntry) {
