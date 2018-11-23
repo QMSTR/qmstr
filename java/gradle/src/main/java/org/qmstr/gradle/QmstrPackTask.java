@@ -9,6 +9,7 @@ import org.qmstr.util.FilenodeUtils;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class QmstrPackTask extends QmstrTask {
 
@@ -34,11 +35,13 @@ public class QmstrPackTask extends QmstrTask {
                 .filter(c -> c.isCanBeResolved())
                 .forEach(c -> c.getAllArtifacts().forEach(art -> arts.put(art, c.getResolvedConfiguration().getFiles())));
 
-        arts.entrySet().parallelStream()
+        bsc.SendBuildFileNodes(arts.entrySet().parallelStream()
                 .map(artEntry -> FilenodeUtils.processArtifact(artEntry.getKey(), artEntry.getValue()))
                 .filter(o -> o.isPresent())
                 .map(o -> o.get())
-                .forEach(node -> bsc.SendBuildMessage(node));
+                .collect(Collectors.toSet())); 
+        
+    
     }
 }
 
