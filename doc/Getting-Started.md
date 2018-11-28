@@ -79,8 +79,9 @@ Every build that is instrumented with Quartermaster needs a master
 process. Every Quartermaster master needs a configuration file,
 usually called [qmstr.yaml](tutorial/qmstr.yaml). The configuration
 file is located in the tutorial/ directory because in our case, we are
-avoiding to make changes to the project under analysis. Let's start
-the master:
+avoiding to make changes to the project under analysis. If you want 
+to learn how to fill in the configuration file, visit the [qmstr.yaml instructions](Qmstr.yaml.md). 
+Let's start the master:
 
 	> cd json-c
 	> eval `qmstrctl start --wait --config ../qmstr.yaml`
