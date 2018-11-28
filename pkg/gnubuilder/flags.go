@@ -119,5 +119,6 @@ var (
 		"--32":          struct{}{},
 		"--64":          struct{}{},
 		"--noexecstack": struct{}{},
+		"-v":            struct{}{},
 	}
 )
