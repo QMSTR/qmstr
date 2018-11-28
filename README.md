@@ -32,4 +32,5 @@ All modules are executed in the context of the master, not the build
 machine. The master ships all dependencies of the modules without
 affecting the build clients file system (it runs in a container).
 
+Read more in the [Getting started](doc/Getting-Started.md) page.
 
