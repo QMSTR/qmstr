@@ -149,6 +149,16 @@
   version = "v1.0.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/spdx/tools-golang"
+  packages = [
+    "v0/spdx",
+    "v0/tvsaver",
+    "v0/tvsaver/saver2v1"
+  ]
+  revision = "ac9e6fcf6eaa55f975d5d052fe7ca6a1c35b2efd"
+
+[[projects]]
   name = "github.com/spf13/afero"
   packages = [
     ".",
@@ -290,6 +300,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c574cca337c400e9bd98d5abf450cab0fbebf135410592e41e3d50b275b31ea2"
+  inputs-digest = "fbb133a8029d2a6c5067243471e816797c7f4c8e906c2d6da91cd13bfb6736f5"
   solver-name = "gps-cdcl"
   solver-version = 1

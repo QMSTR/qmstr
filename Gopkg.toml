@@ -61,3 +61,7 @@ required = ["github.com/golang/protobuf/protoc-gen-go"]
 [prune]
   go-tests = true
   unused-packages = true
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/spdx/tools-golang"
