@@ -111,8 +111,10 @@ func (r *SPDXReporter) Report(cserv service.ControlServiceClient, rserv service.
 	defer out.Close()
 
 	// export to tag-value format
-	tvsaver.Save2_1(doc, out)
-
+	err = tvsaver.Save2_1(doc, out)
+	if err != nil {
+		return fmt.Errorf("failed to export SPDX doc: %v", err)
+	}
 	return nil
 }
 
