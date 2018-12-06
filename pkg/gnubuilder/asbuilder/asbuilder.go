@@ -51,9 +51,10 @@ func (as *AsBuilder) Analyze(commandline []string) ([]*service.FileNode, error) 
 	if as.Debug {
 		as.Logger.Printf("This is the source file %s", as.Input)
 	}
-	sourceFile := builder.NewFileNode(common.BuildCleanPath(as.WorkDir, as.Input, false), service.FileNode_SOURCE)
+	inputFileType := gnubuilder.CheckInputFileExt(as.Input)
+	inputFile := builder.NewFileNode(common.BuildCleanPath(as.WorkDir, as.Input, false), inputFileType)
 	targetFile := builder.NewFileNode(common.BuildCleanPath(as.WorkDir, as.Output, false), service.FileNode_INTERMEDIATE)
-	targetFile.DerivedFrom = []*service.FileNode{sourceFile}
+	targetFile.DerivedFrom = []*service.FileNode{inputFile}
 	fileNodes = append(fileNodes, targetFile)
 
 	return fileNodes, nil

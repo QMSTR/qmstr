@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"sort"
 	"strings"
 
+	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/spf13/afero"
 )
 
@@ -126,6 +128,18 @@ func CleanCmdLine(args []string, logger *log.Logger, debug bool, staticLink bool
 		}
 	}
 	return args
+}
+
+func CheckInputFileExt(inputFile string) service.FileNode_Type {
+	ext := filepath.Ext(inputFile)
+	switch ext {
+	case ".c", ".cc", ".cpp", ".c++", ".cp", ".cxx":
+		return service.FileNode_SOURCE
+	case ".s", ".o":
+		return service.FileNode_INTERMEDIATE
+	default:
+		return service.FileNode_TARGET
+	}
 }
 
 func GetOsLibFixes() (prefix string, dSuffixes []string, sSuffixes []string, err error) {

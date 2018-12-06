@@ -112,8 +112,6 @@ func (a *ArBuilder) getResults() ([]*service.FileNode, error) {
 			inputFileNode := &service.FileNode{}
 			ext := filepath.Ext(inFile)
 			switch ext {
-			case ".o":
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), service.FileNode_INTERMEDIATE)
 			case ".a":
 				inputFileNode = builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), service.FileNode_TARGET)
 			default:
