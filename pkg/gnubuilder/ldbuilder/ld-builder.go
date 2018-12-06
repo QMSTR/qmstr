@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"path/filepath"
 
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
@@ -74,19 +73,16 @@ func (ld *LdBuilder) Analyze(commandline []string) ([]*service.FileNode, error) 
 	} else {
 		ld.Logger.Printf("ld linking")
 	}
+	if ld.Debug {
+		ld.Logger.Printf("This is our input %v", ld.Input)
+		ld.Logger.Printf("This is our output %v", ld.Output)
+	}
 	fileNodes := []*service.FileNode{}
 	linkedTarget := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, ld.Output[0], false), service.FileNode_TARGET)
 	dependencies := []*service.FileNode{}
 	for _, inFile := range ld.Input {
-		inputFileNode := &service.FileNode{}
-		ext := filepath.Ext(inFile)
-		if ext == ".o" {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_INTERMEDIATE)
-		} else if ext == ".c" {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_SOURCE)
-		} else {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_TARGET)
-		}
+		inputFileType := gnubuilder.CheckInputFileExt(inFile)
+		inputFileNode := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), inputFileType)
 		dependencies = append(dependencies, inputFileNode)
 	}
 	err := gnubuilder.FindActualLibraries(ld.Afs, ld.ActualLibs, ld.LinkLibs, append(ld.LibPath, ld.SysLibsPath...), ld.staticLink, ld.StaticLibs)

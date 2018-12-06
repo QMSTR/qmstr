@@ -87,19 +87,16 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 		} else {
 			g.Logger.Printf("%s linking", g.Builder)
 		}
+		if g.Debug {
+			g.Logger.Printf("This is our input %v", g.Input)
+			g.Logger.Printf("This is our output %v", g.Output)
+		}
 		fileNodes := []*pb.FileNode{}
 		linkedTarget := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[0], false), pb.FileNode_TARGET)
 		dependencies := []*pb.FileNode{}
 		for _, inFile := range g.Input {
-			inputFileNode := &pb.FileNode{}
-			ext := filepath.Ext(inFile)
-			if ext == ".o" {
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_INTERMEDIATE)
-			} else if ext == ".c" || ext == ".cc" || ext == ".cpp" || ext == ".c++" || ext == ".cp" || ext == ".cxx" {
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_SOURCE)
-			} else {
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_TARGET)
-			}
+			inputFileType := gnubuilder.CheckInputFileExt(inFile)
+			inputFileNode := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), inputFileType)
 			dependencies = append(dependencies, inputFileNode)
 		}
 		err := gnubuilder.FindActualLibraries(g.Afs, g.ActualLibs, g.LinkLibs, append(g.LibPath, g.SysLibPath...), g.staticLink, g.StaticLibs)
@@ -124,9 +121,10 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			if g.Debug {
 				g.Logger.Printf("This is the source file %s indexed %d", inFile, idx)
 			}
-			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_SOURCE)
+			inputFileType := gnubuilder.CheckInputFileExt(inFile)
+			inputFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), inputFileType)
 			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), pb.FileNode_INTERMEDIATE)
-			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
+			targetFile.DerivedFrom = []*pb.FileNode{inputFile}
 			fileNodes = append(fileNodes, targetFile)
 		}
 		return fileNodes, nil
@@ -141,9 +139,10 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			if g.Debug {
 				g.Logger.Printf("This is the source file %s indexed %d", inFile, idx)
 			}
-			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_SOURCE)
-			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), pb.FileNode_SOURCE)
-			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
+			inputFileType := gnubuilder.CheckInputFileExt(inFile)
+			inputFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), inputFileType)
+			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), pb.FileNode_INTERMEDIATE)
+			targetFile.DerivedFrom = []*pb.FileNode{inputFile}
 			fileNodes = append(fileNodes, targetFile)
 		}
 		return fileNodes, nil
