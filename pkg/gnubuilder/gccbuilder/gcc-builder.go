@@ -146,6 +146,23 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			fileNodes = append(fileNodes, targetFile)
 		}
 		return fileNodes, nil
+	case gnubuilder.ModePreproc:
+		g.Logger.Printf("%s preprocessor - skipping compilation, assemble and link", g.Builder)
+		fileNodes := []*pb.FileNode{}
+		if g.Debug {
+			g.Logger.Printf("This is our input %v", g.Input)
+			g.Logger.Printf("This is our output %v", g.Output)
+		}
+		for idx, inFile := range g.Input {
+			if g.Debug {
+				g.Logger.Printf("This is the source file %s indexed %d", inFile, idx)
+			}
+			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_SOURCE)
+			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), pb.FileNode_INTERMEDIATE)
+			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
+			fileNodes = append(fileNodes, targetFile)
+		}
+		return fileNodes, nil
 	case gnubuilder.ModePrintOnly:
 		g.Logger.Println("print only; nothing produced")
 		return nil, nil
@@ -218,6 +235,12 @@ func (g *GccBuilder) parseCommandLine(args []string) error {
 				objectname := strings.TrimSuffix(input, filepath.Ext(input)) + ".s"
 				g.Output = append(g.Output, objectname)
 			}
+		case gnubuilder.ModePreproc:
+			for _, input := range g.Input {
+				objectname := strings.TrimSuffix(input, filepath.Ext(input)) + ".i"
+				g.Output = append(g.Output, objectname)
+			}
+
 		}
 	}
 	return nil

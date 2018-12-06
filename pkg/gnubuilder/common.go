@@ -135,7 +135,7 @@ func CheckInputFileExt(inputFile string) service.FileNode_Type {
 	switch ext {
 	case ".c", ".cc", ".cpp", ".c++", ".cp", ".cxx":
 		return service.FileNode_SOURCE
-	case ".s", ".o":
+	case ".s", ".o", ".i", ".ii":
 		return service.FileNode_INTERMEDIATE
 	default:
 		return service.FileNode_TARGET
