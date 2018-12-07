@@ -247,3 +247,27 @@ func TestForcedStaticLib(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestDefaultPreprocessorFiles(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"gcc", "-E", "a.c", "-o", "a.i"})
+	if gcc.Input[0] != "a.c" || gcc.Output[0] != "a.i" {
+		t.Fail()
+	}
+}
+
+func TestDefaultPreprocessorNoOutput(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"gcc", "-E", "a.c"})
+	if gcc.Input[0] != "a.c" || gcc.Output[0] != "a.i" {
+		t.Fail()
+	}
+}
+
+func TestMultitPreprocessor(t *testing.T) {
+	gcc := getTestCompiler()
+	gcc.Analyze([]string{"gcc", "-E", "a.c", "b.c"})
+	if gcc.Input[0] != "a.c" || gcc.Input[1] != "b.c" || gcc.Output[0] != "a.i" || gcc.Output[1] != "b.i" {
+		t.Fail()
+	}
+}
