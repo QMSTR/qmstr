@@ -45,11 +45,19 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 			break
 		}
 
-		infoNodeMsgs := []*service.InfoNodeMessage{}
+		infoNodeMsg := service.InfoNodeMessage{}
 		log.Printf("Analyzing file %s", fileNode.Path)
 		spdxIdent, err := detectSPDXLicense(fileNode.Path)
 		if err != nil {
-			log.Printf("No SPDX license identifier found")
+			log.Printf("%v", err)
+			// Adding warning node
+			warningNode := service.CreateWarningNode(fmt.Sprintf("%v", err))
+			infoNodeMsg = service.InfoNodeMessage{Token: token, Infonode: warningNode, Uid: fileNode.Uid}
+		} else if _, ok := analysis.SpdxLicenses[spdxIdent]; !ok {
+			log.Printf("Found invalid spdx license identifier %v.", spdxIdent)
+			// Adding error node
+			errorNode := service.CreateErrorNode(fmt.Sprintf("Invalid SPDX license expression %v", spdxIdent))
+			infoNodeMsg = service.InfoNodeMessage{Token: token, Infonode: errorNode, Uid: fileNode.Uid}
 		} else {
 			licenseNode := service.InfoNode{
 				Type: "license",
@@ -60,37 +68,24 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 					},
 				},
 			}
-			infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: &licenseNode, Uid: fileNode.Uid})
-
-			// Check if file node contains a valid SPDX license identifier
-			if _, ok := analysis.SpdxLicenses[licenseNode.DataNodes[0].Data]; !ok {
-				log.Printf("Found invalid spdx license identifier %v.", licenseNode.DataNodes[0].Data)
-				log.Println("Adding warning node...")
-				warningNode := service.CreateWarningNode(fmt.Sprintf("File %v contains an invalid SPDX license identifier: %v", fileNode.Path, spdxIdent))
-				infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: warningNode, Uid: fileNode.Uid})
-			}
-
-			sendStream, err := analysisService.SendInfoNodes(context.Background())
-			if err != nil {
-				return err
-			}
-
-			for _, inodeMsg := range infoNodeMsgs {
-				err = sendStream.Send(inodeMsg)
-				if err != nil {
-					return err
-				}
-			}
-
-			reply, err := sendStream.CloseAndRecv()
-			if err != nil {
-				return err
-			}
-			if reply.Success {
-				log.Println("Simple SPDX Analyzer sent InfoNodes")
-			}
+			infoNodeMsg = service.InfoNodeMessage{Token: token, Infonode: &licenseNode, Uid: fileNode.Uid}
+		}
+		sendStream, err := analysisService.SendInfoNodes(context.Background())
+		if err != nil {
+			return err
+		}
+		err = sendStream.Send(&infoNodeMsg)
+		if err != nil {
+			return err
 		}
 
+		reply, err := sendStream.CloseAndRecv()
+		if err != nil {
+			return err
+		}
+		if reply.Success {
+			log.Println("Simple SPDX Analyzer sent InfoNodes")
+		}
 	}
 	return nil
 }
@@ -120,5 +115,5 @@ func detectSPDXLicense(srcFilePath string) (string, error) {
 			return matches[1], nil
 		}
 	}
-	return "", fmt.Errorf("No spdx identifier found in %s", srcFilePath)
+	return "", fmt.Errorf("No SPDX license identifier found")
 }
