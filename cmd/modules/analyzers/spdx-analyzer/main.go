@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
 
 	"github.com/QMSTR/qmstr/pkg/analysis"
@@ -16,7 +17,9 @@ import (
 
 var spdxPattern = regexp.MustCompile(`SPDX-License-Identifier: (.+)\s*`)
 
-type SpdxAnalyzer struct{}
+type SpdxAnalyzer struct {
+	basedir string
+}
 
 func main() {
 	analyzer := analysis.NewAnalyzer(&SpdxAnalyzer{})
@@ -27,6 +30,12 @@ func main() {
 }
 
 func (spdxalizer *SpdxAnalyzer) Configure(configMap map[string]string) error {
+	if workdir, ok := configMap["workdir"]; ok {
+		spdxalizer.basedir = workdir
+	} else {
+		return fmt.Errorf("no working directory configured")
+	}
+
 	return nil
 }
 
@@ -47,7 +56,7 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 
 		infoNodeMsg := service.InfoNodeMessage{}
 		log.Printf("Analyzing file %s", fileNode.Path)
-		spdxIdent, err := detectSPDXLicense(fileNode.Path)
+		spdxIdent, lineNo, columnNo, err := detectSPDXLicense(fileNode.Path)
 		if err != nil {
 			log.Printf("%v", err)
 			// Adding warning node
@@ -56,7 +65,11 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 		} else if _, ok := analysis.SpdxLicenses[spdxIdent]; !ok {
 			log.Printf("Found invalid spdx license identifier %v.", spdxIdent)
 			// Adding error node
-			errorNode := service.CreateErrorNode(fmt.Sprintf("Invalid SPDX license expression %v", spdxIdent))
+			file, err := filepath.Rel(spdxalizer.basedir, fileNode.Path)
+			if err != nil {
+				return err
+			}
+			errorNode := service.CreateErrorNode(fmt.Sprintf("%v:%v:%v Invalid SPDX license expression %v", file, lineNo, columnNo, spdxIdent))
 			infoNodeMsg = service.InfoNodeMessage{Token: token, Infonode: errorNode, Uid: fileNode.Uid}
 		} else {
 			licenseNode := service.InfoNode{
@@ -94,10 +107,10 @@ func (spdxalizer *SpdxAnalyzer) PostAnalyze() error {
 	return nil
 }
 
-func detectSPDXLicense(srcFilePath string) (string, error) {
+func detectSPDXLicense(srcFilePath string) (string, int, int, error) {
 	f, err := os.Open(srcFilePath)
 	if err != nil {
-		return "", err
+		return "", 0, 0, err
 	}
 
 	scanner := bufio.NewScanner(f)
@@ -112,8 +125,9 @@ func detectSPDXLicense(srcFilePath string) (string, error) {
 
 		matches := spdxPattern.FindStringSubmatch(line)
 		if matches != nil {
-			return matches[1], nil
+			column := spdxPattern.FindStringSubmatchIndex(line)
+			return matches[1], lineNo, column[2], nil
 		}
 	}
-	return "", fmt.Errorf("No SPDX license identifier found")
+	return "", 0, 0, fmt.Errorf("No SPDX license identifier found")
 }
