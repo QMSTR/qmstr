@@ -59,7 +59,7 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		}
 		phase.db.CloseInsertQueue()
 		phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Analyzer %s successfully finished", analyzerName)})
-		log.Printf("Analyzer %s finished successfully: %s\n", analyzerName, out)
+		log.Printf("Analyzer %s finished successfully:\n%s\n", analyzerName, out)
 	}
 
 	phase.finished <- nil
