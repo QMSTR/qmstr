@@ -39,7 +39,7 @@ func (phase *serverPhaseReport) Activate() error {
 			return errors.New(errMsg)
 		}
 		phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Reporter %s successfully finished", reporterName)})
-		log.Printf("Reporter %s finished successfully: %s\n", reporterName, out)
+		log.Printf("Reporter %s finished successfully:\n%s\n", reporterName, out)
 	}
 	return nil
 }
