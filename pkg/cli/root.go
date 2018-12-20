@@ -13,6 +13,7 @@ import (
 // global variables
 var (
 	conn                 *grpc.ClientConn
+	buildServiceClient   service.BuildServiceClient
 	controlServiceClient service.ControlServiceClient
 	// AddressOptional means the command does not require a server address (version, start, ...)
 	AddressOptional bool
@@ -61,6 +62,23 @@ func setUpServer() {
 		Log.Fatalf("Failed to setup connection to master: %v", err)
 	}
 	Debug.Printf("Connection to master at %v set up\n", address)
+	controlServiceClient = service.NewControlServiceClient(conn)
+}
+
+func setUpBuildServer() {
+	if len(address) == 0 {
+		address = os.Getenv("QMSTR_MASTER")
+	}
+	if len(address) == 0 {
+		Log.Fatalln("Error: master address not specified")
+	}
+	var err error
+	conn, err = grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		Log.Fatalf("Failed to setup connection to master: %v", err)
+	}
+	Debug.Printf("Connection to master at %v set up\n", address)
+	buildServiceClient = service.NewBuildServiceClient(conn)
 	controlServiceClient = service.NewControlServiceClient(conn)
 }
 

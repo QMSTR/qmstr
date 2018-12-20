@@ -4,6 +4,8 @@ import (
 	"log"
 	"path/filepath"
 
+	"github.com/QMSTR/qmstr/pkg/gnubuilder"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 
@@ -73,4 +75,14 @@ func CleanCmd(commandline []string, cleanIdx []int, debug bool, logger *log.Logg
 		}
 	}
 	return commandline
+}
+
+func CheckInputFileExt(inputFile string) service.FileNode_Type {
+	ext := filepath.Ext(inputFile)
+	switch ext {
+	case ".java":
+		return service.FileNode_SOURCE
+	default:
+		return gnubuilder.CheckInputFileExt(inputFile)
+	}
 }
