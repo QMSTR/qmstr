@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # install runtime deps
 RUN apt-get update && apt-get install -y \
-    software-properties-common curl autoconf git libgit2-dev libio-captureoutput-perl python python-pip python3-distutils protobuf-compiler && \
+    software-properties-common curl autoconf git libgit2-dev libio-captureoutput-perl python python-pip python3-distutils protobuf-compiler icu-devtools libicu-dev && \
     rm -rf /var/lib/apt/lists/*
 
 ARG HUGO_VERSION
@@ -30,7 +30,7 @@ RUN mkdir /ninka && \
 
 # install scancode
 ARG SCANCODE_VERSION
-RUN pip install -U scancode-toolkit==${SCANCODE_VERSION}
+RUN ICU_VERSION=$(icuinfo | sed -n 's:.*<param name="version">\([0-9]*\)\.[0-9]*</param>.*:\1:p') pip install -U scancode-toolkit==${SCANCODE_VERSION}
 
 # install dgraph
 ARG DGRAPH_VERSION
