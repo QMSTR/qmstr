@@ -1,12 +1,14 @@
 package database
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"log"
 	"strconv"
 	"sync/atomic"
+	"text/template"
 
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
@@ -86,23 +88,59 @@ func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 	return ret["hasNode"][0].Uid, nil
 }
 
-func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode) ([]*service.FileNode, error) {
+// GetFileNodesByFileNode queries filenodes on a specific attribute of a provided filenode.
+// For instance, you can provide a filenode with a certain filetype and get all the filenodes
+// with this filetype.
+// You can query for just one attribute. For instance, if you set filetype and hash, only the
+// hash will be used in the query.
+func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool) ([]*service.FileNode, error) {
 	var ret map[string][]*service.FileNode
 
-	q := `query FileNodeByFileNode($Type: int){
-		getFileNodeByFileNode(func: eq(fileType, $Type)) @recurse(loop: false){
-		  uid
-		  hash
-		  path
-		  derivedFrom
-		}}`
+	q := `query FileNodeByFileNode($Filter: string, $TypeFilter: int){
+			getFileNodeByFileNode(func: has(fileNodeType)) {{.Query}} {{.Recurse}}{
+			  uid
+			  hash
+			  path
+			  derivedFrom
+			}}`
 
-	//get the int value from the enumeration
-	t := service.FileNode_Type_value[filenode.FileType.String()]
-	nt := int(t)
-	//convert it to string to query it
-	vars := map[string]string{"$Type": strconv.Itoa(nt)}
-	err := db.queryNodes(q, vars, &ret)
+	queryTmpl, err := template.New("filenodesbyfilenode").Parse(q)
+
+	type QueryParams struct {
+		Recurse    string
+		Query      string
+		Filter     string
+		TypeFilter int
+	}
+
+	qp := QueryParams{}
+	vars := map[string]string{}
+
+	if recursive {
+		qp.Recurse = "@recurse(loop: false)"
+	}
+	if filenode.FileType != 0 {
+		//get the int value from the enumeration
+		t := service.FileNode_Type_value[filenode.FileType.String()]
+		nt := int(t)
+		qp.TypeFilter = nt
+		qp.Query = "@filter(eq(fileType, $TypeFilter))"
+		//convert it to string to query it
+		vars["$TypeFilter"] = strconv.Itoa(nt)
+	}
+	if filenode.Hash != "" {
+		qp.Filter = filenode.Hash
+		qp.Query = "@filter(eq(hash, $Filter))"
+		vars["$Filter"] = qp.Filter
+	}
+
+	var b bytes.Buffer
+	err = queryTmpl.Execute(&b, qp)
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.queryNodes(b.String(), vars, &ret)
 	if err != nil {
 		return nil, err
 	}
@@ -110,39 +148,6 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode) ([]*servi
 	return ret["getFileNodeByFileNode"], nil
 }
 
-// GetFileNodeByHash returns the file node for the file with the provided checksum
-func (db *DataBase) GetFileNodeByHash(hash string, recursive bool) (*service.FileNode, error) {
-
-	var ret map[string][]*service.FileNode
-
-	q := `query NodeByHash($Hash: string){
-		  getNodeByHash(func: eq(hash, $Hash)) {
-			uid
-			hash
-			path
-		  }}`
-
-	if recursive {
-		q = `query NodeByHash($Hash: string){
-		  getNodeByHash(func: eq(hash, $Hash)) @recurse(loop: false) {
-			uid
-			hash
-			path
-			derivedFrom
-		  }}`
-	}
-
-	vars := map[string]string{"$Hash": hash}
-
-	err := db.queryNodes(q, vars, &ret)
-	if err != nil {
-		return nil, err
-	}
-
-	return ret["getNodeByHash"][0], nil
-}
-
-//
 func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {
 
 	var ret map[string][]*service.FileNode
