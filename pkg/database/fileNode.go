@@ -100,8 +100,15 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 			getFileNodeByFileNode(func: has(fileNodeType)) {{.Query}} {{.Recurse}}{
 			  uid
 			  hash
+			  name
 			  path
+			  type
 			  derivedFrom
+			  additionalInfo
+			  confidenceScore
+			  analyzer
+			  dataNodes
+			  data
 			}}`
 
 	queryTmpl, err := template.New("filenodesbyfilenode").Parse(q)
@@ -131,6 +138,16 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 	if filenode.Hash != "" {
 		qp.Filter = filenode.Hash
 		qp.Query = "@filter(eq(hash, $Filter))"
+		vars["$Filter"] = qp.Filter
+	}
+	if filenode.Name != "" {
+		qp.Filter = filenode.Name
+		qp.Query = "@filter(eq(name, $Filter))"
+		vars["$Filter"] = qp.Filter
+	}
+	if filenode.Path != "" {
+		qp.Filter = filenode.Path
+		qp.Query = "@filter(eq(path, $Filter))"
 		vars["$Filter"] = qp.Filter
 	}
 

@@ -35,6 +35,8 @@ func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error)
 			fileType
 			path
 			additionalInfo
+			confidenceScore
+			analyzer
 			dataNodes
 			data
 		  }}`
