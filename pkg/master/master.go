@@ -106,6 +106,22 @@ func (s *server) GetFileNode(in *service.FileNode, stream service.ControlService
 	return s.currentPhase.GetFileNode(in, stream)
 }
 
+func (s *server) GetFileNodeDescription(in *service.FileNode, stream service.ControlService_GetFileNodeDescriptionServer) error {
+	db, err := s.currentPhase.getDataBase()
+	if err != nil {
+		return err
+	}
+	nodeFiles, err := db.GetFileNodesByFileNode(in, true, true)
+	if err != nil {
+		return err
+	}
+
+	for _, nodeFile := range nodeFiles {
+		stream.Send(nodeFile)
+	}
+	return nil
+}
+
 func (s *server) GetInfoData(ctx context.Context, in *service.InfoDataRequest) (*service.InfoDataResponse, error) {
 	return s.currentPhase.GetInfoData(in)
 }

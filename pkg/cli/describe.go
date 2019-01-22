@@ -69,7 +69,7 @@ func describeNode(args []string) error {
 			queryNode = &service.FileNode{Name: node}
 		}
 
-		stream, err := controlServiceClient.GetFileNode(context.Background(), queryNode)
+		stream, err := controlServiceClient.GetFileNodeDescription(context.Background(), queryNode)
 		if err != nil {
 			log.Printf("Could not get file node %v", err)
 			return err

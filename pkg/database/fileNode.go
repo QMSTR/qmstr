@@ -93,17 +93,25 @@ func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 // with this filetype.
 // You can query for just one attribute. For instance, if you set filetype and hash, only the
 // hash will be used in the query.
-func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool) ([]*service.FileNode, error) {
+func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool, describe bool) ([]*service.FileNode, error) {
 	var ret map[string][]*service.FileNode
-
-	q := `query FileNodeByFileNode($Filter: string, $TypeFilter: int){
-			getFileNodeByFileNode(func: has(fileNodeType)) {{.Query}} {{.Recurse}}{
-			  uid
-			  hash
-			  path
-			  derivedFrom
-			}}`
-
+	var q string
+	if describe {
+		q = `query FileNodeByFileNode($Filter: string, $TypeFilter: int){
+				getFileNodeByFileNode(func: has(fileNodeType)) {{.Query}} {{.Recurse}}{
+				  name
+				  path
+				  derivedFrom
+				}}`
+	} else {
+		q = `query FileNodeByFileNode($Filter: string, $TypeFilter: int){
+				getFileNodeByFileNode(func: has(fileNodeType)) {{.Query}} {{.Recurse}}{
+				  uid
+				  hash
+				  path
+				  derivedFrom
+				}}`
+	}
 	queryTmpl, err := template.New("filenodesbyfilenode").Parse(q)
 
 	type QueryParams struct {
@@ -131,6 +139,16 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 	if filenode.Hash != "" {
 		qp.Filter = filenode.Hash
 		qp.Query = "@filter(eq(hash, $Filter))"
+		vars["$Filter"] = qp.Filter
+	}
+	if filenode.Name != "" {
+		qp.Filter = filenode.Name
+		qp.Query = "@filter(eq(name, $Filter))"
+		vars["$Filter"] = qp.Filter
+	}
+	if filenode.Path != "" {
+		qp.Filter = filenode.Path
+		qp.Query = "@filter(eq(path, $Filter))"
 		vars["$Filter"] = qp.Filter
 	}
 
