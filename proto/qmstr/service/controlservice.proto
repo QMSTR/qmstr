@@ -31,6 +31,8 @@ message SwitchPhaseResponse {
 
 message PackageRequest {
   string session = 1;
+  string name = 2;
+  bool lessInfo = 3;
 }
 
 message StatusMessage {

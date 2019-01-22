@@ -78,7 +78,14 @@ func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest)
 	if err != nil {
 		return nil, err
 	}
-	node, err := db.GetPackageNode(in.Session)
+
+	node := &service.PackageNode{}
+	if in.Session != "" {
+		node, err = db.GetPackageNode(in.Session, false, in.LessInfo)
+	}
+	if in.Name != "" {
+		node, err = db.GetPackageNode(in.Name, true, in.LessInfo)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +97,7 @@ func (s *server) SendBuildError(ctx context.Context, in *service.InfoNode) (*ser
 	if err != nil {
 		return nil, err
 	}
-	node, err := db.GetPackageNode(s.currentPhase.getSession())
+	node, err := db.GetPackageNode(s.currentPhase.getSession(), false, false)
 	if err != nil {
 		return nil, err
 	}

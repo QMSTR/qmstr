@@ -76,7 +76,7 @@ func (phase *serverPhaseReport) GetBOM(in *service.BOMRequest) (*service.BOM, er
 	if err != nil {
 		return nil, err
 	}
-	pkgNode, err := db.GetPackageNode(in.Session)
+	pkgNode, err := db.GetPackageNode(in.Session, false, false)
 	if err != nil {
 		return nil, err
 	}

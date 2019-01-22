@@ -60,7 +60,15 @@ func describeNode(args []string) error {
 	switch nodeType {
 	case "package":
 		//query package name
-		fmt.Printf("Type %s is not yet implemented", nodeType)
+		pkgNode, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageRequest{Name: node, LessInfo: less})
+		if err != nil {
+			return err
+		}
+
+		err = printNode(pkgNode)
+		if err != nil {
+			return err
+		}
 	case "target":
 		queryNode := &service.FileNode{}
 		path := strings.Contains(node, "/")
@@ -88,13 +96,24 @@ func describeNode(args []string) error {
 				return err
 			}
 
-			json, err := json.MarshalIndent(fileNode, "", "   ")
-			fmt.Printf("%v \n", string(json))
+			err = printNode(fileNode)
+			if err != nil {
+				return err
+			}
 		}
 	case "info":
 		//TODO: query for infonode
 		fmt.Printf("Type %s is not yet implemented", nodeType)
 	}
 
+	return nil
+}
+
+func printNode(node interface{}) error {
+	json, err := json.MarshalIndent(node, "", "   ")
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%v \n", string(json))
 	return nil
 }

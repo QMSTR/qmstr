@@ -19,10 +19,37 @@ func (db *DataBase) AddPackageNode(node *service.PackageNode) {
 	db.insertQueue <- node
 }
 
-func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error) {
+func (db *DataBase) GetPackageNode(filter string, describe bool, lessInfo bool) (*service.PackageNode, error) {
 	var ret map[string][]*service.PackageNode
+	var q string
 
-	q := `query PackageNode($Session: string) {
+	if describe {
+		if lessInfo {
+			q = `query PackageNode($Filter: string) {
+				getPackageNode(func: has(packageNodeType)) @recurse(loop: false) {
+					name
+					type
+					targets
+					derivedFrom
+					fileType
+					path
+				  }}`
+		} else {
+			q = `query PackageNode($Filter: string) {
+			getPackageNode(func: has(packageNodeType)) @recurse(loop: false) {
+				name
+				type
+				targets
+				derivedFrom
+				fileType
+				path
+				additionalInfo
+				dataNodes
+				data
+		  	}}`
+		}
+	} else {
+		q = `query PackageNode($Filter: string) {
 		getPackageNode(func: has(packageNodeType)) @recurse(loop: false) {
 			uid
 			session
@@ -37,9 +64,10 @@ func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error)
 			additionalInfo
 			dataNodes
 			data
-		  }}`
+		}}`
+	}
 
-	vars := map[string]string{"$Session": session}
+	vars := map[string]string{"$Filter": filter}
 
 	err := db.queryNodes(q, vars, &ret)
 	if err != nil {
