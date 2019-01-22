@@ -177,7 +177,13 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 		return nil, err
 	}
 
-	return ret["getFileNodeByFileNode"], nil
+	fileNodes := ret["getFileNodeByFileNode"]
+
+	if len(fileNodes) < 1 {
+		return nil, errors.New("No file node found")
+	}
+
+	return fileNodes, nil
 }
 
 func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {

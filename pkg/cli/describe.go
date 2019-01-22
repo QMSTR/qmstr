@@ -78,8 +78,14 @@ func describeNode(args []string) error {
 
 		for {
 			fileNode, err := stream.Recv()
-			if err == io.EOF {
-				break
+			if err != nil {
+				if err == io.EOF {
+					break
+				}
+				if err.Error() == "rpc error: code = Unknown desc = No file node found" {
+					return fmt.Errorf("No file node %s found in the database", node)
+				}
+				return err
 			}
 
 			json, err := json.MarshalIndent(fileNode, "", "   ")

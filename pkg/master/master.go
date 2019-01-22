@@ -119,6 +119,7 @@ func (s *server) GetFileNodeDescription(in *service.FileDescriptionRequest, stre
 	for _, nodeFile := range nodeFiles {
 		stream.Send(nodeFile)
 	}
+
 	return nil
 }
 
