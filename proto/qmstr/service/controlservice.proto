@@ -57,6 +57,11 @@ message ExportResponse {
   bool success = 1;
 }
 
+message FileDescriptionRequest {
+  FileNode file = 1;
+  bool lessInfo = 2;
+}
+
 service ControlService {
   rpc Log(LogMessage) returns (LogResponse) {}
   rpc Quit(QuitMessage) returns (QuitResponse) {}
@@ -66,5 +71,5 @@ service ControlService {
   rpc Status(StatusMessage) returns (StatusResponse) {}
   rpc SubscribeEvents(EventMessage) returns (stream Event) {}
   rpc ExportSnapshot(ExportRequest) returns (ExportResponse) {}
-  rpc GetFileNodeDescription(FileNode) returns (stream FileNode) {}
+  rpc GetFileNodeDescription(FileDescriptionRequest) returns (stream FileNode) {}
 }

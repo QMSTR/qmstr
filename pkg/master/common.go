@@ -112,7 +112,7 @@ func (gsp *genericServerPhase) GetFileNode(in *service.FileNode, stream service.
 	if err != nil {
 		return err
 	}
-	nodeFiles, err := db.GetFileNodesByFileNode(in, true, false)
+	nodeFiles, err := db.GetFileNodesByFileNode(in, true, false, false)
 
 	for _, nodeFile := range nodeFiles {
 		stream.Send(nodeFile)

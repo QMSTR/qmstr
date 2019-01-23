@@ -14,6 +14,7 @@ import (
 
 var (
 	packageName, target string
+	less                bool
 )
 
 var describeCmd = &cobra.Command{
@@ -41,6 +42,7 @@ and node, can be:
 
 func init() {
 	rootCmd.AddCommand(describeCmd)
+	describeCmd.Flags().BoolVar(&less, "less", false, "show less information-info nodes are not traversed")
 }
 
 func describeNode(args []string) error {
@@ -55,21 +57,20 @@ func describeNode(args []string) error {
 	nodeType := input[0]
 	node := input[1]
 
-	queryNode := &service.FileNode{}
-
 	switch nodeType {
 	case "package":
 		//query package name
 		fmt.Printf("Type %s is not yet implemented", nodeType)
 	case "target":
+		queryNode := &service.FileNode{}
 		path := strings.Contains(node, "/")
 		if path {
 			queryNode = &service.FileNode{Path: node}
 		} else {
 			queryNode = &service.FileNode{Name: node}
 		}
-
-		stream, err := controlServiceClient.GetFileNodeDescription(context.Background(), queryNode)
+		descriptionRequest := &service.FileDescriptionRequest{File: queryNode, LessInfo: less}
+		stream, err := controlServiceClient.GetFileNodeDescription(context.Background(), descriptionRequest)
 		if err != nil {
 			log.Printf("Could not get file node %v", err)
 			return err

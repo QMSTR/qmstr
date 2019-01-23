@@ -186,7 +186,7 @@ func (phase *serverPhaseAnalysis) GetFileNode(in *service.FileNode, stream servi
 	if err != nil {
 		return err
 	}
-	nodeFiles, err := db.GetFileNodesByFileNode(in, true, false)
+	nodeFiles, err := db.GetFileNodesByFileNode(in, true, false, false)
 	if err != nil {
 		return err
 	}

@@ -93,16 +93,30 @@ func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 // with this filetype.
 // You can query for just one attribute. For instance, if you set filetype and hash, only the
 // hash will be used in the query.
-func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool, describe bool) ([]*service.FileNode, error) {
+func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool, describe bool, lessInfo bool) ([]*service.FileNode, error) {
 	var ret map[string][]*service.FileNode
 	var q string
 	if describe {
-		q = `query FileNodeByFileNode($Filter: string, $TypeFilter: int){
-				getFileNodeByFileNode(func: has(fileNodeType)) {{.Query}} {{.Recurse}}{
-				  name
-				  path
-				  derivedFrom
-				}}`
+		if lessInfo {
+			q = `query FileNodeByFileNode($Filter: string, $TypeFilter: int){
+			getFileNodeByFileNode(func: has(fileNodeType)) {{.Query}} {{.Recurse}}{
+			  name
+			  path
+			  derivedFrom
+			}}`
+		} else {
+			q = `query FileNodeByFileNode($Filter: string, $TypeFilter: int){
+					getFileNodeByFileNode(func: has(fileNodeType)) {{.Query}} {{.Recurse}}{
+					  name
+					  path
+					  derivedFrom
+					  additionalInfo
+					  type
+					  analyzer
+					  dataNodes
+					  data
+					}}`
+		}
 	} else {
 		q = `query FileNodeByFileNode($Filter: string, $TypeFilter: int){
 				getFileNodeByFileNode(func: has(fileNodeType)) {{.Query}} {{.Recurse}}{
