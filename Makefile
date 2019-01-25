@@ -81,7 +81,6 @@ clean:
 	@rm -fr venv || true
 	@rm requirements.txt || true
 	@rm -fr vendor || true
-	@rm Gopkg.lock || true
 	@rm .go_module_test .go_qmstr_test || true
 
 .PHONY: cleanall
