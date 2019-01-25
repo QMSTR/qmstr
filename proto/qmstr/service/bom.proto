@@ -10,6 +10,7 @@ message PackageInformation {
 	string ocFossLiaison = 4;
     string ocComplianceContact = 5;
     string licenseDeclared = 6;
+    string sourceURL = 8;
 }
 
 message Person {
