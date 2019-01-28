@@ -82,8 +82,11 @@ func describeNode(args []string) error {
 
 		for {
 			fileNode, err := fNodes.Recv()
-			if err == io.EOF {
-				break
+			if err != nil {
+				if err == io.EOF {
+					break
+				}
+				return err
 			}
 			fmt.Println(fileNode.Describe(less, ""))
 		}

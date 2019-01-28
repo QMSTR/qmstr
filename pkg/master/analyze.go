@@ -179,21 +179,3 @@ func (phase *serverPhaseAnalysis) SendPackageNode(stream service.AnalysisService
 		phase.db.AddPackageNode(pkgNode)
 	}
 }
-
-func (phase *serverPhaseAnalysis) GetFileNode(in *service.FileNode, stream service.ControlService_GetFileNodeServer) error {
-	// TODO get rid of code duplication
-	db, err := phase.getDataBase()
-	if err != nil {
-		return err
-	}
-	nodeFiles, err := db.GetFileNodesByFileNode(in, true)
-	if err != nil {
-		return err
-	}
-
-	for _, nodeFile := range nodeFiles {
-		nodeFile.Path = filepath.Join(phase.masterConfig.Server.BuildPath, nodeFile.Path)
-		stream.Send(nodeFile)
-	}
-	return nil
-}
