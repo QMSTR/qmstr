@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"sync/atomic"
@@ -162,6 +163,10 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 		return nil, err
 	}
 
+	fileNodes := ret["getFileNodeByFileNode"]
+	if len(fileNodes) < 1 {
+		return nil, fmt.Errorf("No file node %v found in the database", filenode)
+	}
 	return ret["getFileNodeByFileNode"], nil
 }
 

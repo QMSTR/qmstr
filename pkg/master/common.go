@@ -113,8 +113,13 @@ func (gsp *genericServerPhase) GetFileNode(in *service.FileNode, stream service.
 		return err
 	}
 	nodeFiles, err := db.GetFileNodesByFileNode(in, true)
-
+	if err != nil {
+		return err
+	}
 	for _, nodeFile := range nodeFiles {
+		if gsp.server.currentPhase.GetPhaseID() == service.Phase_ANALYSIS {
+			nodeFile.Path = filepath.Join(gsp.masterConfig.Server.BuildPath, nodeFile.Path)
+		}
 		stream.Send(nodeFile)
 	}
 	return nil
