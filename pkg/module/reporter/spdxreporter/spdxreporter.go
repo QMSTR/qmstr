@@ -10,13 +10,15 @@ import (
 	"sort"
 	"time"
 
+	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 	"github.com/spdx/tools-golang/v0/spdx"
 	"github.com/spdx/tools-golang/v0/tvsaver"
 )
 
 const (
-	ModuleName = "reporter-spdx"
+	ModuleName  = "reporter-spdx"
+	outFileName = "%s.spdx"
 )
 
 type SPDXReporter struct {
@@ -101,7 +103,7 @@ func (r *SPDXReporter) Report(cserv service.ControlServiceClient, rserv service.
 		Packages: []*spdx.Package2_1{pkg},
 	}
 
-	fName := filepath.Join(r.outputdir, "report.spdx")
+	fName := filepath.Join(r.outputdir, fmt.Sprintf(outFileName, common.GetPosixFullyPortableFilename(bom.PackageInfo.Name)))
 	out, err := os.Create(fName)
 	if err != nil {
 		return fmt.Errorf("failed to create out file %q: %v", fName, err)
