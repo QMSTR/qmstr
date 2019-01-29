@@ -7,11 +7,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/database"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
 )
+
+var nonPosixChars = regexp.MustCompile(`[^A-Za-z0-9\._-]`)
 
 func BuildCleanPath(base string, subpath string, abs bool) string {
 	if filepath.IsAbs(subpath) {
@@ -149,4 +152,9 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 		}
 	}
 	return nil
+}
+
+func GetPosixFullyPortableFilename(filename string) string {
+	posixFilename := nonPosixChars.ReplaceAllString(filename, "_")
+	return posixFilename
 }

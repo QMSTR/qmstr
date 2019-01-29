@@ -4,8 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"regexp"
 	"strings"
+
+	"github.com/QMSTR/qmstr/pkg/common"
 )
 
 func validateConfig(configuration *MasterConfig) error {
@@ -29,7 +30,7 @@ func validateConfig(configuration *MasterConfig) error {
 	// Validate analyzers
 	for idx, analyzer := range configuration.Analysis {
 		if analyzer.PosixName == "" {
-			analyzer.PosixName = posixFullyPortableFilename(analyzer.Name)
+			analyzer.PosixName = common.GetPosixFullyPortableFilename(analyzer.Name)
 		}
 		err := validateFields(analyzer, uniqueFields, "Name", "Analyzer", "PosixName")
 		if err != nil {
@@ -39,7 +40,7 @@ func validateConfig(configuration *MasterConfig) error {
 	// Validate reporters
 	for idx, reporter := range configuration.Reporting {
 		if reporter.PosixName == "" {
-			reporter.PosixName = posixFullyPortableFilename(reporter.Name)
+			reporter.PosixName = common.GetPosixFullyPortableFilename(reporter.Name)
 		}
 		err := validateFields(reporter, uniqueFields, "Name", "Reporter", "PosixName")
 		if err != nil {
@@ -67,12 +68,6 @@ func validateFields(structure interface{}, uniqueFields map[string]map[string]st
 	}
 
 	return nil
-}
-
-func posixFullyPortableFilename(filename string) string {
-	nonPosixChars := regexp.MustCompile(`[^A-Za-z0-9\._-]`)
-	posixFilename := nonPosixChars.ReplaceAllString(filename, "_")
-	return posixFilename
 }
 
 // GetRPCPort returns the configured port for qmstr's grpc service

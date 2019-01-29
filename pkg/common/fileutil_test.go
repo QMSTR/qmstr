@@ -39,3 +39,25 @@ func TestHash(t *testing.T) {
 	}
 
 }
+
+func TestPosixFullyPortableFilename(t *testing.T) {
+	type args struct {
+		filename string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{"Whitespace", args{filename: "There are whitespaces\there"}, "There_are_whitespaces_here"},
+		{"Newline", args{filename: "There is a newline\nhere"}, "There_is_a_newline_here"},
+		{"non-ascii", args{filename: "There is a non-ascii char ä here"}, "There_is_a_non-ascii_char___here"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := common.GetPosixFullyPortableFilename(tt.args.filename); got != tt.want {
+				t.Errorf("posixFullyPortableFilename() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
