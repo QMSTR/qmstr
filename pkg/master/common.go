@@ -22,7 +22,6 @@ type serverPhase interface {
 	Activate() error
 	Shutdown() error
 	getDataBase() (*database.DataBase, error)
-	getSession() string
 	getError() string
 	getMasterConfig() *config.MasterConfig
 	Build(service.BuildService_BuildServer) error
@@ -43,7 +42,6 @@ type serverPhase interface {
 type genericServerPhase struct {
 	Name          string
 	db            *database.DataBase
-	session       string
 	masterConfig  *config.MasterConfig
 	server        *server
 	postInitPhase *service.Phase
@@ -61,10 +59,6 @@ func (gsp *genericServerPhase) getDataBase() (*database.DataBase, error) {
 		return nil, errors.New("Database not yet available")
 	}
 	return gsp.db, nil
-}
-
-func (gsp *genericServerPhase) getSession() string {
-	return gsp.session
 }
 
 func (gsp *genericServerPhase) getError() string {

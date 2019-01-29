@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/QMSTR/qmstr/pkg/master"
-	"github.com/QMSTR/qmstr/pkg/reporting"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/reporting"
 	"github.com/QMSTR/qmstr/pkg/tester"
 )
 
@@ -33,9 +33,9 @@ func (testRporter *TestReporter) Configure(config map[string]string) error {
 }
 
 // Report generates the actual reports.
-func (testRporter *TestReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient, session string) error {
+func (testRporter *TestReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
 	var err error
-	testpackageNode, err = cserv.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
+	testpackageNode, err = cserv.GetPackageNode(context.Background(), &service.PackageRequest{})
 	if err != nil {
 		return fmt.Errorf("could not get package node: %v", err)
 	}

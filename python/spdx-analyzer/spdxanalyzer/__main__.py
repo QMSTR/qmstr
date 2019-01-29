@@ -140,7 +140,6 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         )
 
         package_request = PackageRequest(
-            session=self.session
         )
 
         package_node = self.cserv.GetPackageNode(package_request)

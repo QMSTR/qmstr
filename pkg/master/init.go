@@ -22,8 +22,8 @@ type serverPhaseInit struct {
 	genericServerPhase
 }
 
-func newInitServerPhase(session string, masterConfig *config.MasterConfig) *serverPhaseInit {
-	return &serverPhaseInit{genericServerPhase{Name: "Init", session: session, masterConfig: masterConfig}}
+func newInitServerPhase(masterConfig *config.MasterConfig) *serverPhaseInit {
+	return &serverPhaseInit{genericServerPhase{Name: "Init", masterConfig: masterConfig}}
 }
 
 func (phase *serverPhaseInit) Activate() error {
@@ -36,7 +36,7 @@ func (phase *serverPhaseInit) Activate() error {
 
 	if !snapshotAvailable() {
 		phase.db.OpenInsertQueue()
-		phase.initPackage(phase.session)
+		phase.initPackage()
 		phase.db.CloseInsertQueue()
 		return nil
 	}
@@ -139,7 +139,7 @@ func importSnapshot() error {
 	return nil
 }
 
-func (phase *serverPhaseInit) initPackage(session string) {
+func (phase *serverPhaseInit) initPackage() {
 	rootPackageNode := &service.PackageNode{Name: phase.masterConfig.Name, BuildConfig: phase.masterConfig.BuildConfig}
 	tmpInfoNode := &service.InfoNode{Type: "metadata"}
 	for key, val := range phase.masterConfig.MetaData {
@@ -150,7 +150,6 @@ func (phase *serverPhaseInit) initPackage(session string) {
 		rootPackageNode.AdditionalInfo = []*service.InfoNode{tmpInfoNode}
 	}
 
-	rootPackageNode.Session = session
 	phase.db.AddPackageNode(rootPackageNode)
 }
 

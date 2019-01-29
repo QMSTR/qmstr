@@ -40,7 +40,6 @@ path:string @index(hash,trigram) .
 type:string @index(hash) .
 fileType:int @index(int) .
 phase:int .
-session:string .
 dataNodes:uid @reverse .
 buildConfig:string .
 dataNodeType:string @index(hash) .

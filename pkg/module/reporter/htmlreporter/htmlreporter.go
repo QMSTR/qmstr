@@ -14,8 +14,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/QMSTR/qmstr/pkg/reporting"
 	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/reporting"
 	version "github.com/hashicorp/go-version"
 )
 
@@ -100,13 +100,13 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 
 // Report generates the actual reports.
 // It is part of the ReporterModule interface.
-func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient, session string) error {
-	packageNode, err := cserv.GetPackageNode(context.Background(), &service.PackageRequest{Session: session})
+func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
+	packageNode, err := cserv.GetPackageNode(context.Background(), &service.PackageRequest{})
 	if err != nil {
 		return fmt.Errorf("could not get package node: %v", err)
 	}
 
-	bom, err := rserv.GetBOM(context.Background(), &service.BOMRequest{Session: session, Warnings: r.enableWarnings, Errors: r.enableErrors})
+	bom, err := rserv.GetBOM(context.Background(), &service.BOMRequest{Warnings: r.enableWarnings, Errors: r.enableErrors})
 	if err != nil {
 		return err
 	}

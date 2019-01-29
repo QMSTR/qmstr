@@ -17,9 +17,9 @@ type serverPhaseReport struct {
 	genericServerPhase
 }
 
-func newReportPhase(session string, masterConfig *config.MasterConfig, db *database.DataBase, server *server) serverPhase {
+func newReportPhase(masterConfig *config.MasterConfig, db *database.DataBase, server *server) serverPhase {
 	return &serverPhaseReport{
-		genericServerPhase{Name: "Report", session: session, masterConfig: masterConfig, db: db, server: server},
+		genericServerPhase{Name: "Report", masterConfig: masterConfig, db: db, server: server},
 	}
 }
 
@@ -67,8 +67,7 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 	config.Config["cachedir"] = filepath.Join(ServerCacheDir, config.Reporter, config.PosixName)
 	config.Config["outputdir"] = filepath.Join(ServerOutputDir, config.Reporter, config.PosixName)
 
-	return &service.ReporterConfigResponse{ConfigMap: config.Config, Session: phase.session,
-		Name: config.Name}, nil
+	return &service.ReporterConfigResponse{ConfigMap: config.Config, Name: config.Name}, nil
 }
 
 func (phase *serverPhaseReport) GetBOM(in *service.BOMRequest) (*service.BOM, error) {
@@ -76,7 +75,7 @@ func (phase *serverPhaseReport) GetBOM(in *service.BOMRequest) (*service.BOM, er
 	if err != nil {
 		return nil, err
 	}
-	pkgNode, err := db.GetPackageNode(in.Session)
+	pkgNode, err := db.GetPackageNode()
 	if err != nil {
 		return nil, err
 	}

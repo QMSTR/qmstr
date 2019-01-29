@@ -43,7 +43,6 @@ class QMSTR_Analyzer(QMSTR_Module):
         conf_response = self.aserv.GetAnalyzerConfig(conf_request)
         self.configure(conf_response.configMap)
         self.token = conf_response.token
-        self.session = conf_response.session
         self.analyze()
 
         self.post_analyze()

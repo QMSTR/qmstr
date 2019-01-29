@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"math/rand"
 	"net"
 	"strings"
 	"sync"
@@ -21,10 +20,10 @@ import (
 )
 
 var quitServer chan interface{}
-var phaseMap map[service.Phase]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase
+var phaseMap map[service.Phase]func(*config.MasterConfig, *database.DataBase, *server) serverPhase
 
 func init() {
-	phaseMap = map[service.Phase]func(string, *config.MasterConfig, *database.DataBase, *server) serverPhase{
+	phaseMap = map[service.Phase]func(*config.MasterConfig, *database.DataBase, *server) serverPhase{
 		service.Phase_BUILD:    newBuildPhase,
 		service.Phase_ANALYSIS: newAnalysisPhase,
 		service.Phase_REPORT:   newReportPhase,
@@ -78,7 +77,7 @@ func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest)
 	if err != nil {
 		return nil, err
 	}
-	node, err := db.GetPackageNode(in.Session)
+	node, err := db.GetPackageNode()
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +89,7 @@ func (s *server) SendBuildError(ctx context.Context, in *service.InfoNode) (*ser
 	if err != nil {
 		return nil, err
 	}
-	node, err := db.GetPackageNode(s.currentPhase.getSession())
+	node, err := db.GetPackageNode()
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +162,7 @@ func (s *server) switchPhase(requestedPhase service.Phase) error {
 			s.enterFailureServerPhase(err)
 			return err
 		}
-		s.currentPhase = phaseCtor(s.currentPhase.getSession(), s.currentPhase.getMasterConfig(), db, s)
+		s.currentPhase = phaseCtor(s.currentPhase.getMasterConfig(), db, s)
 		s.pendingPhaseSwitch = 0
 		err = s.currentPhase.Activate()
 		if err != nil {
@@ -203,16 +202,12 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 		return nil, fmt.Errorf("Failed to setup socket and listen: %v", err)
 	}
 
-	sessionBytes := make([]byte, 32)
-	rand.Read(sessionBytes)
-	session := fmt.Sprintf("%x", sessionBytes)
-
 	s := grpc.NewServer()
 	serverImpl := &server{
 		serverMutex:    &sync.Mutex{},
 		analysisClosed: make(chan bool),
 		analysisDone:   false,
-		currentPhase:   newInitServerPhase(session, masterConfig),
+		currentPhase:   newInitServerPhase(masterConfig),
 		eventChannels: map[service.EventClass][]chan *service.Event{
 			service.EventClass_ALL:    []chan *service.Event{},
 			service.EventClass_MODULE: []chan *service.Event{},
@@ -274,7 +269,7 @@ func (s *server) persistPhase() error {
 		return err
 	}
 
-	if _, err := db.AddQmstrStateNode(&service.QmstrStateNode{Phase: s.currentPhase.GetPhaseID(), Session: s.currentPhase.getSession()}); err != nil {
+	if _, err := db.AddQmstrStateNode(&service.QmstrStateNode{Phase: s.currentPhase.GetPhaseID()}); err != nil {
 		return err
 	}
 	return nil

@@ -20,7 +20,6 @@ func (db *DataBase) GetQmstrStateNode() (*service.QmstrStateNode, error) {
 	q := `{
 		getQmstrStateNode(func: has(qmstrStateNodeType)) @recurse(loop: false) {
 			uid
-			session
 			phase
 		}
 	}`

@@ -9,9 +9,8 @@ message ReporterConfigRequest {
 }
 
 message ReporterConfigResponse {
-  string session = 1;
-  map<string, string> configMap = 2;
-  string name = 4;
+  map<string, string> configMap = 1;
+  string name = 2;
 }
 
 message InfoDataRequest {
@@ -27,7 +26,6 @@ message InfoDataResponse {
 message BOMRequest {
   bool warnings = 1;
   bool errors = 2;
-  string session = 3;
 }
 
 service ReportService {

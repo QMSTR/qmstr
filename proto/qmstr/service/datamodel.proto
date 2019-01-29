@@ -51,7 +51,6 @@ message PathSubstitution {
 message PackageNode {
     string uid = 1;
     string name = 2;
-    string session = 3;
     string packageNodeType = 4;
     repeated FileNode targets = 5;
     repeated InfoNode additionalInfo = 6;
@@ -73,7 +72,6 @@ message QmstrStateNode {
     string uid = 1;
     string qmstrStateNodeType = 2;
     Phase phase = 3;
-    string session = 4;
 }
 
 enum Phase {
