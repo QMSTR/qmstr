@@ -25,9 +25,9 @@ type serverPhaseAnalysis struct {
 
 var src = rand.NewSource(time.Now().UnixNano())
 
-func newAnalysisPhase(session string, masterConfig *config.MasterConfig, db *database.DataBase, server *server) serverPhase {
+func newAnalysisPhase(masterConfig *config.MasterConfig, db *database.DataBase, server *server) serverPhase {
 	return &serverPhaseAnalysis{
-		genericServerPhase{Name: "Analysis", session: session, masterConfig: masterConfig, db: db, server: server},
+		genericServerPhase{Name: "Analysis", masterConfig: masterConfig, db: db, server: server},
 		nil, src.Int63(), make(chan interface{}, 1)}
 }
 
@@ -98,7 +98,7 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 	}
 	phase.currentAnalyzer.PathSub = config.PathSub
 	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, PathSub: config.PathSub,
-		Token: phase.currentToken, Name: config.Name, Session: phase.session}, nil
+		Token: phase.currentToken, Name: config.Name}, nil
 }
 
 func (phase *serverPhaseAnalysis) SendInfoNodes(stream service.AnalysisService_SendInfoNodesServer) error {

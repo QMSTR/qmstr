@@ -222,7 +222,7 @@ func (db *DataBase) insertPkgNode(node *service.PackageNode) {
 
 	// we are ready to insert the node
 	db.insertMutex.Lock()
-	packageNode, err := db.GetPackageNode(node.Session)
+	packageNode, err := db.GetPackageNode()
 	if err == nil {
 		node.Uid = packageNode.Uid
 		node.Targets = append(packageNode.Targets, node.Targets...)

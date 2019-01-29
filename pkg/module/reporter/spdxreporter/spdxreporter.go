@@ -45,9 +45,9 @@ func (r *SPDXReporter) Configure(config map[string]string) error {
 	return nil
 }
 
-func (r *SPDXReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient, session string) error {
+func (r *SPDXReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
 
-	bom, err := rserv.GetBOM(context.Background(), &service.BOMRequest{Session: session, Warnings: r.enableWarnings, Errors: r.enableErrors})
+	bom, err := rserv.GetBOM(context.Background(), &service.BOMRequest{Warnings: r.enableWarnings, Errors: r.enableErrors})
 	if err != nil {
 		return err
 	}

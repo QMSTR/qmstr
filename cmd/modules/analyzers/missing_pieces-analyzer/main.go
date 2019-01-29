@@ -47,7 +47,7 @@ func (mpanalyzer *MissingPiecesAnalyzer) Configure(configMap map[string]string) 
 	return fmt.Errorf("Misconfigured Missing Pieces Analyzer. No input file declared")
 }
 
-func (mpanalyzer *MissingPiecesAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64, session string) error {
+func (mpanalyzer *MissingPiecesAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64) error {
 	sendStream, err := analysisService.SendFileNode(context.Background())
 	if err != nil {
 		return err

@@ -30,7 +30,6 @@ message SwitchPhaseResponse {
 }
 
 message PackageRequest {
-  string session = 1;
 }
 
 message StatusMessage {

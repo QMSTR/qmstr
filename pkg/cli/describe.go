@@ -55,7 +55,7 @@ func describeNode(args []string) error {
 
 	switch nodeType {
 	case PKGNODE:
-		pkgNode, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageRequest{Session: ""})
+		pkgNode, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageRequest{})
 		if err != nil {
 			return err
 		}

@@ -19,13 +19,12 @@ func (db *DataBase) AddPackageNode(node *service.PackageNode) {
 	db.insertQueue <- node
 }
 
-func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error) {
+func (db *DataBase) GetPackageNode() (*service.PackageNode, error) {
 	var ret map[string][]*service.PackageNode
 
-	q := `query PackageNode($Session: string) {
+	q := `{
 		getPackageNode(func: has(packageNodeType)) @recurse(loop: false) {
 			uid
-			session
 			buildConfig
 			hash
 			name
@@ -39,17 +38,15 @@ func (db *DataBase) GetPackageNode(session string) (*service.PackageNode, error)
 			analyzer
 			dataNodes
 			data
-		  }}`
+		  }
+		}`
 
-	vars := map[string]string{"$Session": session}
-
-	err := db.queryNodes(q, vars, &ret)
+	err := db.queryNodesSimple(q, &ret)
 	if err != nil {
 		return nil, err
 	}
 
 	pkgNodes := ret["getPackageNode"]
-
 	if len(pkgNodes) < 1 {
 		return nil, errors.New("No package node found")
 	}
