@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/docker"
@@ -59,6 +60,10 @@ func copyExport() error {
 	if common.IsFileExist(snapshotFile) {
 		if !forceOverride {
 			return fmt.Errorf("snapshot %s already exists; use -f to overwrite", snapshotFile)
+		}
+		err := os.Remove(snapshotFile)
+		if err != nil {
+			return fmt.Errorf("failed to remove snapshot %v", err)
 		}
 	}
 	return docker.CopySnapshot(ctx, cli, mID, snapshotFile)
