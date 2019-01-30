@@ -128,16 +128,8 @@ If the steps above didn't work try the next:
 
   > make
 
-  > make install_qmstr_client
+  > make install_qmstr_client_gopath
 
-It might happen that when `make` is executed it will need superuser
-privileges and it might happen that when executing `sudo make` the
-sources won't be found within a know GOPATH/src in that case do the next:
-
-  > sudo -E make
-
-If that still doesn't work, change the lines that you added to make
-$GOPATH/bin part of you $PATH in ~/.bashrc file to /etc/profile file.
 
 ## Master installation
 
