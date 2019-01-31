@@ -16,10 +16,10 @@ package:
         workdir: "/buildroot/"
     - analyzer: spdx-analyzer
       name: "Simple SPDX Analyzer"
-      selector: sourcecode
+      config:
+        workdir: "/buildroot"
     - analyzer: scancode-analyzer
       name: "Scancode Analyzer"
-      selector: sourcecode
       trustlevel: 400
       config:
         workdir: "/buildroot"
