@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )

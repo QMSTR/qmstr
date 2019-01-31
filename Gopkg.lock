@@ -8,6 +8,16 @@
   version = "v0.4.11"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/QMSTR/go-qmstr"
+  packages = [
+    "analysis",
+    "reporting",
+    "service"
+  ]
+  revision = "e1e3790f531b4333e7802725893bd7389a9cb111"
+
+[[projects]]
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
   revision = "e1e72e9de974bd926e5c56f83753fba2df402ce5"
@@ -300,6 +310,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "fbb133a8029d2a6c5067243471e816797c7f4c8e906c2d6da91cd13bfb6736f5"
+  inputs-digest = "a3f2b2badbd2130c80bdd6556cc78eb33c94c742edbbc85f8c50c4843e9b069b"
   solver-name = "gps-cdcl"
   solver-version = 1

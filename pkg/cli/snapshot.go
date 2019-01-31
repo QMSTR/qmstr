@@ -6,7 +6,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/docker"
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 	"github.com/docker/docker/client"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"

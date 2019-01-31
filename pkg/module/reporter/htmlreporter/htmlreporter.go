@@ -14,8 +14,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
-	"github.com/QMSTR/qmstr/pkg/reporting"
+	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/go-qmstr/reporting"
 	version "github.com/hashicorp/go-version"
 )
 

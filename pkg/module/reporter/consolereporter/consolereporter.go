@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 )
 
 const (

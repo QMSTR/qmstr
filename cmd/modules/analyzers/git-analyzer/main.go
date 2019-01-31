@@ -7,9 +7,9 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/QMSTR/qmstr/pkg/analysis"
+	"github.com/QMSTR/go-qmstr/analysis"
 	"github.com/QMSTR/qmstr/pkg/master"
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 	git "gopkg.in/libgit2/git2go.v26"
 )
 

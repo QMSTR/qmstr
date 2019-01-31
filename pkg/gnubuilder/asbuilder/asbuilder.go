@@ -12,7 +12,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/gnubuilder"
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 )
 
 const undef = "undef"

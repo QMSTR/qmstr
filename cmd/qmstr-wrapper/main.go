@@ -10,7 +10,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/logging"
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 	"github.com/QMSTR/qmstr/pkg/wrapper"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"

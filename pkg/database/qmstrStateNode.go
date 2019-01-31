@@ -3,7 +3,7 @@ package database
 import (
 	"errors"
 
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 )
 
 func (db *DataBase) AddQmstrStateNode(qNode *service.QmstrStateNode) (string, error) {
