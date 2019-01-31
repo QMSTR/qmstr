@@ -1,6 +1,6 @@
-package analysis
+package main
 
-var SpdxLicenses = map[string]struct{}{
+var spdxLicenses = map[string]struct{}{
 	"0BSD":                                 struct{}{},
 	"AAL":                                  struct{}{},
 	"ADSL":                                 struct{}{},
