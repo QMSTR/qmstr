@@ -96,6 +96,7 @@ var (
 		"--eh-frame-hdr":      struct{}{},
 		"--help":              struct{}{},
 		"--as-needed":         struct{}{},
+		"--no-as-needed":      struct{}{},
 		"--gc-sections":       struct{}{},
 		"--no-gc-sections":    struct{}{},
 		"--noexecstack":       struct{}{},
