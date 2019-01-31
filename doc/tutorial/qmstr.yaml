@@ -9,7 +9,7 @@ package:
       name: "Package Analyzer"
       config:
         targetdir: "/buildroot/.libs"
-        targets: "libjson-c.4.dylib"
+        targets: "libjson-c\\.(?:so)|(?:dylib)\\.\\d\\.\\d.\\d"
     - analyzer: git-analyzer
       name: "Git Analyzer"
       config:
