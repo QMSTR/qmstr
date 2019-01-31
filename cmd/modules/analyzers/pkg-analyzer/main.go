@@ -10,10 +10,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/QMSTR/qmstr/pkg/analysis"
+	"github.com/QMSTR/go-qmstr/analysis"
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/master"
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 )
 
 type PkgAnalyzer struct {

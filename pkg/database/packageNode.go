@@ -7,7 +7,7 @@ import (
 	"log"
 	"sync/atomic"
 
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 )
 
 // AddPackageNode adds a node to the insert queue

@@ -8,7 +8,7 @@ import (
 	"log"
 	"text/template"
 
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 )
 
 // AddInfoNodes stores the given InfoNodes in a PackageNode or FileNode identified by the nodeID

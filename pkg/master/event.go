@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 	"golang.org/x/net/context"
 )
 

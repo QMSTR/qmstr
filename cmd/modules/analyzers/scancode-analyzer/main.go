@@ -15,9 +15,9 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/QMSTR/qmstr/pkg/analysis"
+	"github.com/QMSTR/go-qmstr/analysis"
 	"github.com/QMSTR/qmstr/pkg/master"
-	"github.com/QMSTR/qmstr/pkg/qmstr/service"
+	"github.com/QMSTR/go-qmstr/service"
 )
 
 const (
