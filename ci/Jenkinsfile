@@ -7,13 +7,13 @@ pipeline {
     }
 
     environment {
-    	VAGRANT_VAGRANTFILE = 'ci/Vagrantfile'
+        VAGRANT_VAGRANTFILE = 'ci/Vagrantfile'
     }
 
     stages {
         stage('DocTest') {
             steps {
-	    	sh 'git clean -ffxd'
+                sh 'git clean -ffxd'
                 sh 'vagrant up'
                 sh 'vagrant ssh -c /vagrant/ci/vagrant-test-documentation-driver.sh'
             }
