@@ -28,6 +28,7 @@ func CommitMessageSummary(message string) string {
 		summary = fmt.Sprintf("%s...", summary[:47])
 	}
 	// escape double quotes
+	summary = strings.Replace(summary, `\`, `\\`, -1)
 	summary = strings.Replace(summary, `"`, `\"`, -1)
 	return summary
 }
