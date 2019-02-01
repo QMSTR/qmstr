@@ -3,7 +3,7 @@ title = "{{{.BuildConfig}}}"
 versionid = "{{{.VersionIdentifier}}}"
 package = "{{{.Package.PackageName}}}"
 author = "{{{.Author}}}"
-summary = {{ htmlEscape "{{{summary .Message}}}" }}
+summary = {{< htmlEscape "{{{summary .Message}}}" >}}
 weight = 1
 +++
 
