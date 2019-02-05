@@ -60,6 +60,10 @@ requirements.txt:
 	echo pex >> requirements.txt
 	echo autopep8 >> requirements.txt
 
+.PHONY: pyqmstr
+pyqmstr: venv
+	venv/bin/pip install git+https://github.com/QMSTR/pyqmstr
+
 .PHONY: go_proto
 go_proto: $(GO_PROTO)
 
@@ -159,8 +163,8 @@ ratelimage:
 .PHONY: pyqmstr-spdx-analyzer
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
 
-$(QMSTR_PYTHON_SPDX_ANALYZER): $(PROTO_PYTHON_FILES)
-	venv/bin/pex ./python/pyqmstr ./python/spdx-analyzer 'grpcio==${GRPCIO_VERSION}' protobuf -e spdxanalyzer.__main__:main --python=venv/bin/python3 --disable-cache -o $@
+$(QMSTR_PYTHON_SPDX_ANALYZER): $(PROTO_PYTHON_FILES) pyqmstr
+	venv/bin/pex ./python/spdx-analyzer 'grpcio==${GRPCIO_VERSION}' protobuf pyqmstr -e spdxanalyzer.__main__:main --python=venv/bin/python3 --disable-cache -o $@
 
 python_modules: $(QMSTR_PYTHON_MODULES)
 
