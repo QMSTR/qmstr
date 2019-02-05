@@ -1,6 +1,3 @@
-PROTO_FILES := $(shell ls proto/qmstr/service/*.proto)
-PROTO_PYTHON_FILES := $(patsubst proto%,python/pyqmstr%,$(PROTO_FILES:.proto=_pb2.py)) $(patsubst proto%,python/pyqmstr%,$(PROTO_FILES:.proto=_pb2_grpc.py))
-PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
 GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
 
@@ -13,8 +10,6 @@ GO_PATH := $(shell go env GOPATH)
 GO_BIN := $(GO_PATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
 GODEP := $(GO_BIN)/dep
-PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
-PROTOC_GEN_GO_SRC := vendor/github.com/golang/protobuf/protoc-gen-go
 GRPCIO_VERSION := 1.15.0
 
 OUTDIR := out/
@@ -114,15 +109,10 @@ Gopkg.lock: $(GODEP) Gopkg.toml
 vendor: Gopkg.lock
 	${GO_BIN}/dep ensure --vendor-only
 
-$(PROTOC_GEN_GO_SRC): vendor
-
-$(PROTOC_GEN_GO): $(PROTOC_GEN_GO_SRC) 
-	(cd $(PROTOC_GEN_GO_SRC) && go install)
-
-$(QMSTR_GO_BINARIES): $(GO_PROTO) $(GO_SRCS) .go_qmstr_test 
+$(QMSTR_GO_BINARIES): $(GO_SRCS) .go_qmstr_test 
 	go build -o $@ github.com/QMSTR/qmstr/cmd/$(subst $(OUTDIR),,$@)
 
-$(QMSTR_GO_MODULES): $(GO_PROTO) $(GO_SRCS) .go_module_test
+$(QMSTR_GO_MODULES): $(GO_SRCS) .go_module_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/modules/$(subst $(OUTDIR),,$@)
 
 .PHONY: container master
@@ -145,7 +135,7 @@ ratelimage:
 .PHONY: pyqmstr-spdx-analyzer
 pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
 
-$(QMSTR_PYTHON_SPDX_ANALYZER): $(PROTO_PYTHON_FILES) pyqmstr
+$(QMSTR_PYTHON_SPDX_ANALYZER): pyqmstr
 	venv/bin/pex ./python/spdx-analyzer 'grpcio==${GRPCIO_VERSION}' protobuf pyqmstr -e spdxanalyzer.__main__:main --python=venv/bin/python3 --disable-cache -o $@
 
 python_modules: $(QMSTR_PYTHON_MODULES)
