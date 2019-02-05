@@ -46,8 +46,6 @@ endif
 .PHONY: all
 all: install_qmstr_client_gopath democontainer
 
-generate: go_proto python_proto
-
 venv: venv/bin/activate
 venv/bin/activate: requirements.txt
 	test -d venv || virtualenv -p python3 venv
@@ -70,16 +68,8 @@ go_proto: $(GO_PROTO)
 pkg/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
 	protoc -I proto --go_out=plugins=grpc:pkg proto/qmstr/service/*.proto
 
-.PHONY: python_proto
-python_proto: $(PROTO_PYTHON_FILES)
-
-python/pyqmstr/%_pb2.py python/pyqmstr/%_pb2_grpc.py : venv proto/%.proto
-	venv/bin/python -m grpc_tools.protoc -Iproto --python_out=./python/pyqmstr --grpc_python_out=./python/pyqmstr proto/qmstr/service/*.proto
-
-
 .PHONY: clean
 clean:
-	@rm -f $(PROTO_PYTHON_FILES) || true
 	@rm -f $(GO_PROTO) || true
 	@rm -r out || true
 	@rm -fr venv || true
