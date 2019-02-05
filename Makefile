@@ -1,6 +1,5 @@
 PROTO_FILES := $(shell ls proto/qmstr/service/*.proto)
 PROTO_PYTHON_FILES := $(patsubst proto%,python/pyqmstr%,$(PROTO_FILES:.proto=_pb2.py)) $(patsubst proto%,python/pyqmstr%,$(PROTO_FILES:.proto=_pb2_grpc.py))
-GO_PROTO := $(patsubst proto%,pkg%,$(PROTO_FILES:proto=pb.go))
 PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(shell find python/ -type f -name '*.py' -printf '%p '))
 GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
@@ -62,15 +61,8 @@ requirements.txt:
 pyqmstr: venv
 	venv/bin/pip install git+https://github.com/QMSTR/pyqmstr
 
-.PHONY: go_proto
-go_proto: $(GO_PROTO)
-
-pkg/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
-	protoc -I proto --go_out=plugins=grpc:pkg proto/qmstr/service/*.proto
-
 .PHONY: clean
 clean:
-	@rm -f $(GO_PROTO) || true
 	@rm -r out || true
 	@rm -fr venv || true
 	@rm requirements.txt || true
