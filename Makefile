@@ -109,10 +109,10 @@ Gopkg.lock: $(GODEP) Gopkg.toml
 vendor: Gopkg.lock
 	${GO_BIN}/dep ensure --vendor-only
 
-$(QMSTR_GO_BINARIES): $(GO_SRCS) .go_qmstr_test 
+$(QMSTR_GO_BINARIES): vendor $(GO_SRCS) .go_qmstr_test 
 	go build -o $@ github.com/QMSTR/qmstr/cmd/$(subst $(OUTDIR),,$@)
 
-$(QMSTR_GO_MODULES): $(GO_SRCS) .go_module_test
+$(QMSTR_GO_MODULES): vendor $(GO_SRCS) .go_module_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/modules/$(subst $(OUTDIR),,$@)
 
 .PHONY: container master
