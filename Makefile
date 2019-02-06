@@ -46,8 +46,6 @@ venv/bin/activate: requirements.txt
 	touch venv/bin/activate
 
 requirements.txt:
-	echo grpcio==$(GRPCIO_VERSION) >> requirements.txt
-	echo grpcio-tools==$(GRPCIO_VERSION) >> requirements.txt
 	echo pex >> requirements.txt
 	echo autopep8 >> requirements.txt
 
