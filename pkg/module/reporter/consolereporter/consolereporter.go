@@ -3,6 +3,7 @@ package consolereporter
 import (
 	"context"
 	"fmt"
+	"io"
 
 	"github.com/QMSTR/go-qmstr/service"
 )
@@ -20,21 +21,20 @@ func (r *ConsoleReporter) Configure(config map[string]string) error {
 }
 
 func (r *ConsoleReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
-	packageNode, err := cserv.GetPackageNode(context.Background(), &service.PackageRequest{})
+	stream, err := cserv.GetDiagnosticNode(context.Background(), &service.DiagnosticNode{Type: service.DiagnosticNode_ERROR})
 	if err != nil {
-		return fmt.Errorf("could not get package node: %v", err)
+		return fmt.Errorf("could not get diagnostic nodes: %v", err)
 	}
 
-	for _, target := range packageNode.Targets {
-		for _, depNode := range target.DerivedFrom {
-			for _, info := range depNode.AdditionalInfo {
-				if info.Type == "error" {
-					for _, d := range info.DataNodes {
-						fmt.Printf("ERROR: %s\n", d.Data)
-					}
-				}
+	for {
+		diagnosticNode, err := stream.Recv()
+		if err != nil {
+			if err == io.EOF {
+				break
 			}
+			return err
 		}
+		fmt.Printf("ERROR: %s\n", diagnosticNode.Message)
 	}
 	return nil
 }

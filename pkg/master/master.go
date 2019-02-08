@@ -109,6 +109,10 @@ func (s *server) GetFileNode(in *service.FileNode, stream service.ControlService
 	return s.currentPhase.GetFileNode(in, stream)
 }
 
+func (s *server) GetDiagnosticNode(in *service.DiagnosticNode, stream service.ControlService_GetDiagnosticNodeServer) error {
+	return s.currentPhase.GetDiagnosticNode(in, stream)
+}
+
 func (s *server) GetInfoData(ctx context.Context, in *service.InfoDataRequest) (*service.InfoDataResponse, error) {
 	return s.currentPhase.GetInfoData(in)
 }
