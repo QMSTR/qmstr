@@ -1,10 +1,13 @@
 package database
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
+	"text/template"
 
 	"github.com/QMSTR/go-qmstr/service"
 )
@@ -66,4 +69,46 @@ func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnodes ...*servic
 		}
 	}
 	return nil
+}
+
+//GetDiagnosticNodeByType queries diagnostic nodes on a specific type
+func (db *DataBase) GetDiagnosticNodeByType(diagnosticNode *service.DiagnosticNode) ([]*service.DiagnosticNode, error) {
+	var ret map[string][]*service.DiagnosticNode
+
+	const q = `query DiagnosticData($Type: int){
+		getDiagnosticData(func: has(diagnosticNodeType)) @filter(eq(type, 3)) {
+			diagnosticInfo
+			message
+		}}`
+
+	queryTmpl, err := template.New("diagnosticnodebytype").Parse(q)
+
+	type QueryParams struct {
+		Type int
+	}
+
+	qp := QueryParams{}
+	//get the int value from the enumeration
+	t := service.DiagnosticNode_Type_value[diagnosticNode.Type.String()]
+	nt := int(t)
+	qp.Type = nt
+
+	//convert it to string to query it
+	vars := map[string]string{"$Type": strconv.Itoa(3)}
+
+	var b bytes.Buffer
+	err = queryTmpl.Execute(&b, qp)
+	if err != nil {
+		panic(err)
+	}
+	err = db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	messages := ret["getDiagnosticData"]
+	if len(messages) < 1 {
+		return nil, fmt.Errorf("No diagnostic node %v found in the database", strconv.Itoa(nt))
+	}
+	return messages, nil
 }

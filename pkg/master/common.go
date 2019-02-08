@@ -32,6 +32,7 @@ type serverPhase interface {
 	SendPackageNode(service.AnalysisService_SendPackageNodeServer) error
 	SendDiagnosticNode(service.AnalysisService_SendDiagnosticNodeServer) error
 	GetFileNode(*service.FileNode, service.ControlService_GetFileNodeServer) error
+	GetDiagnosticNode(*service.DiagnosticNode, service.ControlService_GetDiagnosticNodeServer) error
 	GetBOM(*service.BOMRequest) (*service.BOM, error)
 	GetInfoData(*service.InfoDataRequest) (*service.InfoDataResponse, error)
 	ExportSnapshot(*service.ExportRequest) (*service.ExportResponse, error)
@@ -120,6 +121,21 @@ func (gsp *genericServerPhase) GetFileNode(in *service.FileNode, stream service.
 			nodeFile.Path = filepath.Join(gsp.masterConfig.Server.BuildPath, nodeFile.Path)
 		}
 		stream.Send(nodeFile)
+	}
+	return nil
+}
+
+func (gsp *genericServerPhase) GetDiagnosticNode(in *service.DiagnosticNode, stream service.ControlService_GetDiagnosticNodeServer) error {
+	db, err := gsp.getDataBase()
+	if err != nil {
+		return err
+	}
+	diagnosticNodes, err := db.GetDiagnosticNodeByType(in)
+	if err != nil {
+		return err
+	}
+	for _, diagnosticNode := range diagnosticNodes {
+		stream.Send(diagnosticNode)
 	}
 	return nil
 }
