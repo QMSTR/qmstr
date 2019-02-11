@@ -54,14 +54,15 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 			break
 		}
 
-		infoNodeMsg := service.InfoNodeMessage{}
+		diagnosticNodeMsg := service.DiagnosticNodeMessage{}
+
 		log.Printf("Analyzing file %s", fileNode.Path)
 		spdxIdent, lineNo, columnNo, err := detectSPDXLicense(fileNode.Path)
 		if err != nil {
 			log.Printf("%v", err)
 			// Adding warning node
-			warningNode := service.CreateWarningNode(fmt.Sprintf("%v", err))
-			infoNodeMsg = service.InfoNodeMessage{Token: token, Infonode: warningNode, Uid: fileNode.Uid}
+			diagnosticWarningNode := service.DiagnosticNode{Type: service.DiagnosticNode_WARNING, Message: fmt.Sprintf("%v", err)}
+			diagnosticNodeMsg = service.DiagnosticNodeMessage{Token: token, Diagnosticnode: &diagnosticWarningNode, Uid: fileNode.Uid}
 		} else if _, ok := spdxLicenses[spdxIdent]; !ok {
 			log.Printf("Found invalid spdx license identifier %v.", spdxIdent)
 			// Adding error node
@@ -69,35 +70,23 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 			if err != nil {
 				return err
 			}
-			errorNode := service.CreateErrorNode(fmt.Sprintf("%v:%v:%v Invalid SPDX license expression %v", file, lineNo, columnNo, spdxIdent))
-			infoNodeMsg = service.InfoNodeMessage{Token: token, Infonode: errorNode, Uid: fileNode.Uid}
+			diagnosticErrorNode := service.DiagnosticNode{Type: service.DiagnosticNode_ERROR, Message: fmt.Sprintf("%v:%v:%v Invalid SPDX license expression %v", file, lineNo, columnNo, spdxIdent)}
+			diagnosticNodeMsg = service.DiagnosticNodeMessage{Token: token, Diagnosticnode: &diagnosticErrorNode, Uid: fileNode.Uid}
 		} else {
-			licenseNode := service.InfoNode{
-				Type: "license",
-				DataNodes: []*service.InfoNode_DataNode{
-					&service.InfoNode_DataNode{
-						Type: "spdxIdentifier",
-						Data: spdxIdent,
-					},
-				},
-			}
-			infoNodeMsg = service.InfoNodeMessage{Token: token, Infonode: &licenseNode, Uid: fileNode.Uid}
+			diagnosticInfoNode := service.DiagnosticNode{Type: service.DiagnosticNode_INFO, Message: fmt.Sprintf("SPDX license expression detected: %s", spdxIdent)}
+			diagnosticNodeMsg = service.DiagnosticNodeMessage{Token: token, Diagnosticnode: &diagnosticInfoNode, Uid: fileNode.Uid}
 		}
-		sendStream, err := analysisService.SendInfoNodes(context.Background())
+		sendStream, err := analysisService.SendDiagnosticNode(context.Background())
 		if err != nil {
 			return err
 		}
-		err = sendStream.Send(&infoNodeMsg)
+		err = sendStream.Send(&diagnosticNodeMsg)
 		if err != nil {
 			return err
 		}
-
 		reply, err := sendStream.CloseAndRecv()
-		if err != nil {
-			return err
-		}
 		if reply.Success {
-			log.Println("Simple SPDX Analyzer sent InfoNodes")
+			log.Println("Simple SPDX Analyzer sent DiagnosticNodes")
 		}
 	}
 	return nil
