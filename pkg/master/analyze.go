@@ -179,3 +179,28 @@ func (phase *serverPhaseAnalysis) SendPackageNode(stream service.AnalysisService
 		phase.db.AddPackageNode(pkgNode)
 	}
 }
+
+func (phase *serverPhaseAnalysis) SendDiagnosticNode(stream service.AnalysisService_SendDiagnosticNodeServer) error {
+	for {
+		diagnosticNodeReq, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&service.SendResponse{
+				Success: true,
+			})
+		}
+		if err != nil {
+			return err
+		}
+		if diagnosticNodeReq.Token != phase.currentToken {
+			log.Println("Analyzer supplied wrong token")
+			return errors.New("wrong token supplied")
+		}
+		diagnosticNode := diagnosticNodeReq.Diagnosticnode
+		diagnosticNode.Analyzer = []*service.Analyzer{phase.currentAnalyzer}
+		err = phase.db.AddDiagnosticNodes(diagnosticNodeReq.Uid, diagnosticNode)
+		if err != nil {
+			return err
+		}
+	}
+
+}

@@ -34,6 +34,7 @@ data:string @index(hash) .
 packageNodeType:string @index(hash) .
 fileNodeType:string @index(hash) .
 infoNodeType:string @index(hash) .
+diagnosticNodeType:string @index(hash) .
 dataNodeType:string @index(hash) .
 analyzerNodeType:string @index(hash) .
 `
