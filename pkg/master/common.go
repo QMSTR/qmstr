@@ -130,7 +130,7 @@ func (gsp *genericServerPhase) GetDiagnosticNode(in *service.DiagnosticNode, str
 	if err != nil {
 		return err
 	}
-	diagnosticNodes, err := db.GetDiagnosticNodeByType(in)
+	diagnosticNodes, err := db.GetDiagnosticNodeBySeverity(in)
 	if err != nil {
 		return err
 	}

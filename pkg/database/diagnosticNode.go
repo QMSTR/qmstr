@@ -71,37 +71,37 @@ func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnodes ...*servic
 	return nil
 }
 
-//GetDiagnosticNodeByType queries diagnostic nodes on a specific type
-func (db *DataBase) GetDiagnosticNodeByType(diagnosticNode *service.DiagnosticNode) ([]*service.DiagnosticNode, error) {
+//GetDiagnosticNodeBySeverity queries diagnostic nodes on a specific severity
+func (db *DataBase) GetDiagnosticNodeBySeverity(diagnosticNode *service.DiagnosticNode) ([]*service.DiagnosticNode, error) {
 	var ret map[string][]*service.DiagnosticNode
 
-	const q = `query DiagnosticData($Type: int){
-		getDiagnosticData(func: has(diagnosticNodeType)) @filter(eq(type, 3)) {
+	const q = `query DiagnosticData($Severity: int){
+		getDiagnosticData(func: has(diagnosticNodeType)) @filter(eq(severity, $Severity)) {
 			diagnosticInfo
 			message
 		}}`
 
-	queryTmpl, err := template.New("diagnosticnodebytype").Parse(q)
+	queryTmpl, err := template.New("diagnosticnodebyseverity").Parse(q)
 
 	type QueryParams struct {
-		Type int
+		Severity int
 	}
 
 	qp := QueryParams{}
 	//get the int value from the enumeration
-	t := service.DiagnosticNode_Type_value[diagnosticNode.Type.String()]
+	t := service.DiagnosticNode_Severity_value[diagnosticNode.Severity.String()]
 	nt := int(t)
-	qp.Type = nt
+	qp.Severity = nt
 
 	//convert it to string to query it
-	vars := map[string]string{"$Type": strconv.Itoa(3)}
+	vars := map[string]string{"$Severity": strconv.Itoa(nt)}
 
 	var b bytes.Buffer
 	err = queryTmpl.Execute(&b, qp)
 	if err != nil {
 		panic(err)
 	}
-	err = db.queryNodes(q, vars, &ret)
+	err = db.queryNodes(b.String(), vars, &ret)
 	if err != nil {
 		return nil, err
 	}
