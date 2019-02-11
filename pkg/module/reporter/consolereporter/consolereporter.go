@@ -21,7 +21,7 @@ func (r *ConsoleReporter) Configure(config map[string]string) error {
 }
 
 func (r *ConsoleReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
-	stream, err := cserv.GetDiagnosticNode(context.Background(), &service.DiagnosticNode{Type: service.DiagnosticNode_ERROR})
+	stream, err := cserv.GetDiagnosticNode(context.Background(), &service.DiagnosticNode{Severity: service.DiagnosticNode_ERROR})
 	if err != nil {
 		return fmt.Errorf("could not get diagnostic nodes: %v", err)
 	}

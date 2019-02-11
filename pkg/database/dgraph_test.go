@@ -46,6 +46,7 @@ dataNodeType:string @index(hash) .
 fileNodeType:string @index(hash) .
 infoNodeType:string @index(hash) .
 diagnosticNodeType:string @index(hash) .
+severity:string @index(hash) .
 additionalInfo:uid .
 packageNodeType:string @index(hash) .
 analyzerNodeType:string @index(hash) .
