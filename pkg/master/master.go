@@ -68,6 +68,10 @@ func (s *server) SendPackageNode(stream service.AnalysisService_SendPackageNodeS
 	return s.currentPhase.SendPackageNode(stream)
 }
 
+func (s *server) SendDiagnosticNode(stream service.AnalysisService_SendDiagnosticNodeServer) error {
+	return s.currentPhase.SendDiagnosticNode(stream)
+}
+
 func (s *server) GetBOM(ctx context.Context, in *service.BOMRequest) (*service.BOM, error) {
 	return s.currentPhase.GetBOM(in)
 }
