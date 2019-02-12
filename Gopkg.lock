@@ -15,7 +15,7 @@
     "reporting",
     "service"
   ]
-  revision = "e1e3790f531b4333e7802725893bd7389a9cb111"
+  revision = "04c8ee450fa05d06d1e9a87fd9dce8eee029dfb4"
 
 [[projects]]
   name = "github.com/Sirupsen/logrus"
@@ -37,7 +37,7 @@
     "protos/api",
     "y"
   ]
-  revision = "a97eb8186a3aad431ad42af9d8128945c7d69ceb"
+  revision = "d5a1729ba70542920754c5fd2e9d5ad64fe886a5"
 
 [[projects]]
   name = "github.com/docker/distribution"
@@ -174,8 +174,8 @@
     ".",
     "mem"
   ]
-  revision = "a5d6946387efe7d64d09dcba68cdd523dc1273a3"
-  version = "v1.2.0"
+  revision = "f4711e4db9e9a1d3887343acb72b2bbfc2f686f5"
+  version = "v1.2.1"
 
 [[projects]]
   name = "github.com/spf13/cobra"
@@ -202,7 +202,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "057139ce5d2bdbe6fe73c53679e24e9cf007f637"
+  revision = "74369b46fc6756741c016591724fd1cb8e26845f"
 
 [[projects]]
   branch = "master"
@@ -219,7 +219,7 @@
     "proxy",
     "trace"
   ]
-  revision = "4b62a64f59f73840b9ab79204c94fee61cd1ba2c"
+  revision = "65e2d4e15006aab9813ff8769e768bbf4bb667a0"
 
 [[projects]]
   branch = "master"
@@ -228,7 +228,7 @@
     "unix",
     "windows"
   ]
-  revision = "b90733256f2e882e81d52f9126de08df5615afd9"
+  revision = "3b5209105503162ded1863c307ac66fec31120dd"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -255,7 +255,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "8819c946db4494a2259bf100a377f51aa585d893"
+  revision = "4b09977fb92221987e99d190c8f88f2c92727a29"
 
 [[projects]]
   name = "google.golang.org/grpc"
@@ -310,6 +310,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a3f2b2badbd2130c80bdd6556cc78eb33c94c742edbbc85f8c50c4843e9b069b"
+  inputs-digest = "ad7cb710f6753efba1939a4d8b97b9c9d439363529f36019e8ce4fd4fa38bc2a"
   solver-name = "gps-cdcl"
   solver-version = 1
