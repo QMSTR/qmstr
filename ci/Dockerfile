@@ -3,6 +3,8 @@ ARG DGRAPH_VERSION=1.0.9
 ARG HUGO_VERSION=0.39
 ARG SCANCODE_VERSION=2.9.1
 
+## runtimebase ##
+
 # this stage contains all 3rd party dependencies
 FROM ubuntu:18.04 as runtimebase
 
@@ -43,6 +45,7 @@ RUN temp_dir=$(mktemp -d 2>/dev/null) && \
     rmdir ${temp_dir}
 RUN rm /tmp/dgraph*
 
+## builder ##
 
 # Create a container that only builds the software to be installed into the master container:
 FROM ubuntu:18.04 as builder
@@ -51,14 +54,10 @@ ENV GOPATH /go
 ENV PATH ${GOPATH}/bin:$PATH
 ENV DEBIAN_FRONTEND=noninteractive
 
-# install golang
+# install dependecies
 RUN apt-get update && apt-get install -y \
-    curl golang autoconf git libgit2-dev libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
-
-# install build deps
-RUN apt-get update && apt-get install -y \
-    git protobuf-compiler python-virtualenv python-dev && \
-    rm -rf /var/lib/apt/lists/*
+    curl golang autoconf git libgit2-dev libio-captureoutput-perl \
+    && rm -rf /var/lib/apt/lists/*
 
 # install golang tools
 RUN mkdir -p ${GOPATH}/src/github.com/QMSTR/qmstr && \
@@ -74,6 +73,7 @@ RUN make $GOPATH/bin/dep
 RUN touch ${GOPATH}/src/github.com/QMSTR/qmstr/Gopkg.*
 RUN make install_qmstr_all
 
+## master_unit_tests ##
 
 # separate stage just to run the master unit tests:
 FROM builder as master_unit_tests
@@ -82,6 +82,23 @@ LABEL org.qmstr.image master_unit_tests
 
 WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
 CMD make gotest
+
+## qmstr_spdx_analyzer ##
+
+# build the python spdx analyzer
+FROM ubuntu:18.04 as qmstr_spdx_analyzer
+
+LABEL org.qmstr.image qmstr_spdx_analyzer
+
+# install build deps
+RUN apt-get update && apt-get install -y \
+    git make python-virtualenv python-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /
+RUN git clone https://github.com/QMSTR/qmstr-spdx-analyzer && cd qmstr-spdx-analyzer && make
+
+## runtime ##
 
 # the runtime stage contains all the elements needed to run the master and the analysis tools:
 FROM runtimebase as runtime
@@ -99,9 +116,14 @@ ADD ci/common.inc /common.inc
 RUN mkdir -p /go/bin
 COPY --from=builder /usr/local/bin/* /usr/local/bin/
 
+# copy qmstr-qmstr_spdx_analyzer from its stagr
+COPY --from=qmstr_spdx_analyzer /qmstr-spdx-analyzer/spdx-analyzer /usr/local/bin/qmstr_spdx_analyzer
+
 EXPOSE 50051
 
 VOLUME /buildroot
+
+## master ##
 
 # release master container, based on the runtime stage:
 FROM runtime as master
@@ -116,6 +138,8 @@ RUN chmod +x /docker-entrypoint.sh
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
+## web ##
+
 # debug stage for container running ratel
 FROM ubuntu:18.04 as web
 
@@ -129,6 +153,8 @@ EXPOSE 8000
 EXPOSE 8080
 
 CMD /entrypoint.sh
+
+## dev ##
 
 # development container for the master and other tools, based on the runtime stage:
 # The $GOROOT/src directory can be mounted in as a volume, to allow testing of local changes.
