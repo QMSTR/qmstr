@@ -59,7 +59,7 @@ func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnodes ...*servic
 		if err != nil {
 			return err
 		}
-	} else {
+	} else if _, ok := receiverNode["fileNodeType"]; ok {
 		fileNode := service.FileNode{}
 		fileNode.Uid = nodeID
 		fileNode.DiagnosticInfo = diagnosticInfo
@@ -67,6 +67,8 @@ func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnodes ...*servic
 		if err != nil {
 			return err
 		}
+	} else {
+		return fmt.Errorf("wrong type of node. Can't connect diagnostic nodes to it")
 	}
 	return nil
 }
