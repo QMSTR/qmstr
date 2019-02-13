@@ -17,8 +17,6 @@ QMSTR_GO_REPORTERS := $(foreach rep, $(shell ls cmd/modules/reporters), ${OUTDIR
 QMSTR_GO_BUILDERS := $(foreach builder, qmstr-wrapper, ${OUTDIR}$(builder))
 QMSTR_CLIENT_BINARIES := $(foreach cli, qmstrctl qmstr, ${OUTDIR}$(cli)) $(QMSTR_GO_BUILDERS)
 QMSTR_MASTER := $(foreach bin, qmstr-master, ${OUTDIR}$(bin))
-QMSTR_PYTHON_SPDX_ANALYZER := ${OUTDIR}pyqmstr-spdx-analyzer
-QMSTR_PYTHON_MODULES := $(QMSTR_PYTHON_SPDX_ANALYZER)
 QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_GO_ANALYZERS) $(QMSTR_GO_REPORTERS) $(QMSTR_PYTHON_MODULES)
 QMSTR_GO_BINARIES := $(QMSTR_MASTER) $(QMSTR_CLIENT_BINARIES)
 QMSTR_GO_MODULES := $(QMSTR_GO_ANALYZERS) $(QMSTR_GO_REPORTERS)
@@ -39,25 +37,10 @@ endif
 .PHONY: all
 all: install_qmstr_client_gopath democontainer
 
-venv: venv/bin/activate
-venv/bin/activate: requirements.txt
-	test -d venv || virtualenv -p python3 venv
-	venv/bin/pip install -Ur requirements.txt
-	touch venv/bin/activate
-
-requirements.txt:
-	echo pex >> requirements.txt
-	echo autopep8 >> requirements.txt
-
-wheels: venv
-	venv/bin/pip wheel -w ./wheels git+https://github.com/QMSTR/pyqmstr
 
 .PHONY: clean
 clean:
 	@rm -r out || true
-	@rm -fr venv || true
-	@rm -fr wheels || true
-	@rm requirements.txt || true
 	@rm -fr vendor || true
 	@rm .go_module_test .go_qmstr_test || true
 
@@ -65,14 +48,6 @@ clean:
 cleanall: clean
 	@docker rmi ${CONTAINER_TAG_DEV} ${CONTAINER_TAG_MASTER} ${CONTAINER_TAG_RUNTIME} || true
 	@docker image prune --all --force --filter=label=org.qmstr.image
-
-.PHONY: checkpep8
-checkpep8: $(PYTHON_FILES) venv
-	venv/bin/autopep8 --diff $(filter-out venv, $^)
-
-.PHONY: autopep8
-autopep8: $(PYTHON_FILES) venv
-	venv/bin/autopep8 -i $(filter-out venv, $^)
 
 .go_module_test: $(GO_MODULE_SRCS)
 	go test $(GO_MODULE_PKGS)
@@ -128,17 +103,6 @@ democontainer: container
 .PHONY: ratelimage
 ratelimage:
 	docker build -f ci/Dockerfile -t qmstr-ratel --target web $(DOCKER_PROXY) .
-
-.PHONY: pyqmstr-spdx-analyzer
-pyqmstr-spdx-analyzer: $(QMSTR_PYTHON_SPDX_ANALYZER)
-
-$(QMSTR_PYTHON_SPDX_ANALYZER): wheels
-	venv/bin/pex ./python/spdx-analyzer pyqmstr -e spdxanalyzer.__main__:main --python=venv/bin/python3 --disable-cache -f ./wheels -o $@
-
-python_modules: $(QMSTR_PYTHON_MODULES)
-
-install_python_modules: $(QMSTR_PYTHON_MODULES)
-	cp $^ /usr/local/bin
 
 install_qmstr_server: $(QMSTR_SERVER_BINARIES)
 	cp $^ /usr/local/bin
