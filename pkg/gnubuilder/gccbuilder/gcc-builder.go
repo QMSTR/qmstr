@@ -10,10 +10,10 @@ import (
 
 	"github.com/spf13/afero"
 
+	pb "github.com/QMSTR/go-qmstr/service"
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/gnubuilder"
-	pb "github.com/QMSTR/go-qmstr/service"
 	"github.com/spf13/pflag"
 )
 
@@ -65,8 +65,10 @@ func (g *GccBuilder) GetName() string {
 	switch g.Builder {
 	case "gcc":
 		return "GNU C compiler builder"
-	default:
+	case "g++":
 		return "GNU C++ compiler builder"
+	default:
+		return "unknown C/C++ compiler builder"
 	}
 }
 
