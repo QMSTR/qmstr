@@ -38,6 +38,7 @@ hash:string @index(exact) .
 name:string @index(hash) .
 path:string @index(hash,trigram) .
 type:string @index(hash) .
+trustLevel:string @index(hash) .
 fileType:int @index(int) .
 phase:int .
 dataNodes:uid @reverse .

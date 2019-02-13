@@ -32,6 +32,7 @@ name:string @index(hash) .
 dataNodes:uid @reverse .
 data:string @index(hash) .
 projectNodeType:string @index(hash) .
+trustLevel:string @index(hash) .
 packageNodeType:string @index(hash) .
 fileNodeType:string @index(hash) .
 infoNodeType:string @index(hash) .

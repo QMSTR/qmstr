@@ -72,6 +72,74 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 	return nil
 }
 
+// GetInfoDataByTrustLevel returns infonodes containing the datanodes detected from the most trusted analyzer
+func (db *DataBase) GetInfoDataByTrustLevel(fileID string, infotype string) ([]*service.InfoNode, error) {
+	var ret map[string][]*service.InfoNode
+
+	const q = `query InfoData($ID: string, $Itype: string){
+		var(func: uid($ID)) @recurse(loop: false) {
+			name
+			T as additionalInfo @filter(eq(type, $Itype))
+		}
+		var(func: uid(T)){
+			type
+			analyzer{
+				tr as trustLevel
+				name
+			}
+		}
+		var(){
+			A as trustLevel: max(val(tr))
+		}
+		getInfoData(func: uid(T)) @recurse(loop: false) {
+			name
+			type
+			analyzer @filter(eq(trustLevel, val(A)))
+			trustLevel
+			dataNodes
+			data
+		}
+	  }`
+
+	queryTmpl, err := template.New("infodatabytrustlevel").Parse(q)
+
+	type QueryParams struct {
+		ID    string
+		Itype string
+	}
+	qp := QueryParams{}
+
+	vars := map[string]string{"$ID": fileID, "$Itype": infotype}
+
+	var b bytes.Buffer
+	err = queryTmpl.Execute(&b, qp)
+	if err != nil {
+		panic(err)
+	}
+	err = db.queryNodes(b.String(), vars, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	infoData := ret["getInfoData"]
+	if len(infoData) < 1 {
+		return nil, nil
+	}
+
+	realData := []*service.InfoNode{}
+
+	for _, info := range infoData {
+		// infoData contains all the infodata attached to the filenode (with the declared info type)
+		// but the query returns only the most trusted analyzer connected to the infonodes
+		// So only info nodes with an analyzer attached are the trustworthy data
+		if len(info.Analyzer) != 0 {
+			realData = append(realData, info)
+		}
+	}
+
+	return realData, nil
+}
+
 func (db *DataBase) GetInfoData(rootNodeID string, infotype string, datatype string) ([]string, error) {
 	const q = `
 	query InfoData($id: string, $itype: string, $dtype: string){
