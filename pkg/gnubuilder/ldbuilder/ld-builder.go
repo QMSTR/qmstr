@@ -47,7 +47,6 @@ func NewLdBuilder(workDir string, logger *log.Logger, debug bool) *LdBuilder {
 		GeneralBuilder: builder.NewGeneralBuilder(logger, debug)}
 }
 
-//TODO use ccache
 func (ld *LdBuilder) GetPrefix() (string, error) {
 	return "", errors.New("ld not prefixed")
 }
