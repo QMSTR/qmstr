@@ -66,7 +66,6 @@ RUN mkdir -p ${GOPATH}/src/github.com/QMSTR/qmstr && \
     mkdir ${GOPATH}/src/github.com/QMSTR/qmstr/pkg
 ADD cmd ${GOPATH}/src/github.com/QMSTR/qmstr/cmd
 ADD pkg ${GOPATH}/src/github.com/QMSTR/qmstr/pkg
-ADD proto ${GOPATH}/src/github.com/QMSTR/qmstr/proto
 ADD python ${GOPATH}/src/github.com/QMSTR/qmstr/python
 ADD Makefile ${GOPATH}/src/github.com/QMSTR/qmstr/Makefile
 COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
