@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -32,11 +33,20 @@ type GccBuilder struct {
 	staticLink bool
 	StaticLibs map[string]struct{}
 	ActualLibs map[string]string
+	Ccache     string
 	builder.GeneralBuilder
 }
 
 func NewGccBuilder(workDir string, logger *log.Logger, debug bool) *GccBuilder {
-	return &GccBuilder{
+	var ccacheCmd *exec.Cmd
+	// setup ccache if possible
+	ccachePath := common.FindExecutablesOnPath("ccache")
+	if len(ccachePath) > 0 {
+		ccacheCmd = exec.Command(ccachePath[0], "-s")
+		ccacheCmd.Start()
+	}
+
+	builder := GccBuilder{
 		Builder:        "",
 		Mode:           gnubuilder.ModeLink,
 		Input:          []string{},
@@ -49,14 +59,21 @@ func NewGccBuilder(workDir string, logger *log.Logger, debug bool) *GccBuilder {
 		staticLink:     false,
 		StaticLibs:     map[string]struct{}{},
 		ActualLibs:     map[string]string{},
-		GeneralBuilder: builder.GeneralBuilder{Logger: logger, Debug: debug, Afs: afero.NewOsFs()}}
+		GeneralBuilder: builder.GeneralBuilder{Logger: logger, Debug: debug, Afs: afero.NewOsFs()},
+	}
+
+	if ccacheCmd != nil {
+		if err := ccacheCmd.Wait(); err != nil {
+			builder.Ccache = ccacheCmd.Path
+		}
+	}
+
+	return &builder
 }
 
 func (g *GccBuilder) GetPrefix() (string, error) {
-	// setup ccache if possible
-	ccachePath := common.FindExecutablesOnPath("ccache")
-	if len(ccachePath) > 0 {
-		return ccachePath[0], nil
+	if g.Ccache != "" {
+		return g.Ccache, nil
 	}
 	return "", errors.New("Ccache not found")
 }
