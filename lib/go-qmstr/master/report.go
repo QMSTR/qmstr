@@ -77,28 +77,16 @@ func (phase *serverPhaseReport) GetInfoData(in *service.InfoDataRequest) (*servi
 	}
 	var infos []string
 
-	if in.Datatype == "" {
+	if in.Infotype == "" {
 		infos, err = db.GetAllInfoData(in.Infotype)
 		if err != nil {
 			return nil, err
 		}
-		return &service.InfoDataResponse{Data: infos}, nil
 	} else {
-		infos, err = db.GetInfoData(in.RootID, in.Infotype, in.Datatype)
+		infos, err = db.GetInfoDataByTrustLevel(in.RootID, in.Infotype)
 	}
 	if err != nil {
 		return nil, err
 	}
-
-	infoSet := map[string]struct{}{}
-	for _, data := range infos {
-		infoSet[data] = struct{}{}
-	}
-
-	uniqInfos := []string{}
-	for key := range infoSet {
-		uniqInfos = append(uniqInfos, key)
-	}
-
-	return &service.InfoDataResponse{Data: uniqInfos}, nil
+	return &service.InfoDataResponse{Data: infos}, nil
 }
