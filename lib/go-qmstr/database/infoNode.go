@@ -73,7 +73,7 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 }
 
 // GetInfoDataByTrustLevel returns infonodes containing the datanodes detected from the most trusted analyzer
-func (db *DataBase) GetInfoDataByTrustLevel(fileID string, infotype string) ([]*service.InfoNode, error) {
+func (db *DataBase) GetInfoDataByTrustLevel(fileID string, infotype string) ([]string, error) {
 	var ret map[string][]*service.InfoNode
 
 	const q = `query InfoData($ID: string, $Itype: string){
@@ -126,14 +126,16 @@ func (db *DataBase) GetInfoDataByTrustLevel(fileID string, infotype string) ([]*
 		return nil, nil
 	}
 
-	realData := []*service.InfoNode{}
+	realData := []string{}
 
 	for _, info := range infoData {
 		// infoData contains all the infodata attached to the filenode (with the declared info type)
 		// but the query returns only the most trusted analyzer connected to the infonodes
 		// So only info nodes with an analyzer attached are the trustworthy data
-		if len(info.Analyzer) != 0 {
-			realData = append(realData, info)
+		if len(info.Analyzer) > 0 {
+			for _, data := range info.DataNodes {
+				realData = append(realData, data.Data)
+			}
 		}
 	}
 
