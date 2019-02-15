@@ -77,10 +77,6 @@ func (s *server) SendInfoNodes(stream service.AnalysisService_SendInfoNodesServe
 	return s.currentPhase.SendInfoNodes(stream)
 }
 
-func (s *server) SendFileNode(stream service.AnalysisService_SendFileNodeServer) error {
-	return s.currentPhase.SendFileNode(stream)
-}
-
 func (s *server) SendPackageNode(stream service.AnalysisService_SendPackageNodeServer) error {
 	return s.currentPhase.SendPackageNode(stream)
 }
