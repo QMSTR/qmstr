@@ -58,7 +58,7 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 		if err != nil {
 			return err
 		}
-	} else {
+	} else if _, ok := receiverNode["fileNodeType"]; ok {
 		fileNode := service.FileNode{}
 		fileNode.Uid = nodeID
 		fileNode.AdditionalInfo = additionalInfo
@@ -66,6 +66,8 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 		if err != nil {
 			return err
 		}
+	} else {
+		return fmt.Errorf("wrong type of node. Can't connect info nodes to it")
 	}
 	return nil
 }
