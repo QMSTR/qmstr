@@ -8,6 +8,9 @@ const (
 	QMSTRDEBUGENV = "QMSTR_DEBUG"
 	// CCACHEDIRENV is the name of the environment variable that stores the path to the ccache cache directory
 	CCACHEDIRENV = "CCACHE_DIR"
+	// QMSTRGCC is the name of the environment variable that defines if gcc wrapper is running
+	// It is used to skip as, or ld commands when wrapping gcc builder
+	QMSTRGCC = "QMSTR_GCC"
 )
 
 // ContainerBuildDir is where the source code gets mounted in the qmstr-master container
