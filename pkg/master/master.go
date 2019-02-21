@@ -11,11 +11,14 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"golang.org/x/net/context"
 
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
-	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 	"google.golang.org/grpc"
 )
 
@@ -74,6 +77,10 @@ func (s *server) SendDiagnosticNode(stream service.AnalysisService_SendDiagnosti
 
 func (s *server) GetBOM(ctx context.Context, in *service.BOMRequest) (*service.BOM, error) {
 	return s.currentPhase.GetBOM(in)
+}
+
+func (s *server) Package(stream service.BuildService_PackageServer) error {
+	return status.Error(codes.Unimplemented, "Package method unimplemented")
 }
 
 func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest) (*service.PackageNode, error) {

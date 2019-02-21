@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/QMSTR/qmstr/pkg/logging"
-	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )

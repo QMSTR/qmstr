@@ -11,7 +11,7 @@ import (
 
 	"github.com/spf13/afero"
 
-	pb "github.com/QMSTR/go-qmstr/service"
+	pb "github.com/QMSTR/qmstr/pkg/service"
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/gnubuilder"

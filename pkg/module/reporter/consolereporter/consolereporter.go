@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 const (

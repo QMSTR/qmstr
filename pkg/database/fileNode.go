@@ -11,7 +11,7 @@ import (
 	"sync/atomic"
 	"text/template"
 
-	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 // AddBuildFileNode adds a node to the insert queue in build phase

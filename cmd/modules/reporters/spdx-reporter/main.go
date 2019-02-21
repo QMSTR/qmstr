@@ -6,7 +6,7 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/master"
 	"github.com/QMSTR/qmstr/pkg/module/reporter/spdxreporter"
-	"github.com/QMSTR/go-qmstr/reporting"
+	"github.com/QMSTR/qmstr/pkg/reporting"
 )
 
 func main() {

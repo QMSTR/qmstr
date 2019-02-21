@@ -11,6 +11,12 @@ GO_BIN := $(GO_PATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
 GODEP := $(GO_BIN)/dep
 
+PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
+PROTOC_GEN_GO_SRC := vendor/github.com/golang/protobuf/protoc-gen-go
+
+PROTO_FILES := $(shell ls proto/*.proto)
+GO_PROTO := $(patsubst proto%,pkg/service%,$(PROTO_FILES:proto=pb.go))
+
 OUTDIR := out/
 QMSTR_GO_ANALYZERS := $(foreach ana, $(shell ls cmd/modules/analyzers), ${OUTDIR}analyzers/$(ana))
 QMSTR_GO_REPORTERS := $(foreach rep, $(shell ls cmd/modules/reporters), ${OUTDIR}reporters/$(rep))
@@ -114,3 +120,11 @@ install_qmstr_all: install_qmstr_client install_qmstr_server
 
 install_qmstr_client_gopath: $(QMSTR_CLIENT_BINARIES)
 	cp $^ ${GO_PATH}/bin/
+
+
+.PHONY: go_proto
+proto: $(GO_PROTO)
+	echo $(GO_PROTO)
+
+pkg/service/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
+	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
