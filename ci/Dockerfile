@@ -117,7 +117,7 @@ RUN mkdir -p /go/bin
 COPY --from=builder /usr/local/bin/* /usr/local/bin/
 
 # copy qmstr-qmstr_spdx_analyzer from its stagr
-COPY --from=qmstr_spdx_analyzer /qmstr-spdx-analyzer/spdx-analyzer /usr/local/bin/qmstr_spdx_analyzer
+COPY --from=qmstr_spdx_analyzer /qmstr-spdx-analyzer/spdx-analyzer /usr/local/bin/qmstr-spdx-analyzer
 
 EXPOSE 50051
 
