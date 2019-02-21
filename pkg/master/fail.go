@@ -4,7 +4,7 @@ import (
 	"errors"
 	"log"
 
-	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 type serverPhaseFailure struct {

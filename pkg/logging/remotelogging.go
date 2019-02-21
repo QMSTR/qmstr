@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	pb "github.com/QMSTR/go-qmstr/service"
+	pb "github.com/QMSTR/qmstr/pkg/service"
 )
 
 // RemoteLogWriter can be used as logger sink that sends the log messages to the server

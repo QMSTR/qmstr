@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"text/template"
 
-	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 // AddDiagnosticNodes stores the given DiagnosticNodes in a PackageNode or FileNode identified by the nodeID

@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/QMSTR/qmstr/pkg/database"
-	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 var nonPosixChars = regexp.MustCompile(`[^A-Za-z0-9\._-]`)

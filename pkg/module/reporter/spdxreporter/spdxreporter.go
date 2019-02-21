@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/QMSTR/qmstr/pkg/common"
-	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spdx/tools-golang/v0/spdx"
 	"github.com/spdx/tools-golang/v0/tvsaver"
 )

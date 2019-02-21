@@ -11,7 +11,7 @@ import (
 	"github.com/QMSTR/qmstr/pkg/gnubuilder"
 	"github.com/spf13/pflag"
 
-	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 const undef = "undef"

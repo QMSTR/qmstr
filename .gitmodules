@@ -1,0 +1,4 @@
+[submodule "proto"]
+	path = proto
+	url = https://github.com/QMSTR/qmstr-proto.git
+	branch = master

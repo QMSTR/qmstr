@@ -1,6 +1,6 @@
 package database
 
-import "github.com/QMSTR/go-qmstr/service"
+import "github.com/QMSTR/qmstr/pkg/service"
 
 func (db *DataBase) GetAnalyzerByName(name string) (*service.Analyzer, error) {
 	var ret map[string][]*service.Analyzer

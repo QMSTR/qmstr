@@ -66,6 +66,3 @@ required = ["github.com/golang/protobuf/protoc-gen-go"]
   branch = "master"
   name = "github.com/spdx/tools-golang"
 
-[[constraint]]
-  branch = "master"
-  name = "github.com/QMSTR/go-qmstr"
