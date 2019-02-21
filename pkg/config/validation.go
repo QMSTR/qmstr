@@ -14,10 +14,6 @@ func validateConfig(configuration *MasterConfig) error {
 		return fmt.Errorf("empty configuration -- check indentation")
 	}
 
-	if configuration.BuildConfig == "" {
-		return errors.New("Invalid empty BuildConfig")
-	}
-
 	serveraddress := strings.Split(configuration.Server.RPCAddress, ":")
 	if len(serveraddress) != 2 {
 		return errors.New("Invalid RPC address")
