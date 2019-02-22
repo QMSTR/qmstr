@@ -42,6 +42,7 @@ fileType:int @index(int) .
 phase:int .
 dataNodes:uid @reverse .
 buildConfig:string .
+projectNodeType:string @index(hash) .
 dataNodeType:string @index(hash) .
 fileNodeType:string @index(hash) .
 infoNodeType:string @index(hash) .
