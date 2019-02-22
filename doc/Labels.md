@@ -31,16 +31,16 @@ Note that the command returned the correct empty value, but succeeded. Querying 
 Error: Label "some-label" undefined on node "file:src/main.c".
 ```
 
-Re-creating an existing label will simply change its value:
+Re-creating an existing label will simply change its value. This adds the version that was missing when the label was initially created:
 
-    > qmstrctl label set file:src/main.c MODIFIED yes
+    > qmstrctl label set file:src/main.c MODIFIED 0.3.0
     > qmstrctl label get file:src/main.c MODIFIED
-    yes
+    0.3.0
 
 A label is removed using the `delete` command:
 
     > qmstrctl label get file:src/main.c MODIFIED
-    yes
+    0.3.0
     > qmstrctl label delete file:src/main.c MODIFIED
 
 Reading the label after deleting it results in an error:
