@@ -42,22 +42,20 @@ type ServerConfig struct {
 }
 
 type MasterConfig struct {
-	Name        string
-	BuildConfig string
-	MetaData    map[string]string
-	Server      *ServerConfig
-	Analysis    []Analysis
-	Reporting   []Reporting
+	Name      string
+	MetaData  map[string]string
+	Server    *ServerConfig
+	Analysis  []Analysis
+	Reporting []Reporting
 }
 
 type QmstrConfig struct {
-	Package *MasterConfig
+	Project *MasterConfig
 }
 
 func getDefaultConfig() *QmstrConfig {
 	return &QmstrConfig{
-		Package: &MasterConfig{
-			BuildConfig: "default",
+		Project: &MasterConfig{
 			Server: &ServerConfig{DBWorkers: 2, RPCAddress: ":50051", DBAddress: "localhost:9080",
 				ExtraEnv: map[string]string{}, ExtraMount: map[string]string{},
 			},
@@ -91,7 +89,7 @@ func ReadConfigFromFiles(configfiles ...string) (*MasterConfig, error) {
 		return nil, errors.New("No configuration file found")
 	}
 
-	return config.Package, nil
+	return config.Project, nil
 }
 
 func ReadConfigFromBytes(data []byte) (*MasterConfig, error) {
@@ -100,7 +98,7 @@ func ReadConfigFromBytes(data []byte) (*MasterConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	return config.Package, err
+	return config.Project, err
 }
 
 func readConfig(data []byte, configuration *QmstrConfig) error {
@@ -108,7 +106,7 @@ func readConfig(data []byte, configuration *QmstrConfig) error {
 	if err != nil {
 		return err
 	}
-	err = validateConfig(configuration.Package)
+	err = validateConfig(configuration.Project)
 	if err != nil {
 		return err
 	}
@@ -116,7 +114,7 @@ func readConfig(data []byte, configuration *QmstrConfig) error {
 }
 
 func SerializeConfig(config *MasterConfig) ([]byte, error) {
-	data, err := yaml.Marshal(QmstrConfig{Package: config})
+	data, err := yaml.Marshal(QmstrConfig{Project: config})
 	return data, err
 }
 
