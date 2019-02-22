@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 func TestInvalidIdentifier(t *testing.T) {

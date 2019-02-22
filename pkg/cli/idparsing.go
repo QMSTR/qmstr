@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/QMSTR/go-qmstr/service"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 var ErrInvalidNodeIdent = errors.New("Invalid node identifier")
