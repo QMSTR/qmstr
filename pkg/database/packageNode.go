@@ -31,6 +31,7 @@ func (db *DataBase) GetPackageNode() (*service.PackageNode, error) {
 			type
 			targets
 			derivedFrom
+			dependencies
 			fileType
 			path
 			additionalInfo
