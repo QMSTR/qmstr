@@ -35,9 +35,9 @@ Install The depencencies:
 
   - If you are running an Ubuntu machine:
 
-    > sudo apt update 
-    
-    > sudo apt install golang protobuf-compiler
+    > sudo apt update
+
+	> sudo apt install golang protobuf-compiler
 
     - Install Docker: https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
