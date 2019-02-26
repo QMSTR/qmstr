@@ -108,6 +108,7 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 			  path
 			  type
 			  derivedFrom
+			  dependencies
 			  additionalInfo
 			  confidenceScore
 			  analyzer
