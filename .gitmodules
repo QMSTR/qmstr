@@ -2,3 +2,6 @@
 	path = proto
 	url = https://github.com/QMSTR/qmstr-proto.git
 	branch = master
+[submodule "doc/themes/hugo-theme-techdoc"]
+	path = doc/themes/hugo-theme-techdoc
+	url = https://github.com/thingsym/hugo-theme-techdoc.git
