@@ -1,7 +1,13 @@
-# Qmstr.yaml
+---
+title: "Configuration"
+date: 2019-01-17T15:26:15Z
+lastmod: 2019-01-17T15:26:15Z
+draft: false
+weight: 3
+---
 
-`Qmstr.yaml` is the QMSTR's configuration file. It holds information about the 
-analysis and reporting phase of a QMSTR process. 
+`qmstr.yaml` is QMSTR's project level configuration file. It holds
+information about the analysis and reporting phase of a QMSTR process.
 
 Let's assume we want to run the JSON-C library as the project under analysis.
 The `qmstr.yaml` file for this project would look like this:
