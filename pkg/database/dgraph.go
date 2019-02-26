@@ -175,6 +175,22 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 		}
 	}
 
+	for idx, dep := range node.Dependencies {
+		if dep.Uid == "" {
+			// missing dep
+			ready = false
+			// look up dep in db
+			uid, err := db.GetFileNodeUid(dep.Hash)
+			if err != nil {
+				panic(err)
+			}
+			// found uid
+			if uid != "" {
+				node.Dependencies[idx].Uid = uid
+			}
+		}
+	}
+
 	if !ready {
 		// put node back to queue
 		go func() { db.insertQueue <- node }()

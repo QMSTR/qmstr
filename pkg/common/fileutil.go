@@ -151,6 +151,11 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 			return err
 		}
 	}
+	for _, dep := range f.Dependencies {
+		if err := SanitizeFileNode(dep, base, pathSub, db, f.Path); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
