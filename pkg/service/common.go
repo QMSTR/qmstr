@@ -59,6 +59,9 @@ func (fn *FileNode) Describe(less bool, indent string) string {
 	for _, fnode := range fn.DerivedFrom {
 		describe = append(describe, fnode.Describe(less, indent))
 	}
+	for _, dep := range fn.Dependencies {
+		describe = append(describe, dep.Describe(less, indent))
+	}
 	return strings.Join(describe, "\n")
 }
 
