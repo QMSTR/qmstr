@@ -28,7 +28,7 @@ attribute can be:
 and value, the value of the attribute.
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		setUpServer()
+		setUpControlService()
 		if err := describeNode(args); err != nil {
 			Log.Fatalf("Describe failed: %v", err)
 		}

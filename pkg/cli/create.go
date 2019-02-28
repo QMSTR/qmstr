@@ -13,7 +13,7 @@ var createCmd = &cobra.Command{
 	Short: "create a new node",
 	Long:  "create a new node described by an node identifier",
 	Run: func(cmd *cobra.Command, args []string) {
-		setUpServer()
+		setUpControlService()
 		createNode(args)
 		tearDownServer()
 	},
