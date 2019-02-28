@@ -10,15 +10,15 @@ import (
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
-var ErrInvalidNodeIdent = errors.New("Invalid node identifier")
+var ErrEmptyNodeIdent = errors.New("Empty node identifier")
 var ErrInvalidAttribute = errors.New("Invalid attribute")
 var ErrCallByValue = errors.New("you shall not call setFieldValue by value")
 
 func ParseNodeID(nodeid string) (interface{}, error) {
-	nodeIDTokens := strings.Split(nodeid, ":")
-	if len(nodeIDTokens) < 2 {
-		return nil, ErrInvalidNodeIdent
+	if nodeid == "" {
+		return nil, ErrEmptyNodeIdent
 	}
+	nodeIDTokens := strings.Split(nodeid, ":")
 	switch nodeIDTokens[0] {
 	case "file":
 		return createResult(&service.FileNode{}, "Path", nodeIDTokens[1:])
@@ -39,6 +39,10 @@ func createResult(node interface{}, defaultAttribute string, args []string) (int
 	var attr string
 	var value string
 
+	// empty node
+	if len(args) < 1 {
+		return node, nil
+	}
 	// set default attribute
 	if len(args) < 2 {
 		attr = defaultAttribute
