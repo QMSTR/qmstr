@@ -19,3 +19,9 @@ The command follows the generic syntax of the database commands to reference nod
 For example:
 
     > qmstrctl describe file:name:debug.o
+
+    > qmstrctl describe file:name:debug.o --less
+
+the --less flag, will traverse the tree and will ignore the information that has been collected 
+from the analyzers (info nodes and data nodes). If --less flag is not provided then the `describe` 
+command will print out all the nodes in the database connected to our node.
