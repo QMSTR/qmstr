@@ -16,7 +16,7 @@ var statusCmd = &cobra.Command{
 	Short: "prints server status",
 	Long:  `prints the server status`,
 	Run: func(cmd *cobra.Command, args []string) {
-		setUpServer()
+		setUpControlService()
 		getStatus()
 		tearDownServer()
 	},

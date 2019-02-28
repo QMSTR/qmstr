@@ -27,7 +27,7 @@ var quitCmd = &cobra.Command{
 				Log.Fatalf("copying results failed: %v", err)
 			}
 		}
-		setUpServer()
+		setUpControlService()
 		quitServer()
 		tearDownServer()
 		stopMasterContainer()

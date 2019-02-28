@@ -48,7 +48,7 @@ func Execute() {
 }
 
 // Set up connection to the server
-func setUpServer() {
+func setUpControlService() {
 	if len(address) == 0 {
 		address = os.Getenv("QMSTR_MASTER")
 	}

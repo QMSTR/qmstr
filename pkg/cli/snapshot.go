@@ -20,7 +20,7 @@ var snapshotCmd = &cobra.Command{
 	Short: "Take snapshot of qmstr-master server",
 	Long:  `Create a database export of the graph database`,
 	Run: func(cmd *cobra.Command, args []string) {
-		setUpServer()
+		setUpControlService()
 		if err := exportGraph(); err != nil {
 			Log.Fatalf("snapshot creation failed: %v", err)
 		}
