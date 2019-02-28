@@ -124,7 +124,7 @@ func startMaster(cmd *cobra.Command, args []string) {
 	address = fmt.Sprintf("%s:%s", portBinding.HostIP, portBinding.HostPort)
 
 	if wait {
-		setUpServer()
+		setUpControlService()
 		defer tearDownServer()
 		awaitServer()
 	}

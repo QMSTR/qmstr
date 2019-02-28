@@ -32,7 +32,7 @@ and node, can be:
 	- node path 
 	- node type`,
 	Run: func(cmd *cobra.Command, args []string) {
-		setUpServer()
+		setUpControlService()
 		if err := describeNode(args); err != nil {
 			Log.Fatalf("Describe failed: %v", err)
 		}
