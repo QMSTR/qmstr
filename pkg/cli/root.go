@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"errors"
+	"fmt"
 	golog "log" // avoid having "log" in the namespace
 	"os"
 
@@ -14,6 +16,7 @@ import (
 var (
 	conn                 *grpc.ClientConn
 	controlServiceClient service.ControlServiceClient
+	buildServiceClient   service.BuildServiceClient
 	// AddressOptional means the command does not require a server address (version, start, ...)
 	AddressOptional bool
 	address         string
@@ -47,21 +50,40 @@ func Execute() {
 	}
 }
 
-// Set up connection to the server
-func setUpControlService() {
+func setupConnection() error {
+	if conn != nil {
+		return nil
+	}
 	if len(address) == 0 {
 		address = os.Getenv("QMSTR_MASTER")
 	}
 	if len(address) == 0 {
-		Log.Fatalln("Error: master address not specified")
+		return errors.New("Error: master address not specified")
 	}
 	var err error
 	conn, err = grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
-		Log.Fatalf("Failed to setup connection to master: %v", err)
+		return fmt.Errorf("Failed to setup connection to master: %v", err)
 	}
-	Debug.Printf("Connection to master at %v set up\n", address)
+	return nil
+}
+
+// Set up connection to the control service
+func setUpControlService() {
+	if err := setupConnection(); err != nil {
+		Log.Fatalf("Failed to setup control service connection: %v", err)
+	}
 	controlServiceClient = service.NewControlServiceClient(conn)
+	Debug.Printf("Connection to control service at %v set up\n", address)
+}
+
+// Set up connection to the build service
+func setUpBuildService() {
+	if err := setupConnection(); err != nil {
+		Log.Fatalf("Failed to setup build service connection: %v", err)
+	}
+	buildServiceClient = service.NewBuildServiceClient(conn)
+	Debug.Printf("Connection to build service at %v set up\n", address)
 }
 
 func tearDownServer() {
