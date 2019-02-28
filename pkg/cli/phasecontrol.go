@@ -16,7 +16,7 @@ var anaCmd = &cobra.Command{
 	Long:  `Start analysis phase on the master server.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		setUpServer()
+		setUpControlService()
 		startPhase(service.Phase_ANALYSIS)
 		tearDownServer()
 	},
@@ -28,7 +28,7 @@ var reportCmd = &cobra.Command{
 	Long:  `Start report phase on the master server.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		setUpServer()
+		setUpControlService()
 		startPhase(service.Phase_REPORT)
 		tearDownServer()
 	},

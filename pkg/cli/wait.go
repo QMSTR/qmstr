@@ -17,7 +17,7 @@ var waitCmd = &cobra.Command{
 	Long: `waits until the server is ready. If 60 seconds pass 
 	then it exits with an error message.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		setUpServer()
+		setUpControlService()
 		awaitServer()
 		tearDownServer()
 	},
