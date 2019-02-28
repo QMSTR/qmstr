@@ -9,8 +9,8 @@ import (
 )
 
 func TestInvalidIdentifier(t *testing.T) {
-	_, err := ParseNodeID("invalid")
-	if err != ErrInvalidNodeIdent {
+	_, err := ParseNodeID("")
+	if err != ErrEmptyNodeIdent {
 		t.Fail()
 	}
 }
@@ -103,16 +103,23 @@ func TestCallByValue(t *testing.T) {
 func TestFileNodeParsing(t *testing.T) {
 	fileNode, err := ParseNodeID("file:/dev/null")
 	if err != nil {
-		t.Fail()
+		t.FailNow()
 	}
 	if fileNode.(*service.FileNode).Path != "/dev/null" {
 		t.Fail()
 	}
 	fileNode, err = ParseNodeID("file:hash:deadbeef")
 	if err != nil {
-		t.Fail()
+		t.FailNow()
 	}
 	if fileNode.(*service.FileNode).Hash != "deadbeef" {
+		t.Fail()
+	}
+	fileNode, err = ParseNodeID("file")
+	if err != nil {
+		t.FailNow()
+	}
+	if fileNode.(*service.FileNode).Hash != "" {
 		t.Fail()
 	}
 }
