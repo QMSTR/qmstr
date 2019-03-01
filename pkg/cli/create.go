@@ -17,7 +17,7 @@ var cmdFlags *pflag.FlagSet
 var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "create a new node",
-	Long:  "create a new node described by an node identifier",
+	Long:  "create a new node described by a node identifier",
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpBuildService()
 		cmdFlags = cmd.Flags()
