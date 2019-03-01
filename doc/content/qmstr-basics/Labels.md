@@ -1,4 +1,9 @@
-# Node labels in Quartermaster
+---
+title: "Node labels in Quartermaster"
+date: 2019-02-27T09:48:15Z
+draft: false
+weight: 30
+---
 
 Node labels are used to flexibly add data to nodes based on key-value pairs. For example, if a build process consists of multiple stages, a label can be used to mark nodes with the stage during which they are created. Or a target program generated during the build could be marked with a release milestone name. The labelling functionality allows for user-defined concepts to be flexibly represented in the knowledge graph.
 
@@ -48,6 +53,6 @@ Reading the label after deleting it results in an error:
 ```shell {shelldocexitcode=1}
 > qmstrctl label get file:src/main.c MODIFIED
 Error: Label "MODIFIED" undefined on node "file:src/main.c".
-````
+```
 
 There are no practical limits to the number of labels or the size of the label values attached to a node.
