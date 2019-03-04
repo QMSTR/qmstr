@@ -38,13 +38,13 @@ func generateFlags(structure interface{}, targetFlagSet *pflag.FlagSet) error {
 
 		switch field.Kind() {
 		case reflect.String:
-			targetFlagSet.String(structName+fieldName, "", fmt.Sprintf("Set %s's %s", structName, fieldName))
+			targetFlagSet.String(fieldName, "", fmt.Sprintf("Set %s's %s", structName, fieldName))
 		case reflect.Int64:
-			targetFlagSet.Int64(structName+fieldName, 0, fmt.Sprintf("Set %s's %s", structName, fieldName))
+			targetFlagSet.Int64(fieldName, 0, fmt.Sprintf("Set %s's %s", structName, fieldName))
 		case reflect.Int32:
-			targetFlagSet.Int32(structName+fieldName, 0, fmt.Sprintf("Set %s's %s", structName, fieldName))
+			targetFlagSet.Int32(fieldName, 0, fmt.Sprintf("Set %s's %s", structName, fieldName))
 		case reflect.Bool:
-			targetFlagSet.Bool(structName+fieldName, false, fmt.Sprintf("Set %s's %s", structName, fieldName))
+			targetFlagSet.Bool(fieldName, false, fmt.Sprintf("Set %s's %s", structName, fieldName))
 		}
 	}
 	return nil
@@ -81,24 +81,8 @@ func setField(nodeStruct interface{}, attribute string, value interface{}) error
 	return nil
 }
 
-func visitFileNodeFlag(flag *pflag.Flag) {
-	if err := visitNodeFlag(flag, "FileNode"); err != nil {
-		log.Fatalf("Failed to evaluate package node flags: %v", err)
-	}
-}
-
-func visitPkgNodeFlag(flag *pflag.Flag) {
-	if err := visitNodeFlag(flag, "PackageNode"); err != nil {
-		log.Fatalf("Failed to evaluate package node flags: %v", err)
-	}
-}
-
-func visitNodeFlag(flag *pflag.Flag, nodeType string) error {
-	if !strings.HasPrefix(flag.Name, nodeType) {
-		return fmt.Errorf("Can not set %s on %s", flag.Name, nodeType)
-	}
-
-	fieldName := strings.TrimPrefix(flag.Name, nodeType)
+func visitNodeFlag(flag *pflag.Flag) {
+	fieldName := flag.Name
 	var value interface{}
 	var err error
 
@@ -106,24 +90,23 @@ func visitNodeFlag(flag *pflag.Flag, nodeType string) error {
 	case "bool":
 		value, err = cmdFlags.GetBool(flag.Name)
 		if err != nil {
-			return err
+			log.Fatalf("Failed to evaluate node flags: %v", err)
 		}
 	case "string":
 		value, err = cmdFlags.GetString(flag.Name)
 		if err != nil {
-			return err
+			log.Fatalf("Failed to evaluate node flags: %v", err)
 		}
 	case "int64":
 		value, err = cmdFlags.GetInt64(flag.Name)
 		if err != nil {
-			return err
+			log.Fatalf("Failed to evaluate node flags: %v", err)
 		}
 	case "int32":
 		value, err = cmdFlags.GetInt32(flag.Name)
 		if err != nil {
-			return err
+			log.Fatalf("Failed to evaluate node flags: %v", err)
 		}
 	}
 	setField(currentNode, fieldName, value)
-	return nil
 }

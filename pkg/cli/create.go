@@ -18,6 +18,12 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "create a new node",
 	Long:  "create a new node described by a node identifier",
+}
+
+var createFileCmd = &cobra.Command{
+	Use:   "file",
+	Short: "create a new file node",
+	Long:  "create a new file node described by a node identifier",
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpBuildService()
 		cmdFlags = cmd.Flags()
@@ -26,7 +32,21 @@ var createCmd = &cobra.Command{
 			log.Fatalf("Failed to create node: %v", err)
 		}
 		tearDownServer()
+	},
+}
 
+var createPkgCmd = &cobra.Command{
+	Use:   "package",
+	Short: "create a new package node",
+	Long:  "create a new package node described by a node identifier",
+	Run: func(cmd *cobra.Command, args []string) {
+		setUpBuildService()
+		cmdFlags = cmd.Flags()
+		err := createNode(args[0], true)
+		if err != nil {
+			log.Fatalf("Failed to create node: %v", err)
+		}
+		tearDownServer()
 	},
 }
 
@@ -34,16 +54,21 @@ func init() {
 	var err error
 	generatedFlags := &pflag.FlagSet{}
 	rootCmd.AddCommand(createCmd)
+
 	err = generateFlags(&service.FileNode{}, generatedFlags)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
-	createCmd.Flags().AddFlagSet(generatedFlags)
+	createFileCmd.Flags().AddFlagSet(generatedFlags)
+	createCmd.AddCommand(createFileCmd)
+
+	generatedFlags = &pflag.FlagSet{}
 	err = generateFlags(&service.PackageNode{}, generatedFlags)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
-	createCmd.Flags().AddFlagSet(generatedFlags)
+	createPkgCmd.Flags().AddFlagSet(generatedFlags)
+	createCmd.AddCommand(createPkgCmd)
 }
 
 func createNode(nodeIdent string, send bool) error {
@@ -52,9 +77,12 @@ func createNode(nodeIdent string, send bool) error {
 	if err != nil {
 		return err
 	}
+
+	// set fields according to flags
+	cmdFlags.Visit(visitNodeFlag)
+
 	switch reflect.TypeOf(currentNode) {
 	case reflect.TypeOf((*service.FileNode)(nil)):
-		cmdFlags.Visit(visitFileNodeFlag)
 		log.Printf("Got file node %v", currentNode.(*service.FileNode).Describe(true, ""))
 		if send {
 			stream, err := buildServiceClient.Build(context.Background())
@@ -72,7 +100,6 @@ func createNode(nodeIdent string, send bool) error {
 			return nil
 		}
 	case reflect.TypeOf((*service.PackageNode)(nil)):
-		cmdFlags.Visit(visitPkgNodeFlag)
 		log.Printf("Got pkg node %v", currentNode.(*service.PackageNode).Describe(true))
 		if send {
 			log.Fatalf("Sending package nodes not yet supported")
