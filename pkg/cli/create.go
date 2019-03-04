@@ -92,7 +92,6 @@ func createNode(nodeIdent string, send bool) error {
 
 	switch reflect.TypeOf(currentNode) {
 	case reflect.TypeOf((*service.FileNode)(nil)):
-		log.Printf("Got file node %v", currentNode.(*service.FileNode).Describe(true, ""))
 		if send {
 			stream, err := buildServiceClient.Build(context.Background())
 			if err != nil {
@@ -109,7 +108,6 @@ func createNode(nodeIdent string, send bool) error {
 			return nil
 		}
 	case reflect.TypeOf((*service.PackageNode)(nil)):
-		log.Printf("Got pkg node %v", currentNode.(*service.PackageNode).Describe(true))
 		if send {
 			br, err := buildServiceClient.CreatePackage(context.Background(), currentNode.(*service.PackageNode))
 			if err != nil {
@@ -117,6 +115,17 @@ func createNode(nodeIdent string, send bool) error {
 			}
 			if !br.Success {
 				return errors.New("sending package failed")
+			}
+			return nil
+		}
+	case reflect.TypeOf((*service.ProjectNode)(nil)):
+		if send {
+			br, err := buildServiceClient.CreateProject(context.Background(), currentNode.(*service.ProjectNode))
+			if err != nil {
+				return err
+			}
+			if !br.Success {
+				return errors.New("sending project failed")
 			}
 			return nil
 		}
