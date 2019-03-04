@@ -24,6 +24,8 @@ type Builder interface {
 	GetName() string
 	GetPrefix() (string, error)
 	SetStdinChannel(chan []byte)
+	Setup() error
+	TearDown() error
 }
 
 type GeneralBuilder struct {
@@ -43,6 +45,14 @@ func (gb *GeneralBuilder) SetStdinChannel(stdin chan []byte) {
 
 func (gb *GeneralBuilder) GetPushFile() (*service.PushFileMessage, error) {
 	return nil, ErrNoPushFile
+}
+
+func (gb *GeneralBuilder) Setup() error {
+	return nil
+}
+
+func (gb *GeneralBuilder) TearDown() error {
+	return nil
 }
 
 func NewFileNode(path string, fileType service.FileNode_Type) *service.FileNode {

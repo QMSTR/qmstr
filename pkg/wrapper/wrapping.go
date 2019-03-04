@@ -47,20 +47,33 @@ func NewWrapper(commandline []string, workdir string, logger *log.Logger, debug 
 }
 
 func getBuilder(prog string, workDir string, logger *log.Logger, debug bool) (builder.Builder, error) {
+	var currentBuilder builder.Builder
+	var err error
 	switch prog {
 	case "gcc", "g++":
-		os.Setenv("QMSTR_GCC", "true")
-		return gccbuilder.NewGccBuilder(workDir, logger, debug), nil
+		currentBuilder, err = gccbuilder.NewGccBuilder(workDir, logger, debug), nil
 	case "ar":
-		return arbuilder.NewArBuilder(workDir, logger, debug), nil
+		currentBuilder, err = arbuilder.NewArBuilder(workDir, logger, debug), nil
 	case "ld":
-		return ldbuilder.NewLdBuilder(workDir, logger, debug), nil
+		currentBuilder, err = ldbuilder.NewLdBuilder(workDir, logger, debug), nil
 	case "as":
-		return asbuilder.NewAsBuilder(workDir, logger, debug), nil
+		currentBuilder, err = asbuilder.NewAsBuilder(workDir, logger, debug), nil
 	case "objcopy":
-		return objcopybuilder.NewObjcopyBuilder(workDir, logger, debug), nil
+		currentBuilder, err = objcopybuilder.NewObjcopyBuilder(workDir, logger, debug), nil
+	default:
+		err = fmt.Errorf("Builder %s not available", prog)
 	}
-	return nil, fmt.Errorf("Builder %s not available", prog)
+	if err != nil {
+		return nil, err
+	}
+
+	currentBuilder.Setup()
+
+	return currentBuilder, nil
+}
+
+func (w *Wrapper) Exit() {
+	w.Builder.TearDown()
 }
 
 // Wrap calls the actual program to be wrapped and preserves output and return value
