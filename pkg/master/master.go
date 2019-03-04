@@ -51,6 +51,14 @@ func (s *server) PushFile(ctx context.Context, in *service.PushFileMessage) (*se
 	return s.currentPhase.PushFile(in)
 }
 
+func (s *server) CreatePackage(ctx context.Context, in *service.PackageNode) (*service.BuildResponse, error) {
+	return s.currentPhase.CreatePackage(in)
+}
+
+func (s *server) CreateProject(ctx context.Context, in *service.ProjectNode) (*service.BuildResponse, error) {
+	return s.currentPhase.CreateProject(in)
+}
+
 func (s *server) GetAnalyzerConfig(ctx context.Context, in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
 	return s.currentPhase.GetAnalyzerConfig(in)
 }
