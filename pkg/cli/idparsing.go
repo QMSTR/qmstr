@@ -38,7 +38,7 @@ func ParseNodeID(nodeid string) (interface{}, error) {
 	case "package":
 		return createResult(&service.PackageNode{}, "Name", nodeIDTokens)
 	case "project":
-		return nil, fmt.Errorf("%s not yet supported", nodeType)
+		return createResult(&service.ProjectNode{}, "Name", nodeIDTokens)
 	case "info":
 		return nil, fmt.Errorf("%s not yet supported", nodeType)
 	case "data":
