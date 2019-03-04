@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -90,6 +91,10 @@ func (g *GccBuilder) GetName() string {
 }
 
 func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
+	os.Setenv(common.QMSTRWRAPGCC, "")
+	// Unset environment variable before we end
+	defer os.Unsetenv(common.QMSTRWRAPGCC)
+
 	if g.Debug {
 		g.Logger.Printf("Parsing commandline %v", commandline)
 	}

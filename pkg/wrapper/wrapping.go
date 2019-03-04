@@ -49,7 +49,6 @@ func NewWrapper(commandline []string, workdir string, logger *log.Logger, debug 
 func getBuilder(prog string, workDir string, logger *log.Logger, debug bool) (builder.Builder, error) {
 	switch prog {
 	case "gcc", "g++":
-		os.Setenv("QMSTR_GCC", "true")
 		return gccbuilder.NewGccBuilder(workDir, logger, debug), nil
 	case "ar":
 		return arbuilder.NewArBuilder(workDir, logger, debug), nil

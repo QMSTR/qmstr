@@ -10,7 +10,7 @@ const (
 	CCACHEDIRENV = "CCACHE_DIR"
 	// QMSTRGCC is the name of the environment variable that defines if gcc wrapper is running
 	// It is used to skip as, or ld commands when wrapping gcc builder
-	QMSTRGCC = "QMSTR_GCC"
+	QMSTRWRAPGCC = "QMSTR_WRAPPING_GCC"
 )
 
 // ContainerBuildDir is where the source code gets mounted in the qmstr-master container

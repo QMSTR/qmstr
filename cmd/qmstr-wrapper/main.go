@@ -70,14 +70,6 @@ func main() {
 	}
 	w.Wrap()
 
-	_, gccCalled := os.LookupEnv(common.QMSTRGCC)
-	// skip as or ld when wrapping gcc
-	if (w.Program == "as" || w.Program == "ld") && gccCalled {
-		if debug {
-			logger.Printf("Skipping %v", w.Program)
-		}
-		return
-	}
 	fileNodes, err := w.Builder.Analyze(commandLine)
 	switch err {
 	case nil:
@@ -120,10 +112,6 @@ func main() {
 			if err := stream.Send(fileNode); err != nil {
 				log.Fatalf("Failed to send filenode to server")
 			}
-		}
-		// Unset environment variable before we end
-		if gccCalled {
-			os.Unsetenv("QMSTR_GCC")
 		}
 	case builder.ErrBuilderModeNotImplemented:
 		logger.Printf("WARNING for %s: \"%s\": %v", w.Builder.GetName(), commandLine, err)

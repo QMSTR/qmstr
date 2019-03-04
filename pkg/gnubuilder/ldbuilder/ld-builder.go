@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -57,6 +58,11 @@ func (ld *LdBuilder) GetName() string {
 }
 
 func (ld *LdBuilder) Analyze(commandline []string) ([]*service.FileNode, error) {
+	// skip when wrapping gcc
+	if _, gccCalled := os.LookupEnv(common.QMSTRWRAPGCC); gccCalled {
+		return []*service.FileNode{}, nil
+	}
+
 	if err := ld.parseCommandLine(commandline[1:]); err != nil {
 		return nil, fmt.Errorf("Failed to parse commandline: %v", err)
 	}
