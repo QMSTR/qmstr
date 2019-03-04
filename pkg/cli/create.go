@@ -24,30 +24,31 @@ var createFileCmd = &cobra.Command{
 	Use:   "file",
 	Short: "create a new file node",
 	Long:  "create a new file node described by a node identifier",
-	Run: func(cmd *cobra.Command, args []string) {
-		setUpBuildService()
-		cmdFlags = cmd.Flags()
-		err := createNode(args[0], true)
-		if err != nil {
-			log.Fatalf("Failed to create node: %v", err)
-		}
-		tearDownServer()
-	},
+	Run:   create,
 }
 
 var createPkgCmd = &cobra.Command{
 	Use:   "package",
 	Short: "create a new package node",
 	Long:  "create a new package node described by a node identifier",
-	Run: func(cmd *cobra.Command, args []string) {
-		setUpBuildService()
-		cmdFlags = cmd.Flags()
-		err := createNode(args[0], true)
-		if err != nil {
-			log.Fatalf("Failed to create node: %v", err)
-		}
-		tearDownServer()
-	},
+	Run:   create,
+}
+
+var createProjCmd = &cobra.Command{
+	Use:   "project",
+	Short: "create a new project node",
+	Long:  "create a new project node described by a node identifier",
+	Run:   create,
+}
+
+func create(cmd *cobra.Command, args []string) {
+	setUpBuildService()
+	cmdFlags = cmd.Flags()
+	err := createNode(args[0], true)
+	if err != nil {
+		log.Fatalf("Failed to create node: %v", err)
+	}
+	tearDownServer()
 }
 
 func init() {
@@ -69,6 +70,14 @@ func init() {
 	}
 	createPkgCmd.Flags().AddFlagSet(generatedFlags)
 	createCmd.AddCommand(createPkgCmd)
+
+	generatedFlags = &pflag.FlagSet{}
+	err = generateFlags(&service.ProjectNode{}, generatedFlags)
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+	createProjCmd.Flags().AddFlagSet(generatedFlags)
+	createCmd.AddCommand(createProjCmd)
 }
 
 func createNode(nodeIdent string, send bool) error {
@@ -102,7 +111,14 @@ func createNode(nodeIdent string, send bool) error {
 	case reflect.TypeOf((*service.PackageNode)(nil)):
 		log.Printf("Got pkg node %v", currentNode.(*service.PackageNode).Describe(true))
 		if send {
-			log.Fatalf("Sending package nodes not yet supported")
+			br, err := buildServiceClient.CreatePackage(context.Background(), currentNode.(*service.PackageNode))
+			if err != nil {
+				return err
+			}
+			if !br.Success {
+				return errors.New("sending package failed")
+			}
+			return nil
 		}
 	}
 	return nil
