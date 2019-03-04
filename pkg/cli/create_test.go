@@ -14,7 +14,7 @@ func TestStringFlagNodeCreation(t *testing.T) {
 	if err != nil {
 		log.Printf("%v", err)
 	}
-	cmdFlags.Parse([]string{"--Name", "foobar", "--Path", "/dev/null"})
+	cmdFlags.Parse([]string{"--name", "foobar", "--path", "/dev/null"})
 	if err = createNode("file:hash:12345", false); err != nil {
 		t.FailNow()
 	}
@@ -29,7 +29,7 @@ func TestBoolFlagNodeCreation(t *testing.T) {
 	if err != nil {
 		log.Printf("%v", err)
 	}
-	cmdFlags.Parse([]string{"--Broken"})
+	cmdFlags.Parse([]string{"--broken"})
 	if err = createNode("file:hash:12345", false); err != nil {
 		t.FailNow()
 	}
@@ -44,7 +44,7 @@ func TestIntFlagNodeCreation(t *testing.T) {
 	if err != nil {
 		log.Printf("%v", err)
 	}
-	cmdFlags.Parse([]string{"--FileType", "2"})
+	cmdFlags.Parse([]string{"--filetype", "2"})
 	if err = createNode("file:hash:12345", false); err != nil {
 		t.FailNow()
 	}
@@ -59,7 +59,7 @@ func TestStringPackageNodeCreation(t *testing.T) {
 	if err != nil {
 		log.Printf("%v", err)
 	}
-	cmdFlags.Parse([]string{"--BuildConfig", "foobar"})
+	cmdFlags.Parse([]string{"--buildconfig", "foobar"})
 	if err = createNode("package:TestPackage", false); err != nil {
 		t.FailNow()
 	}
