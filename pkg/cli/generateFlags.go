@@ -36,6 +36,9 @@ func generateFlags(structure interface{}, targetFlagSet *pflag.FlagSet) error {
 			continue
 		}
 
+		// flags should be lower case
+		fieldName = strings.ToLower(fieldName)
+
 		switch field.Kind() {
 		case reflect.String:
 			targetFlagSet.String(fieldName, "", fmt.Sprintf("Set %s's %s", structName, fieldName))
@@ -61,6 +64,17 @@ func setField(nodeStruct interface{}, attribute string, value interface{}) error
 
 	if kind := val.Kind(); kind != reflect.Struct {
 		return fmt.Errorf("Not a struct: %v", kind)
+	}
+
+	// find right field
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		if !field.IsValid() || !field.CanSet() {
+			continue
+		}
+		if strings.ToLower(val.Type().Field(i).Name) == attribute {
+			attribute = val.Type().Field(i).Name
+		}
 	}
 
 	field := val.FieldByName(attribute)
