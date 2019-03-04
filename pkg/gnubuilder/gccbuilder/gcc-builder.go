@@ -5,16 +5,17 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/spf13/afero"
 
-	pb "github.com/QMSTR/qmstr/pkg/service"
 	"github.com/QMSTR/qmstr/pkg/builder"
 	"github.com/QMSTR/qmstr/pkg/common"
 	"github.com/QMSTR/qmstr/pkg/gnubuilder"
+	pb "github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spf13/pflag"
 )
 
@@ -90,6 +91,10 @@ func (g *GccBuilder) GetName() string {
 }
 
 func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
+	os.Setenv(common.QMSTRWRAPGCC, "")
+	// Unset environment variable before we end
+	defer os.Unsetenv(common.QMSTRWRAPGCC)
+
 	if g.Debug {
 		g.Logger.Printf("Parsing commandline %v", commandline)
 	}
