@@ -44,7 +44,6 @@ var internalMasterPort string
 var configFile string
 var wait bool
 var debug bool
-var buildConfig string
 var seed string
 
 func getConfig() (*config.MasterConfig, error) {
@@ -76,11 +75,6 @@ func startMaster(cmd *cobra.Command, args []string) {
 	config, err := getConfig()
 	if err != nil {
 		Log.Fatalf("failed to read configuration %v", err)
-	}
-
-	// overwrite buildconfig if set via commandline
-	if buildConfig != "" {
-		config.BuildConfig = buildConfig
 	}
 
 	if config.Server.BuildPath == "" {
@@ -329,6 +323,5 @@ func init() {
 	startCmd.Flags().BoolVar(&wait, "wait", false, "wait for qmstr-master")
 	startCmd.Flags().IntVarP(&timeout, "timeout", "t", 60, "timeout after the specified time (seconds). Used after the wait flag")
 	startCmd.Flags().StringVarP(&configFile, "config", "c", "qmstr.yaml", "Path to qmstr configuration file")
-	startCmd.Flags().StringVar(&buildConfig, "buildconfig", "", "Set build configuration")
 	startCmd.Flags().StringVar(&seed, "seed", "", "Replay dgraph export on init")
 }

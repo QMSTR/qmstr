@@ -36,7 +36,9 @@ func (phase *serverPhaseInit) Activate() error {
 
 	if !snapshotAvailable() {
 		phase.db.OpenInsertQueue()
-		phase.initPackage()
+		if len(phase.masterConfig.MetaData) != 0 {
+			phase.initProject()
+		}
 		phase.db.CloseInsertQueue()
 		return nil
 	}
@@ -139,18 +141,18 @@ func importSnapshot() error {
 	return nil
 }
 
-func (phase *serverPhaseInit) initPackage() {
-	rootPackageNode := &service.PackageNode{Name: phase.masterConfig.Name, BuildConfig: phase.masterConfig.BuildConfig}
+func (phase *serverPhaseInit) initProject() {
+	projectNode := &service.ProjectNode{Name: phase.masterConfig.Name}
 	tmpInfoNode := &service.InfoNode{Type: "metadata"}
 	for key, val := range phase.masterConfig.MetaData {
 		tmpInfoNode.DataNodes = append(tmpInfoNode.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val})
 	}
 
 	if len(tmpInfoNode.DataNodes) > 0 {
-		rootPackageNode.AdditionalInfo = []*service.InfoNode{tmpInfoNode}
+		projectNode.AdditionalInfo = []*service.InfoNode{tmpInfoNode}
 	}
 
-	phase.db.AddPackageNode(rootPackageNode)
+	phase.db.AddProjectNode(projectNode)
 }
 
 func (phase *serverPhaseInit) Shutdown() error {
