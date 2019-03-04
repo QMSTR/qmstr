@@ -39,6 +39,8 @@ type serverPhase interface {
 	requestExport() error
 	getPostInitPhase() service.Phase
 	PushFile(*service.PushFileMessage) (*service.PushFileResponse, error)
+	CreateProject(*service.ProjectNode) (*service.BuildResponse, error)
+	CreatePackage(*service.PackageNode) (*service.BuildResponse, error)
 }
 
 type genericServerPhase struct {
@@ -80,6 +82,14 @@ func (gsp *genericServerPhase) Build(stream service.BuildService_BuildServer) er
 }
 
 func (gsp *genericServerPhase) PushFile(in *service.PushFileMessage) (*service.PushFileResponse, error) {
+	return nil, errors.New("Wrong phase")
+}
+
+func (gsp *genericServerPhase) CreatePackage(in *service.PackageNode) (*service.BuildResponse, error) {
+	return nil, errors.New("Wrong phase")
+}
+
+func (gsp *genericServerPhase) CreateProject(in *service.ProjectNode) (*service.BuildResponse, error) {
 	return nil, errors.New("Wrong phase")
 }
 
