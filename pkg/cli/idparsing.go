@@ -14,24 +14,37 @@ var ErrEmptyNodeIdent = errors.New("Empty node identifier")
 var ErrInvalidAttribute = errors.New("Invalid attribute")
 var ErrCallByValue = errors.New("you shall not call setFieldValue by value")
 
-func ParseNodeID(nodeid string) (interface{}, error) {
+func TokenizeNodeID(nodeid string) (string, []string, error) {
 	if nodeid == "" {
-		return nil, ErrEmptyNodeIdent
+		return "", nil, ErrEmptyNodeIdent
 	}
 	nodeIDTokens := strings.Split(nodeid, ":")
-	switch nodeIDTokens[0] {
+	nodetype := nodeIDTokens[0]
+	tokens := []string{}
+	if len(nodeIDTokens) > 1 {
+		tokens = nodeIDTokens[1:]
+	}
+	return nodetype, tokens, nil
+}
+
+func ParseNodeID(nodeid string) (interface{}, error) {
+	nodeType, nodeIDTokens, err := TokenizeNodeID(nodeid)
+	if err != nil {
+		return nil, err
+	}
+	switch nodeType {
 	case "file":
-		return createResult(&service.FileNode{}, "Path", nodeIDTokens[1:])
+		return createResult(&service.FileNode{}, "Path", nodeIDTokens)
 	case "package":
-		return createResult(&service.PackageNode{}, "Name", nodeIDTokens[1:])
+		return createResult(&service.PackageNode{}, "Name", nodeIDTokens)
 	case "project":
-		return nil, fmt.Errorf("%s not yet supported", nodeIDTokens[0])
+		return nil, fmt.Errorf("%s not yet supported", nodeType)
 	case "info":
-		return nil, fmt.Errorf("%s not yet supported", nodeIDTokens[0])
+		return nil, fmt.Errorf("%s not yet supported", nodeType)
 	case "data":
-		return nil, fmt.Errorf("%s not yet supported", nodeIDTokens[0])
+		return nil, fmt.Errorf("%s not yet supported", nodeType)
 	default:
-		return nil, fmt.Errorf("Unsupported node type %s", nodeIDTokens[0])
+		return nil, fmt.Errorf("Unsupported node type %s", nodeType)
 	}
 }
 

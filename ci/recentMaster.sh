@@ -12,4 +12,6 @@ if [ -z ${QMSTR_MASTER} ]; then
     exit 2
 fi
 
+export QMSTR_MASTER=${QMSTR_MASTER}
 echo "export QMSTR_MASTER=${QMSTR_MASTER}"
+
