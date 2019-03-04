@@ -36,7 +36,7 @@ func (phase *serverPhaseInit) Activate() error {
 
 	if !snapshotAvailable() {
 		phase.db.OpenInsertQueue()
-		if len(phase.masterConfig.MetaData) != 0 {
+		if phase.masterConfig.Name != "" {
 			phase.initProject()
 		}
 		phase.db.CloseInsertQueue()
