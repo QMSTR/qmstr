@@ -10,6 +10,8 @@ import (
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
+var ErrNoSuchPackage = errors.New("no such package")
+
 // AddPackageNode adds a node to the insert queue
 func (db *DataBase) AddPackageNode(node *service.PackageNode) {
 	atomic.AddUint64(&db.pending, 1)
@@ -17,6 +19,29 @@ func (db *DataBase) AddPackageNode(node *service.PackageNode) {
 		db.AddFileNode(dep)
 	}
 	db.insertQueue <- node
+}
+
+func (db *DataBase) GetPackageNodeByName(name string) (*service.PackageNode, error) {
+	var ret map[string][]*service.PackageNode
+
+	q := `query GetPackageNodeByName($Name: string){
+		  getPackageNodeByName(func: has(packageNodeType)) @filter(eq(name, $Name)) {
+			uid
+			name
+		  }}`
+
+	vars := map[string]string{"$Name": name}
+
+	err := db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	// no such node
+	if len(ret["getPackageNodeByName"]) == 0 {
+		return nil, ErrNoSuchPackage
+	}
+	return ret["getPackageNodeByName"][0], nil
 }
 
 func (db *DataBase) GetPackageNode() (*service.PackageNode, error) {
