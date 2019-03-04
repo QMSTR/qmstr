@@ -13,7 +13,7 @@ func TestStringFlag(t *testing.T) {
 	if err != nil {
 		t.FailNow()
 	}
-	err = flags.Parse([]string{"--FooBar", "dafuq"})
+	err = flags.Parse([]string{"--Bar", "dafuq"})
 	if err != nil {
 		log.Printf("Error %v", err)
 		t.FailNow()
@@ -26,7 +26,7 @@ func TestInt64Flag(t *testing.T) {
 	if err != nil {
 		t.FailNow()
 	}
-	err = flags.Parse([]string{"--FooBarInt", "1337"})
+	err = flags.Parse([]string{"--BarInt", "1337"})
 	if err != nil {
 		log.Printf("Error %v", err)
 		t.FailNow()
@@ -39,7 +39,7 @@ func TestBoolFlag(t *testing.T) {
 	if err != nil {
 		t.FailNow()
 	}
-	err = flags.Parse([]string{"--FooBarBool"})
+	err = flags.Parse([]string{"--BarBool"})
 	if err != nil {
 		log.Printf("Error %v", err)
 		t.FailNow()
