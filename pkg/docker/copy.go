@@ -132,8 +132,8 @@ func GetMasterConfig(ctx context.Context, cli *client.Client, container string, 
 	}
 
 	// poor man's untar this might be replaced by a proper untar function
-	tarPattern := regexp.MustCompile("^.*package:")
-	config = tarPattern.ReplaceAll(config, []byte("package:"))
+	tarPattern := regexp.MustCompile("^.*project:")
+	config = tarPattern.ReplaceAll(config, []byte("project:"))
 	config = bytes.Trim(config, "\x00")
 
 	return config, nil
