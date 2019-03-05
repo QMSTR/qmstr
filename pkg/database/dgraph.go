@@ -327,6 +327,26 @@ func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 	return uid, nil
 }
 
+// DBDelete deletes nodes from the db.
+// The data should be JSON marshalable
+func DBDelete(db *DataBase, nodeUID string) (string, error) {
+	txn := db.client.NewTxn()
+	defer txn.Discard(context.Background())
+
+	// we just need the uid of the node
+	d := map[string]string{"uid": nodeUID}
+	pb, err := json.Marshal(d)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ret, err := txn.Mutate(context.Background(), &api.Mutation{CommitNow: true, DeleteJson: pb})
+	if err != nil {
+		return "", err
+	}
+	uid := ret.Uids["blank-0"]
+	return uid, nil
+}
+
 func getVarName(index int) string {
 	var result string
 	for index > 25 {
