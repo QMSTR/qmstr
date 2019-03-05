@@ -77,3 +77,15 @@ func (pn *PackageNode) Describe(less bool) string {
 	}
 	return strings.Join(describe, "\n")
 }
+
+func (fn *FileNode) IsValid() bool {
+	return fn.Path != ""
+}
+
+func (pn *PackageNode) IsValid() bool {
+	return pn.Name != ""
+}
+
+func (prn *ProjectNode) IsValid() bool {
+	return prn.Name != ""
+}
