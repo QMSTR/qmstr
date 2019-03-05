@@ -53,6 +53,10 @@ func (phase *serverPhaseBuild) Build(stream service.BuildService_BuildServer) er
 			return err
 		}
 
+		if !fileNode.IsValid() {
+			return errors.New("invalid file node")
+		}
+
 		common.SanitizeFileNode(fileNode, buildPath, pathSub, phase.db, "")
 		log.Printf("Adding file node %s", fileNode.Path)
 		phase.db.AddFileNode(fileNode)
@@ -104,7 +108,9 @@ func (phase *serverPhaseBuild) ExportGraph(in *service.ExportRequest) (*service.
 }
 
 func (phase *serverPhaseBuild) CreatePackage(in *service.PackageNode) (*service.BuildResponse, error) {
-	//TODO check for package with name
+	if !in.IsValid() {
+		return nil, errors.New("invalid package node")
+	}
 	if _, err := phase.db.GetPackageNodeByName(in.Name); err != database.ErrNoSuchPackage {
 		return nil, errors.New("package already created")
 	}
@@ -114,6 +120,9 @@ func (phase *serverPhaseBuild) CreatePackage(in *service.PackageNode) (*service.
 }
 
 func (phase *serverPhaseBuild) CreateProject(in *service.ProjectNode) (*service.BuildResponse, error) {
+	if !in.IsValid() {
+		return nil, errors.New("invalid project node")
+	}
 	if _, err := phase.db.GetProjectNode(); err != database.ErrNoProjectNode {
 		return nil, errors.New("project node already created")
 	}
