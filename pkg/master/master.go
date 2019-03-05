@@ -57,6 +57,10 @@ func (s *server) CreateProject(ctx context.Context, in *service.ProjectNode) (*s
 	return s.currentPhase.CreateProject(in)
 }
 
+func (s *server) DeleteNode(stream service.BuildService_DeleteNodeServer) error {
+	return s.currentPhase.DeleteNode(stream)
+}
+
 func (s *server) GetAnalyzerConfig(ctx context.Context, in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
 	return s.currentPhase.GetAnalyzerConfig(in)
 }
