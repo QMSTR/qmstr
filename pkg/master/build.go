@@ -130,3 +130,21 @@ func (phase *serverPhaseBuild) CreateProject(in *service.ProjectNode) (*service.
 	phase.db.AddProjectNode(in)
 	return &service.BuildResponse{Success: true}, nil
 }
+
+func (phase *serverPhaseBuild) DeleteNode(stream service.BuildService_DeleteNodeServer) error {
+	for {
+		deleteNodeReq, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&service.BuildResponse{
+				Success: true,
+			})
+		}
+		if err != nil {
+			return err
+		}
+		_, err = database.DBDelete(phase.db, deleteNodeReq.Uid)
+		if err != nil {
+			return err
+		}
+	}
+}
