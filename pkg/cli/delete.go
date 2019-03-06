@@ -41,7 +41,7 @@ func deleteNode(args []string) error {
 		}
 		switch node.(type) {
 		case *service.PackageNode:
-			pkgNode, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageRequest{})
+			pkgNode, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{})
 			if err != nil {
 				return err
 			}

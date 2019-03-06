@@ -46,7 +46,7 @@ func (pkganalyzer *PkgAnalyzer) Configure(configMap map[string]string) error {
 
 // Analyze finds the targets in db which we are going to connect to the package node
 func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64) error {
-	pkgNode, err := controlService.GetPackageNode(context.Background(), &service.PackageRequest{})
+	pkgNode, err := controlService.GetPackageNode(context.Background(), &service.PackageNode{})
 	if err != nil {
 		return err
 	}

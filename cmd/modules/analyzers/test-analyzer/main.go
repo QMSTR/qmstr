@@ -51,7 +51,7 @@ func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceC
 	queryNode := &service.FileNode{}
 
 	var err error
-	pkgNode, err = controlService.GetPackageNode(context.Background(), &service.PackageRequest{})
+	pkgNode, err = controlService.GetPackageNode(context.Background(), &service.PackageNode{})
 	if err != nil {
 		return err
 	}
