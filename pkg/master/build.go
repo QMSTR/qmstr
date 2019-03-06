@@ -111,10 +111,12 @@ func (phase *serverPhaseBuild) CreatePackage(in *service.PackageNode) (*service.
 	if !in.IsValid() {
 		return nil, errors.New("invalid package node")
 	}
+
 	if _, err := phase.db.GetPackageNodeByName(in.Name); err != database.ErrNoSuchPackage {
 		return nil, errors.New("package already created")
 	}
 
+	log.Printf("Adding package node %s", in.Name)
 	phase.db.AddPackageNode(in)
 	return &service.BuildResponse{Success: true}, nil
 }
@@ -123,10 +125,12 @@ func (phase *serverPhaseBuild) CreateProject(in *service.ProjectNode) (*service.
 	if !in.IsValid() {
 		return nil, errors.New("invalid project node")
 	}
+
 	if _, err := phase.db.GetProjectNode(); err != database.ErrNoProjectNode {
 		return nil, errors.New("project node already created")
 	}
 
+	log.Printf("Adding project node %s", in)
 	phase.db.AddProjectNode(in)
 	return &service.BuildResponse{Success: true}, nil
 }
