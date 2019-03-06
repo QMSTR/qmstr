@@ -40,12 +40,20 @@ func deleteNode(args []string) error {
 			return err
 		}
 		switch node.(type) {
-		case *service.PackageNode:
-			pkgNode, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{})
+		case *service.ProjectNode:
+			projectNode, err := buildServiceClient.GetProjectNode(context.Background(), &service.ProjectNode{Name: node.(*service.ProjectNode).Name})
 			if err != nil {
 				return err
 			}
-			fmt.Println(pkgNode)
+			fmt.Printf("Deleting project node: %v\n", projectNode.Name)
+			deleteNodeMsg = append(deleteNodeMsg, &service.DeleteMessage{Uid: projectNode.Uid})
+		case *service.PackageNode:
+			pkgNode, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{Name: node.(*service.PackageNode).Name})
+			if err != nil {
+				return err
+			}
+			fmt.Printf("Deleting package node: %v\n", pkgNode.Name)
+			deleteNodeMsg = append(deleteNodeMsg, &service.DeleteMessage{Uid: pkgNode.Uid})
 		case *service.FileNode:
 			fNodes, err := controlServiceClient.GetFileNode(context.Background(), node.(*service.FileNode))
 			if err != nil {
@@ -70,6 +78,7 @@ func deleteNode(args []string) error {
 			if count > 1 {
 				return fmt.Errorf("Found more than one %v in database\n Please provide a better identifier", node)
 			}
+			fmt.Printf("Deleting file node: %v\n", fileN.Path)
 			deleteNodeMsg = append(deleteNodeMsg, &service.DeleteMessage{Uid: fileN.Uid})
 		}
 	}

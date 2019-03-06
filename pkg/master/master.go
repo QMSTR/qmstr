@@ -117,7 +117,26 @@ func (s *server) GetPackageNode(ctx context.Context, in *service.PackageNode) (*
 	if err != nil {
 		return nil, err
 	}
+	if in.Name != "" {
+		node, err := db.GetPackageNodeByName(in.Name)
+		if err != nil {
+			return nil, err
+		}
+		return node, nil
+	}
 	node, err := db.GetPackageNode()
+	if err != nil {
+		return nil, err
+	}
+	return node, nil
+}
+
+func (s *server) GetProjectNode(ctx context.Context, in *service.ProjectNode) (*service.ProjectNode, error) {
+	db, err := s.currentPhase.getDataBase()
+	if err != nil {
+		return nil, err
+	}
+	node, err := db.GetProjectNode()
 	if err != nil {
 		return nil, err
 	}
