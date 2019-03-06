@@ -116,8 +116,8 @@ ADD ci/common.inc /common.inc
 RUN mkdir -p /go/bin
 COPY --from=builder /usr/local/bin/* /usr/local/bin/
 
-# copy qmstr-qmstr_spdx_analyzer from its stagr
-COPY --from=qmstr_spdx_analyzer /qmstr-spdx-analyzer/spdx-analyzer /usr/local/bin/qmstr_spdx_analyzer
+# copy qmstr-analyzer from its stage
+COPY --from=qmstr_spdx_analyzer /qmstr-spdx-analyzer/spdx-analyzer /usr/local/bin/spdx-analyzer
 
 EXPOSE 50051
 
