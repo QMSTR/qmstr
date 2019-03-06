@@ -112,7 +112,7 @@ func (s *server) Package(stream service.BuildService_PackageServer) error {
 	return stream.SendAndClose(&service.BuildResponse{Success: true})
 }
 
-func (s *server) GetPackageNode(ctx context.Context, in *service.PackageRequest) (*service.PackageNode, error) {
+func (s *server) GetPackageNode(ctx context.Context, in *service.PackageNode) (*service.PackageNode, error) {
 	db, err := s.currentPhase.getDataBase()
 	if err != nil {
 		return nil, err

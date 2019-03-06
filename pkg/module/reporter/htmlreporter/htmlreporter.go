@@ -101,7 +101,7 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 // Report generates the actual reports.
 // It is part of the ReporterModule interface.
 func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
-	packageNode, err := cserv.GetPackageNode(context.Background(), &service.PackageRequest{})
+	packageNode, err := cserv.GetPackageNode(context.Background(), &service.PackageNode{})
 	if err != nil {
 		return fmt.Errorf("could not get package node: %v", err)
 	}
