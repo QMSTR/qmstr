@@ -117,7 +117,7 @@ func (s *server) GetPackageNode(ctx context.Context, in *service.PackageNode) (*
 	if err != nil {
 		return nil, err
 	}
-	if in.Name != "" {
+	if in.IsValid() {
 		node, err := db.GetPackageNodeByName(in.Name)
 		if err != nil {
 			return nil, err

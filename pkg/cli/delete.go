@@ -3,7 +3,6 @@ package cli
 import (
 	"errors"
 	"fmt"
-	"io"
 
 	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spf13/cobra"
@@ -39,47 +38,28 @@ func deleteNode(args []string) error {
 		if err != nil {
 			return err
 		}
-		switch node.(type) {
+		switch currentNode := node.(type) {
 		case *service.ProjectNode:
-			projectNode, err := buildServiceClient.GetProjectNode(context.Background(), &service.ProjectNode{Name: node.(*service.ProjectNode).Name})
+			projectNode, err := buildServiceClient.GetProjectNode(context.Background(), &service.ProjectNode{Name: currentNode.Name})
 			if err != nil {
 				return err
 			}
 			fmt.Printf("Deleting project node: %v\n", projectNode.Name)
 			deleteNodeMsg = append(deleteNodeMsg, &service.DeleteMessage{Uid: projectNode.Uid})
 		case *service.PackageNode:
-			pkgNode, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{Name: node.(*service.PackageNode).Name})
+			pkgNode, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{Name: currentNode.Name})
 			if err != nil {
 				return err
 			}
 			fmt.Printf("Deleting package node: %v\n", pkgNode.Name)
 			deleteNodeMsg = append(deleteNodeMsg, &service.DeleteMessage{Uid: pkgNode.Uid})
 		case *service.FileNode:
-			fNodes, err := controlServiceClient.GetFileNode(context.Background(), node.(*service.FileNode))
+			fNode, err := getUniqueFileNode(currentNode)
 			if err != nil {
-				return err
+				return fmt.Errorf("get unique file node fail. please use better matching params: %v", err)
 			}
-			fileN := &service.FileNode{}
-			var count int
-			for {
-				fileNode, err := fNodes.Recv()
-				if err != nil {
-					if err == io.EOF {
-						break
-					}
-					return err
-				}
-				count++
-				fileN = fileNode
-			}
-			if fileN.Uid == "" {
-				return fmt.Errorf("No file %v found in the database", node)
-			}
-			if count > 1 {
-				return fmt.Errorf("Found more than one %v in database\n Please provide a better identifier", node)
-			}
-			fmt.Printf("Deleting file node: %v\n", fileN.Path)
-			deleteNodeMsg = append(deleteNodeMsg, &service.DeleteMessage{Uid: fileN.Uid})
+			fmt.Printf("Deleting file node: %v\n", fNode.Path)
+			deleteNodeMsg = append(deleteNodeMsg, &service.DeleteMessage{Uid: fNode.Uid})
 		}
 	}
 	deleteStream, err := buildServiceClient.DeleteNode(context.Background())
