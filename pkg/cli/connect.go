@@ -19,16 +19,12 @@ var validFileToPackageEdges = []string{
 }
 
 var connectCmdFlags = struct {
-	fileToFileEdge    string
-	fileToPackageEdge string
+	edge string
 }{}
 
 func init() {
 	rootCmd.AddCommand(connectCmd)
-	connectCmd.Flags().StringVar(&connectCmdFlags.fileToFileEdge, "fileToFileEdge",
-		"derivedFrom", fmt.Sprintf("Edge to use when connecting FileNode to FileNode. One of %v", validFileToFileEdges))
-	connectCmd.Flags().StringVar(&connectCmdFlags.fileToPackageEdge, "fileToPackageEdge",
-		"targets", fmt.Sprintf("Edge to use when connecting FileNode to PackageNode. One of %v", validFileToPackageEdges))
+	connectCmd.Flags().StringVar(&connectCmdFlags.edge, "edge", "", "Edge to use when connecting nodes")
 }
 
 var connectCmd = &cobra.Command{
@@ -91,14 +87,18 @@ func connectToFileNode(node *service.FileNode, args []string) error {
 			if err != nil {
 				return fmt.Errorf("get unique \"this\" node fail: %v", err)
 			}
+			// default edge
+			if connectCmdFlags.edge == "" {
+				connectCmdFlags.edge = "derivedFrom"
+			}
 			// Which edge
-			switch connectCmdFlags.fileToFileEdge {
+			switch connectCmdFlags.edge {
 			case "derivedFrom":
 				node.DerivedFrom = append(node.DerivedFrom, this)
 			case "dependencies":
 				node.Dependencies = append(node.Dependencies, this)
 			default:
-				return fmt.Errorf("unknown edge for FileNode -> FileNode: %s", connectCmdFlags.fileToFileEdge)
+				return fmt.Errorf("unknown edge %q for FileNode -> FileNode. Valid values %v", connectCmdFlags.edge, validFileToFileEdges)
 			}
 		default:
 			return fmt.Errorf("cannot connect %T to FileNode", thisVal)
@@ -129,15 +129,19 @@ func connectToPackageNode(node *service.PackageNode, args []string) error {
 			if err != nil {
 				return fmt.Errorf("get unique \"this\" node fail: %v", err)
 			}
+			// default edge
+			if connectCmdFlags.edge == "" {
+				connectCmdFlags.edge = "targets"
+			}
 			// Which edge
-			switch connectCmdFlags.fileToPackageEdge {
+			switch connectCmdFlags.edge {
 			case "targets":
 				err = stream.Send(this)
 				if err != nil {
 					return fmt.Errorf("send fileNode to pkg stream fail: %v", err)
 				}
 			default:
-				return fmt.Errorf("unknown edge for FileNode -> FileNode: %s", connectCmdFlags.fileToPackageEdge)
+				return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", connectCmdFlags.edge, validFileToPackageEdges)
 			}
 		default:
 			return fmt.Errorf("cannot connect %T to FileNode", thisVal)
