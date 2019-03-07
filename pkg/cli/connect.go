@@ -85,7 +85,7 @@ func connectToFileNode(node *service.FileNode, args []string) error {
 		case *service.FileNode:
 			this, err := getUniqueFileNode(thisVal)
 			if err != nil {
-				return fmt.Errorf("get unique \"this\" node fail: %v", err)
+				return fmt.Errorf("get unique file node fail. please use better matching params: %v", err)
 			}
 			// default edge
 			if connectCmdFlags.edge == "" {
@@ -127,7 +127,7 @@ func connectToPackageNode(node *service.PackageNode, args []string) error {
 		case *service.FileNode:
 			this, err := getUniqueFileNode(thisVal)
 			if err != nil {
-				return fmt.Errorf("get unique \"this\" node fail: %v", err)
+				return fmt.Errorf("get unique file node fail. please use better matching params: %v", err)
 			}
 			// default edge
 			if connectCmdFlags.edge == "" {
