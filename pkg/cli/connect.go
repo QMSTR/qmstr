@@ -60,7 +60,7 @@ func connectCmdRun(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("connectToFileNode fail: %v", err)
 		}
 	case *service.PackageNode:
-		that, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageRequest{})
+		that, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{})
 		if err != nil {
 			return fmt.Errorf("get package node fail: %v", err)
 		}
