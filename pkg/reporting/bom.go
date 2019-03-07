@@ -9,8 +9,8 @@ import (
 	"github.com/QMSTR/qmstr/pkg/service"
 )
 
-func GetBOM(pkg *service.PackageNode, enableWarnings bool, enableErrors bool) (*service.BOM, error) {
-	packageInfo, err := getPackageInfo(pkg)
+func GetBOM(proj *service.ProjectNode, pkg *service.PackageNode, enableWarnings bool, enableErrors bool) (*service.BOM, error) {
+	packageInfo, err := getPackageInfo(pkg, proj)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to get package information : %v", err)
 	}
@@ -52,7 +52,7 @@ func getDataByInfoType(packageNode *service.PackageNode, infoType string) []stri
 	return data
 }
 
-func getPackageInfo(pkg *service.PackageNode) (*service.PackageInformation, error) {
+func getPackageInfo(pkg *service.PackageNode, proj *service.ProjectNode) (*service.PackageInformation, error) {
 	packageInfo := service.PackageInformation{
 		Name:                pkg.GetName(),
 		BuildConfig:         pkg.GetBuildConfig(),
@@ -61,7 +61,7 @@ func getPackageInfo(pkg *service.PackageNode) (*service.PackageInformation, erro
 		OcComplianceContact: "Compliance contact email"}
 	ps := reflect.ValueOf(&packageInfo)
 	s := ps.Elem()
-	for _, inode := range pkg.AdditionalInfo {
+	for _, inode := range proj.AdditionalInfo {
 		if inode.Type == "metadata" {
 			for _, dnode := range inode.DataNodes {
 				f := s.FieldByName(getFieldName(dnode.Type))
