@@ -9,8 +9,8 @@ import (
 
 	"github.com/QMSTR/qmstr/pkg/config"
 	"github.com/QMSTR/qmstr/pkg/database"
-	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/QMSTR/qmstr/pkg/reporting"
+	"github.com/QMSTR/qmstr/pkg/service"
 )
 
 type serverPhaseReport struct {
@@ -79,7 +79,11 @@ func (phase *serverPhaseReport) GetBOM(in *service.BOMRequest) (*service.BOM, er
 	if err != nil {
 		return nil, err
 	}
-	bom, err := reporting.GetBOM(pkgNode, in.Warnings, in.Errors)
+	projNode, err := db.GetProjectNode()
+	if err != nil {
+		return nil, err
+	}
+	bom, err := reporting.GetBOM(projNode, pkgNode, in.Warnings, in.Errors)
 	if err != nil {
 		return nil, err
 	}
