@@ -13,3 +13,6 @@ python/**/*egg-info
 # misc
 **/.DS_Store
 .vscode
+
+# Emacs temporary files
+*~
