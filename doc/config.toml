@@ -40,6 +40,9 @@ enableMissingTranslationPlaceholders = false
     # path name excluded from documentation menu
     menu_exclusion = ["archives", "blog", "entry", "post", "posts"]
 
+    # additional CSS code for the site:
+    custom_css = ["css/qmstr.css"]
+
 # Global menu section
 [[menu.main]]
     name = "Documentation"
