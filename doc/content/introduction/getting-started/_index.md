@@ -3,7 +3,7 @@ title: "Getting started"
 date: 2019-01-17T15:26:15Z
 lastmod: 2019-01-17T15:26:15Z
 draft: false
-weight: 2
+weight: 4
 ---
 
 There are usually three groups of users interested in working with
