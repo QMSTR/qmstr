@@ -3,7 +3,7 @@ title: "Installing Quartermaster"
 date: 2019-01-17T15:26:15Z
 lastmod: 2019-01-17T15:26:15Z
 draft: false
-weight: 1
+weight: 3
 ---
 
 A Quartermaster installation consists of a client and a master side
