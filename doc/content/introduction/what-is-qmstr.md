@@ -12,17 +12,17 @@ compliance management. It is FOSS because the QMSTR community believes
 that software that manages FOSS compliance becomes critical
 infrastructure to the wider open source community and should itself be
 FOSS. QMSTR is developed in collaboration with users, legal experts
-and all other interested stakeholders.
+and other interested stakeholders.
 
 ## QMSTR: A command-line workflow toolchain for FOSS compliance
 
 QMSTR is implemented as a command line toolchain. It assumes that
 almost everywhere, software is built and packaged using command line
 based build systems that automate the build steps. By integrating into
-the common software development tooling, QMSTR programs may be used in
-terminals, scripts, Makefiles, Jenkinsfiles and other places. QMSTR
-aggregates the knowledge it acquires about the software being built in
-a graph database held in a central master process.
+the common software development tooling, QMSTR programs may be used on
+the command line, in scripts, Makefiles, Jenkinsfiles and other
+places. QMSTR aggregates the knowledge it acquires about the software
+being built in a graph database held in a central master process.
 
 The workflow QMSTR implements proceeds through three separate phases,
 a build phase, an analysis phase and a reporting phase. The purpose of
@@ -93,10 +93,11 @@ be consumed by analysis or created by reporting modules.
 ## Integration into CI/CD pipelines
 
 Software integration today should be automated and performed in
-continuous integration (CI) pipelines. Since the steps performed by CI
-pipelines are commonly regular command line instructions, QMSTR can be
-integrated into a CI pipeline in the same style as the other
-instructions for the individual build steps. Endocode runs
+continuous integration (CI) and continuous delivery (CD)
+pipelines. Since the steps performed by CI pipelines are commonly
+regular command line instructions, QMSTR can be integrated into a CI
+pipeline in the same style as the other instructions for the
+individual build steps. Endocode runs
 a
 [public cURL with QMSTR demo](https://ci.endocode.com/view/QMSTR/job/QMSTR/job/qmstr-cURL-demo/) that
 showcases how all the steps necessary to perform a build with QMSTR
