@@ -14,8 +14,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/QMSTR/qmstr/pkg/reporting"
+	"github.com/QMSTR/qmstr/pkg/service"
 	version "github.com/hashicorp/go-version"
 )
 
@@ -24,7 +24,7 @@ const (
 	// ModuleName is used across QMSTR to reference this module
 	ModuleName         = "reporter-html"
 	themeDirectoryName = "theme"
-	cacheVersion       = "0.2"
+	cacheVersion       = "0.3"
 )
 
 // HTMLReporter is the context of the HTML reporter module

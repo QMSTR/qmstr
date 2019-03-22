@@ -30,7 +30,7 @@ Verify that the client side tools are available by querying the
 version of the `qmstrctl` tool:
 
     > qmstrctl version
-    This is qmstrctl version 0.2.
+    This is qmstrctl version 0.3.
 
 To check that the master image exists, run
 
@@ -56,7 +56,7 @@ are located in the [tutorial](tutorial/) subdirectory. Let's retrieve
 the JSON-C source code first, in a specific revision that we know
 works with this tutorial:
 
-	> cd doc/tutorial
+	> cd doc/content/introduction/getting-started/tutorial
 	> git clone https://github.com/json-c/json-c.git
 	...
 	> cd json-c
