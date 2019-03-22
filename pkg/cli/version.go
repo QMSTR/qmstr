@@ -7,7 +7,7 @@ import (
 )
 
 var major = 0
-var minor = 2
+var minor = 3
 
 // quitCmd represents the quit command
 var versionCmd = &cobra.Command{
