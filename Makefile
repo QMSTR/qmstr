@@ -119,3 +119,10 @@ install_qmstr_client_gopath: $(QMSTR_CLIENT_BINARIES)
 
 pkg/service/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
 	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
+
+# Generate doc website statics files
+.PHONY: docs
+docs:
+	cd doc && hugo -d documentation
+	cd doc && tar -cjvf qmstr-doc.tar.bz2 documentation
+	rm -rf doc/documentation
