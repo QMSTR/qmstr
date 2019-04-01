@@ -28,7 +28,7 @@ obligations from consuming and distributing FOSS. The wider open
 source community forms a society, and being a member of good standing
 in that society requires actively supporting the norms of the
 community. In this thought-model, neglecting FOSS compliance amounts
-to anti-social behaviour.
+to anti-social behavior.
 
 This approach may sound a bit theoretical, but it has real-life
 implications. Contributors prefer to be part of companies that hold up
@@ -53,7 +53,7 @@ for FOSS license compliance management.
 ## Contributors and project history
 
 QMSTR is a FOSS project both by licensing and by governance. It
-originated from a brainstrom session of
+originated from a brainstorm session of
 the [FSFE Legal Network](https://fsfe.org/activities/ftf/ln.en.html)
 in April 2017 on what tooling functionality is needed to streamline
 the maintenance of FOSS license compliance across international supply
@@ -67,7 +67,7 @@ The QMSTR development team is initially hosted
 by [Endocode](https://endocode.com). With the launch of
 the
 [Linux Foundation](https://www.linuxfoundation.org) [Automated Compliance Tooling (ACT)](https://www.linuxfoundation.org/press-release/2018/12/the-linux-foundation-to-launch-new-tooling-project-to-improve-open-source-compliance/) project,
-QMSTR will incubate there together with other FOSS complaince
+QMSTR will incubate there together with other FOSS compliance
 like [Fossology](https://www.fossology.org/). Since summer 2018,
 Endocode is part of the [FASTEN](https://www.fasten-project.eu/)
 consortium that got funded for three years by the European Commission
