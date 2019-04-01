@@ -14,6 +14,7 @@ pygmentsCodefences = true
 defaultContentLanguage = "en"
 defaultContentLanguageInSubdir= false
 enableMissingTranslationPlaceholders = false
+enableGitInfo = "true"
 
 [Params]
 
