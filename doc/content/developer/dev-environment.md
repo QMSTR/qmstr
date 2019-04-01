@@ -1,4 +1,8 @@
-# Setting up an environment to hack on Quartermaster
+---
+title: "Development environment"
+date: 2019-04-01T15:26:15Z
+weight: 1
+---
 
 To create a local development environment for Quartermaster, follow
 these instructions. The master by default runs in a container. See
@@ -27,10 +31,6 @@ Install the wrapper
 Optional: install the cli
 
 	% go get github.com/QMSTR/qmstr/cmd/qmstrctl
-
-Or if you dare:
-
-	% wget -O - http://github.com/QMSTR/qmstr/raw/master/install.sh | bash
 
 ## Build and run the Quartermaster master process
 

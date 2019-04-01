@@ -12,11 +12,11 @@ FOSS compliance documentation and support compliance decisions. It executes as p
 ## Compilation and Installation
 
 The client and master side installation of Quartermaster is Makefile
-based. See the [installation instructions](doc/Installation.md) for
+based. See the [installation instructions](https://qmstr.org/documentation/introduction/installation/) for
 details. The client side tools need to be installed on all build
 machines. The master is only needed once per build process.
 
-To develop on Quartermaster, a [few extra steps](doc/Developers.md)
+To develop on Quartermaster, a [few extra steps](https://qmstr.org/documentation/developer)
 may be required.
 
 ## Basics
@@ -32,5 +32,4 @@ All modules are executed in the context of the master, not the build
 machine. The master ships all dependencies of the modules without
 affecting the build clients file system (it runs in a container).
 
-Read more in the [Getting started](doc/Getting-Started.md) page.
-
+Read more in the [Getting started](https://qmstr.org/documentation/introduction/getting-started/) page.
