@@ -28,10 +28,22 @@ func init() {
 }
 
 var connectCmd = &cobra.Command{
-	Use:   "connect",
+	Use:   "connect [type_of_node:attribute:value] [type_of_node:attribute:value]",
 	Short: "Connect nodes with specific edges",
 	Long: `Usage: qmstrctl connect <that> <this>...
-Connect to Node <that> Node(s) <this>. In case of multiple edges for the specified types you can use --<type>To<type>Edge flag to specify the edge you want.`,
+Connect to Node <that> Node(s) <this>. In case of multiple edges for the specified types you can use --<type>To<type>Edge flag to specify the edge you want.
+
+input: [type_of_node:attribute:value]
+
+type_of_node:
+	- package
+	- file
+attribute:
+	- hash
+	- path
+	- name
+	- type
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpControlService()
 		setUpBuildService()

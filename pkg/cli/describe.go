@@ -17,16 +17,18 @@ var describeCmd = &cobra.Command{
 	Long: `Print description of the node and traverse the tree 
 to print the description of the nodes connected to it.
 
-input: [type_of_node:attribute:value], where type_of_node can be:
+input: [type_of_node:attribute:value]
+
+type_of_node:
 	- package
-	- target 
-attribute can be:
-	- name
-	- path 
-	- type
+	- file
+attribute:
 	- hash
-and value, the value of the attribute.
+	- path
+	- name
+	- type
 	`,
+	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpControlService()
 		if err := describeNode(args); err != nil {
@@ -42,9 +44,6 @@ func init() {
 }
 
 func describeNode(args []string) error {
-	if len(args) < 1 {
-		return fmt.Errorf("Please provide the node you want to get description for: [type_of_node:attribute:value]")
-	}
 	node, err := ParseNodeID(args[0])
 	if err != nil {
 		return err
