@@ -101,6 +101,9 @@ func disconnectFromFileNode(node *service.FileNode, args []string) error {
 			return fmt.Errorf("cannot disconnect %T from FileNode", thisVal)
 		}
 	}
+	// delete edge
+	buildServiceClient.DeleteEdge(context.Background(), deleteNodeMsg)
+
 	// ship node back with the modified edge
 	err := sendFileNode(node)
 	if err != nil {
