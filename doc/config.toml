@@ -29,8 +29,7 @@ enableGitInfo = "true"
     # github_doc_repository = "https://github.com/QMSTR/qmstr"
 
     # Analytic section
-    # Mirko: not enabled for bow
-    # google_analytics_id = "" # Your Google Analytics tracking id
+    google_analytics_id = "UA-40601155-2"
     # tag_manager_container_id = "" # Your Google Tag Manager container id
     # google_site_verification = "" # Your Google Site Verification
 
