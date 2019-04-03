@@ -327,9 +327,9 @@ func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 	return uid, nil
 }
 
-// DBDelete deletes nodes from the db.
+// Delete deletes nodes from the db.
 // The data should be JSON marshalable
-func DBDelete(db *DataBase, nodeUID string) (string, error) {
+func Delete(db *DataBase, nodeUID string) (string, error) {
 	txn := db.client.NewTxn()
 	defer txn.Discard(context.Background())
 

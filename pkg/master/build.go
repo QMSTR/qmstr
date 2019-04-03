@@ -111,7 +111,6 @@ func (phase *serverPhaseBuild) CreatePackage(in *service.PackageNode) (*service.
 	if !in.IsValid() {
 		return nil, errors.New("invalid package node")
 	}
-
 	if _, err := phase.db.GetPackageNodeByName(in.Name); err != database.ErrNoSuchPackage {
 		return nil, errors.New("package already created")
 	}
@@ -125,7 +124,6 @@ func (phase *serverPhaseBuild) CreateProject(in *service.ProjectNode) (*service.
 	if !in.IsValid() {
 		return nil, errors.New("invalid project node")
 	}
-
 	if _, err := phase.db.GetProjectNode(); err != database.ErrNoProjectNode {
 		return nil, errors.New("project node already created")
 	}
@@ -146,7 +144,7 @@ func (phase *serverPhaseBuild) DeleteNode(stream service.BuildService_DeleteNode
 		if err != nil {
 			return err
 		}
-		_, err = database.DBDelete(phase.db, deleteNodeReq.Uid)
+		_, err = database.Delete(phase.db, deleteNodeReq.Uid)
 		if err != nil {
 			return err
 		}
