@@ -150,3 +150,11 @@ func (phase *serverPhaseBuild) DeleteNode(stream service.BuildService_DeleteNode
 		}
 	}
 }
+
+func (phase *serverPhaseBuild) DeleteEdge(in *service.DeleteMessage) (*service.BuildResponse, error) {
+	_, err := database.DeleteEdge(phase.db, in.Uid, in.Edge)
+	if err != nil {
+		return nil, errors.New("Failed removing edge")
+	}
+	return &service.BuildResponse{Success: true}, nil
+}

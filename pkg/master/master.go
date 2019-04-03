@@ -61,6 +61,10 @@ func (s *server) DeleteNode(stream service.BuildService_DeleteNodeServer) error 
 	return s.currentPhase.DeleteNode(stream)
 }
 
+func (s *server) DeleteEdge(ctx context.Context, in *service.DeleteMessage) (*service.BuildResponse, error) {
+	return s.currentPhase.DeleteEdge(in)
+}
+
 func (s *server) GetAnalyzerConfig(ctx context.Context, in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
 	return s.currentPhase.GetAnalyzerConfig(in)
 }

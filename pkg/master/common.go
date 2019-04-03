@@ -33,6 +33,7 @@ type serverPhase interface {
 	SendDiagnosticNode(service.AnalysisService_SendDiagnosticNodeServer) error
 	GetFileNode(*service.FileNode, service.ControlService_GetFileNodeServer) error
 	DeleteNode(service.BuildService_DeleteNodeServer) error
+	DeleteEdge(*service.DeleteMessage) (*service.BuildResponse, error)
 	GetDiagnosticNode(*service.DiagnosticNode, service.ControlService_GetDiagnosticNodeServer) error
 	GetBOM(*service.BOMRequest) (*service.BOM, error)
 	GetInfoData(*service.InfoDataRequest) (*service.InfoDataResponse, error)
@@ -96,6 +97,10 @@ func (gsp *genericServerPhase) CreateProject(in *service.ProjectNode) (*service.
 
 func (gsp *genericServerPhase) DeleteNode(stream service.BuildService_DeleteNodeServer) error {
 	return errors.New("Wrong phase")
+}
+
+func (gsp *genericServerPhase) DeleteEdge(in *service.DeleteMessage) (*service.BuildResponse, error) {
+	return nil, errors.New("Wrong phase")
 }
 
 func (gsp *genericServerPhase) GetReporterConfig(in *service.ReporterConfigRequest) (*service.ReporterConfigResponse, error) {

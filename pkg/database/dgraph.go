@@ -347,6 +347,21 @@ func Delete(db *DataBase, nodeUID string) (string, error) {
 	return uid, nil
 }
 
+// DeleteEdge deletes an edge from a node
+func DeleteEdge(db *DataBase, nodeUID string, predicate string) (string, error) {
+	txn := db.client.NewTxn()
+	defer txn.Discard(context.Background())
+
+	mu := &api.Mutation{CommitNow: true}
+	client.DeleteEdges(mu, nodeUID, predicate)
+	ret, err := txn.Mutate(context.Background(), mu)
+	if err != nil {
+		return "", err
+	}
+	uid := ret.Uids["blank-0"]
+	return uid, nil
+}
+
 func getVarName(index int) string {
 	var result string
 	for index > 25 {
