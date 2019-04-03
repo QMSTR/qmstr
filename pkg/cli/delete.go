@@ -13,6 +13,7 @@ var deleteCmd = &cobra.Command{
 	Use:   "delete [type_of_node:attribute:value]",
 	Short: "Delete node from the database",
 	Long:  `Delete the provided node from the database.`,
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpBuildService()
 		setUpControlService()
@@ -28,9 +29,6 @@ func init() {
 }
 
 func deleteNode(args []string) error {
-	if len(args) < 1 {
-		return fmt.Errorf("Please provide the node to be deleted: [type_of_node:attribute:value]")
-	}
 	deleteNodeMsg := []*service.DeleteMessage{}
 	// loop through the nodes we are going to delete
 	for _, arg := range args {
@@ -51,14 +49,12 @@ func deleteNode(args []string) error {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("Deleting package node: %v\n", pkgNode.Name)
 			deleteNodeMsg = append(deleteNodeMsg, &service.DeleteMessage{Uid: pkgNode.Uid})
 		case *service.FileNode:
 			fNode, err := getUniqueFileNode(currentNode)
 			if err != nil {
 				return fmt.Errorf("get unique file node fail. please use better matching params: %v", err)
 			}
-			fmt.Printf("Deleting file node: %v\n", fNode.Path)
 			deleteNodeMsg = append(deleteNodeMsg, &service.DeleteMessage{Uid: fNode.Uid})
 		}
 	}
@@ -68,6 +64,9 @@ func deleteNode(args []string) error {
 	}
 
 	for _, dltMsg := range deleteNodeMsg {
+		if verbose {
+			fmt.Printf("Deleting node: %v\n", dltMsg.Uid)
+		}
 		deleteStream.Send(dltMsg)
 	}
 	reply, err := deleteStream.CloseAndRecv()
