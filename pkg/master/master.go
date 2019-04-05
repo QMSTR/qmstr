@@ -112,6 +112,7 @@ func (s *server) Package(stream service.BuildService_PackageServer) error {
 		}
 		pkg.Targets = append(pkg.Targets, fl)
 	}
+	log.Printf("Adding package node %s", pkg.Name)
 	db.AddPackageNode(pkg)
 	return stream.SendAndClose(&service.BuildResponse{Success: true})
 }
