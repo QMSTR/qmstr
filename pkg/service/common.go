@@ -65,15 +65,28 @@ func (fn *FileNode) Describe(less bool, indent string) string {
 	return strings.Join(describe, "\n")
 }
 
-func (pn *PackageNode) Describe(less bool) string {
+func (pkg *PackageNode) Describe(less bool, indent string) string {
+	describe := []string{fmt.Sprintf("|- Name: %s", pkg.Name)}
+	if !less {
+		for _, inode := range pkg.AdditionalInfo {
+			describe = append(describe, inode.Describe("\t"))
+		}
+	}
+	for _, tnode := range pkg.Targets {
+		describe = append(describe, tnode.Describe(less, "\t"))
+	}
+	return strings.Join(describe, "\n")
+}
+
+func (pn *ProjectNode) Describe(less bool) string {
 	describe := []string{fmt.Sprintf("|- Name: %s", pn.Name)}
 	if !less {
 		for _, inode := range pn.AdditionalInfo {
 			describe = append(describe, inode.Describe("\t"))
 		}
 	}
-	for _, fnode := range pn.Targets {
-		describe = append(describe, fnode.Describe(less, "\t"))
+	for _, pkgnode := range pn.Packages {
+		describe = append(describe, pkgnode.Describe(less, "\t"))
 	}
 	return strings.Join(describe, "\n")
 }
