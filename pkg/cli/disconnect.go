@@ -65,11 +65,11 @@ func disconnectNodes(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func disconnectFromFileNode(node *service.FileNode, args []string) error {
+func disconnectFromFileNode(that *service.FileNode, args []string) error {
 	for _, nID := range args {
 		thisID, err := ParseNodeID(nID)
 		if err != nil {
-			return fmt.Errorf("ParseNodeID fail for %q: %v", args[0], err)
+			return fmt.Errorf("ParseNodeID fail for %q: %v", nID, err)
 		}
 		switch thisVal := thisID.(type) {
 		// FileNode -> FileNode
@@ -78,28 +78,9 @@ func disconnectFromFileNode(node *service.FileNode, args []string) error {
 			if err != nil {
 				return err
 			}
-			// default edge
-			if disconnectCmdFlags.edge == "" {
-				disconnectCmdFlags.edge = "derivedFrom"
-			}
-			// Which edge
-			switch disconnectCmdFlags.edge {
-			case "derivedFrom":
-				deleteNodeMsg = &service.DeleteMessage{Uid: node.Uid, Edge: "derivedFrom"}
-				for i, dr := range node.DerivedFrom {
-					if reflect.DeepEqual(this, dr) {
-						node.DerivedFrom = append(node.DerivedFrom[:i], node.DerivedFrom[i+1:]...)
-					}
-				}
-			case "dependencies":
-				deleteNodeMsg = &service.DeleteMessage{Uid: node.Uid, Edge: "dependencies"}
-				for i, dep := range node.Dependencies {
-					if dep == this {
-						node.Dependencies = append(node.Dependencies[:i], node.Dependencies[i+1:]...)
-					}
-				}
-			default:
-				return fmt.Errorf("unknown edge %q for FileNode -> FileNode. Valid values %v", disconnectCmdFlags.edge, validFileToFileEdges)
+			err = removeFileNodeEdge(that, this)
+			if err != nil {
+				return err
 			}
 		default:
 			return fmt.Errorf("cannot disconnect %T from FileNode", thisVal)
@@ -115,14 +96,14 @@ func disconnectFromFileNode(node *service.FileNode, args []string) error {
 	}
 
 	// ship node back with the modified edge
-	err = sendFileNode(node)
+	err = sendFileNode(that)
 	if err != nil {
 		return fmt.Errorf("sending FileNode fail: %v", err)
 	}
 	return nil
 }
 
-func disconnectFromPackageNode(node *service.PackageNode, args []string) error {
+func disconnectFromPackageNode(that *service.PackageNode, args []string) error {
 	for _, nID := range args {
 		thisID, err := ParseNodeID(nID)
 		if err != nil {
@@ -135,21 +116,9 @@ func disconnectFromPackageNode(node *service.PackageNode, args []string) error {
 			if err != nil {
 				return err
 			}
-			// default edge
-			if disconnectCmdFlags.edge == "" {
-				disconnectCmdFlags.edge = "targets"
-			}
-			// Which edge
-			switch disconnectCmdFlags.edge {
-			case "targets":
-				deleteNodeMsg = &service.DeleteMessage{Uid: node.Uid, Edge: "targets"}
-				for i, target := range node.Targets {
-					if reflect.DeepEqual(this, target) {
-						node.Targets = append(node.Targets[:i], node.Targets[i+1:]...)
-					}
-				}
-			default:
-				return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", disconnectCmdFlags.edge, validFileToPackageEdges)
+			err = removePackageNodeEdge(that, this)
+			if err != nil {
+				return err
 			}
 		default:
 			return fmt.Errorf("cannot disconnect %T from PackageNode", thisVal)
@@ -168,7 +137,7 @@ func disconnectFromPackageNode(node *service.PackageNode, args []string) error {
 		return err
 	}
 	// ship back modified targets
-	for _, target := range node.Targets {
+	for _, target := range that.Targets {
 		err = stream.Send(target)
 		if err != nil {
 			return fmt.Errorf("send fileNode to pkg stream fail: %v", err)
@@ -180,6 +149,53 @@ func disconnectFromPackageNode(node *service.PackageNode, args []string) error {
 	}
 	if !res.Success {
 		return fmt.Errorf("sending node fail: %v", err)
+	}
+	return nil
+}
+
+func removeFileNodeEdge(that *service.FileNode, this *service.FileNode) error {
+	// default edge
+	if disconnectCmdFlags.edge == "" {
+		disconnectCmdFlags.edge = "derivedFrom"
+	}
+	// Which edge
+	switch disconnectCmdFlags.edge {
+	case "derivedFrom":
+		deleteNodeMsg = &service.DeleteMessage{Uid: that.Uid, Edge: "derivedFrom"}
+		for i, dr := range that.DerivedFrom {
+			if reflect.DeepEqual(this, dr) {
+				that.DerivedFrom = append(that.DerivedFrom[:i], that.DerivedFrom[i+1:]...)
+			}
+		}
+	case "dependencies":
+		deleteNodeMsg = &service.DeleteMessage{Uid: that.Uid, Edge: "dependencies"}
+		for i, dep := range that.Dependencies {
+			if dep == this {
+				that.Dependencies = append(that.Dependencies[:i], that.Dependencies[i+1:]...)
+			}
+		}
+	default:
+		return fmt.Errorf("unknown edge %q for FileNode -> FileNode. Valid values %v", disconnectCmdFlags.edge, validFileToFileEdges)
+	}
+	return nil
+}
+
+func removePackageNodeEdge(that *service.PackageNode, this *service.FileNode) error {
+	// default edge
+	if disconnectCmdFlags.edge == "" {
+		disconnectCmdFlags.edge = "targets"
+	}
+	// Which edge
+	switch disconnectCmdFlags.edge {
+	case "targets":
+		deleteNodeMsg = &service.DeleteMessage{Uid: that.Uid, Edge: "targets"}
+		for i, target := range that.Targets {
+			if reflect.DeepEqual(this, target) {
+				that.Targets = append(that.Targets[:i], that.Targets[i+1:]...)
+			}
+		}
+	default:
+		return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", disconnectCmdFlags.edge, validFileToPackageEdges)
 	}
 	return nil
 }
