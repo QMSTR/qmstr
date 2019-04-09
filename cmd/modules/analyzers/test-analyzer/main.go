@@ -56,7 +56,7 @@ func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceC
 		return err
 	}
 
-	stream, err := controlService.GetFileNode(context.Background(), queryNode)
+	stream, err := controlService.GetFileNode(context.Background(), &service.GetFileNodeMessage{FileNode: queryNode})
 	if err != nil {
 		log.Printf("Could not get file node %v", err)
 		return err

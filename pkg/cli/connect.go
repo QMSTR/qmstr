@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/QMSTR/qmstr/pkg/service"
 	"github.com/spf13/cobra"
@@ -53,7 +52,7 @@ func connectCmdRun(cmd *cobra.Command, args []string) error {
 	case *service.FileNode:
 		that, err := getUniqueFileNode(thatVal)
 		if err != nil {
-			return fmt.Errorf("get unique \"that\" node fail: %v", err)
+			return err
 		}
 		err = connectToFileNode(that, args[1:])
 		if err != nil {
@@ -74,7 +73,7 @@ func connectCmdRun(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func connectToFileNode(node *service.FileNode, args []string) error {
+func connectToFileNode(that *service.FileNode, args []string) error {
 	for _, nID := range args {
 		thisID, err := ParseNodeID(nID)
 		if err != nil {
@@ -85,7 +84,7 @@ func connectToFileNode(node *service.FileNode, args []string) error {
 		case *service.FileNode:
 			this, err := getUniqueFileNode(thisVal)
 			if err != nil {
-				return fmt.Errorf("get unique file node fail. please use better matching params: %v", err)
+				return err
 			}
 			// default edge
 			if connectCmdFlags.edge == "" {
@@ -94,9 +93,9 @@ func connectToFileNode(node *service.FileNode, args []string) error {
 			// Which edge
 			switch connectCmdFlags.edge {
 			case "derivedFrom":
-				node.DerivedFrom = append(node.DerivedFrom, this)
+				that.DerivedFrom = append(that.DerivedFrom, this)
 			case "dependencies":
-				node.Dependencies = append(node.Dependencies, this)
+				that.Dependencies = append(that.Dependencies, this)
 			default:
 				return fmt.Errorf("unknown edge %q for FileNode -> FileNode. Valid values %v", connectCmdFlags.edge, validFileToFileEdges)
 			}
@@ -105,14 +104,14 @@ func connectToFileNode(node *service.FileNode, args []string) error {
 		}
 	}
 	// ship it back
-	err := sendFileNode(node)
+	err := sendFileNode(that)
 	if err != nil {
 		return fmt.Errorf("sending FileNode fail: %v", err)
 	}
 	return nil
 }
 
-func connectToPackageNode(node *service.PackageNode, args []string) error {
+func connectToPackageNode(that *service.PackageNode, args []string) error {
 	stream, err := buildServiceClient.Package(context.Background())
 	if err != nil {
 		return err
@@ -127,7 +126,7 @@ func connectToPackageNode(node *service.PackageNode, args []string) error {
 		case *service.FileNode:
 			this, err := getUniqueFileNode(thisVal)
 			if err != nil {
-				return fmt.Errorf("get unique file node fail. please use better matching params: %v", err)
+				return err
 			}
 			// default edge
 			if connectCmdFlags.edge == "" {
@@ -155,22 +154,6 @@ func connectToPackageNode(node *service.PackageNode, args []string) error {
 		return fmt.Errorf("sending node fail: %v", err)
 	}
 	return nil
-}
-
-func getUniqueFileNode(queryNode *service.FileNode) (*service.FileNode, error) {
-	stream, err := controlServiceClient.GetFileNode(context.Background(), queryNode)
-	node, err := stream.Recv()
-	if err != nil {
-		return nil, fmt.Errorf("recv FileNode fail for %v: %v", queryNode, err)
-	}
-	_, err = stream.Recv()
-	if err == nil {
-		return nil, fmt.Errorf("more than one FileNode match %v", queryNode)
-	}
-	if err != io.EOF {
-		return nil, fmt.Errorf("probbing for more nodes fail: %v", err)
-	}
-	return node, nil
 }
 
 func sendFileNode(node *service.FileNode) error {
