@@ -86,18 +86,9 @@ func connectToFileNode(that *service.FileNode, args []string) error {
 			if err != nil {
 				return err
 			}
-			// default edge
-			if connectCmdFlags.edge == "" {
-				connectCmdFlags.edge = "derivedFrom"
-			}
-			// Which edge
-			switch connectCmdFlags.edge {
-			case "derivedFrom":
-				that.DerivedFrom = append(that.DerivedFrom, this)
-			case "dependencies":
-				that.Dependencies = append(that.Dependencies, this)
-			default:
-				return fmt.Errorf("unknown edge %q for FileNode -> FileNode. Valid values %v", connectCmdFlags.edge, validFileToFileEdges)
+			err = addFileNodeEdge(that, this)
+			if err != nil {
+				return err
 			}
 		default:
 			return fmt.Errorf("cannot connect %T to FileNode", thisVal)
@@ -128,19 +119,12 @@ func connectToPackageNode(that *service.PackageNode, args []string) error {
 			if err != nil {
 				return err
 			}
-			// default edge
-			if connectCmdFlags.edge == "" {
-				connectCmdFlags.edge = "targets"
-			}
-			// Which edge
-			switch connectCmdFlags.edge {
-			case "targets":
-				err = stream.Send(this)
-				if err != nil {
-					return fmt.Errorf("send fileNode to pkg stream fail: %v", err)
-				}
-			default:
+			if connectCmdFlags.edge != "" && connectCmdFlags.edge != "targets" {
 				return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", connectCmdFlags.edge, validFileToPackageEdges)
+			}
+			err = stream.Send(this)
+			if err != nil {
+				return fmt.Errorf("send fileNode to pkg stream fail: %v", err)
 			}
 		default:
 			return fmt.Errorf("cannot connect %T to FileNode", thisVal)
@@ -156,21 +140,19 @@ func connectToPackageNode(that *service.PackageNode, args []string) error {
 	return nil
 }
 
-func sendFileNode(node *service.FileNode) error {
-	stream, err := buildServiceClient.Build(context.Background())
-	if err != nil {
-		return fmt.Errorf("getting stream for build service fail: %v", err)
+func addFileNodeEdge(that *service.FileNode, this *service.FileNode) error {
+	// default edge
+	if connectCmdFlags.edge == "" {
+		connectCmdFlags.edge = "derivedFrom"
 	}
-	err = stream.Send(node)
-	if err != nil {
-		return fmt.Errorf("sending node fail: %v", err)
-	}
-	res, err := stream.CloseAndRecv()
-	if err != nil {
-		return fmt.Errorf("close stream fail: %v", err)
-	}
-	if !res.Success {
-		return fmt.Errorf("sending node fail: %v", err)
+	// Which edge
+	switch connectCmdFlags.edge {
+	case "derivedFrom":
+		that.DerivedFrom = append(that.DerivedFrom, this)
+	case "dependencies":
+		that.Dependencies = append(that.Dependencies, this)
+	default:
+		return fmt.Errorf("unknown edge %q for FileNode -> FileNode. Valid values %v", connectCmdFlags.edge, validFileToFileEdges)
 	}
 	return nil
 }
