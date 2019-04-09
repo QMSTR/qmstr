@@ -54,7 +54,7 @@ func (pkganalyzer *PkgAnalyzer) Analyze(controlService service.ControlServiceCli
 	PackageNodeMsgs := []*service.PackageNodeMessage{}
 	queryNode := &service.FileNode{FileType: service.FileNode_TARGET}
 
-	stream, err := controlService.GetFileNode(context.Background(), queryNode)
+	stream, err := controlService.GetFileNode(context.Background(), &service.GetFileNodeMessage{FileNode: queryNode})
 	if err != nil {
 		log.Printf("Could not get file node %v", err)
 		return err

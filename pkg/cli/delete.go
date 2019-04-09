@@ -53,7 +53,7 @@ func deleteNode(args []string) error {
 		case *service.FileNode:
 			fNode, err := getUniqueFileNode(currentNode)
 			if err != nil {
-				return fmt.Errorf("get unique file node fail. please use better matching params: %v", err)
+				return err
 			}
 			deleteNodeMsg = append(deleteNodeMsg, &service.DeleteMessage{Uid: fNode.Uid})
 		}

@@ -42,7 +42,7 @@ func (spdxalizer *SpdxAnalyzer) Configure(configMap map[string]string) error {
 func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64) error {
 	queryNode := &service.FileNode{FileType: service.FileNode_SOURCE}
 
-	stream, err := controlService.GetFileNode(context.Background(), queryNode)
+	stream, err := controlService.GetFileNode(context.Background(), &service.GetFileNodeMessage{FileNode: queryNode})
 	if err != nil {
 		log.Printf("Could not get file node %v", err)
 		return err

@@ -31,7 +31,7 @@ type serverPhase interface {
 	SendFileNode(service.AnalysisService_SendFileNodeServer) error
 	SendPackageNode(service.AnalysisService_SendPackageNodeServer) error
 	SendDiagnosticNode(service.AnalysisService_SendDiagnosticNodeServer) error
-	GetFileNode(*service.FileNode, service.ControlService_GetFileNodeServer) error
+	GetFileNode(*service.GetFileNodeMessage, service.ControlService_GetFileNodeServer) error
 	DeleteNode(service.BuildService_DeleteNodeServer) error
 	DeleteEdge(*service.DeleteMessage) (*service.BuildResponse, error)
 	GetDiagnosticNode(*service.DiagnosticNode, service.ControlService_GetDiagnosticNodeServer) error
@@ -127,14 +127,19 @@ func (gsp *genericServerPhase) SendDiagnosticNode(stream service.AnalysisService
 	return errors.New("Wrong phase")
 }
 
-func (gsp *genericServerPhase) GetFileNode(in *service.FileNode, stream service.ControlService_GetFileNodeServer) error {
+func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, stream service.ControlService_GetFileNodeServer) error {
 	db, err := gsp.getDataBase()
 	if err != nil {
 		return err
 	}
-	nodeFiles, err := db.GetFileNodesByFileNode(in, true)
+	nodeFiles, err := db.GetFileNodesByFileNode(in.FileNode, true)
 	if err != nil {
 		return err
+	}
+	if in.UniqueNode {
+		if len(nodeFiles) != 1 {
+			return fmt.Errorf("more than one FileNode match %v. Please provide a better identifier", in.FileNode)
+		}
 	}
 	for _, nodeFile := range nodeFiles {
 		if gsp.server.currentPhase.GetPhaseID() == service.Phase_ANALYSIS {

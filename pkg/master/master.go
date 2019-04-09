@@ -165,7 +165,7 @@ func (s *server) SendBuildError(ctx context.Context, in *service.InfoNode) (*ser
 	return &service.BuildResponse{Success: true}, nil
 }
 
-func (s *server) GetFileNode(in *service.FileNode, stream service.ControlService_GetFileNodeServer) error {
+func (s *server) GetFileNode(in *service.GetFileNodeMessage, stream service.ControlService_GetFileNodeServer) error {
 	return s.currentPhase.GetFileNode(in, stream)
 }
 

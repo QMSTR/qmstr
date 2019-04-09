@@ -44,7 +44,7 @@ func disconnectNodes(cmd *cobra.Command, args []string) error {
 	case *service.FileNode:
 		that, err := getUniqueFileNode(thatVal)
 		if err != nil {
-			return fmt.Errorf("get unique \"that\" node fail: %v", err)
+			return err
 		}
 		err = disconnectFromFileNode(that, args[1:])
 		if err != nil {
@@ -76,7 +76,7 @@ func disconnectFromFileNode(node *service.FileNode, args []string) error {
 		case *service.FileNode:
 			this, err := getUniqueFileNode(thisVal)
 			if err != nil {
-				return fmt.Errorf("get unique file node fail. please use better matching params: %v", err)
+				return err
 			}
 			// default edge
 			if disconnectCmdFlags.edge == "" {
@@ -133,7 +133,7 @@ func disconnectFromPackageNode(node *service.PackageNode, args []string) error {
 		case *service.FileNode:
 			this, err := getUniqueFileNode(thisVal)
 			if err != nil {
-				return fmt.Errorf("get unique file node fail. please use better matching params: %v", err)
+				return err
 			}
 			// default edge
 			if disconnectCmdFlags.edge == "" {

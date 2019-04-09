@@ -58,7 +58,7 @@ func describeNode(args []string) error {
 		}
 		fmt.Println(pkgNode.Describe(less))
 	case *service.FileNode:
-		fNodes, err := controlServiceClient.GetFileNode(context.Background(), node.(*service.FileNode))
+		fNodes, err := controlServiceClient.GetFileNode(context.Background(), &service.GetFileNodeMessage{FileNode: node.(*service.FileNode)})
 		if err != nil {
 			return err
 		}
