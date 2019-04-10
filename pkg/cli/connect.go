@@ -45,89 +45,64 @@ Connect to Node <that> Node(s) <this>. In case of multiple edges for the specifi
 func connectCmdRun(cmd *cobra.Command, args []string) error {
 	thatID, err := ParseNodeID(args[0])
 	if err != nil {
-		return fmt.Errorf("ParseNodeID fail for %q: %v", args[1], err)
+		return fmt.Errorf("Failed parsing node %q: %v", args[0], err)
 	}
-
+	these, err := getNodesFromArgs(args[1:])
+	if err != nil {
+		return err
+	}
 	switch thatVal := thatID.(type) {
 	case *service.FileNode:
 		that, err := getUniqueFileNode(thatVal)
 		if err != nil {
 			return err
 		}
-		err = connectToFileNode(that, args[1:])
+		theseFileNodes := createFileNodesArray(these)
+		err = connectToFileNode(that, theseFileNodes)
 		if err != nil {
-			return fmt.Errorf("connectToFileNode fail: %v", err)
+			return fmt.Errorf("Failed connecting file nodes: %v", err)
 		}
 	case *service.PackageNode:
 		that, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{})
 		if err != nil {
-			return fmt.Errorf("get package node fail: %v", err)
+			return fmt.Errorf("Failed to get package node: %v", err)
 		}
-		err = connectToPackageNode(that, args[1:])
+		theseFileNodes := createFileNodesArray(these)
+		err = connectToPackageNode(that, theseFileNodes)
 		if err != nil {
-			return fmt.Errorf("connectToPackageNode fail: %v", err)
+			return fmt.Errorf("Failed connecting file nodes to package node: %v", err)
 		}
 	default:
-		return fmt.Errorf("unsuported node type %T", thatVal)
+		return fmt.Errorf("unsupported node type %T", thatVal)
 	}
 	return nil
 }
 
-func connectToFileNode(that *service.FileNode, args []string) error {
-	for _, nID := range args {
-		thisID, err := ParseNodeID(nID)
-		if err != nil {
-			return fmt.Errorf("ParseNodeID fail for %q: %v", args[0], err)
-		}
-		switch thisVal := thisID.(type) {
-		// FileNode -> FileNode
-		case *service.FileNode:
-			this, err := getUniqueFileNode(thisVal)
-			if err != nil {
-				return err
-			}
-			err = addFileNodeEdge(that, this)
-			if err != nil {
-				return err
-			}
-		default:
-			return fmt.Errorf("cannot connect %T to FileNode", thisVal)
-		}
+func connectToFileNode(that *service.FileNode, these []*service.FileNode) error {
+	err := addFileNodeEdge(that, these)
+	if err != nil {
+		return err
 	}
 	// ship it back
-	err := sendFileNode(that)
+	err = sendFileNode(that)
 	if err != nil {
-		return fmt.Errorf("sending FileNode fail: %v", err)
+		return fmt.Errorf("Failed sending FileNode: %v", err)
 	}
 	return nil
 }
 
-func connectToPackageNode(that *service.PackageNode, args []string) error {
+func connectToPackageNode(that *service.PackageNode, these []*service.FileNode) error {
+	if connectCmdFlags.edge != "" && connectCmdFlags.edge != "targets" {
+		return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", connectCmdFlags.edge, validFileToPackageEdges)
+	}
 	stream, err := buildServiceClient.Package(context.Background())
 	if err != nil {
 		return err
 	}
-	for _, nID := range args {
-		thisID, err := ParseNodeID(nID)
+	for _, this := range these {
+		err = stream.Send(this)
 		if err != nil {
-			return fmt.Errorf("ParseNodeID fail for %q: %v", args[0], err)
-		}
-		switch thisVal := thisID.(type) {
-		// FileNode -> FileNode
-		case *service.FileNode:
-			this, err := getUniqueFileNode(thisVal)
-			if err != nil {
-				return err
-			}
-			if connectCmdFlags.edge != "" && connectCmdFlags.edge != "targets" {
-				return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", connectCmdFlags.edge, validFileToPackageEdges)
-			}
-			err = stream.Send(this)
-			if err != nil {
-				return fmt.Errorf("send fileNode to pkg stream fail: %v", err)
-			}
-		default:
-			return fmt.Errorf("cannot connect %T to FileNode", thisVal)
+			return fmt.Errorf("Failed sending targets: %v", err)
 		}
 	}
 	res, err := stream.CloseAndRecv()
@@ -140,7 +115,7 @@ func connectToPackageNode(that *service.PackageNode, args []string) error {
 	return nil
 }
 
-func addFileNodeEdge(that *service.FileNode, this *service.FileNode) error {
+func addFileNodeEdge(that *service.FileNode, these []*service.FileNode) error {
 	// default edge
 	if connectCmdFlags.edge == "" {
 		connectCmdFlags.edge = "derivedFrom"
@@ -148,9 +123,9 @@ func addFileNodeEdge(that *service.FileNode, this *service.FileNode) error {
 	// Which edge
 	switch connectCmdFlags.edge {
 	case "derivedFrom":
-		that.DerivedFrom = append(that.DerivedFrom, this)
+		that.DerivedFrom = append(that.DerivedFrom, these...)
 	case "dependencies":
-		that.Dependencies = append(that.Dependencies, this)
+		that.Dependencies = append(that.Dependencies, these...)
 	default:
 		return fmt.Errorf("unknown edge %q for FileNode -> FileNode. Valid values %v", connectCmdFlags.edge, validFileToFileEdges)
 	}
