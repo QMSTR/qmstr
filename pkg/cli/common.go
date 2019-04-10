@@ -7,6 +7,27 @@ import (
 	"golang.org/x/net/context"
 )
 
+func getNodesFromArgs(args []string) ([]interface{}, error) {
+	var these []interface{}
+	for _, arg := range args {
+		thisID, err := ParseNodeID(arg)
+		if err != nil {
+			return nil, fmt.Errorf("Failed parsing node %q: %v", arg, err)
+		}
+		switch thisVal := thisID.(type) {
+		case *service.FileNode:
+			this, err := getUniqueFileNode(thisVal)
+			if err != nil {
+				return nil, err
+			}
+			these = append(these, this)
+		default:
+			return nil, fmt.Errorf("unsupported node type %T", thisVal)
+		}
+	}
+	return these, nil
+}
+
 func getUniqueFileNode(fnode *service.FileNode) (*service.FileNode, error) {
 	stream, err := controlServiceClient.GetFileNode(context.Background(), &service.GetFileNodeMessage{FileNode: fnode, UniqueNode: true})
 	if err != nil {
@@ -17,6 +38,15 @@ func getUniqueFileNode(fnode *service.FileNode) (*service.FileNode, error) {
 		return nil, err
 	}
 	return fileNode, nil
+}
+
+// store nodes in a File node array
+func createFileNodesArray(these []interface{}) []*service.FileNode {
+	var theseFileNodes []*service.FileNode
+	for _, fNode := range these {
+		theseFileNodes = append(theseFileNodes, fNode.(*service.FileNode))
+	}
+	return theseFileNodes
 }
 
 func sendFileNode(node *service.FileNode) error {
