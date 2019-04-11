@@ -212,23 +212,16 @@ func removeFileNodeEdge(that *service.FileNode, these []*service.FileNode) error
 }
 
 func removePackageNodeEdge(that *service.PackageNode, these []*service.FileNode) error {
-	// default edge
-	if disconnectCmdFlags.edge == "" {
-		disconnectCmdFlags.edge = "targets"
+	if connectCmdFlags.edge != "" && connectCmdFlags.edge != "targets" {
+		return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", disconnectCmdFlags.edge, validFileToPackageEdges)
 	}
-	// Which edge
-	switch disconnectCmdFlags.edge {
-	case "targets":
-		deleteNodeMsg = &service.DeleteMessage{Uid: that.Uid, Edge: "targets"}
-		for _, this := range these {
-			for i, target := range that.Targets {
-				if reflect.DeepEqual(this, target) {
-					that.Targets = append(that.Targets[:i], that.Targets[i+1:]...)
-				}
+	deleteNodeMsg = &service.DeleteMessage{Uid: that.Uid, Edge: "targets"}
+	for _, this := range these {
+		for i, target := range that.Targets {
+			if reflect.DeepEqual(this, target) {
+				that.Targets = append(that.Targets[:i], that.Targets[i+1:]...)
 			}
 		}
-	default:
-		return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", disconnectCmdFlags.edge, validFileToPackageEdges)
 	}
 	return nil
 }
