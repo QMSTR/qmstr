@@ -17,6 +17,10 @@ var validFileToPackageEdges = []string{
 	"targets",
 }
 
+var validPackageToProjectEdges = []string{
+	"packages",
+}
+
 var connectCmdFlags = struct {
 	edge string
 }{}
@@ -72,6 +76,16 @@ func connectCmdRun(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return fmt.Errorf("Failed connecting file nodes to package node: %v", err)
 		}
+	case *service.ProjectNode:
+		that, err := buildServiceClient.GetProjectNode(context.Background(), &service.ProjectNode{Name: thatVal.Name})
+		if err != nil {
+			return fmt.Errorf("Failed to get project node: %v", err)
+		}
+		thesePackageNodes := createPkgNodesArray(these)
+		err = connectToProjectNode(that, thesePackageNodes)
+		if err != nil {
+			return fmt.Errorf("Failed connecting package nodes to project node: %v", err)
+		}
 	default:
 		return fmt.Errorf("unsupported node type %T", thatVal)
 	}
@@ -103,6 +117,30 @@ func connectToPackageNode(that *service.PackageNode, these []*service.FileNode) 
 		err = stream.Send(this)
 		if err != nil {
 			return fmt.Errorf("Failed sending targets: %v", err)
+		}
+	}
+	res, err := stream.CloseAndRecv()
+	if err != nil {
+		return fmt.Errorf("close stream fail: %v", err)
+	}
+	if !res.Success {
+		return fmt.Errorf("sending node fail: %v", err)
+	}
+	return nil
+}
+
+func connectToProjectNode(that *service.ProjectNode, these []*service.PackageNode) error {
+	if connectCmdFlags.edge != "" && connectCmdFlags.edge != "packages" {
+		return fmt.Errorf("unknown edge %q for PackageNode -> ProjectNode. Valid values %v", connectCmdFlags.edge, validPackageToProjectEdges)
+	}
+	stream, err := buildServiceClient.Project(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, this := range these {
+		err = stream.Send(this)
+		if err != nil {
+			return fmt.Errorf("Failed sending packages: %v", err)
 		}
 	}
 	res, err := stream.CloseAndRecv()

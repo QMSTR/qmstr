@@ -21,6 +21,12 @@ func getNodesFromArgs(args []string) ([]interface{}, error) {
 				return nil, err
 			}
 			these = append(these, this)
+		case *service.PackageNode:
+			this, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{Name: thisVal.Name})
+			if err != nil {
+				return nil, err
+			}
+			these = append(these, this)
 		default:
 			return nil, fmt.Errorf("unsupported node type %T", thisVal)
 		}
@@ -47,6 +53,14 @@ func createFileNodesArray(these []interface{}) []*service.FileNode {
 		theseFileNodes = append(theseFileNodes, fNode.(*service.FileNode))
 	}
 	return theseFileNodes
+}
+
+func createPkgNodesArray(these []interface{}) []*service.PackageNode {
+	var thesePkgNodes []*service.PackageNode
+	for _, pkgNode := range these {
+		thesePkgNodes = append(thesePkgNodes, pkgNode.(*service.PackageNode))
+	}
+	return thesePkgNodes
 }
 
 func sendFileNode(node *service.FileNode) error {

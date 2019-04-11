@@ -104,12 +104,36 @@ func (s *server) Package(stream service.BuildService_PackageServer) error {
 			break
 		}
 		if err != nil {
-			return fmt.Errorf("recv fileNode fail: %v", err)
+			return fmt.Errorf("Failed receiving fileNodes: %v", err)
 		}
 		pkg.Targets = append(pkg.Targets, fl)
 	}
 	log.Printf("Adding package node %s", pkg.Name)
 	db.AddPackageNode(pkg)
+	return stream.SendAndClose(&service.BuildResponse{Success: true})
+}
+
+func (s *server) Project(stream service.BuildService_ProjectServer) error {
+	db, err := s.currentPhase.getDataBase()
+	if err != nil {
+		return err
+	}
+	project, err := db.GetProjectNode()
+	if err != nil {
+		return err
+	}
+	for {
+		pkg, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return fmt.Errorf("Failed receiving packageNodes: %v", err)
+		}
+		project.Packages = append(project.Packages, pkg)
+	}
+	log.Printf("Adding project node %s", project.Name)
+	db.AddProjectNode(project)
 	return stream.SendAndClose(&service.BuildResponse{Success: true})
 }
 
