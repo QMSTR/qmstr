@@ -77,7 +77,7 @@ govet: gotest
 $(GODEP):
 	go get -u -v github.com/golang/dep/cmd/dep
 
-Gopkg.lock: $(GODEP) Gopkg.toml
+Gopkg.lock: Gopkg.toml
 	${GO_BIN}/dep ensure --no-vendor
 
 vendor: Gopkg.lock
