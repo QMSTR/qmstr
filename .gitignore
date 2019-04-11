@@ -1,22 +1,22 @@
-# generated protobuf code
-**/*_pb2.py
-**/*_pb2_grpc.py
-
-# generated files from fresh installations
-.go_qmstr_test
-/out
-
 # go vendor dir
 vendor/
 
 # python stuff
 venv/
+wheels/
 requirements.txt
-python/**/*egg-info
+**/*egg-info
 
 # misc
 **/.DS_Store
 .vscode
+.vagrant
 
 # Emacs temporary files
 *~
+
+# test marker files
+.go_qmstr_test
+
+# compiled stuff
+out/

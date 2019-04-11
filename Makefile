@@ -1,3 +1,15 @@
+# Versions
+GRPCIO_VERSION := 1.15.0
+
+# Common stuff
+OUTDIR := out/
+MAKEFILES := $(shell find . -name "Makefile.common")
+
+PROTO_FILES := $(shell ls ./proto/*.proto)
+ALL_PYTHON_FILES := $(shell find . -path ./venv -prune -o -name *.py -print)
+PROTO_PYTHON_FILES := $(patsubst ./proto/%,./lib/pyqmstr/qmstr/service/%,$(PROTO_FILES:.proto=_pb2.py)) $(patsubst ./proto/%,./lib/pyqmstr/qmstr/service/%,$(PROTO_FILES:.proto=_pb2_grpc.py))
+PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(ALL_PYTHON_FILES))
+
 GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
 
@@ -14,7 +26,6 @@ GODEP := $(GO_BIN)/dep
 PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
 PROTOC_GEN_GO_SRC := vendor/github.com/golang/protobuf/protoc-gen-go
 
-OUTDIR := out/
 QMSTR_GO_ANALYZERS := $(foreach ana, $(shell ls cmd/modules/analyzers), ${OUTDIR}analyzers/$(ana))
 QMSTR_GO_REPORTERS := $(foreach rep, $(shell ls cmd/modules/reporters), ${OUTDIR}reporters/$(rep))
 QMSTR_GO_BUILDERS := $(foreach builder, qmstr-wrapper, ${OUTDIR}$(builder))
@@ -37,14 +48,14 @@ ifdef https_proxy
 	DOCKER_PROXY += --build-arg https_proxy=$(https_proxy)
 endif
 
+include $(MAKEFILES)
+
 .PHONY: all
 all: install_qmstr_client_gopath democontainer
 
 .PHONY: clean
 clean:
-	@rm -r out || true
-	@rm -fr vendor || true
-	@rm .go_module_test .go_qmstr_test || true
+	git clean -ffxd
 
 .PHONY: cleanall
 cleanall: clean
@@ -126,3 +137,27 @@ docs:
 	cd doc && hugo -d documentation
 	cd doc && tar -cjvf qmstr-doc.tar.bz2 documentation
 	rm -rf doc/documentation
+# Python related stuff
+venv: venv/bin/activate
+venv/bin/activate: requirements.txt
+	test -d venv || virtualenv -p python3 venv
+	venv/bin/pip install -Ur requirements.txt
+	touch venv/bin/activate
+
+requirements.txt:
+	echo grpcio==$(GRPCIO_VERSION) >> requirements.txt
+	echo grpcio-tools==$(GRPCIO_VERSION) >> requirements.txt
+
+venv/bin/pex: venv
+	@venv/bin/pip install pex
+
+venv/bin/autopep8: venv
+	@venv/bin/pip install autopep8
+
+.PHONY: checkpep8
+checkpep8: $(PYTHON_FILES) venv
+	venv/bin/autopep8 --diff $(filter-out venv, $^)
+
+.PHONY: autopep8
+autopep8: $(PYTHON_FILES) venv
+	venv/bin/autopep8 -i $(filter-out venv, $^)
