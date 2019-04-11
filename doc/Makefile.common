@@ -1,0 +1,22 @@
+GOHUGO := $(GO_BIN)/hugo
+HUGO := $(if $(shell which hugo),$(shell which hugo),$(GOHUGO))
+HUGO_VERSION := v0.55.0
+
+.PHONY: docs cleandocs
+docs: doc/qmstr-doc.tar.bz2
+
+# install hugo via go
+$(GOHUGO): HUGOTMP := $(shell mktemp -d)
+$(GOHUGO):
+	@git clone -b $(HUGO_VERSION) --single-branch --depth 2 https://github.com/gohugoio/hugo.git $(HUGOTMP)/hugo
+	@cd $(HUGOTMP)/hugo && go install --tags extended
+	@rm -fr $(HUGOTMP)/hugo
+
+doc/documentation: $(HUGO)
+	@cd doc && $(HUGO) -d documentation
+
+doc/qmstr-doc.tar.bz2: doc/documentation
+	@cd doc && tar -cjvf qmstr-doc.tar.bz2 documentation
+
+cleandocs:
+	@rm -rf doc/documentation doc/qmstr-doc.tar.bz2
