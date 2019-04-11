@@ -16,8 +16,8 @@ type missingPieces struct {
 	File []*service.FileNode
 }
 
-var addCmd = &cobra.Command{
-	Use:   "add [config_file]",
+var addGraphCmd = &cobra.Command{
+	Use:   "add-graph [config_file]",
 	Short: "Add partial graphs from a configuration file",
 	Long: `Add missing files nodes and the connection between them.
 Provide the extra information you want to include in the database,
@@ -33,7 +33,7 @@ through a configuration yaml file.`,
 }
 
 func init() {
-	rootCmd.AddCommand(addCmd)
+	rootCmd.AddCommand(addGraphCmd)
 }
 
 func addMissingPieces(args []string) error {
