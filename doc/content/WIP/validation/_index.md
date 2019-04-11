@@ -20,13 +20,13 @@ questions:
   in the documentation.
 * Is the documentation complete? The documentation is complete if it
   describes all files in the package and contains all required
-  information about these files. This check will fail if, for example,
+  information about these files. This check will fail, for example,
   if license or authorship information is missing even though the file
   is listed in the documentation.
 
 To validate a package, the QMSTR Validator must have been implemented
 to support that package format. For each format, a standard or a best
-practise needs to exist that describes how the package compliance
+practice needs to exist that describes how the package compliance
 documentation and the package payload content are shipped
 together. Initially, the validator supports the Debian file format as
 a starting point.
@@ -47,14 +47,14 @@ In case of a validation error, the return code of the validator
 depends on which of the checks failed (1, 2 or 3). If the validation
 succeeds the return code is zero.
 
-Depending o the file format, the manifest file may be included in the
+Depending on the file format, the manifest file may be included in the
 package. Support for that may be added to the validator.
 
 ## Verifying distributions
 
-In the QMSTR context, a distribution is a set pf packages that is
+In the QMSTR context, a distribution is a set of packages that is
 shipped together as a unit. The validator can be used to evaluate
-distributions. The validation succeeds of the validation for each
+distributions. The validation succeeds if the validation for each
 package contained in the distribution succeeds.
 
 TODO How this can be done has to be developed and depends on how
