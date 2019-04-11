@@ -91,7 +91,7 @@ func disconnectNodes(cmd *cobra.Command, args []string) error {
 }
 
 func disconnectFromFileNode(that *service.FileNode, these []*service.FileNode) error {
-	err := removeFileNodeEdge(that, these)
+	err := removeFileNodePredicates(that, these)
 	if err != nil {
 		return err
 	}
@@ -114,7 +114,7 @@ func disconnectFromFileNode(that *service.FileNode, these []*service.FileNode) e
 }
 
 func disconnectFromPackageNode(that *service.PackageNode, these []*service.FileNode) error {
-	err := removePackageNodeEdge(that, these)
+	err := removePackageNodePredicates(that, these)
 	if err != nil {
 		return err
 	}
@@ -148,7 +148,7 @@ func disconnectFromPackageNode(that *service.PackageNode, these []*service.FileN
 }
 
 func disconnectFromProjectNode(that *service.ProjectNode, these []*service.PackageNode) error {
-	err := removeProjectNodeEdge(that, these)
+	err := removeProjectNodePredicates(that, these)
 	if err != nil {
 		return err
 	}
@@ -181,7 +181,7 @@ func disconnectFromProjectNode(that *service.ProjectNode, these []*service.Packa
 	return nil
 }
 
-func removeFileNodeEdge(that *service.FileNode, these []*service.FileNode) error {
+func removeFileNodePredicates(that *service.FileNode, these []*service.FileNode) error {
 	// default edge
 	if disconnectCmdFlags.edge == "" {
 		disconnectCmdFlags.edge = "derivedFrom"
@@ -211,7 +211,7 @@ func removeFileNodeEdge(that *service.FileNode, these []*service.FileNode) error
 	return nil
 }
 
-func removePackageNodeEdge(that *service.PackageNode, these []*service.FileNode) error {
+func removePackageNodePredicates(that *service.PackageNode, these []*service.FileNode) error {
 	if connectCmdFlags.edge != "" && connectCmdFlags.edge != "targets" {
 		return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", disconnectCmdFlags.edge, validFileToPackageEdges)
 	}
@@ -226,7 +226,7 @@ func removePackageNodeEdge(that *service.PackageNode, these []*service.FileNode)
 	return nil
 }
 
-func removeProjectNodeEdge(that *service.ProjectNode, these []*service.PackageNode) error {
+func removeProjectNodePredicates(that *service.ProjectNode, these []*service.PackageNode) error {
 	if connectCmdFlags.edge != "" && connectCmdFlags.edge != "packages" {
 		return fmt.Errorf("unknown edge %q for PackageNode -> ProjectNode. Valid values %v", disconnectCmdFlags.edge, validPackageToProjectEdges)
 	}
