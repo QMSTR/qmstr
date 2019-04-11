@@ -23,7 +23,7 @@ Disconnect from Node <that> Node(s) <this>.`,
 		setUpControlService()
 		setUpBuildService()
 		if err := disconnectNodes(cmd, args); err != nil {
-			Log.Fatalf("Disonnect failed: %v", err)
+			Log.Fatalf("Disconnect failed: %v", err)
 		}
 		tearDownServer()
 	},
@@ -70,6 +70,19 @@ func disconnectNodes(cmd *cobra.Command, args []string) error {
 		err = disconnectFromPackageNode(that, theseFileNodes)
 		if err != nil {
 			return fmt.Errorf("Failed disconnecting files from package node: %v", err)
+		}
+	case *service.ProjectNode:
+		that, err := buildServiceClient.GetProjectNode(context.Background(), &service.ProjectNode{})
+		if err != nil {
+			return fmt.Errorf("Failed to get project node: %v", err)
+		}
+		thesePkgNodes, err := createPkgNodesArray(these)
+		if err != nil {
+			return fmt.Errorf("Only package nodes can be disconnected from project node: %v", err)
+		}
+		err = disconnectFromProjectNode(that, thesePkgNodes)
+		if err != nil {
+			return fmt.Errorf("Failed disconnecting packages from project node: %v", err)
 		}
 	default:
 		return fmt.Errorf("unsupported node type %T", thatVal)
@@ -134,6 +147,40 @@ func disconnectFromPackageNode(that *service.PackageNode, these []*service.FileN
 	return nil
 }
 
+func disconnectFromProjectNode(that *service.ProjectNode, these []*service.PackageNode) error {
+	err := removeProjectNodeEdge(that, these)
+	if err != nil {
+		return err
+	}
+	// delete edge
+	res, err := buildServiceClient.DeleteEdge(context.Background(), deleteNodeMsg)
+	if err != nil {
+		return err
+	}
+	if !res.Success {
+		return fmt.Errorf("Failed deleting edge: %v", err)
+	}
+	stream, err := buildServiceClient.Project(context.Background())
+	if err != nil {
+		return err
+	}
+	// ship back modified targets
+	for _, pkg := range that.Packages {
+		err = stream.Send(pkg)
+		if err != nil {
+			return fmt.Errorf("Failed sending package nodes to project stream: %v", err)
+		}
+	}
+	res, err = stream.CloseAndRecv()
+	if err != nil {
+		return fmt.Errorf("close stream fail: %v", err)
+	}
+	if !res.Success {
+		return fmt.Errorf("sending node fail: %v", err)
+	}
+	return nil
+}
+
 func removeFileNodeEdge(that *service.FileNode, these []*service.FileNode) error {
 	// default edge
 	if disconnectCmdFlags.edge == "" {
@@ -182,6 +229,22 @@ func removePackageNodeEdge(that *service.PackageNode, these []*service.FileNode)
 		}
 	default:
 		return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", disconnectCmdFlags.edge, validFileToPackageEdges)
+	}
+	return nil
+}
+
+func removeProjectNodeEdge(that *service.ProjectNode, these []*service.PackageNode) error {
+	if connectCmdFlags.edge != "" && connectCmdFlags.edge != "packages" {
+		return fmt.Errorf("unknown edge %q for PackageNode -> ProjectNode. Valid values %v", disconnectCmdFlags.edge, validPackageToProjectEdges)
+	}
+
+	deleteNodeMsg = &service.DeleteMessage{Uid: that.Uid, Edge: "packages"}
+	for _, this := range these {
+		for i, pkg := range that.Packages {
+			if reflect.DeepEqual(this, pkg) {
+				that.Packages = append(that.Packages[:i], that.Packages[i+1:]...)
+			}
+		}
 	}
 	return nil
 }
