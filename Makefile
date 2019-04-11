@@ -80,7 +80,7 @@ $(GODEP):
 Gopkg.lock: Gopkg.toml
 	${GO_BIN}/dep ensure --no-vendor
 
-vendor: Gopkg.lock
+vendor: $(GODEP) Gopkg.lock
 	${GO_BIN}/dep ensure --vendor-only
 
 $(QMSTR_GO_BINARIES): vendor $(GO_SRCS) .go_qmstr_test 
