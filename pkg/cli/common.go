@@ -47,20 +47,31 @@ func getUniqueFileNode(fnode *service.FileNode) (*service.FileNode, error) {
 }
 
 // store nodes in a File node array
-func createFileNodesArray(these []interface{}) []*service.FileNode {
+func createFileNodesArray(these []interface{}) ([]*service.FileNode, error) {
 	var theseFileNodes []*service.FileNode
 	for _, fNode := range these {
-		theseFileNodes = append(theseFileNodes, fNode.(*service.FileNode))
+		switch this := fNode.(type) {
+		case *service.FileNode:
+			theseFileNodes = append(theseFileNodes, this)
+		default:
+			return nil, fmt.Errorf("can not connect %T", this)
+		}
 	}
-	return theseFileNodes
+	return theseFileNodes, nil
 }
 
-func createPkgNodesArray(these []interface{}) []*service.PackageNode {
+// store nodes in a Package node array
+func createPkgNodesArray(these []interface{}) ([]*service.PackageNode, error) {
 	var thesePkgNodes []*service.PackageNode
 	for _, pkgNode := range these {
-		thesePkgNodes = append(thesePkgNodes, pkgNode.(*service.PackageNode))
+		switch this := pkgNode.(type) {
+		case *service.PackageNode:
+			thesePkgNodes = append(thesePkgNodes, this)
+		default:
+			return nil, fmt.Errorf("can not connect %T", this)
+		}
 	}
-	return thesePkgNodes
+	return thesePkgNodes, nil
 }
 
 func sendFileNode(node *service.FileNode) error {

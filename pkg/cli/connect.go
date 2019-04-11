@@ -61,7 +61,10 @@ func connectCmdRun(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-		theseFileNodes := createFileNodesArray(these)
+		theseFileNodes, err := createFileNodesArray(these)
+		if err != nil {
+			return fmt.Errorf("Only file nodes can be connected to file node: %v", err)
+		}
 		err = connectToFileNode(that, theseFileNodes)
 		if err != nil {
 			return fmt.Errorf("Failed connecting file nodes: %v", err)
@@ -71,7 +74,10 @@ func connectCmdRun(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return fmt.Errorf("Failed to get package node: %v", err)
 		}
-		theseFileNodes := createFileNodesArray(these)
+		theseFileNodes, err := createFileNodesArray(these)
+		if err != nil {
+			return fmt.Errorf("Only file nodes can be connected to package node: %v", err)
+		}
 		err = connectToPackageNode(that, theseFileNodes)
 		if err != nil {
 			return fmt.Errorf("Failed connecting file nodes to package node: %v", err)
@@ -81,7 +87,10 @@ func connectCmdRun(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return fmt.Errorf("Failed to get project node: %v", err)
 		}
-		thesePackageNodes := createPkgNodesArray(these)
+		thesePackageNodes, err := createPkgNodesArray(these)
+		if err != nil {
+			return fmt.Errorf("Only package nodes can be connected to Project node: %v", err)
+		}
 		err = connectToProjectNode(that, thesePackageNodes)
 		if err != nil {
 			return fmt.Errorf("Failed connecting package nodes to project node: %v", err)

@@ -50,7 +50,10 @@ func disconnectNodes(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-		theseFileNodes := createFileNodesArray(these)
+		theseFileNodes, err := createFileNodesArray(these)
+		if err != nil {
+			return fmt.Errorf("Only file nodes can be disconnected from file node: %v", err)
+		}
 		err = disconnectFromFileNode(that, theseFileNodes)
 		if err != nil {
 			return fmt.Errorf("Failed disconnecting from file node: %v", err)
@@ -60,7 +63,10 @@ func disconnectNodes(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return fmt.Errorf("Failed to get package node: %v", err)
 		}
-		theseFileNodes := createFileNodesArray(these)
+		theseFileNodes, err := createFileNodesArray(these)
+		if err != nil {
+			return fmt.Errorf("Only file nodes can be disconnected from package node: %v", err)
+		}
 		err = disconnectFromPackageNode(that, theseFileNodes)
 		if err != nil {
 			return fmt.Errorf("Failed disconnecting files from package node: %v", err)
