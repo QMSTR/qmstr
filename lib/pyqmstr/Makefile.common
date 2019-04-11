@@ -1,0 +1,6 @@
+.PHONY: python_proto
+python_proto: venv $(PROTO_PYTHON_FILES)
+
+lib/pyqmstr/qmstr/service/%_pb2.py lib/pyqmstr/qmstr/service/%_pb2_grpc.py: proto/%.proto
+	venv/bin/python -m grpc_tools.protoc -Iproto --python_out=./lib/pyqmstr/qmstr/service --grpc_python_out=./lib/pyqmstr/qmstr/service proto/*.proto
+	sed -i -E 's/^(import.*_pb2)/from . \1/' lib/pyqmstr/qmstr/service/*.py

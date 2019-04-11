@@ -1,0 +1,11 @@
+SPDX_ANALYZER := spdx-analyzer
+
+.PHONY: $(SPDX_ANALYZER)
+$(SPDX_ANALYZER): out/$(SPDX_ANALYZER)
+
+out/$(SPDX_ANALYZER): venv/bin/pex wheels
+	venv/bin/pex modules/analyzers/qmstr-spdx-analyzer pyqmstr -e spdxanalyzer.__main__:main --python=venv/bin/python3 --disable-cache -f ./wheels -o $@
+
+wheels: PYQMSTR_FILES := $(shell find lib/pyqmstr -name "*.py")
+wheels: venv $(PYQMSTR_FILES)
+	venv/bin/pip wheel -w ./wheels lib/pyqmstr
