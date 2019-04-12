@@ -13,7 +13,7 @@ GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
 
 # those are intended to be a recursively expanded variables
-GO_SRCS = $(shell find cmd -name '*.go') $(shell find pkg -name '*.go') 
+GO_SRCS = $(shell find modules -name '*.go') $(shell find pkg -name '*.go') 
 FILTER = $(foreach v,$(2),$(if $(findstring $(1),$(v)),$(v),))
 GO_MODULE_SRCS = $(call FILTER,module,$(GO_SRCS))
 
@@ -27,14 +27,13 @@ PROTOC_GEN_GO_SRC := vendor/github.com/golang/protobuf/protoc-gen-go
 
 QMSTR_ANALYZERS := $(foreach ana, $(shell ls modules/analyzers), $(OUTDIR)analyzers/$(ana))
 
-QMSTR_GO_ANALYZERS := $(foreach ana, $(shell ls cmd/modules/analyzers), ${OUTDIR}analyzers/$(ana))
 QMSTR_GO_REPORTERS := $(foreach rep, $(shell ls cmd/modules/reporters), ${OUTDIR}reporters/$(rep))
 QMSTR_GO_BUILDERS := $(foreach builder, qmstr-wrapper, ${OUTDIR}$(builder))
 QMSTR_CLIENT_BINARIES := $(foreach cli, qmstrctl qmstr, ${OUTDIR}$(cli)) $(QMSTR_GO_BUILDERS)
 QMSTR_MASTER := $(foreach bin, qmstr-master, ${OUTDIR}$(bin))
-QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_GO_ANALYZERS) $(QMSTR_GO_REPORTERS) $(QMSTR_ANALYZERS)
+QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_GO_REPORTERS) $(QMSTR_ANALYZERS)
 QMSTR_GO_BINARIES := $(QMSTR_MASTER) $(QMSTR_CLIENT_BINARIES)
-QMSTR_GO_MODULES := $(QMSTR_GO_ANALYZERS) $(QMSTR_GO_REPORTERS)
+QMSTR_GO_MODULES := $(QMSTR_GO_REPORTERS)
 
 CONTAINER_TAG_DEV := qmstr/dev
 CONTAINER_TAG_MASTER := qmstr/master
@@ -62,11 +61,11 @@ cleanall: clean
 	@docker rmi ${CONTAINER_TAG_DEV} ${CONTAINER_TAG_MASTER} ${CONTAINER_TAG_RUNTIME} || true
 	@docker image prune --all --force --filter=label=org.qmstr.image
 
-.go_module_test: $(GO_MODULE_SRCS)
+.go_module_test: $(GO_MODULE_SRCS) vendor
 	go test $(GO_MODULE_PKGS)
 	@touch .go_module_test
 
-.go_qmstr_test: $(GO_SRCS)
+.go_qmstr_test: $(GO_SRCS) vendor
 	go test $(GO_PKGS)
 	@touch .go_qmstr_test
 
