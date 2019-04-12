@@ -56,7 +56,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # install dependecies
 RUN apt-get update && apt-get install -y \
-    curl golang autoconf git libgit2-dev libio-captureoutput-perl \
+    curl golang autoconf git libgit2-dev libio-captureoutput-perl virtualenv \
     && rm -rf /var/lib/apt/lists/*
 
 # install golang tools
@@ -65,38 +65,14 @@ RUN mkdir -p ${GOPATH}/src/github.com/QMSTR/qmstr && \
     mkdir ${GOPATH}/src/github.com/QMSTR/qmstr/pkg
 ADD cmd ${GOPATH}/src/github.com/QMSTR/qmstr/cmd
 ADD pkg ${GOPATH}/src/github.com/QMSTR/qmstr/pkg
+ADD modules ${GOPATH}/src/github.com/QMSTR/qmstr/modules
+ADD proto ${GOPATH}/src/github.com/QMSTR/qmstr/proto
+ADD lib ${GOPATH}/src/github.com/QMSTR/qmstr/lib
 ADD Makefile ${GOPATH}/src/github.com/QMSTR/qmstr/Makefile
 COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
 
 WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
-RUN make $GOPATH/bin/dep
-RUN touch ${GOPATH}/src/github.com/QMSTR/qmstr/Gopkg.*
 RUN make install_qmstr_all
-
-## master_unit_tests ##
-
-# separate stage just to run the master unit tests:
-FROM builder as master_unit_tests
-
-LABEL org.qmstr.image master_unit_tests
-
-WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
-CMD make gotest
-
-## qmstr_spdx_analyzer ##
-
-# build the python spdx analyzer
-FROM ubuntu:18.04 as qmstr_spdx_analyzer
-
-LABEL org.qmstr.image qmstr_spdx_analyzer
-
-# install build deps
-RUN apt-get update && apt-get install -y \
-    git make python-virtualenv python-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /
-RUN git clone https://github.com/QMSTR/qmstr-spdx-analyzer && cd qmstr-spdx-analyzer && make
 
 ## runtime ##
 
@@ -113,11 +89,7 @@ RUN rm -fr /tmp/qmstr
 ADD ci/common.inc /common.inc
 
 # copy qmstr installation from previous stage
-RUN mkdir -p /go/bin
 COPY --from=builder /usr/local/bin/* /usr/local/bin/
-
-# copy qmstr-analyzer from its stage
-COPY --from=qmstr_spdx_analyzer /qmstr-spdx-analyzer/spdx-analyzer /usr/local/bin/spdx-analyzer
 
 EXPOSE 50051
 
