@@ -142,7 +142,7 @@ func connectToProjectNode(that *service.ProjectNode, these []*service.PackageNod
 	if connectCmdFlags.edge != "" && connectCmdFlags.edge != "packages" {
 		return fmt.Errorf("unknown edge %q for PackageNode -> ProjectNode. Valid values %v", connectCmdFlags.edge, validPackageToProjectEdges)
 	}
-	stream, err := buildServiceClient.Project(context.Background())
+	stream, err := buildServiceClient.UpdateProjectNode(context.Background())
 	if err != nil {
 		return err
 	}

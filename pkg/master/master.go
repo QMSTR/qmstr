@@ -113,7 +113,7 @@ func (s *server) Package(stream service.BuildService_PackageServer) error {
 	return stream.SendAndClose(&service.BuildResponse{Success: true})
 }
 
-func (s *server) Project(stream service.BuildService_ProjectServer) error {
+func (s *server) UpdateProjectNode(stream service.BuildService_UpdateProjectNodeServer) error {
 	db, err := s.currentPhase.getDataBase()
 	if err != nil {
 		return err

@@ -160,7 +160,7 @@ func disconnectFromProjectNode(that *service.ProjectNode, these []*service.Packa
 	if !res.Success {
 		return fmt.Errorf("Failed deleting edge: %v", err)
 	}
-	stream, err := buildServiceClient.Project(context.Background())
+	stream, err := buildServiceClient.UpdateProjectNode(context.Background())
 	if err != nil {
 		return err
 	}
