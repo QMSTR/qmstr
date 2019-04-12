@@ -3,7 +3,6 @@ GRPCIO_VERSION := 1.15.0
 
 # Common stuff
 OUTDIR := out/
-MAKEFILES := $(shell find . -name "Makefile.common")
 
 PROTO_FILES := $(shell ls ./proto/*.proto)
 ALL_PYTHON_FILES := $(shell find . -path ./venv -prune -o -name *.py -print)
@@ -26,12 +25,14 @@ GODEP := $(GO_BIN)/dep
 PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
 PROTOC_GEN_GO_SRC := vendor/github.com/golang/protobuf/protoc-gen-go
 
+QMSTR_ANALYZERS := $(foreach ana, $(shell ls modules/analyzers), $(OUTDIR)analyzers/$(ana))
+
 QMSTR_GO_ANALYZERS := $(foreach ana, $(shell ls cmd/modules/analyzers), ${OUTDIR}analyzers/$(ana))
 QMSTR_GO_REPORTERS := $(foreach rep, $(shell ls cmd/modules/reporters), ${OUTDIR}reporters/$(rep))
 QMSTR_GO_BUILDERS := $(foreach builder, qmstr-wrapper, ${OUTDIR}$(builder))
 QMSTR_CLIENT_BINARIES := $(foreach cli, qmstrctl qmstr, ${OUTDIR}$(cli)) $(QMSTR_GO_BUILDERS)
 QMSTR_MASTER := $(foreach bin, qmstr-master, ${OUTDIR}$(bin))
-QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_GO_ANALYZERS) $(QMSTR_GO_REPORTERS) $(QMSTR_PYTHON_MODULES)
+QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_GO_ANALYZERS) $(QMSTR_GO_REPORTERS) $(QMSTR_ANALYZERS)
 QMSTR_GO_BINARIES := $(QMSTR_MASTER) $(QMSTR_CLIENT_BINARIES)
 QMSTR_GO_MODULES := $(QMSTR_GO_ANALYZERS) $(QMSTR_GO_REPORTERS)
 
@@ -48,7 +49,6 @@ ifdef https_proxy
 	DOCKER_PROXY += --build-arg https_proxy=$(https_proxy)
 endif
 
-include $(MAKEFILES)
 
 .PHONY: all
 all: install_qmstr_client_gopath democontainer
@@ -139,8 +139,8 @@ venv/bin/activate: requirements.txt
 	touch venv/bin/activate
 
 requirements.txt:
-	echo grpcio==$(GRPCIO_VERSION) >> requirements.txt
-	echo grpcio-tools==$(GRPCIO_VERSION) >> requirements.txt
+	@echo grpcio==$(GRPCIO_VERSION) >> requirements.txt
+	@echo grpcio-tools==$(GRPCIO_VERSION) >> requirements.txt
 
 venv/bin/pex: venv
 	@venv/bin/pip install pex
@@ -156,3 +156,6 @@ checkpep8: $(PYTHON_FILES) venv
 autopep8: $(PYTHON_FILES) venv
 	venv/bin/autopep8 -i $(filter-out venv, $^)
 
+
+# include all makefiles
+include $(shell find . -name "Makefile.common")
