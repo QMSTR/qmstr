@@ -100,23 +100,6 @@ $(QMSTR_GO_BINARIES): vendor $(GO_SRCS) .go_qmstr_test
 $(QMSTR_GO_MODULES): vendor $(GO_SRCS) .go_module_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/modules/$(subst $(OUTDIR),,$@)
 
-.PHONY: container master
-master container: ci/Dockerfile
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master $(DOCKER_PROXY) .
-
-.PHONY: devcontainer
-devcontainer: container
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_DEV} --target dev $(DOCKER_PROXY) .
-
-.PHONY: democontainer
-democontainer: container
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime $(DOCKER_PROXY) .
-	docker build -f ci/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target builder $(DOCKER_PROXY) .
-
-.PHONY: ratelimage
-ratelimage:
-	docker build -f ci/Dockerfile -t qmstr-ratel --target web $(DOCKER_PROXY) .
-
 install_qmstr_server: $(QMSTR_SERVER_BINARIES)
 	cp $^ /usr/local/bin
 
