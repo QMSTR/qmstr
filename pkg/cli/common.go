@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/QMSTR/qmstr/pkg/service"
 	"golang.org/x/net/context"
@@ -50,12 +51,10 @@ func getUniqueFileNode(fnode *service.FileNode) (*service.FileNode, error) {
 func createFileNodesArray(these []interface{}) ([]*service.FileNode, error) {
 	var theseFileNodes []*service.FileNode
 	for _, fNode := range these {
-		switch this := fNode.(type) {
-		case *service.FileNode:
-			theseFileNodes = append(theseFileNodes, this)
-		default:
-			return nil, fmt.Errorf("can not connect %T", this)
+		if reflect.TypeOf(fNode) != reflect.TypeOf((*service.FileNode)(nil)) {
+			return nil, fmt.Errorf("can not connect %v", reflect.TypeOf(fNode))
 		}
+		theseFileNodes = append(theseFileNodes, fNode.(*service.FileNode))
 	}
 	return theseFileNodes, nil
 }
@@ -64,12 +63,10 @@ func createFileNodesArray(these []interface{}) ([]*service.FileNode, error) {
 func createPkgNodesArray(these []interface{}) ([]*service.PackageNode, error) {
 	var thesePkgNodes []*service.PackageNode
 	for _, pkgNode := range these {
-		switch this := pkgNode.(type) {
-		case *service.PackageNode:
-			thesePkgNodes = append(thesePkgNodes, this)
-		default:
-			return nil, fmt.Errorf("can not connect %T", this)
+		if reflect.TypeOf(pkgNode) != reflect.TypeOf((*service.PackageNode)(nil)) {
+			return nil, fmt.Errorf("can not connect %v", reflect.TypeOf(pkgNode))
 		}
+		thesePkgNodes = append(thesePkgNodes, pkgNode.(*service.PackageNode))
 	}
 	return thesePkgNodes, nil
 }
