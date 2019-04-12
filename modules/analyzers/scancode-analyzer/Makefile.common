@@ -1,0 +1,8 @@
+SCANCODE_ANALYZER := scancode-analyzer
+
+.PHONY: $(SCANCODE_ANALYZER)
+$(SCANCODE_ANALYZER): $(OUTDIR)analyzers/$(SCANCODE_ANALYZER)
+
+$(OUTDIR)analyzers/$(SCANCODE_ANALYZER): vendor $(GO_SRCS) .go_module_test
+	go test github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)
+	go build -o $@ github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)

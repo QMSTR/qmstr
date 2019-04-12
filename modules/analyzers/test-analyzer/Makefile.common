@@ -1,0 +1,8 @@
+TEST_ANALYZER := test-analyzer
+
+.PHONY: $(TEST_ANALYZER)
+$(TEST_ANALYZER): $(OUTDIR)analyzers/$(TEST_ANALYZER)
+
+$(OUTDIR)analyzers/$(TEST_ANALYZER): vendor $(GO_SRCS) .go_module_test
+	go test github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)
+	go build -o $@ github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)
