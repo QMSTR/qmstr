@@ -1,0 +1,43 @@
+syntax = "proto3";
+package service;
+option java_package = "org.qmstr.grpc.service";
+
+import weak "datamodel.proto";
+
+message AnalyzerConfigRequest {
+    int32 analyzerID = 1;
+}
+
+message AnalyzerConfigResponse {
+    map<string, string> configMap = 2;
+    repeated PathSubstitution pathSub = 3;
+    int64 token = 4;
+    string name = 6;
+}
+
+message InfoNodeMessage {
+    int64 token = 1;
+    string uid = 2;
+    InfoNode infonode = 3;
+}
+
+message PackageNodeMessage {
+    int64 token = 1;
+    PackageNode packagenode = 2;
+}
+
+message DiagnosticNodeMessage {
+    int64 token = 1;
+    string uid = 2;
+    DiagnosticNode diagnosticnode =3;
+}
+message SendResponse {
+    bool success = 1;
+}
+
+service AnalysisService {
+    rpc GetAnalyzerConfig(AnalyzerConfigRequest) returns (AnalyzerConfigResponse) {}
+    rpc SendInfoNodes(stream InfoNodeMessage) returns (SendResponse) {}
+    rpc SendPackageNode(stream PackageNodeMessage) returns (SendResponse) {}
+    rpc SendDiagnosticNode(stream DiagnosticNodeMessage) returns (SendResponse) {}
+}
