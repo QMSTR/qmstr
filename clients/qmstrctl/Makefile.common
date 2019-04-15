@@ -1,0 +1,8 @@
+QMSTRCTL := qmstrctl
+
+.PHONY: $(QMSTRCTL)
+$(QMSTRCTL): $(OUTDIR)/$(QMSTRCTL)
+
+$(OUTDIR)$(QMSTRCTL): $(GO_SRCS)
+	go test ./clients/$(subst $(OUTDIR),,$@)
+	go build -o $@ ./clients/$(subst $(OUTDIR),,$@)
