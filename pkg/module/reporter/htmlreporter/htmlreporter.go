@@ -29,15 +29,16 @@ const (
 
 // HTMLReporter is the context of the HTML reporter module
 type HTMLReporter struct {
-	workingDir     string
-	sharedDataDir  string
-	Keep           bool
-	baseURL        string
-	siteData       *reporting.SiteData
-	packageDir     string
-	cacheDir       string
-	enableWarnings bool
-	enableErrors   bool
+	workingDir      string
+	sharedDataDir   string
+	Keep            bool
+	baseURL         string
+	siteData        *reporting.SiteData
+	packageDir      string
+	cacheDir        string
+	enableWarnings  bool
+	enableErrors    bool
+	generateStatics bool
 }
 
 // Configure sets up the working directory for this reporting run.
@@ -57,6 +58,12 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 		r.baseURL = val
 	} else {
 		r.baseURL = "file:///var/lib/qmstr/reports"
+	}
+
+	if statics, ok := config["generatestatics"]; ok && statics == "no" {
+		r.generateStatics = false
+	} else {
+		r.generateStatics = true
 	}
 
 	if siteData, err := reporting.GetSiteDataFromConfiguration(config); err == nil {
@@ -125,17 +132,23 @@ func (r *HTMLReporter) PostReport() error {
 	if !r.Keep {
 		defer r.cleanup()
 	}
+	workingDir := "/tmp"
+	contentDir := strings.TrimPrefix(r.workingDir, "/tmp/")
 
-	staticHTMLContentDir, err := CreateStaticHTML(r.workingDir)
-	if err != nil {
-		return fmt.Errorf("error generating reports: %v", err)
+	if r.generateStatics {
+		staticHTMLContentDir, err := CreateStaticHTML(r.workingDir)
+		if err != nil {
+			return fmt.Errorf("error generating reports: %v", err)
+		}
+		log.Printf("QMSTR reports generated in %v", staticHTMLContentDir)
+		contentDir = staticHTMLContentDir
+		workingDir = r.workingDir
 	}
-	log.Printf("QMSTR reports generated in %v", staticHTMLContentDir)
-
 	// Create the reports package (for publishing, etc).
-	if err := CreateReportsPackage(r.workingDir, staticHTMLContentDir, r.packageDir); err != nil {
+	if err := CreateReportsPackage(workingDir, contentDir, r.packageDir, r.generateStatics); err != nil {
 		return fmt.Errorf("error packaging report to %v: %v", r.packageDir, err)
 	}
+
 	log.Printf("QMSTR reports package generated in %v", r.packageDir)
 	return nil
 }
@@ -326,14 +339,23 @@ func CreateStaticHTML(workingdir string) (string, error) {
 }
 
 // CreateReportsPackage creates a tarball of the static HTML reports in the packagePath directory.
-func CreateReportsPackage(workingDir string, contentDir string, packagePath string) error {
+func CreateReportsPackage(workingDir string, contentDir string, packagePath string, generateStatics bool) error {
 	outputFile := path.Join(packagePath, "qmstr-reports.tar.bz2")
+
 	cmd := exec.Command("tar", "cfj", outputFile, "-C", workingDir, contentDir)
+
+	if !generateStatics {
+		cmd = exec.Command("tar", "cfj", outputFile, "-C", workingDir, contentDir, "-h")
+	}
 	cmd.Dir = workingDir
+	argstest := cmd.Args //TODO: Delete after tests
+	log.Print(argstest)  //TODO: Delete after tests
 	if output, err := cmd.CombinedOutput(); err != nil {
 		log.Printf("NOTE - output:\n%v", string(output[:]))
 		return fmt.Errorf("error creating package of QMSTR reports: %v", err)
 	}
+	log.Printf("WORKDIR: %v", workingDir)    //TODO: Delete after tests
+	log.Printf("CONTENTDIR: %v", contentDir) //TODO: Delete after tests
 	log.Printf("generated package of QMSTR reports at %v", outputFile)
 	return nil
 }
