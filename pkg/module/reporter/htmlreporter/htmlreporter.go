@@ -348,14 +348,10 @@ func CreateReportsPackage(workingDir string, contentDir string, packagePath stri
 		cmd = exec.Command("tar", "cfj", outputFile, "-C", workingDir, contentDir, "-h")
 	}
 	cmd.Dir = workingDir
-	argstest := cmd.Args //TODO: Delete after tests
-	log.Print(argstest)  //TODO: Delete after tests
 	if output, err := cmd.CombinedOutput(); err != nil {
 		log.Printf("NOTE - output:\n%v", string(output[:]))
 		return fmt.Errorf("error creating package of QMSTR reports: %v", err)
 	}
-	log.Printf("WORKDIR: %v", workingDir)    //TODO: Delete after tests
-	log.Printf("CONTENTDIR: %v", contentDir) //TODO: Delete after tests
 	log.Printf("generated package of QMSTR reports at %v", outputFile)
 	return nil
 }
