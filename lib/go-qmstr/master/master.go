@@ -252,13 +252,12 @@ func (s *server) switchPhase(requestedPhase service.Phase) error {
 		}
 		s.currentPhase = phaseCtor(s.currentPhase.getMasterConfig(), db, s)
 		s.pendingPhaseSwitch = 0
+		s.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: fmt.Sprintf("Switched to phase %d", requestedPhase)})
 		err = s.currentPhase.Activate()
 		if err != nil {
-			s.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: "Entering failure phase"})
 			s.enterFailureServerPhase(err)
 			return err
 		}
-		s.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: fmt.Sprintf("Switched to phase %d", requestedPhase)})
 		return nil
 	}
 	return fmt.Errorf("Invalid phase requested %d", requestedPhase)
@@ -303,6 +302,9 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 		},
 		eventMutex: &sync.RWMutex{},
 	}
+
+	serverImpl.currentPhase.(*serverPhaseInit).ConnectServerImpl(serverImpl)
+
 	service.RegisterBuildServiceServer(s, serverImpl)
 	service.RegisterAnalysisServiceServer(s, serverImpl)
 	service.RegisterReportServiceServer(s, serverImpl)

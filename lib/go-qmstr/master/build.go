@@ -26,6 +26,7 @@ func newBuildPhase(masterConfig *config.MasterConfig, db *database.DataBase, ser
 }
 
 func (phase *serverPhaseBuild) Activate() error {
+	phase.server.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: "Activating build phase"})
 	phase.db.OpenInsertQueue()
 	return nil
 }

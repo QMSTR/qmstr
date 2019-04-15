@@ -26,7 +26,12 @@ func newInitServerPhase(masterConfig *config.MasterConfig) *serverPhaseInit {
 	return &serverPhaseInit{genericServerPhase{Name: "Init", masterConfig: masterConfig}}
 }
 
+func (phase *serverPhaseInit) ConnectServerImpl(server *server) {
+	phase.server = server
+}
+
 func (phase *serverPhaseInit) Activate() error {
+	phase.server.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: "Activating init phase"})
 	// Connect to database (dgraph)
 	db, err := database.Setup(phase.masterConfig.Server.DBAddress, phase.masterConfig.Server.DBWorkers)
 	if err != nil {

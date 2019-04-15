@@ -25,6 +25,7 @@ func newReportPhase(masterConfig *config.MasterConfig, db *database.DataBase, se
 
 func (phase *serverPhaseReport) Activate() error {
 	log.Println("Reporting activated")
+	phase.server.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: "Activating reporting phase"})
 	for idx, reporterConfig := range phase.masterConfig.Reporting {
 		reporterName := reporterConfig.Reporter
 
