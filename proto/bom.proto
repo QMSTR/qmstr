@@ -1,0 +1,60 @@
+syntax = "proto3";
+package service;
+option java_package = "org.qmstr.grpc.service";
+
+message PackageInformation {
+    string name = 1;
+    string buildConfig = 7;
+    string vendor = 2;
+    string configuration = 3;
+	string ocFossLiaison = 4;
+    string ocComplianceContact = 5;
+    string licenseDeclared = 6;
+    string sourceURL = 8;
+}
+
+message Person {
+    string name = 1;
+    string email = 2;
+}
+
+message Revision {
+    string id = 1;
+    string message = 2;
+    Person committer = 3;
+    Person author = 4;
+    string commitDate = 5;
+    string authorDate = 6;
+}
+
+message License {
+    string name = 1;
+    string spdxIdentifier = 2;
+}
+
+message Source {
+    string file = 1;
+    License license = 2;
+    repeated Person authors = 3;
+}
+
+message Dependency {
+    string name = 1;
+    string filepath = 2;
+}
+
+message Target {
+    string name = 1;
+    string sha1 = 2;
+    string path = 3;
+    repeated Source sources = 4;
+    repeated Dependency dependencies = 5;
+}
+
+message BOM {
+    PackageInformation packageInfo = 1;
+    Revision versionInfo = 2;
+    repeated string warnings = 3;
+    repeated string errors = 4;
+    repeated Target targets = 5;
+}
