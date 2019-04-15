@@ -9,10 +9,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/QMSTR/qmstr/pkg/analysis"
-	"github.com/QMSTR/qmstr/pkg/master"
-	"github.com/QMSTR/qmstr/pkg/service"
-	"github.com/QMSTR/qmstr/pkg/tester"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/analysis"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/tester"
 )
 
 const (

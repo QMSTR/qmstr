@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/QMSTR/qmstr/pkg/analysis"
-	"github.com/QMSTR/qmstr/pkg/master"
-	"github.com/QMSTR/qmstr/pkg/service"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/analysis"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
 var spdxPattern = regexp.MustCompile(`SPDX-License-Identifier: (.+)\s*`)

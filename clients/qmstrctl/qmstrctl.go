@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/QMSTR/qmstr/pkg/cli"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
 )
 
 var fixableCommands = map[string]struct{}{"create": struct{}{}, "update": struct{}{}}

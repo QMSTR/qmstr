@@ -13,7 +13,7 @@ GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
 
 # those are intended to be a recursively expanded variables
-GO_SRCS = $(shell find modules -name '*.go') $(shell find pkg -name '*.go') 
+GO_SRCS = $(shell find . -name '*.go')
 FILTER = $(foreach v,$(2),$(if $(findstring $(1),$(v)),$(v),))
 GO_MODULE_SRCS = $(call FILTER,module,$(GO_SRCS))
 
@@ -62,7 +62,7 @@ cleanall: clean
 	@touch .go_module_test
 
 .go_qmstr_test: $(GO_SRCS)
-	go test ./cmd/... ./pkg/...
+	go test ./clients/... ./lib/go-qmstr/...
 	@touch .go_qmstr_test
 
 .PHONY: gotest
@@ -78,7 +78,7 @@ golint:	$(GOMETALINTER)
 
 .PHONY: govet
 govet: gotest
-	go tool vet cmd pkg
+	go vet ./lib/go-qmstr/wrapper/
 
 install_qmstr_server: $(QMSTR_SERVER_BINARIES)
 	cp $^ /usr/local/bin
@@ -91,7 +91,7 @@ install_qmstr_all: install_qmstr_client install_qmstr_server
 install_qmstr_client_gopath: $(QMSTR_CLIENT_BINARIES)
 	cp $^ ${GO_PATH}/bin/
 
-pkg/service/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
+lib/go-qmstr/service/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
 	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
 
 # Python related stuff

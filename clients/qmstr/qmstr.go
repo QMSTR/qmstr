@@ -16,8 +16,8 @@ import (
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
 
-	"github.com/QMSTR/qmstr/pkg/common"
-	"github.com/QMSTR/qmstr/pkg/docker"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/common"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/docker"
 
 	flag "github.com/spf13/pflag"
 )
