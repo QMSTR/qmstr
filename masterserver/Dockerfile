@@ -66,7 +66,8 @@ RUN cd /opt && tar -xf go.tar.gz
 
 # install golang tools
 RUN mkdir /qmstr
-ADD cmd /qmstr/cmd
+ADD clients /qmstr/clients
+ADD masterserver /qmstr/masterserver
 ADD pkg /qmstr/pkg
 ADD modules /qmstr/modules
 ADD proto /qmstr/proto

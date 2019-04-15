@@ -1,3 +1,4 @@
+# container related
 .PHONY: container master
 master container: masterserver/Dockerfile
 	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master $(DOCKER_PROXY) .
@@ -14,3 +15,11 @@ democontainer: container
 .PHONY: ratelimage
 ratelimage:
 	docker build -f masterserver/Dockerfile -t qmstr-ratel --target web $(DOCKER_PROXY) .
+
+# go related
+.PHONY: qmstr-master
+qmstr-master: $(QMSTR_MASTER)
+
+$(QMSTR_MASTER): $(GO_SRCS)
+	go test ./masterserver/...
+	go build -o $@ masterserver/$(subst $(OUTDIR),,$@).go

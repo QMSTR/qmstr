@@ -25,7 +25,7 @@ PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
 
 QMSTR_ANALYZERS := $(foreach ana, $(shell ls modules/analyzers), $(OUTDIR)analyzers/$(ana))
 QMSTR_REPORTERS := $(foreach rep, $(shell ls modules/reporters), $(OUTDIR)reporters/$(rep))
-QMSTR_BUILDERS := $(foreach builder, $(shell ls modules/builders), $(OUTDIR)reporters/$(builder))
+QMSTR_BUILDERS := $(foreach builder, $(shell ls modules/builders), $(OUTDIR)builders/$(builder))
 
 QMSTR_CLIENT_BINARIES := $(foreach cli, qmstrctl qmstr, ${OUTDIR}$(cli)) $(QMSTR_BUILDERS)
 QMSTR_MASTER := $(foreach bin, qmstr-master, ${OUTDIR}$(bin))

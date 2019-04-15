@@ -4,5 +4,5 @@ QMSTR-HTML_REPORTER := qmstr-reporter-html
 $(QMSTR-HTML_REPORTER): $(OUTDIR)reporters/$(QMSTR-HTML_REPORTER)
 
 $(OUTDIR)reporters/$(QMSTR-HTML_REPORTER): $(GO_SRCS)
-	go test github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)
-	go build -o $@ github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)
+	go test ./modules/$(subst $(OUTDIR),,$@)
+	go build -o $@ ./modules/$(subst $(OUTDIR),,$@)
