@@ -5,15 +5,14 @@ import (
 	"os"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
-	"github.com/QMSTR/qmstr/lib/go-qmstr/module/reporter/consolereporter"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/reporting"
 )
 
 func main() {
-	reporter := reporting.NewReporter(&consolereporter.ConsoleReporter{})
+	reporter := reporting.NewReporter(&ConsoleReporter{})
 	if err := reporter.RunReporterModule(); err != nil {
-		log.Printf("%v failed: %v\n", consolereporter.ModuleName, err)
+		log.Printf("%v failed: %v\n", ModuleName, err)
 		os.Exit(master.ReturnReporterFailed)
 	}
-	log.Printf("%v completed successfully\n", consolereporter.ModuleName)
+	log.Printf("%v completed successfully\n", ModuleName)
 }

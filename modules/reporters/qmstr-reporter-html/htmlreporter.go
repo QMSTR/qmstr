@@ -1,4 +1,4 @@
-package htmlreporter
+package main
 
 import (
 	"bufio"

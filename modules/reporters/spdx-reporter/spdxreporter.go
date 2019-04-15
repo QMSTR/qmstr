@@ -1,4 +1,4 @@
-package spdxreporter
+package main
 
 import (
 	"context"
