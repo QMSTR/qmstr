@@ -2,6 +2,7 @@
 ARG DGRAPH_VERSION=1.0.9
 ARG HUGO_VERSION=0.39
 ARG SCANCODE_VERSION=2.9.1
+ARG GO_DL_URL=https://dl.google.com/go/go1.12.4.linux-amd64.tar.gz
 
 ## runtimebase ##
 
@@ -50,28 +51,31 @@ RUN rm /tmp/dgraph*
 # Create a container that only builds the software to be installed into the master container:
 FROM ubuntu:18.04 as builder
 LABEL org.qmstr.image builder
-ENV GOPATH /go
-ENV PATH ${GOPATH}/bin:$PATH
+ENV GOROOT /opt/go
+ENV PATH ${GOPATH}/bin:/opt/go/bin:$PATH
 ENV DEBIAN_FRONTEND=noninteractive
 
 # install dependecies
 RUN apt-get update && apt-get install -y \
-    curl golang autoconf git libgit2-dev libio-captureoutput-perl virtualenv \
+    curl autoconf make git libgit2-dev libio-captureoutput-perl virtualenv tar build-essential pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# install golang tools
-RUN mkdir -p ${GOPATH}/src/github.com/QMSTR/qmstr && \
-    mkdir ${GOPATH}/src/github.com/QMSTR/qmstr/cmd && \
-    mkdir ${GOPATH}/src/github.com/QMSTR/qmstr/pkg
-ADD cmd ${GOPATH}/src/github.com/QMSTR/qmstr/cmd
-ADD pkg ${GOPATH}/src/github.com/QMSTR/qmstr/pkg
-ADD modules ${GOPATH}/src/github.com/QMSTR/qmstr/modules
-ADD proto ${GOPATH}/src/github.com/QMSTR/qmstr/proto
-ADD lib ${GOPATH}/src/github.com/QMSTR/qmstr/lib
-ADD Makefile ${GOPATH}/src/github.com/QMSTR/qmstr/Makefile
-COPY Gopkg.* ${GOPATH}/src/github.com/QMSTR/qmstr/
+ARG GO_DL_URL
+RUN curl -o /opt/go.tar.gz ${GO_DL_URL}
+RUN cd /opt && tar -xf go.tar.gz
 
-WORKDIR ${GOPATH}/src/github.com/QMSTR/qmstr
+# install golang tools
+RUN mkdir /qmstr
+ADD cmd /qmstr/cmd
+ADD pkg /qmstr/pkg
+ADD modules /qmstr/modules
+ADD proto /qmstr/proto
+ADD lib /qmstr/lib
+ADD Makefile /qmstr/Makefile
+ADD go.mod /qmstr/go.mod
+ADD go.sum /qmstr/go.sum
+
+WORKDIR /qmstr
 RUN make install_qmstr_all
 
 ## runtime ##
@@ -82,7 +86,7 @@ FROM runtimebase as runtime
 LABEL org.qmstr.image runtime
 
 # init html reporter data
-COPY --from=builder /go/src/github.com/QMSTR/qmstr /tmp/qmstr
+COPY --from=builder /qmstr /tmp/qmstr
 RUN /tmp/qmstr/cmd/modules/reporters/qmstr-reporter-html/setup.sh /usr/share/qmstr /tmp/qmstr
 RUN rm -fr /tmp/qmstr
 

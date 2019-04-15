@@ -20,10 +20,8 @@ GO_MODULE_SRCS = $(call FILTER,module,$(GO_SRCS))
 GO_PATH := $(shell go env GOPATH)
 GO_BIN := $(GO_PATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
-GODEP := $(GO_BIN)/dep
 
 PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
-PROTOC_GEN_GO_SRC := vendor/github.com/golang/protobuf/protoc-gen-go
 
 QMSTR_ANALYZERS := $(foreach ana, $(shell ls modules/analyzers), $(OUTDIR)analyzers/$(ana))
 
@@ -61,12 +59,12 @@ cleanall: clean
 	@docker rmi ${CONTAINER_TAG_DEV} ${CONTAINER_TAG_MASTER} ${CONTAINER_TAG_RUNTIME} || true
 	@docker image prune --all --force --filter=label=org.qmstr.image
 
-.go_module_test: $(GO_MODULE_SRCS) vendor
-	go test $(GO_MODULE_PKGS)
+.go_module_test: $(GO_MODULE_SRCS)
+	go test ./modules/...
 	@touch .go_module_test
 
-.go_qmstr_test: $(GO_SRCS) vendor
-	go test $(GO_PKGS)
+.go_qmstr_test: $(GO_SRCS)
+	go test ./cmd/... ./pkg/...
 	@touch .go_qmstr_test
 
 .PHONY: gotest
@@ -84,19 +82,10 @@ golint:	$(GOMETALINTER)
 govet: gotest
 	go tool vet cmd pkg
 
-$(GODEP):
-	go get -u -v github.com/golang/dep/cmd/dep
+$(QMSTR_GO_BINARIES): $(GO_SRCS) .go_qmstr_test 
+		go build -o $@ cmd/$(subst $(OUTDIR),,$@)/$(subst $(OUTDIR),,$@).go
 
-Gopkg.lock: Gopkg.toml
-	${GO_BIN}/dep ensure --no-vendor
-
-vendor: $(GODEP) Gopkg.lock
-	${GO_BIN}/dep ensure --vendor-only
-
-$(QMSTR_GO_BINARIES): vendor $(GO_SRCS) .go_qmstr_test 
-	go build -o $@ github.com/QMSTR/qmstr/cmd/$(subst $(OUTDIR),,$@)
-
-$(QMSTR_GO_MODULES): vendor $(GO_SRCS) .go_module_test
+$(QMSTR_GO_MODULES): $(GO_SRCS) .go_module_test
 	go build -o $@ github.com/QMSTR/qmstr/cmd/modules/$(subst $(OUTDIR),,$@)
 
 install_qmstr_server: $(QMSTR_SERVER_BINARIES)
