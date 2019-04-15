@@ -3,6 +3,6 @@ PKG_ANALYZER := pkg-analyzer
 .PHONY: $(PKG_ANALYZER)
 $(PKG_ANALYZER): $(OUTDIR)analyzers/$(PKG_ANALYZER)
 
-$(OUTDIR)analyzers/$(PKG_ANALYZER): $(GO_SRCS) .go_module_test
+$(OUTDIR)analyzers/$(PKG_ANALYZER): $(GO_SRCS)
 	go test github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)
 	go build -o $@ github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)

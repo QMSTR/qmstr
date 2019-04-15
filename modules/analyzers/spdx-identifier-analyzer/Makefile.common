@@ -3,6 +3,6 @@ SPDX_IDENT_ANALYZER := spdx-identifier-analyzer
 .PHONY: $(SPDX_IDENT_ANALYZER)
 $(SPDX_IDENT_ANALYZER): $(OUTDIR)analyzers/$(SPDX_IDENT_ANALYZER)
 
-$(OUTDIR)analyzers/$(SPDX_IDENT_ANALYZER): vendor $(GO_SRCS) .go_module_test
+$(OUTDIR)analyzers/$(SPDX_IDENT_ANALYZER): $(GO_SRCS)
 	go test github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)
 	go build -o $@ github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)
