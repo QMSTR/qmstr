@@ -24,14 +24,12 @@ GOMETALINTER := $(GO_BIN)/gometalinter
 PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
 
 QMSTR_ANALYZERS := $(foreach ana, $(shell ls modules/analyzers), $(OUTDIR)analyzers/$(ana))
+QMSTR_REPORTERS := $(foreach rep, $(shell ls modules/reporters), $(OUTDIR)reporters/$(rep))
+QMSTR_BUILDERS := $(foreach builder, $(shell ls modules/builders), $(OUTDIR)reporters/$(builder))
 
-QMSTR_GO_REPORTERS := $(foreach rep, $(shell ls cmd/modules/reporters), ${OUTDIR}reporters/$(rep))
-QMSTR_GO_BUILDERS := $(foreach builder, qmstr-wrapper, ${OUTDIR}$(builder))
-QMSTR_CLIENT_BINARIES := $(foreach cli, qmstrctl qmstr, ${OUTDIR}$(cli)) $(QMSTR_GO_BUILDERS)
+QMSTR_CLIENT_BINARIES := $(foreach cli, qmstrctl qmstr, ${OUTDIR}$(cli)) $(QMSTR_BUILDERS)
 QMSTR_MASTER := $(foreach bin, qmstr-master, ${OUTDIR}$(bin))
-QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_GO_REPORTERS) $(QMSTR_ANALYZERS)
-QMSTR_GO_BINARIES := $(QMSTR_MASTER) $(QMSTR_CLIENT_BINARIES)
-QMSTR_GO_MODULES := $(QMSTR_GO_REPORTERS)
+QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_REPORTERS) $(QMSTR_ANALYZERS)
 
 CONTAINER_TAG_DEV := qmstr/dev
 CONTAINER_TAG_MASTER := qmstr/master
@@ -81,12 +79,6 @@ golint:	$(GOMETALINTER)
 .PHONY: govet
 govet: gotest
 	go tool vet cmd pkg
-
-$(QMSTR_GO_BINARIES): $(GO_SRCS) .go_qmstr_test 
-		go build -o $@ cmd/$(subst $(OUTDIR),,$@)/$(subst $(OUTDIR),,$@).go
-
-$(QMSTR_GO_MODULES): $(GO_SRCS) .go_module_test
-	go build -o $@ github.com/QMSTR/qmstr/cmd/modules/$(subst $(OUTDIR),,$@)
 
 install_qmstr_server: $(QMSTR_SERVER_BINARIES)
 	cp $^ /usr/local/bin

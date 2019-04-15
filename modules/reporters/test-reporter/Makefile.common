@@ -1,0 +1,8 @@
+TEST_REPORTER := test-reporter
+
+.PHONY: $(TEST_REPORTER)
+$(TEST_REPORTER): $(OUTDIR)reporters/$(TEST_REPORTER)
+
+$(OUTDIR)reporters/$(TEST_REPORTER): $(GO_SRCS)
+	go test github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)
+	go build -o $@ github.com/QMSTR/qmstr/modules/$(subst $(OUTDIR),,$@)
