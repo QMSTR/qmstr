@@ -27,9 +27,9 @@ QMSTR_ANALYZERS := $(foreach ana, $(shell ls modules/analyzers), $(OUTDIR)analyz
 QMSTR_REPORTERS := $(foreach rep, $(shell ls modules/reporters), $(OUTDIR)reporters/$(rep))
 QMSTR_BUILDERS := $(foreach builder, $(shell ls modules/builders), $(OUTDIR)builders/$(builder))
 
-QMSTR_CLIENT_BINARIES := $(foreach cli, qmstrctl qmstr, ${OUTDIR}$(cli)) $(QMSTR_BUILDERS)
 QMSTR_MASTER := $(foreach bin, qmstr-master, ${OUTDIR}$(bin))
-QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_REPORTERS) $(QMSTR_ANALYZERS)
+QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_REPORTERS) $(QMSTR_ANALYZERS) $(QMSTR_BUILDERS)
+QMSTR_CLIENT_BINARIES := $(foreach cli, qmstrctl qmstr, ${OUTDIR}$(cli)) $(QMSTR_BUILDERS)
 
 CONTAINER_TAG_DEV := qmstr/dev
 CONTAINER_TAG_MASTER := qmstr/master
