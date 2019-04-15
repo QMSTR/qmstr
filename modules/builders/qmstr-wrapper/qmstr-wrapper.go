@@ -7,11 +7,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/QMSTR/qmstr/pkg/builder"
-	"github.com/QMSTR/qmstr/pkg/common"
-	"github.com/QMSTR/qmstr/pkg/logging"
-	"github.com/QMSTR/qmstr/pkg/service"
-	"github.com/QMSTR/qmstr/pkg/wrapper"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/builder"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/common"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/logging"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/wrapper"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )

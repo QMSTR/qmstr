@@ -4,9 +4,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/QMSTR/qmstr/pkg/master"
-	"github.com/QMSTR/qmstr/pkg/module/reporter/consolereporter"
-	"github.com/QMSTR/qmstr/pkg/reporting"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/module/reporter/consolereporter"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/reporting"
 )
 
 func main() {

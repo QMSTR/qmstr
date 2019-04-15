@@ -68,7 +68,6 @@ RUN cd /opt && tar -xf go.tar.gz
 RUN mkdir /qmstr
 ADD clients /qmstr/clients
 ADD masterserver /qmstr/masterserver
-ADD pkg /qmstr/pkg
 ADD modules /qmstr/modules
 ADD proto /qmstr/proto
 ADD lib /qmstr/lib
