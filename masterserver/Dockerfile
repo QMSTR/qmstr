@@ -87,7 +87,7 @@ LABEL org.qmstr.image runtime
 
 # init html reporter data
 COPY --from=builder /qmstr /tmp/qmstr
-RUN /tmp/qmstr/cmd/modules/reporters/qmstr-reporter-html/setup.sh /usr/share/qmstr /tmp/qmstr
+RUN /tmp/qmstr/modules/reporters/qmstr-reporter-html/setup.sh /usr/share/qmstr /tmp/qmstr
 RUN rm -fr /tmp/qmstr
 
 ADD ci/common.inc /common.inc
