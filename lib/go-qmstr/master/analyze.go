@@ -33,6 +33,7 @@ func newAnalysisPhase(masterConfig *config.MasterConfig, db *database.DataBase, 
 
 func (phase *serverPhaseAnalysis) Activate() error {
 	log.Println("Analysis activated")
+	phase.server.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: "Activating analysis phase"})
 	for idx, anaConfig := range phase.masterConfig.Analysis {
 		analyzerName := anaConfig.Analyzer
 
