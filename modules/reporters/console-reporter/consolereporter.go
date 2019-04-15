@@ -1,4 +1,4 @@
-package consolereporter
+package main
 
 import (
 	"context"

@@ -92,7 +92,7 @@ install_qmstr_client_gopath: $(QMSTR_CLIENT_BINARIES)
 	cp $^ ${GO_PATH}/bin/
 
 lib/go-qmstr/service/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
-	protoc -I proto --go_out=plugins=grpc:pkg/service proto/*.proto
+	protoc -I proto --go_out=plugins=grpc:lib/go-qmstr/service proto/*.proto
 
 # Python related stuff
 venv: venv/bin/activate
