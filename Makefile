@@ -35,7 +35,7 @@ CONTAINER_TAG_RUNTIME := qmstr/runtime
 CONTAINER_TAG_BUILDER := qmstr/master_build
 
 .PHONY: all
-all: install_qmstr_client_gopath democontainer
+all: install_qmstr_client_gopath master
 
 .PHONY: clean
 clean:

@@ -1,7 +1,7 @@
 QMSTRCTL := qmstrctl
 
 .PHONY: $(QMSTRCTL)
-$(QMSTRCTL): $(OUTDIR)/$(QMSTRCTL)
+$(QMSTRCTL): $(OUTDIR)$(QMSTRCTL)
 
 $(OUTDIR)$(QMSTRCTL): $(GO_SRCS)
 	go test ./clients/$(subst $(OUTDIR),,$@)
