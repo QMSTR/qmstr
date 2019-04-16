@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"text/template"
@@ -132,8 +133,8 @@ func (r *HTMLReporter) PostReport() error {
 	if !r.Keep {
 		defer r.cleanup()
 	}
-	workingDir := "/tmp"
-	contentDir := strings.TrimPrefix(r.workingDir, "/tmp/")
+	workingDir := os.TempDir()
+	_, contentDir := filepath.Split(r.workingDir)
 
 	if r.generateStatics {
 		staticHTMLContentDir, err := CreateStaticHTML(r.workingDir)
