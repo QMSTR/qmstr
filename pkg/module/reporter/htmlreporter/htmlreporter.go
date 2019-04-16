@@ -30,16 +30,16 @@ const (
 
 // HTMLReporter is the context of the HTML reporter module
 type HTMLReporter struct {
-	workingDir      string
-	sharedDataDir   string
-	Keep            bool
-	baseURL         string
-	siteData        *reporting.SiteData
-	packageDir      string
-	cacheDir        string
-	enableWarnings  bool
-	enableErrors    bool
-	generateStatics bool
+	workingDir     string
+	sharedDataDir  string
+	Keep           bool
+	baseURL        string
+	siteData       *reporting.SiteData
+	packageDir     string
+	cacheDir       string
+	enableWarnings bool
+	enableErrors   bool
+	generateHTML   bool
 }
 
 // Configure sets up the working directory for this reporting run.
@@ -61,10 +61,10 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 		r.baseURL = "file:///var/lib/qmstr/reports"
 	}
 
-	if statics, ok := config["generatestatics"]; ok && statics == "no" {
-		r.generateStatics = false
+	if statics, ok := config["generatehtml"]; ok && statics == "no" {
+		r.generateHTML = false
 	} else {
-		r.generateStatics = true
+		r.generateHTML = true
 	}
 
 	if siteData, err := reporting.GetSiteDataFromConfiguration(config); err == nil {
@@ -136,7 +136,7 @@ func (r *HTMLReporter) PostReport() error {
 	workingDir := os.TempDir()
 	_, contentDir := filepath.Split(r.workingDir)
 
-	if r.generateStatics {
+	if r.generateHTML {
 		staticHTMLContentDir, err := CreateStaticHTML(r.workingDir)
 		if err != nil {
 			return fmt.Errorf("error generating reports: %v", err)
@@ -146,7 +146,7 @@ func (r *HTMLReporter) PostReport() error {
 		workingDir = r.workingDir
 	}
 	// Create the reports package (for publishing, etc).
-	if err := CreateReportsPackage(workingDir, contentDir, r.packageDir, r.generateStatics); err != nil {
+	if err := CreateReportsPackage(workingDir, contentDir, r.packageDir, r.generateHTML); err != nil {
 		return fmt.Errorf("error packaging report to %v: %v", r.packageDir, err)
 	}
 
@@ -340,12 +340,12 @@ func CreateStaticHTML(workingdir string) (string, error) {
 }
 
 // CreateReportsPackage creates a tarball of the static HTML reports in the packagePath directory.
-func CreateReportsPackage(workingDir string, contentDir string, packagePath string, generateStatics bool) error {
+func CreateReportsPackage(workingDir string, contentDir string, packagePath string, generateHTML bool) error {
 	outputFile := path.Join(packagePath, "qmstr-reports.tar.bz2")
 
 	cmd := exec.Command("tar", "cfj", outputFile, "-C", workingDir, contentDir)
 
-	if !generateStatics {
+	if !generateHTML {
 		cmd = exec.Command("tar", "cfj", outputFile, "-C", workingDir, contentDir, "-h")
 	}
 	cmd.Dir = workingDir
