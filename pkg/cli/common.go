@@ -89,3 +89,47 @@ func sendFileNode(node *service.FileNode) error {
 	}
 	return nil
 }
+
+func updatePackageNode(pkg *service.PackageNode, these []*service.FileNode) error {
+	stream, err := buildServiceClient.Package(context.Background())
+	if err != nil {
+		return err
+	}
+	// ship back modified targets
+	for _, target := range these {
+		err = stream.Send(target)
+		if err != nil {
+			return fmt.Errorf("Failed sending targets to pkg stream: %v", err)
+		}
+	}
+	res, err := stream.CloseAndRecv()
+	if err != nil {
+		return fmt.Errorf("close stream fail: %v", err)
+	}
+	if !res.Success {
+		return fmt.Errorf("sending node fail: %v", err)
+	}
+	return nil
+}
+
+func updateProjectNode(project *service.ProjectNode, these []*service.PackageNode) error {
+	stream, err := buildServiceClient.UpdateProjectNode(context.Background())
+	if err != nil {
+		return err
+	}
+	// ship back modified targets
+	for _, pkg := range these {
+		err = stream.Send(pkg)
+		if err != nil {
+			return fmt.Errorf("Failed sending package nodes to project stream: %v", err)
+		}
+	}
+	res, err := stream.CloseAndRecv()
+	if err != nil {
+		return fmt.Errorf("close stream fail: %v", err)
+	}
+	if !res.Success {
+		return fmt.Errorf("sending node fail: %v", err)
+	}
+	return nil
+}
