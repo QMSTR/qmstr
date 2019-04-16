@@ -1,20 +1,33 @@
+EMPTY :=
+SPACE := $(EMPTY) $(EMPTY)
+VERSIONS := $(SPACE)$(strip $(shell grep VERSION versions.env))
+DOCKER_BUILD_ARGS = $(subst $(SPACE), --build-arg ,$(VERSIONS))
+
+ifdef http_proxy
+	DOCKER_BUILD_ARGS += --build-arg http_proxy=$(http_proxy)
+endif
+
+ifdef https_proxy
+	DOCKER_BUILD_ARGS += --build-arg https_proxy=$(https_proxy)
+endif
+
 # container related
 .PHONY: container master
 master container: masterserver/Dockerfile
-	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master $(DOCKER_PROXY) .
+	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master $(DOCKER_BUILD_ARGS) .
 
 .PHONY: devcontainer
 devcontainer: container
-	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_DEV} --target dev $(DOCKER_PROXY) .
+	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_DEV} --target dev $(DOCKER_BUILD_ARGS) .
 
 .PHONY: democontainer
 democontainer: container
-	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime $(DOCKER_PROXY) .
-	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target builder $(DOCKER_PROXY) .
+	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime $(DOCKER_BUILD_ARGS) .
+	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target builder $(DOCKER_BUILD_ARGS) .
 
 .PHONY: ratelimage
 ratelimage:
-	docker build -f masterserver/Dockerfile -t qmstr-ratel --target web $(DOCKER_PROXY) .
+	docker build -f masterserver/Dockerfile -t qmstr-ratel --target web $(DOCKER_BUILD_ARGS) .
 
 # go related
 .PHONY: qmstr-master

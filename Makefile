@@ -1,5 +1,4 @@
-# Versions
-GRPCIO_VERSION := 1.15.0
+include versions.env
 
 # Common stuff
 OUTDIR := out/
@@ -20,7 +19,6 @@ GO_MODULE_SRCS = $(call FILTER,module,$(GO_SRCS))
 GO_PATH := $(shell go env GOPATH)
 GO_BIN := $(GO_PATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
-
 PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
 
 QMSTR_ANALYZERS := $(foreach ana, $(shell ls modules/analyzers), $(OUTDIR)analyzers/$(ana))
@@ -35,15 +33,6 @@ CONTAINER_TAG_DEV := qmstr/dev
 CONTAINER_TAG_MASTER := qmstr/master
 CONTAINER_TAG_RUNTIME := qmstr/runtime
 CONTAINER_TAG_BUILDER := qmstr/master_build
-
-ifdef http_proxy
-	DOCKER_PROXY = --build-arg http_proxy=$(http_proxy)
-endif
-
-ifdef https_proxy
-	DOCKER_PROXY += --build-arg https_proxy=$(https_proxy)
-endif
-
 
 .PHONY: all
 all: install_qmstr_client_gopath democontainer
@@ -118,7 +107,6 @@ checkpep8: $(PYTHON_FILES) venv
 .PHONY: autopep8
 autopep8: $(PYTHON_FILES) venv
 	venv/bin/autopep8 -i $(filter-out venv, $^)
-
 
 # include all makefiles
 include $(shell find . -name "Makefile.common")

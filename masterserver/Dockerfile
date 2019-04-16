@@ -1,9 +1,3 @@
-# Versioning
-ARG DGRAPH_VERSION=1.0.9
-ARG HUGO_VERSION=0.39
-ARG SCANCODE_VERSION=2.9.1
-ARG GO_DL_URL=https://dl.google.com/go/go1.12.4.linux-amd64.tar.gz
-
 ## runtimebase ##
 
 # this stage contains all 3rd party dependencies
@@ -60,8 +54,8 @@ RUN apt-get update && apt-get install -y \
     curl autoconf make git libgit2-dev libio-captureoutput-perl virtualenv tar build-essential pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-ARG GO_DL_URL
-RUN curl -o /opt/go.tar.gz ${GO_DL_URL}
+ARG GO_VERSION
+RUN curl -o /opt/go.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz
 RUN cd /opt && tar -xf go.tar.gz
 
 # install golang tools
@@ -74,6 +68,7 @@ ADD lib /qmstr/lib
 ADD Makefile /qmstr/Makefile
 ADD go.mod /qmstr/go.mod
 ADD go.sum /qmstr/go.sum
+ADD versions.env /qmstr/versions.env
 
 WORKDIR /qmstr
 RUN make install_qmstr_all
