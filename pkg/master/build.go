@@ -96,7 +96,6 @@ func (phase *serverPhaseBuild) PushFile(in *service.PushFileMessage) (*service.P
 	if hash != in.Hash {
 		return nil, fmt.Errorf("failed to verify uploaded file %s != %s", hash, in.Hash)
 	}
-
 	return &service.PushFileResponse{Path: f.Name()}, nil
 }
 
@@ -116,7 +115,6 @@ func (phase *serverPhaseBuild) CreatePackage(in *service.PackageNode) (*service.
 	if _, err := phase.db.GetPackageNodeByName(in.Name); err != database.ErrNoSuchPackage {
 		return nil, errors.New("package already created")
 	}
-
 	log.Printf("Adding package node %s", in.Name)
 	phase.db.AddPackageNode(in)
 	return &service.BuildResponse{Success: true}, nil
@@ -126,8 +124,25 @@ func (phase *serverPhaseBuild) CreateProject(in *service.ProjectNode) (*service.
 	if !in.IsValid() {
 		return nil, errors.New("invalid project node")
 	}
-	if _, err := phase.db.GetProjectNode(); err != database.ErrNoProjectNode {
-		return nil, errors.New("project node already created")
+
+	projectNode, err := phase.db.GetProjectNode()
+	switch err {
+	case database.ErrNoProjectNode:
+		// update requested
+		if in.Uid != "" {
+			return nil, errors.New("can not update non existing project")
+		}
+	case nil:
+		// create requested
+		if in.Uid == "" {
+			return nil, errors.New("project node already created")
+		}
+		// update different project node
+		if in.Uid != projectNode.Uid {
+			return nil, errors.New("can not update existing project with different uid")
+		}
+	default:
+		return nil, err
 	}
 
 	log.Printf("Adding project node %s", in)
