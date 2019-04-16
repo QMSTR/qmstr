@@ -12,6 +12,10 @@ ifdef https_proxy
 endif
 
 # container related
+.PHONY: buildercontainer
+buildercontainer: masterserver/Dockerfile
+	docker build --no-cache -f masterserver/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target master $(DOCKER_BUILD_ARGS) .
+
 .PHONY: container master
 master container: masterserver/Dockerfile
 	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master $(DOCKER_BUILD_ARGS) .
