@@ -118,22 +118,9 @@ func connectToPackageNode(that *service.PackageNode, these []*service.FileNode) 
 	if connectCmdFlags.edge != "" && connectCmdFlags.edge != "targets" {
 		return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", connectCmdFlags.edge, validFileToPackageEdges)
 	}
-	stream, err := buildServiceClient.Package(context.Background())
+	err := updatePackageNode(that, these)
 	if err != nil {
 		return err
-	}
-	for _, this := range these {
-		err = stream.Send(this)
-		if err != nil {
-			return fmt.Errorf("Failed sending targets: %v", err)
-		}
-	}
-	res, err := stream.CloseAndRecv()
-	if err != nil {
-		return fmt.Errorf("close stream fail: %v", err)
-	}
-	if !res.Success {
-		return fmt.Errorf("sending node fail: %v", err)
 	}
 	return nil
 }
@@ -142,22 +129,9 @@ func connectToProjectNode(that *service.ProjectNode, these []*service.PackageNod
 	if connectCmdFlags.edge != "" && connectCmdFlags.edge != "packages" {
 		return fmt.Errorf("unknown edge %q for PackageNode -> ProjectNode. Valid values %v", connectCmdFlags.edge, validPackageToProjectEdges)
 	}
-	stream, err := buildServiceClient.UpdateProjectNode(context.Background())
+	err := updateProjectNode(that, these)
 	if err != nil {
 		return err
-	}
-	for _, this := range these {
-		err = stream.Send(this)
-		if err != nil {
-			return fmt.Errorf("Failed sending packages: %v", err)
-		}
-	}
-	res, err := stream.CloseAndRecv()
-	if err != nil {
-		return fmt.Errorf("close stream fail: %v", err)
-	}
-	if !res.Success {
-		return fmt.Errorf("sending node fail: %v", err)
 	}
 	return nil
 }

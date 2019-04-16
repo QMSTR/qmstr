@@ -126,23 +126,9 @@ func disconnectFromPackageNode(that *service.PackageNode, these []*service.FileN
 	if !res.Success {
 		return fmt.Errorf("Failed deleting edge: %v", err)
 	}
-	stream, err := buildServiceClient.Package(context.Background())
+	err = updatePackageNode(that, that.Targets)
 	if err != nil {
 		return err
-	}
-	// ship back modified targets
-	for _, target := range that.Targets {
-		err = stream.Send(target)
-		if err != nil {
-			return fmt.Errorf("Failed sending file nodes to pkg stream: %v", err)
-		}
-	}
-	res, err = stream.CloseAndRecv()
-	if err != nil {
-		return fmt.Errorf("close stream fail: %v", err)
-	}
-	if !res.Success {
-		return fmt.Errorf("sending node fail: %v", err)
 	}
 	return nil
 }
@@ -160,23 +146,9 @@ func disconnectFromProjectNode(that *service.ProjectNode, these []*service.Packa
 	if !res.Success {
 		return fmt.Errorf("Failed deleting edge: %v", err)
 	}
-	stream, err := buildServiceClient.UpdateProjectNode(context.Background())
+	err = updateProjectNode(that, that.Packages)
 	if err != nil {
 		return err
-	}
-	// ship back modified targets
-	for _, pkg := range that.Packages {
-		err = stream.Send(pkg)
-		if err != nil {
-			return fmt.Errorf("Failed sending package nodes to project stream: %v", err)
-		}
-	}
-	res, err = stream.CloseAndRecv()
-	if err != nil {
-		return fmt.Errorf("close stream fail: %v", err)
-	}
-	if !res.Success {
-		return fmt.Errorf("sending node fail: %v", err)
 	}
 	return nil
 }
