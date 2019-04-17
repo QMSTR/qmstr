@@ -3,6 +3,14 @@ include versions.env
 # Common stuff
 OUTDIR := out/
 
+# The installation prefix defaults to /usr/local. It can be overwritten
+# by specifying the PREFIX variable on the command line:
+#     make PREFIX=/opt/qmstr
+prefix = /usr/local
+ifdef PREFIX
+prefix=$(PREFIX)
+endif
+
 PROTO_FILES := $(shell ls ./proto/*.proto)
 ALL_PYTHON_FILES := $(shell find . -path ./venv -prune -o -name *.py -print)
 PROTO_PYTHON_FILES := $(patsubst ./proto/%,./lib/pyqmstr/qmstr/service/%,$(PROTO_FILES:.proto=_pb2.py)) $(patsubst ./proto/%,./lib/pyqmstr/qmstr/service/%,$(PROTO_FILES:.proto=_pb2_grpc.py))
