@@ -1,6 +1,6 @@
 ---
 title: "Installing Quartermaster"
-date: 2019-01-17T15:26:15Z
+date: 2019-04-17T12:26:15Z
 draft: false
 weight: 3
 ---
@@ -29,14 +29,15 @@ steps required to build these modules in their specific ways.
 ## Prerequisites
 
 Quartermaster leverages Protobuf & GRPC for the master - client
-communication. The `protoc` Protobuf  compiler needs to be installed
-and also the Go protobuf library and generator. The later can be
+communication. The `protoc` Protobuf compiler needs to be installed
+together with the Go protobuf library and generator. The later can be
 installed with
 
 	> go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
 
-### Host machine preparation:
-Install The depencencies:
+### Host machine preparation
+
+Install the depencencies:
 
   - If you are running an Ubuntu machine:
 
@@ -69,21 +70,11 @@ Add user to the docker group:
   More information in:
   https://linoxide.com/linux-how-to/use-docker-without-sudo-ubuntu/
 
-Install The `protoc` Protobuf  compiler:
+Install the `protoc` Protobuf compiler:[^gopath_deprecation]
 
-	> go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
-
-Make $GOPATH/bin part of you $PATH, for that edit the ~/.bashrc file and
-add the next at the end of it:
-
-        # Make $GOPATH/bin part of you $PATH
-        export GOPATH="${HOME}/go"
-        export PATH="${PATH}:${GOPATH}/bin"
-
-If that doesn't work try the next:
-
-        # Make $GOPATH/bin part of you $PATH
-        export PATH="${PATH}:${HOME}/go/bin"
+  > go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
+  > protoc --version
+  libprotoc 3.7.1
 
 ## Installing the clients
 
@@ -101,16 +92,17 @@ If that's the case try the next:
 > go get -u github.com/QMSTR/qmstr || true
 
 The main entry point into the installation tasks for Quartermaster is
-the Makefile in the main repository. The default installation installs
-the client programs into `/usr/local/bin`:
+the Makefile in the main repository. The default installation prefix is `/usr/local`.
+The client programs will be installed into the `bin/` subdirectory:
 
 	> make install_qmstr_client
 	...
 
 Depending on the specifics of the local setup, a developer may want to
-install the binaries into the GOPATH:
+install the binaries to a different location. The location can be specified in the
+_PREFIX_ variable of the Makefile invocation:
 
-	> make install_qmstr_client_gopath
+	> make PREFIX=/opt/qmstr install_qmstr_client
 	...
 
 If the installation completes successfully, the `qmstrctl` command is
@@ -126,15 +118,6 @@ perform analysis and create reports are included in the master
 container.
 
 For other make targets, inspect the Makefile.
-
-### Further notes:
-
-If the steps above didn't work try the next:
-
-  > make
-
-  > make install_qmstr_client_gopath
-
 
 ## Master installation
 
@@ -167,3 +150,8 @@ only needs to run once per build process, even if parallel build
 processes are used that deploy build jobs to a number of build
 clients. In most scenarios, the master images need to be built on the
 machine where the software build is started.
+
+[^gopath_deprecation]: Older versions of the documentation contained references to $GOPATH
+    and recommendations to install programs into $GOPATH/bin. Since QMSTR 0.4,
+    GOPATH is not used anymore. The Makefiles instead expect that program
+    dependencies like _protoc_ to be found in the PATH.
