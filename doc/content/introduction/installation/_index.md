@@ -28,12 +28,7 @@ steps required to build these modules in their specific ways.
 
 ## Prerequisites
 
-Quartermaster leverages Protobuf & GRPC for the master - client
-communication. The `protoc` Protobuf compiler needs to be installed
-together with the Go protobuf library and generator. The later can be
-installed with
-
-	> go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
+The qmstr master server is supposed to run in a container therefore Docker is needed to be installed on the host system.
 
 ### Host machine preparation
 
@@ -72,29 +67,20 @@ Add user to the docker group:
 
 Install the `protoc` Protobuf compiler:[^gopath_deprecation]
 
-  > go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
-  > protoc --version
-  libprotoc 3.7.1
+	> protoc --version
+	...
+
+
+## Checkout sources
+
+  > git clone https://github.com/QMSTR/qmstr.git
 
 ## Installing the clients
-
-Get the sources:
-
-> go get -u github.com/QMSTR/qmstr
-
-> cd ~/go/src/github.com/QMSTR/qmstr
-
-* Note: If you are running `go get -u github.com/QMSTR/qmstr` on the Ci it
-might crash and obtain the next error message:
-`Package github.com/QMSTR/qmstr: no Go files in /home/go/src/github.com/QMSTR/qmstr`
-If that's the case try the next:
-
-> go get -u github.com/QMSTR/qmstr || true
 
 The main entry point into the installation tasks for Quartermaster is
 the Makefile in the main repository. The default installation prefix is `/usr/local`.
 The client programs will be installed into the `bin/` subdirectory:
-
+  
 	> make install_qmstr_client
 	...
 
@@ -102,8 +88,7 @@ Depending on the specifics of the local setup, a developer may want to
 install the binaries to a different location. The location can be specified in the
 _PREFIX_ variable of the Makefile invocation:
 
-	> make PREFIX=/opt/qmstr install_qmstr_client
-	...
+  > make PREFIX=/opt/qmstr install_qmstr_client
 
 If the installation completes successfully, the `qmstrctl` command is
 now available:
@@ -129,9 +114,9 @@ to the systems that are supposed to run the master. This may change at
 a later time, however at the moment it is the only mechanism to
 prepare to run the master.
 
-To crate the master image, run make again:
+To create the master image, run make again:
 
-	> make container
+	> make master
 	...
 
 This may take a while. It will build the master container, including
