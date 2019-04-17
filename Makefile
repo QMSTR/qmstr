@@ -29,6 +29,8 @@ GO_BIN := $(GO_PATH)/bin
 GOMETALINTER := $(GO_BIN)/gometalinter
 PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
 
+GO_DEPS := $(PROTOC_GEN_GO) $(GO_SRCS)
+
 QMSTR_ANALYZERS := $(foreach ana, $(shell ls modules/analyzers), $(OUTDIR)analyzers/$(ana))
 QMSTR_REPORTERS := $(foreach rep, $(shell ls modules/reporters), $(OUTDIR)reporters/$(rep))
 QMSTR_BUILDERS := $(foreach builder, $(shell ls modules/builders), $(OUTDIR)builders/$(builder))
@@ -77,6 +79,9 @@ golint:	$(GOMETALINTER)
 govet: gotest
 	go vet ./lib/go-qmstr/wrapper/
 
+$(PROTOC_GEN_GO):
+	go get -u github.com/golang/protobuf/protoc-gen-go
+
 install_qmstr_server: $(QMSTR_SERVER_BINARIES)
 	cp $^ $(prefix)/bin
 
@@ -84,9 +89,6 @@ install_qmstr_client: $(QMSTR_CLIENT_BINARIES)
 	cp $^ $(prefix)/bin
 
 install_qmstr_all: install_qmstr_client install_qmstr_server
-
-lib/go-qmstr/service/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
-	protoc -I proto --go_out=plugins=grpc:lib/go-qmstr/service proto/*.proto
 
 # Python related stuff
 venv: venv/bin/activate

@@ -2,9 +2,10 @@ module github.com/QMSTR/qmstr
 
 go 1.12
 
-replace github.com/Sirupsen/logrus => github.com/sirupsen/logrus v1.4.1
+replace github.com/Sirupsen/logrus => github.com/sirupsen/logrus v1.4.0
 
 require (
+	github.com/Microsoft/go-winio v0.4.12 // indirect
 	github.com/Sirupsen/logrus v0.0.0-00010101000000-000000000000 // indirect
 	github.com/dgraph-io/dgo v0.0.0-20190306204622-95299da439fd
 	github.com/docker/distribution v2.7.1+incompatible // indirect
@@ -13,9 +14,11 @@ require (
 	github.com/docker/go-units v0.3.3 // indirect
 	github.com/golang/protobuf v1.3.1
 	github.com/hashicorp/go-version v1.1.0
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/opencontainers/runc v0.1.1 // indirect
 	github.com/pkg/errors v0.8.1
+	github.com/sirupsen/logrus v1.4.1 // indirect
 	github.com/spdx/tools-golang v0.0.0-20190306141254-3dcceb5b869a
 	github.com/spf13/afero v1.2.2
 	github.com/spf13/cobra v0.0.3

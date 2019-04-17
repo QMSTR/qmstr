@@ -37,6 +37,6 @@ ratelimage:
 .PHONY: qmstr-master
 qmstr-master: $(QMSTR_MASTER)
 
-$(QMSTR_MASTER): $(GO_SRCS)
+$(QMSTR_MASTER): $(GO_DEPS)
 	go test ./masterserver/...
 	go build -o $@ masterserver/$(subst $(OUTDIR),,$@).go
