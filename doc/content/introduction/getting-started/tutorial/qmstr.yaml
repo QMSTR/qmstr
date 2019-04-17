@@ -5,16 +5,11 @@ project:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   analysis:
-    - analyzer: pkg-analyzer
-      name: "Package Analyzer"
-      config:
-        targetdir: "/buildroot/.libs"
-        targets: "libjson-c\\.(?:so)|(?:dylib)\\.\\d\\.\\d.\\d"
     - analyzer: git-analyzer
       name: "Git Analyzer"
       config:
         workdir: "/buildroot/"
-    - analyzer: spdx-analyzer
+    - analyzer: spdx-identifier-analyzer
       name: "Simple SPDX Analyzer"
       config:
         workdir: "/buildroot"

@@ -8,76 +8,60 @@ To create a local development environment for Quartermaster, follow
 these instructions. The master by default runs in a container. See
 below for more details.
 
+## Prerequisites
+
+Quartermaster leverages Protobuf & GRPC for the master - client
+communication. The `protoc` Protobuf compiler needs to be installed
+together with the Go protobuf library and generator. The later will be installed via the `Makefile`.
+
+### Host machine preparation
+
+Install the depencencies:
+
+  - If you are running an Ubuntu machine:
+
+    > sudo apt update
+
+	> sudo apt install golang protobuf-compiler
+
+    - Install Docker: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+  - If you are running a Fedora machine:
+
+    > sudo dnf install golang protobuf-compiler
+
+  - Install Docker: https://docs.docker.com/install/linux/docker-ce/fedora/
+
 ## Dependencies
 
 Quartermaster uses protobuf for the communication between clients and the master. Install `protobuf` from your package manager.
 
-Then install the protobuf go compiler plugin:
+## Checkout sources
 
-	% go get -u github.com/golang/protobuf/protoc-gen-go
-
-## Install Quartermaster
-
-Make sure $GOBIN is part of your $PATH.
-
-Install the master server
-
-	% (go get github.com/QMSTR/qmstr/cmd/qmstr-master || go generate github.com/QMSTR/qmstr/cmd/qmstr-master; go get github.com/QMSTR/qmstr/cmd/qmstr-master)
-
-Install the wrapper
-
-	% go get github.com/QMSTR/qmstr/cmd/qmstr-wrapper
-
-Optional: install the cli
-
-	% go get github.com/QMSTR/qmstr/cmd/qmstrctl
+  > git clone https://github.com/QMSTR/qmstr.git
 
 ## Build and run the Quartermaster master process
 
-Quartermaster uses a multi-stage [Dockerfile](ci/Dockerfile) to create various setups based on a common configuration. The DGraph database process and the Quartermaster master are executed in the container.
+Quartermaster uses a multi-stage [Dockerfile](masterserver/Dockerfile) to create various setups based on a common configuration. The DGraph database process and the Quartermaster master are executed in the container.
 
-### Performing a clean build: builder
+In order to build the different parts of the qmstr system `make` is used.
 
-The `builder` stage compiles the Quartermaster toolchain in a clean Go environment. It does not contain any runtime dependencies.
+### Building qmstr
 
-	% docker build -f ci/Dockerfile -t qmstr/build --target builder .
+There are several targets defined in the `Makefile` to build the different parts of qmstr:
+The client tools:
+	- qmstrctl - client tool to communicate with the master server
 
-### Running the unit tests
+	  > make qmstrctl
 
-The `master_unit_tests` stage is a minimal extension of `builder` that adds an entry point to execute the master unit tests.
+	- qmstr - wrapper tool to set up and run programs in a qmstrized environment
 
-	% docker build -f ci/Dockerfile -t qmstr/master_unit_tests --target master_unit_tests .
-	% docker run --rm -it qmstr/master_unit_tests
+	  > make qmstr
 
-### Dependencies for analysis and reporting: `runtime`
+Automatic targets are created to build every module inside the `modules/{builders,analyzers,reporters}` directories e.g to build the `spdx-analyzer` that can be found in `modules/analyzers/spdx-analyzer` run:
 
-The `runtime` stage contains a full operating system environment and the default tools that Quartermaster uses to perform analysis of the build graph and to create reports.
+	> make spdx-analyzer
 
-	% docker build -f ci/Dockerfile -t qmstr/runtime --target runtime .
+In order to assemble a full master image use the `master` target:
 
-### Build and run the "official" Quartermaster master container
-
-The master container contains all analysis and reporting dependencies, and the compiled Quartermaster toolchain, but no development environment. It is the default way to run a Quartermaster master process.
-
-	% docker build -f ci/Dockerfile -t qmstr/master --target master .
-	% docker run -it -p 50051:50051 -v <build_path>:/buildroot qmstr/master
-
-...where `build_path` is the path to the source files you are about to compile.
-
-### Create and run a container for development
-
-The development container is a combination of the runtime environment with a source volume to test local changes. It uses a volume to pass in source code under development, and builds the source code in it's entrypoint script.
-
-	% docker build -f ci/Dockerfile -t qmstr/dev --target dev .
-	% docker run -it -p 50051:50051 -v $HOME/Go/src:/go/src <build_path>:/buildroot qmstr/dev
-
-...where `build_path` is the path to the source files you are about to compile.
-
-### Debug in development container
-
-You can use the development container to debug qmstr-master.
-
-    % export QMSTR_DEV="<debugger_port>"
-    % docker run -p 50051:50051 -p $QMSTR_DEV:2345 -eQMSTR_DEV=$QMSTR_DEV --security-opt seccomp=unconfined -v $HOME/Go/src:/go/src <build_path>:/buildroot qmstr/dev
-
-Now you can connect your debugger.
+	> make master

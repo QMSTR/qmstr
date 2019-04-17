@@ -10,11 +10,7 @@
 set -e
 sudo chown -R $USER:$USER /usr/local/
 export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:$PATH
-BASEDIR=$GOPATH/src/github.com/QMSTR
-mkdir -p $BASEDIR
-cd $BASEDIR
-ln -sf /vagrant qmstr
-cd qmstr/
+export PATH=$GOPATH/bin:/opt/go/bin:$PATH
+cd /vagrant
 ./ci/test-documentation.sh
 

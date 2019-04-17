@@ -12,7 +12,7 @@ Let's assume we want to run the JSON-C library as the project under analysis.
 The `qmstr.yaml` file for this project would look like this:
 
 ``` 
-package:
+project:
   name: "json-c"
   metadata:
     Vendor: "Endocode"
@@ -23,13 +23,8 @@ package:
     dbaddress: "localhost:9080"
     dbworkers: 4
   analysis:
-    - analyzer: pkg-analyzer
-      name: "Package Analyzer"
-      config:
-        targetdir: "/buildroot/jsonc/.libs"
-        targets: "libjson-c\\.(?:so)|(?:dylib)\\.\\d\\.\\d.\\d"
-    - analyzer: spdx-analyzer
-      name: "Simple SPDX Analyzer"
+    - analyzer: spdx-identifier-analyzer
+      name: "Simple SPDX-Identifier Analyzer"
       trustlevel: 300
     - analyzer: scancode-analyzer
       name: "Scancode Analyzer"
@@ -46,7 +41,7 @@ package:
       name: "Simple CI Test Analyzer"
       config:
         tests: "TestPackageNode"
-    - analyzer: pyqmstr-spdx-analyzer
+    - analyzer: spdx-analyzer
       name: "SPDX Analyzer"
       trustlevel: 300
       config:
@@ -64,10 +59,10 @@ package:
 
 ```
 
-Depending on the project you want to run QMSTR with, you should change the package name to your project's name.
+Depending on the project you want to run QMSTR with, you should change the name to your project's name.
 
 ``` 
-package:
+project:
   name: project_name
 ```
 
@@ -101,60 +96,14 @@ In the `name` section we provide a string with the full name of the analyzer.
 Most of the analyzers include an extra section **`config`**. 
 The config section diverses for each analyzer, regarding the dependencies.
 
-### Missing Pieces Analyzer
+### SPDX-Identifier Analyzer
 
-The `missing pieces analyzer` adds extra build information into the database. 
-It should be the first analyzer to run in the analysis phase, so it should
-be the first analyzer to be configured in the `qmstr.yaml`, if you want to use it,
-as it is the only analyzer which extends the build graph with additional filenodes.
-The rest of the analyzers extend the build graph with additional infonodes.
-To use the missing pieces analyzer, please provide the directory to your input file
-in the `config` section. 
-The input file should be a yaml file containing the extra build
-information to be added in the database.
-The configuration would look like this:
-
-```
-analysis:
-    - analyzer: missing_pieces-analyzer
-      name: "Missing pieces Analyzer"
-      config:
-        inputfile: "/buildroot/mpa.yml"
-```
-
-where mpa.yaml is our input yaml file.
-
-### Package Analyzer
-
-`Package analyzer` concatenates the package node to the rest of the graph. 
-This is achieved by connecting the package node to the desired target file nodes.
-
-To use the package analyzer, please fill in the path to the target files and 
-the target names in the `config` section, in your `qmstr.yaml` file:
-
-```
-        targetdir: target_directory
-        targets: list_of_targets
-```
-
-To add many targets, you can seperate them with the `;` delimiter. 
-For example:
-
-```
-        targetdir: "/buildroot/my_project/"
-        targets: "a;a.so;b;b.a"
-```
-
-Targets can also include regular expressions.
-
-### SPDX Analyzer
-
-`SPDX analyzer` scans input files and package manifests for project metadata 
+`spdx-identifier-analyzer` scans input files and package manifests for project metadata 
 in SPDX format.
 
 ### Scancode Analyzer
 
-`Scancode analyzer` uses the [scancode-toolkit](https://github.com/nexB/scancode-toolkit) to
+`scancode-analyzer` uses the [scancode-toolkit](https://github.com/nexB/scancode-toolkit) to
 scan a codebase for licenses and copyrights. 
 Provide the working directory in order to use it.
 Scancode analyzer may be time consuming. To save time you can provide a result file, 
@@ -176,7 +125,7 @@ be written in different programming languages. With the use of [gRPC](https://gr
 and [protocol buffers](https://developers.google.com/protocol-buffers/docs/overview) 
 we can write client applications in different languages and connect them to the QMSTR server 
 applications. 
-`Python SPDX analyzer` is an example of this use case. It is written in Python and searches for 
+`spdx-analyzer` is an example of this use case. It is written in Python and searches for 
 SPDX licenses. 
 To use this analyzer you have to include in the `config` section the directory 
 of the file with all the information to be parsed by the analyzer. 
@@ -191,7 +140,7 @@ in order to use the analyzer.
 
 ### Test Analyzer
 
-`Test analyzer` runs tests to confirm that the build graph is valid. 
+`test-analyzer` runs tests to confirm that the build graph is valid. 
 
 
 As you may have already noticed, in the qmstr.yaml you can define a `trustlevel`. 
@@ -209,10 +158,10 @@ Reporters have to be configured after the declaration of the analyzers on the se
 
 ### Test Reporter 
 
-`Test reporter` runs tests on the build graph to reassure the graph contains the expected results 
+`test-reporter` runs tests on the build graph to reassure the graph contains the expected results 
 after the analysis phase and that we can proceed to the reporting phase. 
 
 ### HTML Reporter 
 
-`HTML reporter` produces a site with the QMSTR reports of the project.
+`qmstr-reporter-html` produces a site with the QMSTR reports of the project.
 In the `config` section please provide the URL which will host the site.
