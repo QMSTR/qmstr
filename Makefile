@@ -43,7 +43,7 @@ CONTAINER_TAG_RUNTIME := qmstr/runtime
 CONTAINER_TAG_BUILDER := qmstr/master_build
 
 .PHONY: all
-all: install_qmstr_client_gopath master
+all: install_qmstr_client master
 
 .PHONY: clean
 clean:
@@ -78,15 +78,12 @@ govet: gotest
 	go vet ./lib/go-qmstr/wrapper/
 
 install_qmstr_server: $(QMSTR_SERVER_BINARIES)
-	cp $^ /usr/local/bin
+	cp $^ $(prefix)/bin
 
 install_qmstr_client: $(QMSTR_CLIENT_BINARIES)
-	cp $^ /usr/local/bin
+	cp $^ $(prefix)/bin
 
 install_qmstr_all: install_qmstr_client install_qmstr_server
-
-install_qmstr_client_gopath: $(QMSTR_CLIENT_BINARIES)
-	cp $^ ${GO_PATH}/bin/
 
 lib/go-qmstr/service/%.pb.go: $(PROTOC_GEN_GO) proto/%.proto
 	protoc -I proto --go_out=plugins=grpc:lib/go-qmstr/service proto/*.proto
