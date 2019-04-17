@@ -1,0 +1,2 @@
+lib/go-qmstr/service/%.pb.go: proto/%.proto
+	protoc -I proto --go_out=plugins=grpc:lib/go-qmstr/service proto/*.proto
