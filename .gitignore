@@ -21,3 +21,4 @@ requirements.txt
 
 # compiled stuff
 out/
+**/*.log
