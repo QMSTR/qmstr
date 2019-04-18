@@ -53,17 +53,26 @@ func describeNode(args []string) error {
 
 	switch node := n.(type) {
 	case *service.ProjectNode:
-		pNode, err := buildServiceClient.GetProjectNode(context.Background(), &service.ProjectNode{})
+		pNode, err := buildServiceClient.GetProjectNode(context.Background(), node)
 		if err != nil {
 			return err
 		}
 		fmt.Println(pNode.Describe(less))
 	case *service.PackageNode:
-		pkgNode, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{})
+		stream, err := controlServiceClient.GetPackageNode(context.Background(), node)
 		if err != nil {
 			return err
 		}
-		fmt.Println(pkgNode.Describe(less, ""))
+		for {
+			pkgNode, err := stream.Recv()
+			if err != nil {
+				if err == io.EOF {
+					break
+				}
+				return err
+			}
+			fmt.Println(pkgNode.Describe(less, ""))
+		}
 	case *service.FileNode:
 		fNodes, err := controlServiceClient.GetFileNode(context.Background(), &service.GetFileNodeMessage{FileNode: node})
 		if err != nil {

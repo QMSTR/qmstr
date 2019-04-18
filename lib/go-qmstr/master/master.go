@@ -165,7 +165,7 @@ func (s *server) SendBuildError(ctx context.Context, in *service.InfoNode) (*ser
 	if err != nil {
 		return nil, err
 	}
-	node, err := db.GetPackageNode()
+	node, err := db.GetProjectNode()
 	if err != nil {
 		return nil, err
 	}
