@@ -21,11 +21,6 @@ message InfoNodeMessage {
     InfoNode infonode = 3;
 }
 
-message PackageNodeMessage {
-    int64 token = 1;
-    PackageNode packagenode = 2;
-}
-
 message DiagnosticNodeMessage {
     int64 token = 1;
     string uid = 2;
@@ -38,6 +33,5 @@ message SendResponse {
 service AnalysisService {
     rpc GetAnalyzerConfig(AnalyzerConfigRequest) returns (AnalyzerConfigResponse) {}
     rpc SendInfoNodes(stream InfoNodeMessage) returns (SendResponse) {}
-    rpc SendPackageNode(stream PackageNodeMessage) returns (SendResponse) {}
     rpc SendDiagnosticNode(stream DiagnosticNodeMessage) returns (SendResponse) {}
 }

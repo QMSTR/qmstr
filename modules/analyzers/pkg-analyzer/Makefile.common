@@ -1,8 +1,0 @@
-PKG_ANALYZER := pkg-analyzer
-
-.PHONY: $(PKG_ANALYZER)
-$(PKG_ANALYZER): $(OUTDIR)analyzers/$(PKG_ANALYZER)
-
-$(OUTDIR)analyzers/$(PKG_ANALYZER): $(GO_SRCS)
-	go test ./modules/$(subst $(OUTDIR),,$@)
-	go build -o $@ ./modules/$(subst $(OUTDIR),,$@)

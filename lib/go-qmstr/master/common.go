@@ -29,7 +29,6 @@ type serverPhase interface {
 	GetAnalyzerConfig(*service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error)
 	GetReporterConfig(*service.ReporterConfigRequest) (*service.ReporterConfigResponse, error)
 	SendInfoNodes(service.AnalysisService_SendInfoNodesServer) error
-	SendPackageNode(service.AnalysisService_SendPackageNodeServer) error
 	SendDiagnosticNode(service.AnalysisService_SendDiagnosticNodeServer) error
 	GetFileNode(*service.GetFileNodeMessage, service.ControlService_GetFileNodeServer) error
 	DeleteNode(service.BuildService_DeleteNodeServer) error
@@ -123,10 +122,6 @@ func (gsp *genericServerPhase) GetAnalyzerConfig(in *service.AnalyzerConfigReque
 }
 
 func (gsp *genericServerPhase) SendInfoNodes(stream service.AnalysisService_SendInfoNodesServer) error {
-	return errors.New("Wrong phase")
-}
-
-func (gsp *genericServerPhase) SendPackageNode(stream service.AnalysisService_SendPackageNodeServer) error {
 	return errors.New("Wrong phase")
 }
 
