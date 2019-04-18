@@ -34,4 +34,5 @@ service ReportService {
   rpc GetReporterConfig(ReporterConfigRequest) returns (ReporterConfigResponse) {}
   rpc GetInfoData(InfoDataRequest) returns (InfoDataResponse) {}
   rpc GetBOM(BOMRequest) returns (BOM) {}
+  rpc GetProjectNode(ProjectNode) returns (ProjectNode) {}
 }
