@@ -50,12 +50,15 @@ func (testanalyzer *TestAnalyzer) Configure(configMap map[string]string) error {
 func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64) error {
 	queryNode := &service.FileNode{}
 
-	var err error
-	pkgNode, err = controlService.GetPackageNode(context.Background(), &service.PackageNode{})
+	pkgNodeStream, err := controlService.GetPackageNode(context.Background(), &service.PackageNode{})
 	if err != nil {
 		return err
 	}
 
+	pkgNode, err = pkgNodeStream.Recv()
+	if err != nil {
+		return err
+	}
 	stream, err := controlService.GetFileNode(context.Background(), &service.GetFileNodeMessage{FileNode: queryNode})
 	if err != nil {
 		log.Printf("Could not get file node %v", err)
