@@ -3,6 +3,7 @@ package service;
 option java_package = "org.qmstr.grpc.service";
 
 import weak "bom.proto";
+import weak "datamodel.proto";
 
 message ReporterConfigRequest {
   int32 reporterID = 1;
@@ -24,8 +25,9 @@ message InfoDataResponse {
 }
 
 message BOMRequest {
-  bool warnings = 1;
-  bool errors = 2;
+  PackageNode package = 1;
+  bool warnings = 2;
+  bool errors = 3;
 }
 
 service ReportService {

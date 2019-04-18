@@ -76,15 +76,11 @@ func (phase *serverPhaseReport) GetBOM(in *service.BOMRequest) (*service.BOM, er
 	if err != nil {
 		return nil, err
 	}
-	pkgNode, err := db.GetPackageNode()
-	if err != nil {
-		return nil, err
-	}
 	projNode, err := db.GetProjectNode()
 	if err != nil {
 		return nil, err
 	}
-	bom, err := reporting.GetBOM(projNode, pkgNode, in.Warnings, in.Errors)
+	bom, err := reporting.GetBOM(projNode, in.Package, in.Warnings, in.Errors)
 	if err != nil {
 		return nil, err
 	}

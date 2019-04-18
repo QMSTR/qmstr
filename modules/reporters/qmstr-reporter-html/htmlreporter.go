@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -109,21 +110,33 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 // Report generates the actual reports.
 // It is part of the ReporterModule interface.
 func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
-	packageNode, err := cserv.GetPackageNode(context.Background(), &service.PackageNode{})
+	stream, err := cserv.GetPackageNode(context.Background(), &service.PackageNode{})
 	if err != nil {
 		return fmt.Errorf("could not get package node: %v", err)
 	}
+	for {
+		packageNode, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if packageNode == nil {
+			log.Println("Warning:No Package node found")
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		bom, err := rserv.GetBOM(context.Background(), &service.BOMRequest{Package: packageNode, Warnings: r.enableWarnings, Errors: r.enableErrors})
+		if err != nil {
+			return err
+		}
+		log.Printf("%v", bom)
 
-	bom, err := rserv.GetBOM(context.Background(), &service.BOMRequest{Warnings: r.enableWarnings, Errors: r.enableErrors})
-	if err != nil {
-		return err
+		if err := r.CreatePackageLevelReports(bom, cserv, rserv); err != nil {
+			return fmt.Errorf("error generating package level report: %v", err)
+		}
+		log.Printf("HTML reporter: created report for %v", packageNode.Name)
 	}
-	log.Printf("%v", bom)
-
-	if err := r.CreatePackageLevelReports(bom, cserv, rserv); err != nil {
-		return fmt.Errorf("error generating package level report: %v", err)
-	}
-	log.Printf("HTML reporter: created report for %v", packageNode.Name)
 	return nil
 }
 
