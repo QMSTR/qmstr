@@ -89,28 +89,15 @@ func (s *server) GetBOM(ctx context.Context, in *service.BOMRequest) (*service.B
 	return s.currentPhase.GetBOM(in)
 }
 
-func (s *server) Package(stream service.BuildService_PackageServer) error {
+func (s *server) UpdatePackageNode(ctx context.Context, in *service.UpdatePackageNodeMessage) (*service.BuildResponse, error) {
 	db, err := s.currentPhase.getDataBase()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	pkg, err := db.GetPackageNode()
-	if err != nil {
-		return err
-	}
-	for {
-		fl, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return fmt.Errorf("Failed receiving fileNodes: %v", err)
-		}
-		pkg.Targets = append(pkg.Targets, fl)
-	}
-	log.Printf("Adding package node %s", pkg.Name)
-	db.AddPackageNode(pkg)
-	return stream.SendAndClose(&service.BuildResponse{Success: true})
+	in.Package.Targets = append(in.Package.Targets, in.Targets...)
+	log.Printf("Adding package node %s", in.Package.Name)
+	db.AddPackageNode(in.Package)
+	return &service.BuildResponse{Success: true}, nil
 }
 
 func (s *server) UpdateProjectNode(stream service.BuildService_UpdateProjectNodeServer) error {
