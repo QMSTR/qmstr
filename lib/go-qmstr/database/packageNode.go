@@ -44,7 +44,7 @@ func (db *DataBase) GetPackageNodeByName(name string) (*service.PackageNode, err
 	return ret["getPackageNodeByName"][0], nil
 }
 
-func (db *DataBase) GetPackageNode() (*service.PackageNode, error) {
+func (db *DataBase) GetPackageNode() ([]*service.PackageNode, error) {
 	var ret map[string][]*service.PackageNode
 
 	q := `{
@@ -77,7 +77,7 @@ func (db *DataBase) GetPackageNode() (*service.PackageNode, error) {
 		return nil, errors.New("No package node found")
 	}
 
-	return pkgNodes[0], nil
+	return pkgNodes, nil
 
 }
 

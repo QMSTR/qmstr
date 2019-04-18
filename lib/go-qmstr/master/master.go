@@ -137,23 +137,28 @@ func (s *server) UpdateProjectNode(stream service.BuildService_UpdateProjectNode
 	return stream.SendAndClose(&service.BuildResponse{Success: true})
 }
 
-func (s *server) GetPackageNode(ctx context.Context, in *service.PackageNode) (*service.PackageNode, error) {
+func (s *server) GetPackageNode(in *service.PackageNode, stream service.ControlService_GetPackageNodeServer) error {
 	db, err := s.currentPhase.getDataBase()
 	if err != nil {
-		return nil, err
+		return err
 	}
+	var packages []*service.PackageNode
 	if in.IsValid() {
 		node, err := db.GetPackageNodeByName(in.Name)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		return node, nil
+		packages = append(packages, node)
+	} else {
+		packages, err = db.GetPackageNode()
+		if err != nil {
+			return err
+		}
 	}
-	node, err := db.GetPackageNode()
-	if err != nil {
-		return nil, err
+	for _, pkg := range packages {
+		stream.Send(pkg)
 	}
-	return node, nil
+	return nil
 }
 
 func (s *server) GetProjectNode(ctx context.Context, in *service.ProjectNode) (*service.ProjectNode, error) {
