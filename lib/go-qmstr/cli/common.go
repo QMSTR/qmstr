@@ -47,6 +47,18 @@ func getUniqueFileNode(fnode *service.FileNode) (*service.FileNode, error) {
 	return fileNode, nil
 }
 
+func getUniquePackageNode(pnode *service.PackageNode) (*service.PackageNode, error) {
+	stream, err := controlServiceClient.GetPackageNode(context.Background(), pnode)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to get package node: %v", err)
+	}
+	pkgNode, err := stream.Recv()
+	if err != nil {
+		return nil, err
+	}
+	return pkgNode, nil
+}
+
 // store nodes in a File node array
 func createFileNodesArray(these []interface{}) ([]*service.FileNode, error) {
 	var theseFileNodes []*service.FileNode
@@ -79,28 +91,6 @@ func sendFileNode(node *service.FileNode) error {
 	err = stream.Send(node)
 	if err != nil {
 		return fmt.Errorf("sending node fail: %v", err)
-	}
-	res, err := stream.CloseAndRecv()
-	if err != nil {
-		return fmt.Errorf("close stream fail: %v", err)
-	}
-	if !res.Success {
-		return fmt.Errorf("sending node fail: %v", err)
-	}
-	return nil
-}
-
-func updatePackageNode(pkg *service.PackageNode, these []*service.FileNode) error {
-	stream, err := buildServiceClient.Package(context.Background())
-	if err != nil {
-		return err
-	}
-	// ship back modified targets
-	for _, target := range these {
-		err = stream.Send(target)
-		if err != nil {
-			return fmt.Errorf("Failed sending targets to pkg stream: %v", err)
-		}
 	}
 	res, err := stream.CloseAndRecv()
 	if err != nil {

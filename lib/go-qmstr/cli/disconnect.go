@@ -59,9 +59,9 @@ func disconnectNodes(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("Failed disconnecting from file node: %v", err)
 		}
 	case *service.PackageNode:
-		that, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{})
+		that, err := getUniquePackageNode(thatVal)
 		if err != nil {
-			return fmt.Errorf("Failed to get package node: %v", err)
+			return err
 		}
 		theseFileNodes, err := createFileNodesArray(these)
 		if err != nil {
@@ -126,9 +126,12 @@ func disconnectFromPackageNode(that *service.PackageNode, these []*service.FileN
 	if !res.Success {
 		return fmt.Errorf("Failed deleting edge: %v", err)
 	}
-	err = updatePackageNode(that, that.Targets)
+	res, err = buildServiceClient.UpdatePackageNode(context.Background(), &service.UpdatePackageNodeMessage{Package: that, Targets: that.Targets})
 	if err != nil {
 		return err
+	}
+	if !res.Success {
+		return fmt.Errorf("sending package node failed: %v", err)
 	}
 	return nil
 }

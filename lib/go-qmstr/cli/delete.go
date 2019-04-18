@@ -45,7 +45,7 @@ func deleteNode(args []string) error {
 			fmt.Printf("Deleting project node: %v\n", projectNode.Name)
 			deleteNodeMsg = append(deleteNodeMsg, &service.DeleteMessage{Uid: projectNode.Uid})
 		case *service.PackageNode:
-			pkgNode, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{Name: currentNode.Name})
+			pkgNode, err := getUniquePackageNode(currentNode)
 			if err != nil {
 				return err
 			}

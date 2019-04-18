@@ -70,9 +70,9 @@ func connectCmdRun(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("Failed connecting file nodes: %v", err)
 		}
 	case *service.PackageNode:
-		that, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{})
+		that, err := getUniquePackageNode(thatVal)
 		if err != nil {
-			return fmt.Errorf("Failed to get package node: %v", err)
+			return err
 		}
 		theseFileNodes, err := createFileNodesArray(these)
 		if err != nil {
@@ -118,9 +118,12 @@ func connectToPackageNode(that *service.PackageNode, these []*service.FileNode) 
 	if connectCmdFlags.edge != "" && connectCmdFlags.edge != "targets" {
 		return fmt.Errorf("unknown edge %q for FileNode -> PackageNode. Valid values %v", connectCmdFlags.edge, validFileToPackageEdges)
 	}
-	err := updatePackageNode(that, these)
+	res, err := buildServiceClient.UpdatePackageNode(context.Background(), &service.UpdatePackageNodeMessage{Package: that, Targets: these})
 	if err != nil {
 		return err
+	}
+	if !res.Success {
+		return fmt.Errorf("sending package node failed: %v", err)
 	}
 	return nil
 }
