@@ -15,7 +15,7 @@ import (
 
 type TestReporter struct{}
 
-var testpackageNode *service.PackageNode
+var testprojectNode *service.ProjectNode
 
 func main() {
 	reporter := reporting.NewReporter(&TestReporter{})
@@ -35,9 +35,9 @@ func (testRporter *TestReporter) Configure(config map[string]string) error {
 // Report generates the actual reports.
 func (testRporter *TestReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
 	var err error
-	testpackageNode, err = cserv.GetPackageNode(context.Background(), &service.PackageNode{})
+	testprojectNode, err = rserv.GetProjectNode(context.Background(), &service.ProjectNode{})
 	if err != nil {
-		return fmt.Errorf("could not get package node: %v", err)
+		return fmt.Errorf("could not get project node: %v", err)
 	}
 	testSuite := []testing.InternalTest{
 		{
@@ -57,8 +57,8 @@ func (testRporter *TestReporter) PostReport() error {
 }
 
 func TestGraphLAdditionalInfo(t *testing.T) {
-	if len(testpackageNode.AdditionalInfo) == 0 {
-		t.Logf("The graph doesn't contain any information nodes. Package name: %s", testpackageNode.Name)
+	if len(testprojectNode.AdditionalInfo) == 0 {
+		t.Logf("The graph doesn't contain any information nodes. Project name: %s", testprojectNode.Name)
 		t.Fail()
 	}
 }
