@@ -6,7 +6,9 @@ weight: 10
 ---
 
 This section is targeted primarily at developers who wish to
-contribute to QMSTR itself or write modules to extend it.
+contribute to QMSTR itself or write modules to extend it. It also
+describes the model under which QMSTR is developed and how to
+participate in it.
 
 The material here is still work in progress and
 incomplete. Contributions are welcome :-)

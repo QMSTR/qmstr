@@ -1,7 +1,7 @@
 ---
 title: "Development environment"
 date: 2019-04-01T15:26:15Z
-weight: 1
+weight: 20
 ---
 
 To create a local development environment for Quartermaster, follow
