@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/QMSTR/qmstr/lib/go-qmstr/common"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/config"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/database"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
@@ -127,35 +126,6 @@ func (phase *serverPhaseAnalysis) SendInfoNodes(stream service.AnalysisService_S
 		if err != nil {
 			return err
 		}
-	}
-}
-
-func (phase *serverPhaseAnalysis) SendPackageNode(stream service.AnalysisService_SendPackageNodeServer) error {
-	for {
-		pkgNodeReq, err := stream.Recv()
-		if err == io.EOF {
-			return stream.SendAndClose(&service.SendResponse{
-				Success: true,
-			})
-		}
-		if err != nil {
-			return err
-		}
-		if pkgNodeReq.Token != phase.currentToken {
-			log.Println("Analyzer supplied wrong token")
-			return errors.New("wrong token supplied")
-		}
-		pkgNode := pkgNodeReq.Packagenode
-
-		for _, target := range pkgNode.Targets {
-			err = common.SetRelativePath(target, phase.masterConfig.Server.BuildPath, nil)
-			if err != nil {
-				return err
-			}
-			log.Printf("Adding file node %v to package targets.", target.Path)
-		}
-
-		phase.db.AddPackageNode(pkgNode)
 	}
 }
 
