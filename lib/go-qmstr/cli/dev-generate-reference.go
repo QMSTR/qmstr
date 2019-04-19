@@ -44,8 +44,7 @@ slug: "%s"
 			base := strings.TrimSuffix(name, path.Ext(name))
 			return "../" + strings.ToLower(base) + "/"
 		}
-		err := doc.GenMarkdownTreeCustom(rootCmd, outputPath, filePrepender, linkHandler)
-		if err != nil {
+		if err := doc.GenMarkdownTreeCustom(rootCmd, outputPath, filePrepender, linkHandler); err != nil {
 			log.Fatal(err)
 		}
 	},
