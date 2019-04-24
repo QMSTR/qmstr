@@ -67,6 +67,7 @@ message PathSubstitution {
 message PackageNode {
     string uid = 1;
     string name = 2;
+    string version = 3;
     string packageNodeType = 4;
     repeated FileNode targets = 5;
     repeated InfoNode additionalInfo = 6;
