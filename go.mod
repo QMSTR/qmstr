@@ -7,6 +7,7 @@ replace github.com/Sirupsen/logrus => github.com/sirupsen/logrus v1.4.0
 require (
 	github.com/Microsoft/go-winio v0.4.12 // indirect
 	github.com/Sirupsen/logrus v0.0.0-00010101000000-000000000000 // indirect
+	github.com/cpuguy83/go-md2man v1.0.10 // indirect
 	github.com/dgraph-io/dgo v0.0.0-20190306204622-95299da439fd
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/docker v1.13.1
