@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 
@@ -36,7 +37,9 @@ func getNodesFromArgs(args []string) ([]interface{}, error) {
 }
 
 func getUniqueFileNode(fnode *service.FileNode) (*service.FileNode, error) {
-	stream, err := controlServiceClient.GetFileNode(context.Background(), &service.GetFileNodeMessage{FileNode: fnode, UniqueNode: true})
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	stream, err := controlServiceClient.GetFileNode(ctx, &service.GetFileNodeMessage{FileNode: fnode, UniqueNode: true})
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +51,12 @@ func getUniqueFileNode(fnode *service.FileNode) (*service.FileNode, error) {
 }
 
 func getUniquePackageNode(pnode *service.PackageNode) (*service.PackageNode, error) {
-	stream, err := controlServiceClient.GetPackageNode(context.Background(), pnode)
+	if !pnode.IsValid() {
+		return nil, errors.New("No package name given")
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	stream, err := controlServiceClient.GetPackageNode(ctx, pnode)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to get package node: %v", err)
 	}
