@@ -4,21 +4,40 @@ import (
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
-// PackageData is the package metadata that the report will visualize.
-// PackageData is expected to stay more or less constant across versions of the package.
-// oc... refers to OpenChain related fields
+// PackageData contains metadata about a specific package.
 type PackageData struct {
-	PackageName         string // The package name, e.g. "CURL" or "Linux"
-	BuildConfig         string // The name of the build configuration e.g. "amd_64_something"
-	Vendor              string // Name of the entity distributing this package
-	OcFossLiaison       string // Name of the FOSS liaison function
-	OcComplianceContact string // Email address acting as the general FOSS compliance contact for the vendor
-	LicenseDeclared     string
-	Targets             []*service.Target
-	Site                *SiteData // The site this page is associated with
+	Name            string
+	Version         string // Usually a Git hash, but any string can be used
+	LicenseDeclared string
+	Targets         []*service.FileNode
+	Authors         []string
+	Project         string // The project this package is associated with.
 }
 
-// GetPackageData extracts the package data from the given BOM
-func GetPackageData(bom *service.BOM, siteData *SiteData) *PackageData {
-	return &PackageData{bom.PackageInfo.Name, bom.PackageInfo.BuildConfig, bom.PackageInfo.Vendor, bom.PackageInfo.OcFossLiaison, bom.PackageInfo.OcComplianceContact, bom.PackageInfo.LicenseDeclared, bom.Targets, siteData}
+func GetPackageData(pkg *service.PackageNode, projData *ProjectData) *PackageData {
+	packageData := PackageData{
+		Name:            pkg.GetName(),
+		Version:         pkg.GetVersion(),
+		LicenseDeclared: "NO License declared",
+		Project:         projData.Name,
+	}
+	authors := []string{}
+	targets := []*service.FileNode{}
+	for _, fileNode := range pkg.GetTargets() {
+		targets = append(targets, fileNode)
+		for _, info := range fileNode.AdditionalInfo {
+			if info.Type == "copyright" {
+				for _, d := range info.DataNodes {
+					switch d.Type {
+					case "author":
+						authors = append(authors, d.Data)
+					}
+				}
+			}
+		}
+	}
+	packageData.Authors = authors
+	packageData.Targets = targets
+
+	return &packageData
 }

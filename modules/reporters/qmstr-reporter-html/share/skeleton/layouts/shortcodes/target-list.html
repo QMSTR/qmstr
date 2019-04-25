@@ -1,53 +1,8 @@
-{{ $data := index .Site.Data .Page.Params.package .Page.Params.versionid "data" }}
+{{ $data := index .Site.Data .Page.Params.project .Page.Params.package .Page.Params.version "data" }}
 <!-- <h2>{{ substr .Page.Params.versionid 0 8 | upper }} ({{ .Page.Params.author }})</h2> -->
 <h3>Targets:</h3>
-{{ range $data.Package.Targets }}
+{{ range $data.Targets }}
     <p> Filename: <b>{{ .path }}</b></p>
-    SHA-1: {{ .sha1 }} <br/>
-    Declared license: {{ $data.Package.LicenseDeclared }}<br/>
-    <p>
-    <h4>Sources:</h4>
-    <table>
-        <tr>
-            <th>File</th>
-            <th>License</th>
-            <th>Authors</th>
-        </tr>
-        {{ range .sources }}
-        <tr>
-            <td>{{ .file }}</td>
-            <td><dfn class="tooltip"> 
-                {{ with .license.name }}
-                    {{ . }}
-                {{ else }}
-                    {{ .license.key }}
-                {{ end }}
-                <span rel="tooltip">
-                {{ with .license.name }}
-                    <h5>{{ . }}</h5>
-                {{ else }}
-                    <h5>{{ .license.key }}</h5>
-                {{ end }}
-                {{ with .license.spdxIdentifier }}
-                    SPDX: {{ . }}
-                {{ end }}
-                </span>
-            </dfn></td>
-            <td>
-                {{ range .authors }}
-                    {{ with .name }} {{ . }} {{ end }}
-                {{ end }}
-            </td>
-        </tr>
-        {{ end }}
-    </table>
-    </p>
-    <p>
-    <h4>Dependencies:</h4>
-    <ul>
-    {{ range .dependencies }}
-        <li>{{ .name }}</li>
-    {{ end }}
-    </ul>
-    </p>
+    SHA-1: {{ .hash }} <br/>
+    Declared license: {{ $data.License }}<br/>
 {{ end }}

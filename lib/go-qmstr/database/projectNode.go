@@ -22,6 +22,13 @@ func (db *DataBase) GetProjectNode() (*service.ProjectNode, error) {
 		getProjectNode(func: has(projectNodeType)) {
 			uid
 			name
+			additionalInfo {
+				type
+				dataNodes {
+					data
+					type
+				}
+			}
 		}
 	}`
 

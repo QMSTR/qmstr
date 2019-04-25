@@ -46,44 +46,55 @@ func (r *SPDXReporter) Configure(config map[string]string) error {
 }
 
 func (r *SPDXReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
-
-	bom, err := rserv.GetBOM(context.Background(), &service.BOMRequest{Warnings: r.enableWarnings, Errors: r.enableErrors})
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	pkgStream, err := cserv.GetPackageNode(ctx, &service.PackageNode{})
 	if err != nil {
 		return err
 	}
 
+	for {
+		pkg, err := pkgStream.Recv()
+		if err != nil {
+			return err
+		}
+		if err = r.generateSPDX(pkg); err != nil {
+			return err
+		}
+
+	}
+}
+
+func (r *SPDXReporter) generateSPDX(pkgNode *service.PackageNode) error {
 	files := []*spdx.File2_1{}
 	hashes := []string{}
 
-	for _, trgt := range bom.Targets {
+	for _, trgt := range pkgNode.Targets {
 		fl := &spdx.File2_1{
 			FileName: trgt.Name,
 			// this should be unique
 			FileSPDXIdentifier: "SPDXRef-file-" + trgt.Name,
-			FileChecksumSHA1:   trgt.Sha1,
+			FileChecksumSHA1:   trgt.Hash,
 			LicenseConcluded:   "NOASSERTION",
 			LicenseInfoInFile:  []string{"NOASSERTION"},
 			FileCopyrightText:  "NOASSERTION",
 		}
 		files = append(files, fl)
-		hashes = append(hashes, trgt.Sha1)
+		hashes = append(hashes, trgt.Hash)
 	}
 
-	dnldLocation := bom.PackageInfo.SourceURL
-	if dnldLocation == "" {
-		dnldLocation = "NOASSERTION"
-	}
+	dnldLocation := pkgNode.GetMetaData("SourceURL", "NOASSERTION")
 	pkg := &spdx.Package2_1{
-		PackageName: bom.PackageInfo.Name,
+		PackageName: pkgNode.Name,
 		// this should be unique
-		PackageSPDXIdentifier:   "SPDXRef-pkg-" + bom.PackageInfo.Name,
+		PackageSPDXIdentifier:   "SPDXRef-pkg-" + pkgNode.Name,
 		PackageDownloadLocation: dnldLocation,
 		FilesAnalyzed:           true,
 		PackageVerificationCode: calcSHA1Hash(hashes),
 		// this is the license we detect
 		PackageLicenseConcluded:     "NOASSERTION",
 		PackageLicenseInfoFromFiles: []string{"NOASSERTION"},
-		PackageLicenseDeclared:      bom.PackageInfo.LicenseDeclared,
+		PackageLicenseDeclared:      pkgNode.GetMetaData("LicenseDeclared", "NOASSERTION"),
 		PackageCopyrightText:        "NOASSERTION",
 		Files:                       files,
 	}
@@ -93,8 +104,8 @@ func (r *SPDXReporter) Report(cserv service.ControlServiceClient, rserv service.
 			SPDXVersion:       "SPDX-2.1",
 			DataLicense:       "CC0-1.0",
 			SPDXIdentifier:    "SPDXRef-DOCUMENT",
-			DocumentName:      bom.PackageInfo.Name,
-			DocumentNamespace: r.nsURI + url.PathEscape(bom.PackageInfo.Name),
+			DocumentName:      pkgNode.Name,
+			DocumentNamespace: r.nsURI + url.PathEscape(pkgNode.Name),
 			Created:           time.Now().Format(time.RFC3339),
 			CreatorTools: []string{
 				"QMSTR",
@@ -103,7 +114,7 @@ func (r *SPDXReporter) Report(cserv service.ControlServiceClient, rserv service.
 		Packages: []*spdx.Package2_1{pkg},
 	}
 
-	fName := filepath.Join(r.outputdir, fmt.Sprintf(outFileName, common.GetPosixFullyPortableFilename(bom.PackageInfo.Name)))
+	fName := filepath.Join(r.outputdir, fmt.Sprintf(outFileName, common.GetPosixFullyPortableFilename(pkgNode.Name)))
 	out, err := os.Create(fName)
 	if err != nil {
 		return fmt.Errorf("failed to create out file %q: %v", fName, err)

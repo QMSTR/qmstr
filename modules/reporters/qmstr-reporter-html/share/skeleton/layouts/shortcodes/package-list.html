@@ -1,10 +1,12 @@
-<h2>FOSS Compliance Documentation</h2>
+<h2>Packages</h2>
 
-<p>This site provides FOSS compliance documentation about the following packages:</p>
-
-<ul>
-  {{ range .Page.Sections }}
-  <li><a href="{{ .URL }}">{{ .Params.title }}</a><p></p></li>
+<table>
+  <tr>
+    <th>Package</th>
+  </tr>
+  {{ range sort .Page.Sections }}
+  <tr>
+    <td><a href="{{ .URL }}">{{ substr .Params.title 0 20 | upper }}</a></td>
+  </tr>
   {{ end }}
-</ul>
-
+</table>

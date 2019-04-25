@@ -1,14 +1,13 @@
 +++
-title = "{{{shortenId .VersionIdentifier}}}"
-versionid = "{{{.VersionIdentifier}}}"
-package = "{{{.Package.PackageName}}}"
-author = "{{{.Author}}}"
-summary = "{{{summary .Message}}}"
+title = "{{{.Version}}}"
+project = "{{{.Project}}}"
+package = "{{{.Name}}}"
+version = "{{{.Version}}}"
 weight = 1
 +++
 
-## {{{.Package.PackageName}}} @ {{{.VersionIdentifier}}}
+## {{{.Name}}} @ {{{.Version}}}
 
-{{< version-cmpl-header >}}
+{{< target-list >}}
 
-{{< buildconfig-list >}}
+{{< authors >}}

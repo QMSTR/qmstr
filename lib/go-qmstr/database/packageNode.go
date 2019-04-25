@@ -28,6 +28,7 @@ func (db *DataBase) GetPackageNodeByName(name string) (*service.PackageNode, err
 		  getPackageNodeByName(func: has(packageNodeType)) @filter(eq(name, $Name)) {
 			uid
 			name
+			version
 		  }}`
 
 	vars := map[string]string{"$Name": name}
@@ -53,6 +54,7 @@ func (db *DataBase) GetPackageNode() ([]*service.PackageNode, error) {
 			buildConfig
 			hash
 			name
+			version
 			type
 			targets
 			derivedFrom
