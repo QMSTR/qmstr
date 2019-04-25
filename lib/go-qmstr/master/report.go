@@ -9,7 +9,6 @@ import (
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/config"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/database"
-	"github.com/QMSTR/qmstr/lib/go-qmstr/reporting"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
@@ -69,22 +68,6 @@ func (phase *serverPhaseReport) GetReporterConfig(in *service.ReporterConfigRequ
 	config.Config["outputdir"] = filepath.Join(ServerOutputDir, config.Reporter, config.PosixName)
 
 	return &service.ReporterConfigResponse{ConfigMap: config.Config, Name: config.Name}, nil
-}
-
-func (phase *serverPhaseReport) GetBOM(in *service.BOMRequest) (*service.BOM, error) {
-	db, err := phase.getDataBase()
-	if err != nil {
-		return nil, err
-	}
-	projNode, err := db.GetProjectNode()
-	if err != nil {
-		return nil, err
-	}
-	bom, err := reporting.GetBOM(projNode, in.Package, in.Warnings, in.Errors)
-	if err != nil {
-		return nil, err
-	}
-	return bom, nil
 }
 
 func (phase *serverPhaseReport) GetInfoData(in *service.InfoDataRequest) (*service.InfoDataResponse, error) {

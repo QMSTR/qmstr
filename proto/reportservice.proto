@@ -2,7 +2,6 @@ syntax = "proto3";
 package service;
 option java_package = "org.qmstr.grpc.service";
 
-import weak "bom.proto";
 import weak "datamodel.proto";
 
 message ReporterConfigRequest {
@@ -24,15 +23,8 @@ message InfoDataResponse {
   repeated string data = 1;
 }
 
-message BOMRequest {
-  PackageNode package = 1;
-  bool warnings = 2;
-  bool errors = 3;
-}
-
 service ReportService {
   rpc GetReporterConfig(ReporterConfigRequest) returns (ReporterConfigResponse) {}
   rpc GetInfoData(InfoDataRequest) returns (InfoDataResponse) {}
-  rpc GetBOM(BOMRequest) returns (BOM) {}
   rpc GetProjectNode(ProjectNode) returns (ProjectNode) {}
 }
