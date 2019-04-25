@@ -20,7 +20,6 @@ type ClientContainer struct {
 	Image             string
 	MasterContainerID string
 	QmstrInternalPort uint16
-	Instdir           string
 	Cmd               []string
 	Env               []string
 	Mount             []mount.Mount
@@ -39,9 +38,6 @@ func RunClientContainer(ctx context.Context, cli *client.Client, clientConfig *C
 	}
 
 	containerCmd := []string{"qmstr"}
-	if clientConfig.Instdir != "" {
-		containerCmd = append(containerCmd, fmt.Sprintf("--instdir=%s", clientConfig.Instdir))
-	}
 	containerCmd = append(containerCmd, append([]string{"--"}, clientConfig.Cmd...)...)
 
 	clientConfig.Env = append(
