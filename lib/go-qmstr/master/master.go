@@ -81,10 +81,6 @@ func (s *server) SendDiagnosticNode(stream service.AnalysisService_SendDiagnosti
 	return s.currentPhase.SendDiagnosticNode(stream)
 }
 
-func (s *server) GetBOM(ctx context.Context, in *service.BOMRequest) (*service.BOM, error) {
-	return s.currentPhase.GetBOM(in)
-}
-
 func (s *server) UpdatePackageNode(ctx context.Context, in *service.UpdatePackageNodeMessage) (*service.BuildResponse, error) {
 	db, err := s.currentPhase.getDataBase()
 	if err != nil {
