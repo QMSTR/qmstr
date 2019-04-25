@@ -1,11 +1,8 @@
 +++
-title = "{{{.PackageName}}}"
-chapter = true
+title = "{{{.Name}}}"
 weight = 1
 +++
 
-### FOSS Compliance Documentation
+## {{{.Name}}}
 
-{{< proj-cmpl-header >}}
-
-{{< commit-list >}}
+{{< version-list >}}

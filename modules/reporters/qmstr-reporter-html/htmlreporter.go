@@ -110,9 +110,16 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 // Report generates the actual reports.
 // It is part of the ReporterModule interface.
 func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	projectNode, err := rserv.GetProjectNode(ctx, &service.ProjectNode{})
+	if err != nil {
+		return fmt.Errorf("failed to get project node: %v", err)
+	}
+
 	stream, err := cserv.GetPackageNode(context.Background(), &service.PackageNode{})
 	if err != nil {
-		return fmt.Errorf("could not get package node: %v", err)
+		return fmt.Errorf("failed to get package node: %v", err)
 	}
 	for {
 		packageNode, err := stream.Recv()
@@ -126,13 +133,7 @@ func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.
 		if err != nil {
 			return err
 		}
-		bom, err := rserv.GetBOM(context.Background(), &service.BOMRequest{Package: packageNode, Warnings: r.enableWarnings, Errors: r.enableErrors})
-		if err != nil {
-			return err
-		}
-		log.Printf("%v", bom)
-
-		if err := r.CreatePackageLevelReports(bom, cserv, rserv); err != nil {
+		if err := r.CreatePackageLevelReports(projectNode, packageNode, cserv, rserv); err != nil {
 			return fmt.Errorf("error generating package level report: %v", err)
 		}
 		log.Printf("HTML reporter: created report for %v", packageNode.Name)
@@ -371,16 +372,11 @@ func CreateReportsPackage(workingDir string, contentDir string, packagePath stri
 }
 
 func applyTemplate(templatePath string, data interface{}, target string) error {
-	funcMap := template.FuncMap{
-		"summary":   reporting.CommitMessageSummary,
-		"shortenId": reporting.ShortenedVersionIdentifier,
-	}
-
 	templateData, err := ioutil.ReadFile(templatePath)
 	if err != nil {
 		return fmt.Errorf("unable to read template file \"%s\"", templatePath)
 	}
-	t := template.Must(template.New(templatePath).Funcs(funcMap).Delims("{{{", "}}}").Parse(string(templateData)))
+	t := template.Must(template.New(templatePath).Delims("{{{", "}}}").Parse(string(templateData)))
 
 	targetFile, err := os.Create(target)
 	if err != nil {

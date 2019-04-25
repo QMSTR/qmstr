@@ -133,13 +133,13 @@ func ConsumeFile(filename string) ([]byte, error) {
 
 func CreateProjectNode(masterConfig *MasterConfig) *service.ProjectNode {
 	projectNode := &service.ProjectNode{Name: masterConfig.Name}
-	tmpInfoNode := &service.InfoNode{Type: "metadata"}
+	metaData := &service.InfoNode{Type: "metadata"}
 	for key, val := range masterConfig.MetaData {
-		tmpInfoNode.DataNodes = append(tmpInfoNode.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val})
+		metaData.DataNodes = append(metaData.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val})
 	}
 
-	if len(tmpInfoNode.DataNodes) > 0 {
-		projectNode.AdditionalInfo = []*service.InfoNode{tmpInfoNode}
+	if len(metaData.DataNodes) > 0 {
+		projectNode.AdditionalInfo = []*service.InfoNode{metaData}
 	}
 
 	return projectNode

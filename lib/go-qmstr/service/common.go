@@ -102,3 +102,32 @@ func (pn *PackageNode) IsValid() bool {
 func (prn *ProjectNode) IsValid() bool {
 	return prn.Name != ""
 }
+
+func (prn *ProjectNode) GetMetaData(key string, defaultValue string) string {
+	value, err := getMetaData(key, prn.GetAdditionalInfo())
+	if err != nil {
+		return defaultValue
+	}
+	return value
+}
+
+func (pn *PackageNode) GetMetaData(key string, defaultValue string) string {
+	value, err := getMetaData(key, pn.GetAdditionalInfo())
+	if err != nil {
+		return defaultValue
+	}
+	return value
+}
+
+func getMetaData(key string, info []*InfoNode) (string, error) {
+	for _, inode := range info {
+		if inode.Type == "metadata" {
+			for _, dnode := range inode.DataNodes {
+				if key == dnode.Type {
+					return dnode.Data, nil
+				}
+			}
+		}
+	}
+	return "", fmt.Errorf("No metadata found for key %s", key)
+}
