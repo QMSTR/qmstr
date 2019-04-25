@@ -32,7 +32,7 @@ The environment variable QMSTR_INSTRUMENTATION_HOME will be defined to point to 
 		}
 		return nil
 	},
-	Run: execute,
+	Run: executeRun,
 }
 
 func init() {
@@ -42,7 +42,7 @@ func init() {
 	runCmd.Flags().StringVarP(&instdir, "instdir", "i", "", "Create instrumentation in this directory (optional)")
 }
 
-func execute(cmd *cobra.Command, args []string) {
+func executeRun(cmd *cobra.Command, args []string) {
 	exitCode := Run(args)
 	os.Exit(exitCode)
 }
