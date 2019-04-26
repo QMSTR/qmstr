@@ -17,7 +17,7 @@ var forceOverride bool
 
 var snapshotCmd = &cobra.Command{
 	Use:   "snapshot",
-	Short: "Take snapshot of qmstr-master server",
+	Short: "Take snapshot of the QMSTR master state",
 	Long:  `Create a database export of the graph database`,
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpControlService()

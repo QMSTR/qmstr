@@ -19,8 +19,8 @@ var force, nocopy bool
 // quitCmd represents the quit command
 var quitCmd = &cobra.Command{
 	Use:   "quit",
-	Short: "Quit qmstr",
-	Long:  `Run quit if you want to quit qmstr.`,
+	Short: "Quit QMSTR master",
+	Long:  `Quit the running QMSTR master. This will copy the results produced by the master to the user's workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !nocopy {
 			if err := copyResults(); err != nil {

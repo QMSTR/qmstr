@@ -12,8 +12,8 @@ import (
 
 var anaCmd = &cobra.Command{
 	Use:   "analyze",
-	Short: "Start analysis on qmstr-master",
-	Long:  `Start analysis phase on the master server.`,
+	Short: "Start analysis on the QMSTR master",
+	Long:  `Start analysis phase on the QMSTR master server.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		setUpControlService()
@@ -24,8 +24,8 @@ var anaCmd = &cobra.Command{
 
 var reportCmd = &cobra.Command{
 	Use:   "report",
-	Short: "Start report on qmstr-master",
-	Long:  `Start report phase on the master server.`,
+	Short: "Start report on the QMSTR master",
+	Long:  `Start report phase on the QMSTR master server.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		setUpControlService()
