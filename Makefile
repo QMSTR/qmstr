@@ -83,10 +83,10 @@ $(PROTOC_GEN_GO):
 	go get -u github.com/golang/protobuf/protoc-gen-go
 
 install_qmstr_server: $(QMSTR_SERVER_BINARIES)
-	cp $(filter-out $<, $^) $(prefix)/bin
+	cp $^ $(prefix)/bin
 
 install_qmstr_client: $(QMSTR_CLIENT_BINARIES)
-	cp $(filter-out $<, $^) $(prefix)/bin
+	cp $^ $(prefix)/bin
 
 install_qmstr_all: install_qmstr_client install_qmstr_server
 
