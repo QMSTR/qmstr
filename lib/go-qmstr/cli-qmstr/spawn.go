@@ -28,6 +28,7 @@ var spawnCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(spawnCmd)
+	spawnCmd.Flags().SetInterspersed(false) // this stops flag parsing at the first argument, allowing for e.g. "ls -la" as payload
 }
 
 func executeSpawn(cmd *cobra.Command, args []string) {
