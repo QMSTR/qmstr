@@ -13,8 +13,8 @@ var follow bool
 
 var statusCmd = &cobra.Command{
 	Use:   "status",
-	Short: "prints server status",
-	Long:  `prints the server status`,
+	Short: "Print the QMSTR master status",
+	Long:  `Print the QMSTR master status`,
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpControlService()
 		getStatus()

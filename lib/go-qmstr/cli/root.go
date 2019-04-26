@@ -30,9 +30,9 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "qmstrctl",
-	Short: "qmstrctl controls and manages the Quartermaster master",
-	Long: `qmstrctl controls and manages the Quartermaster master process.
-	It provides commands to run, quit and configure the master.`,
+	Short: "qmstrctl controls and manages the QMSTR master",
+	Long: `qmstrctl controls and manages the QMSTR master process.
+It provides commands to run, quit and configure the master and to interact with the QMSTR knowledge base.`,
 	Run:              func(cmd *cobra.Command, args []string) {},
 	PersistentPreRun: SetupLogging,
 }

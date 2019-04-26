@@ -16,8 +16,8 @@ import (
 
 var copyCmd = &cobra.Command{
 	Use:   "copy",
-	Short: "Copy results from qmstr",
-	Long:  `Copy report results from qmstr server.`,
+	Short: "Copy results from the QMSTR master",
+	Long:  `Copy report results from QMSTR master to the client build directory.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := copyResults(); err != nil {
 			Log.Fatalf("copying results failed: %v", err)

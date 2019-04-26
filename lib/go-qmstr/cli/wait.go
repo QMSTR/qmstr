@@ -13,9 +13,8 @@ var timeout int
 
 var waitCmd = &cobra.Command{
 	Use:   "wait",
-	Short: "waits until the server is ready",
-	Long: `waits until the server is ready. If 60 seconds pass 
-	then it exits with an error message.`,
+	Short: "Wait until the QMSTR master is ready",
+	Long:  `Wait until the QMSTR master is ready. Waiting will time out with an error after the timeout period has elapsed.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpControlService()
 		awaitServer()

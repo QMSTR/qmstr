@@ -313,14 +313,14 @@ func cleanUpContainer(ctx context.Context, cli *client.Client, containerID strin
 
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "start the Quartermaster master",
-	Long:  fmt.Sprintf("Start the Quartermaster master at a random port in the range between %d and %d.", minPort, maxPort),
+	Short: "Start the QMSTR master",
+	Long:  fmt.Sprintf("Start the QMSTR master at a random port in the range between %d and %d.", minPort, maxPort),
 	Run:   startMaster,
 }
 
 func init() {
 	rootCmd.AddCommand(startCmd)
-	startCmd.Flags().BoolVar(&wait, "wait", false, "wait for qmstr-master")
+	startCmd.Flags().BoolVar(&wait, "wait", false, "wait for QMSTR master to be ready")
 	startCmd.Flags().IntVarP(&timeout, "timeout", "t", 60, "timeout after the specified time (seconds). Used after the wait flag")
 	startCmd.Flags().StringVarP(&configFile, "config", "c", "qmstr.yaml", "Path to qmstr configuration file")
 	startCmd.Flags().StringVar(&seed, "seed", "", "Replay dgraph export on init")

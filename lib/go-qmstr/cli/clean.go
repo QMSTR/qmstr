@@ -76,8 +76,8 @@ func cleanUpContainerNetworks(ctx context.Context, cli *client.Client) error {
 
 var cleanCmd = &cobra.Command{
 	Use:   "clean",
-	Short: "remove dangling qmstr containers",
-	Long:  "Remove all stopped qmstr containers",
+	Short: "Remove stopped QMSTR containers",
+	Long:  "Remove all stopped QMSTR containers",
 	Run:   cleanQmstr,
 }
 

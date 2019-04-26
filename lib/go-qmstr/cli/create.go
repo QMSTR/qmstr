@@ -16,27 +16,27 @@ var cmdFlags *pflag.FlagSet
 
 var createCmd = &cobra.Command{
 	Use:   "create",
-	Short: "create a new node",
+	Short: "Create a new node",
 	Long:  "create a new node described by a node identifier",
 }
 
 var createFileCmd = &cobra.Command{
 	Use:   "file",
-	Short: "create a new file node",
+	Short: "Create a new file node",
 	Long:  "create a new file node described by a node identifier",
 	Run:   create,
 }
 
 var createPkgCmd = &cobra.Command{
 	Use:   "package",
-	Short: "create a new package node",
+	Short: "Create a new package node",
 	Long:  "create a new package node described by a node identifier",
 	Run:   create,
 }
 
 var createProjCmd = &cobra.Command{
 	Use:   "project",
-	Short: "create a new project node",
+	Short: "Create a new project node",
 	Long:  "create a new project node described by a node identifier",
 	Run:   create,
 }

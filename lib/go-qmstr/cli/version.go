@@ -12,8 +12,8 @@ var QmstrVersion string
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "version of qmstrctl",
-	Long:  `prints the version of qmstrctl`,
+	Short: "Print the version of qmstrctl",
+	Long:  `Print the version of qmstrctl`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("This is qmstrctl version %s\n", QmstrVersion)
 	},

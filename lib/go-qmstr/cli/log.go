@@ -49,8 +49,8 @@ func logMasterContainer(ctx context.Context, cli *client.Client, follow bool) er
 
 var logsCmd = &cobra.Command{
 	Use:   "logs",
-	Short: "print qmstr-master logs",
-	Long:  "print qmstr-master container logs",
+	Short: "Print QMSTR master logs",
+	Long:  "Print the logs of the QMSTR master container",
 	Run:   logQmstr,
 }
 
