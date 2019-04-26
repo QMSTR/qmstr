@@ -22,7 +22,7 @@ var (
 
 var runCmd = &cobra.Command{
 	Use:   "run",
-	Short: "run a shell command with QMSTR instrumentation",
+	Short: "Run a shell command with QMSTR instrumentation",
 	Long: `run executes the argument after applying temporary QMSTR instrumentation.
 For example, "qmstr make" sets up a QMSTR instrumented environment, then executes  "make", and finally restores the environment and deletes all temporary files.
 The environment variable QMSTR_INSTRUMENTATION_HOME will be defined to point to the QMSTR instrumentation directory.`,
