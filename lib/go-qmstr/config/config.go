@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
+
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -128,4 +129,18 @@ func ConsumeFile(filename string) ([]byte, error) {
 		return nil, err
 	}
 	return data, nil
+}
+
+func CreateProjectNode(masterConfig *MasterConfig) *service.ProjectNode {
+	projectNode := &service.ProjectNode{Name: masterConfig.Name}
+	tmpInfoNode := &service.InfoNode{Type: "metadata"}
+	for key, val := range masterConfig.MetaData {
+		tmpInfoNode.DataNodes = append(tmpInfoNode.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val})
+	}
+
+	if len(tmpInfoNode.DataNodes) > 0 {
+		projectNode.AdditionalInfo = []*service.InfoNode{tmpInfoNode}
+	}
+
+	return projectNode
 }

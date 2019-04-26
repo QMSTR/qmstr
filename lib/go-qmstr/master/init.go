@@ -152,16 +152,7 @@ func importSnapshot() error {
 }
 
 func (phase *serverPhaseInit) initProject() {
-	projectNode := &service.ProjectNode{Name: phase.masterConfig.Name}
-	tmpInfoNode := &service.InfoNode{Type: "metadata"}
-	for key, val := range phase.masterConfig.MetaData {
-		tmpInfoNode.DataNodes = append(tmpInfoNode.DataNodes, &service.InfoNode_DataNode{Type: key, Data: val})
-	}
-
-	if len(tmpInfoNode.DataNodes) > 0 {
-		projectNode.AdditionalInfo = []*service.InfoNode{tmpInfoNode}
-	}
-
+	projectNode := config.CreateProjectNode(phase.getMasterConfig())
 	phase.db.AddProjectNode(projectNode)
 }
 

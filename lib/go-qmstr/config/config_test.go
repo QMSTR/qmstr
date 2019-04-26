@@ -41,9 +41,16 @@ project:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfigFromBytes([]byte(config))
+	masterconf, err := ReadConfigFromBytes([]byte(config))
 	if err != nil {
 		t.Logf("Broken config %v", err)
+		t.Fail()
+	}
+
+	projNode := CreateProjectNode(masterconf)
+	value := projNode.GetMetaData("Vendor", "")
+	if value != "Endocode" {
+		t.Logf("Failed to create project node; %v not Endocode", value)
 		t.Fail()
 	}
 }
