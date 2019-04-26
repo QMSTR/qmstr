@@ -20,7 +20,7 @@ var (
 
 var spawnCmd = &cobra.Command{
 	Use:   "spawn",
-	Short: "spawn a container adjacent to the master and execute a command",
+	Short: "Spawn a container adjacent to the master and execute a command",
 	Long:  `spawn starts a container in the same container network as the master, and executes the specified arguments.`,
 	Args:  cobra.MinimumNArgs(2),
 	Run:   executeSpawn,
