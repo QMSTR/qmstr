@@ -37,6 +37,7 @@ The environment variable QMSTR_INSTRUMENTATION_HOME will be defined to point to 
 
 func init() {
 	rootCmd.AddCommand(runCmd)
+	runCmd.Flags().SetInterspersed(false) // this stops flag parsing at the first argument, allowing for e.g. "ls -la" as payload
 	runCmd.Flags().BoolVarP(&keepTmpDirectories, "keep", "k", false,
 		"Keep the created directories instead of cleaning up.")
 	runCmd.Flags().StringVarP(&instdir, "instdir", "i", "", "Create instrumentation in this directory (optional)")
