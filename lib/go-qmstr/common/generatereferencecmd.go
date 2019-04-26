@@ -15,10 +15,16 @@ import (
 
 // CreateGenerateReferenceCmd creates the command to create the command line reference
 func CreateGenerateReferenceCmd(theRootCmd *cobra.Command) *cobra.Command {
-
+	var baseURL string
 	// create a closure function that refers to theRootCmd:
 	generateReference := func(cmd *cobra.Command, args []string) {
-		print("Generating command line reference...\n")
+		if baseURL == "" {
+			baseURL = "../"
+		}
+		if !strings.HasSuffix(baseURL, "/") {
+			baseURL = baseURL + "/"
+		}
+		fmt.Printf("Generating command line reference with base URL \"%v\"...\n", baseURL)
 		outputPath := args[0]
 		if err := os.MkdirAll(outputPath, os.ModePerm); err != nil {
 			log.Fatal(err)
@@ -40,7 +46,7 @@ slug: "%s"
 
 		linkHandler := func(name string) string {
 			base := strings.TrimSuffix(name, path.Ext(name))
-			return "../" + strings.ToLower(base) + "/"
+			return baseURL + strings.ToLower(base) + "/"
 		}
 		if err := doc.GenMarkdownTreeCustom(theRootCmd, outputPath, filePrepender, linkHandler); err != nil {
 			log.Fatal(err)
@@ -54,5 +60,7 @@ slug: "%s"
 		Args:  cobra.ExactArgs(1),
 		Run:   generateReference,
 	}
+
+	devGenerateReferenceCmd.Flags().StringVarP(&baseURL, "baseURL", "b", "", "The base URL used in the reference (optional)")
 	return devGenerateReferenceCmd
 }
