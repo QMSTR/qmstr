@@ -21,10 +21,10 @@ import (
 )
 
 var quitServer chan interface{}
-var phaseMap map[service.Phase]func(*config.MasterConfig, *database.DataBase, *server) serverPhase
+var phaseMap map[service.Phase]func(*config.MasterConfig, *database.DataBase, *server, bool) serverPhase
 
 func init() {
-	phaseMap = map[service.Phase]func(*config.MasterConfig, *database.DataBase, *server) serverPhase{
+	phaseMap = map[service.Phase]func(*config.MasterConfig, *database.DataBase, *server, bool) serverPhase{
 		service.Phase_BUILD:    newBuildPhase,
 		service.Phase_ANALYSIS: newAnalysisPhase,
 		service.Phase_REPORT:   newReportPhase,
@@ -216,14 +216,15 @@ func (s *server) Status(ctx context.Context, in *service.StatusMessage) (*servic
 
 func (s *server) SwitchPhase(ctx context.Context, in *service.SwitchPhaseMessage) (*service.SwitchPhaseResponse, error) {
 	requestedPhase := in.Phase
-	err := s.switchPhase(requestedPhase)
+	err := s.switchPhase(requestedPhase, false)
 	if err != nil {
 		return &service.SwitchPhaseResponse{Success: false, Error: err.Error()}, nil
 	}
+
 	return &service.SwitchPhaseResponse{Success: true}, nil
 }
 
-func (s *server) switchPhase(requestedPhase service.Phase) error {
+func (s *server) switchPhase(requestedPhase service.Phase, done bool) error {
 	if !atomic.CompareAndSwapInt64(&s.pendingPhaseSwitch, 0, 1) {
 		errMsg := "denied there is a pending phase transition"
 		log.Println(errMsg)
@@ -250,14 +251,18 @@ func (s *server) switchPhase(requestedPhase service.Phase) error {
 			s.enterFailureServerPhase(err)
 			return err
 		}
-		s.currentPhase = phaseCtor(s.currentPhase.getMasterConfig(), db, s)
+		s.currentPhase = phaseCtor(s.currentPhase.getMasterConfig(), db, s, done)
 		s.pendingPhaseSwitch = 0
-		s.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: fmt.Sprintf("Switched to phase %d", requestedPhase)})
-		err = s.currentPhase.Activate()
-		if err != nil {
-			s.enterFailureServerPhase(err)
-			return err
+
+		if !s.currentPhase.getDone() {
+			if err = s.currentPhase.Activate(); err != nil {
+				s.enterFailureServerPhase(err)
+				return err
+			}
 		}
+
+		s.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: fmt.Sprintf("Switched to phase %d", requestedPhase)})
+		log.Printf("Switched to phase %v", s.currentPhase.getName())
 		return nil
 	}
 	return fmt.Errorf("Invalid phase requested %d", requestedPhase)
@@ -325,7 +330,7 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 		return masterRun, err
 	}
 
-	serverImpl.switchPhase(serverImpl.currentPhase.getPostInitPhase())
+	serverImpl.switchPhase(serverImpl.currentPhase.getPostInitPhase(), serverImpl.currentPhase.getPostInitPhaseDone())
 
 	quitServer = make(chan interface{})
 	go func() {
@@ -359,7 +364,7 @@ func (s *server) persistPhase() error {
 		return err
 	}
 
-	if _, err := db.AddQmstrStateNode(&service.QmstrStateNode{Phase: s.currentPhase.GetPhaseID()}); err != nil {
+	if _, err := db.AddQmstrStateNode(&service.QmstrStateNode{Phase: s.currentPhase.GetPhaseID(), Done: s.currentPhase.getDone()}); err != nil {
 		return err
 	}
 	return nil

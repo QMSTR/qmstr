@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -56,7 +57,9 @@ func (phase *serverPhaseInit) Activate() error {
 	if err != nil {
 		return fmt.Errorf("Failed to reconstruct qmstr state after snapshot import: %v", err)
 	}
+
 	phase.postInitPhase = &qmstrState.Phase
+	phase.postInitPhaseDone = qmstrState.Done
 	return nil
 }
 
@@ -67,6 +70,7 @@ func snapshotAvailable() bool {
 }
 
 func importSnapshot() error {
+	log.Println("Importing snapshot")
 	snapshotFile, err := os.Open(common.ContainerGraphImportPath)
 	if err != nil {
 		return fmt.Errorf("Failed opening snapshot: %v", snapshotFile)
@@ -143,6 +147,7 @@ func importSnapshot() error {
 	if err != nil {
 		return fmt.Errorf("live replay failed: %v\n%s", err, out)
 	}
+	log.Println("Importing snapshot done")
 	return nil
 }
 
