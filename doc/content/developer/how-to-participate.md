@@ -13,7 +13,8 @@ newcomers. There are three pillars to the work of the community:
 * *An open development process*: Development is organized into
   quarterly milestones made up of bi-weekly sprints. Requirements are
   collaboratively developed. The QMSTR community offers mentoring
-  opoprtunities. All parts of QMSTR are free and open source software.
+  opportunities for newcomer users and potential contributors. All
+  parts of QMSTR are free and open source software.
 * *Open governance*: QMSTR is hosted at the Linux Foundation ACT
   project, providing a neutral, non-discriminating collaboration
   platform.
@@ -35,20 +36,22 @@ break. The
 using the usual pull request based development model.
 
 Each milestone period opens with a public requirements workshop that
-usually lasts one day. These workshops are commonly organized at the
-Endocode office in Berlin or co-located with major open source
-conferences. The key goals for every milestone release are developed
-at these workshops. The workshops are also an opportunity to provde
-feedback from production deployments, which helps to develop the
-concepts for larger scale or conceptual
+usually lasts one day. These workshops are commonly organized at
+the [Endocode](https://endocode.com/) office in Berlin or co-located
+with major open source conferences. The key goals for every milestone
+release are developed at these workshops. The workshops are also an
+opportunity to provide feedback from production deployments, which
+helps to develop the toolchain for production-ready uses or bigger
+conceptual
 changes. [Subscribe to the QMSTR newsletter](https://qmstr.org/contact/) or
 follow
 the
 [@fosscompliance Twitter account](https://twitter.com/fosscompliance)
 for announcements.
 
-The QMSTR community offers mentoring for both development and
-operations newcomers. Mentorships are coordinated using
+The QMSTR community offers mentoring for both future contributors to
+the toolchain as well as operations newcomers. Mentorships are
+coordinated using
 the [CommunityBridge platform](https://communitybridge.org/) provided
 by the [Linux Foundation](https://www.linuxfoundation.org/).
 
@@ -85,6 +88,8 @@ Multiple parties support or have supported the development of QMSTR,
 including Siemens and Google. Major support for the project is
 provided by the European Commission in the form of a grant to
 the [FASTEN Project](https://www.fasten-project.eu/).
+
+{{< figure src="/img/co-funded-h2020-horiz_en.png" width="40%" class="centered" >}}
 
 Stakeholders interested in funding QMSTR are requested to clearly
 separate their business interest from the development of the open

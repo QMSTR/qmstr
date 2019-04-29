@@ -15,6 +15,7 @@ defaultContentLanguage = "en"
 defaultContentLanguageInSubdir= false
 enableMissingTranslationPlaceholders = false
 enableGitInfo = "true"
+canonifyURLs = true
 
 [Params]
 
