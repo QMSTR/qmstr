@@ -18,9 +18,10 @@ func (db *DataBase) GetQmstrStateNode() (*service.QmstrStateNode, error) {
 	var ret map[string][]*service.QmstrStateNode
 
 	q := `{
-		getQmstrStateNode(func: has(qmstrStateNodeType)) @recurse(loop: false) {
+		getQmstrStateNode(func: has(qmstrStateNodeType)) {
 			uid
 			phase
+			done
 		}
 	}`
 
@@ -31,7 +32,7 @@ func (db *DataBase) GetQmstrStateNode() (*service.QmstrStateNode, error) {
 
 	stateNodes := ret["getQmstrStateNode"]
 	if len(stateNodes) < 1 {
-		return nil, errors.New("No qmstr state nod found")
+		return nil, errors.New("No qmstr state node found")
 	}
 
 	return stateNodes[0], nil

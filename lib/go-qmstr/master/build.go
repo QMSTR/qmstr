@@ -19,9 +19,9 @@ type serverPhaseBuild struct {
 	genericServerPhase
 }
 
-func newBuildPhase(masterConfig *config.MasterConfig, db *database.DataBase, server *server) serverPhase {
+func newBuildPhase(masterConfig *config.MasterConfig, db *database.DataBase, server *server, done bool) serverPhase {
 	return &serverPhaseBuild{
-		genericServerPhase{Name: "Build", masterConfig: masterConfig, db: db, server: server},
+		genericServerPhase{Name: "Build", masterConfig: masterConfig, db: db, server: server, done: done},
 	}
 }
 

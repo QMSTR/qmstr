@@ -18,6 +18,7 @@ import (
 
 type serverPhase interface {
 	GetPhaseID() service.Phase
+	getDone() bool
 	getName() string
 	Activate() error
 	Shutdown() error
@@ -39,17 +40,28 @@ type serverPhase interface {
 	ExportSnapshot(*service.ExportRequest) (*service.ExportResponse, error)
 	requestExport() error
 	getPostInitPhase() service.Phase
+	getPostInitPhaseDone() bool
 	PushFile(*service.PushFileMessage) (*service.PushFileResponse, error)
 	CreateProject(*service.ProjectNode) (*service.BuildResponse, error)
 	CreatePackage(*service.PackageNode) (*service.BuildResponse, error)
 }
 
 type genericServerPhase struct {
-	Name          string
-	db            *database.DataBase
-	masterConfig  *config.MasterConfig
-	server        *server
-	postInitPhase *service.Phase
+	Name              string
+	db                *database.DataBase
+	masterConfig      *config.MasterConfig
+	server            *server
+	postInitPhase     *service.Phase
+	postInitPhaseDone bool
+	done              bool
+}
+
+func (gsp *genericServerPhase) getDone() bool {
+	return gsp.done
+}
+
+func (gsp *genericServerPhase) getPostInitPhaseDone() bool {
+	return gsp.postInitPhaseDone
 }
 
 func (gsp *genericServerPhase) getPostInitPhase() service.Phase {
@@ -179,9 +191,8 @@ func (gsp *genericServerPhase) ExportSnapshot(in *service.ExportRequest) (*servi
 		if os.IsNotExist(err) {
 			log.Printf("No pushed files for export found.")
 			return &service.ExportResponse{Success: true}, nil
-		} else {
-			return nil, err
 		}
+		return nil, err
 	}
 	if fi.IsDir() {
 		pushExportDir := filepath.Join(common.ContainerGraphExportDir, common.ContainerPushFilesDirName)

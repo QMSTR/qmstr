@@ -3,9 +3,11 @@
 
 package service
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -16,7 +18,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type PackageInformation struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -36,16 +38,17 @@ func (m *PackageInformation) Reset()         { *m = PackageInformation{} }
 func (m *PackageInformation) String() string { return proto.CompactTextString(m) }
 func (*PackageInformation) ProtoMessage()    {}
 func (*PackageInformation) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bom_d802980496335da1, []int{0}
+	return fileDescriptor_f689add15dae9986, []int{0}
 }
+
 func (m *PackageInformation) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PackageInformation.Unmarshal(m, b)
 }
 func (m *PackageInformation) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PackageInformation.Marshal(b, m, deterministic)
 }
-func (dst *PackageInformation) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PackageInformation.Merge(dst, src)
+func (m *PackageInformation) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PackageInformation.Merge(m, src)
 }
 func (m *PackageInformation) XXX_Size() int {
 	return xxx_messageInfo_PackageInformation.Size(m)
@@ -124,16 +127,17 @@ func (m *Person) Reset()         { *m = Person{} }
 func (m *Person) String() string { return proto.CompactTextString(m) }
 func (*Person) ProtoMessage()    {}
 func (*Person) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bom_d802980496335da1, []int{1}
+	return fileDescriptor_f689add15dae9986, []int{1}
 }
+
 func (m *Person) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Person.Unmarshal(m, b)
 }
 func (m *Person) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Person.Marshal(b, m, deterministic)
 }
-func (dst *Person) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Person.Merge(dst, src)
+func (m *Person) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Person.Merge(m, src)
 }
 func (m *Person) XXX_Size() int {
 	return xxx_messageInfo_Person.Size(m)
@@ -174,16 +178,17 @@ func (m *Revision) Reset()         { *m = Revision{} }
 func (m *Revision) String() string { return proto.CompactTextString(m) }
 func (*Revision) ProtoMessage()    {}
 func (*Revision) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bom_d802980496335da1, []int{2}
+	return fileDescriptor_f689add15dae9986, []int{2}
 }
+
 func (m *Revision) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Revision.Unmarshal(m, b)
 }
 func (m *Revision) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Revision.Marshal(b, m, deterministic)
 }
-func (dst *Revision) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Revision.Merge(dst, src)
+func (m *Revision) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Revision.Merge(m, src)
 }
 func (m *Revision) XXX_Size() int {
 	return xxx_messageInfo_Revision.Size(m)
@@ -248,16 +253,17 @@ func (m *License) Reset()         { *m = License{} }
 func (m *License) String() string { return proto.CompactTextString(m) }
 func (*License) ProtoMessage()    {}
 func (*License) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bom_d802980496335da1, []int{3}
+	return fileDescriptor_f689add15dae9986, []int{3}
 }
+
 func (m *License) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_License.Unmarshal(m, b)
 }
 func (m *License) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_License.Marshal(b, m, deterministic)
 }
-func (dst *License) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_License.Merge(dst, src)
+func (m *License) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_License.Merge(m, src)
 }
 func (m *License) XXX_Size() int {
 	return xxx_messageInfo_License.Size(m)
@@ -295,16 +301,17 @@ func (m *Source) Reset()         { *m = Source{} }
 func (m *Source) String() string { return proto.CompactTextString(m) }
 func (*Source) ProtoMessage()    {}
 func (*Source) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bom_d802980496335da1, []int{4}
+	return fileDescriptor_f689add15dae9986, []int{4}
 }
+
 func (m *Source) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Source.Unmarshal(m, b)
 }
 func (m *Source) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Source.Marshal(b, m, deterministic)
 }
-func (dst *Source) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Source.Merge(dst, src)
+func (m *Source) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Source.Merge(m, src)
 }
 func (m *Source) XXX_Size() int {
 	return xxx_messageInfo_Source.Size(m)
@@ -348,16 +355,17 @@ func (m *Dependency) Reset()         { *m = Dependency{} }
 func (m *Dependency) String() string { return proto.CompactTextString(m) }
 func (*Dependency) ProtoMessage()    {}
 func (*Dependency) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bom_d802980496335da1, []int{5}
+	return fileDescriptor_f689add15dae9986, []int{5}
 }
+
 func (m *Dependency) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Dependency.Unmarshal(m, b)
 }
 func (m *Dependency) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Dependency.Marshal(b, m, deterministic)
 }
-func (dst *Dependency) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Dependency.Merge(dst, src)
+func (m *Dependency) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Dependency.Merge(m, src)
 }
 func (m *Dependency) XXX_Size() int {
 	return xxx_messageInfo_Dependency.Size(m)
@@ -397,16 +405,17 @@ func (m *Target) Reset()         { *m = Target{} }
 func (m *Target) String() string { return proto.CompactTextString(m) }
 func (*Target) ProtoMessage()    {}
 func (*Target) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bom_d802980496335da1, []int{6}
+	return fileDescriptor_f689add15dae9986, []int{6}
 }
+
 func (m *Target) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Target.Unmarshal(m, b)
 }
 func (m *Target) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Target.Marshal(b, m, deterministic)
 }
-func (dst *Target) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Target.Merge(dst, src)
+func (m *Target) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Target.Merge(m, src)
 }
 func (m *Target) XXX_Size() int {
 	return xxx_messageInfo_Target.Size(m)
@@ -467,16 +476,17 @@ func (m *BOM) Reset()         { *m = BOM{} }
 func (m *BOM) String() string { return proto.CompactTextString(m) }
 func (*BOM) ProtoMessage()    {}
 func (*BOM) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bom_d802980496335da1, []int{7}
+	return fileDescriptor_f689add15dae9986, []int{7}
 }
+
 func (m *BOM) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_BOM.Unmarshal(m, b)
 }
 func (m *BOM) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_BOM.Marshal(b, m, deterministic)
 }
-func (dst *BOM) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BOM.Merge(dst, src)
+func (m *BOM) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BOM.Merge(m, src)
 }
 func (m *BOM) XXX_Size() int {
 	return xxx_messageInfo_BOM.Size(m)
@@ -533,9 +543,9 @@ func init() {
 	proto.RegisterType((*BOM)(nil), "service.BOM")
 }
 
-func init() { proto.RegisterFile("bom.proto", fileDescriptor_bom_d802980496335da1) }
+func init() { proto.RegisterFile("bom.proto", fileDescriptor_f689add15dae9986) }
 
-var fileDescriptor_bom_d802980496335da1 = []byte{
+var fileDescriptor_f689add15dae9986 = []byte{
 	// 587 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x54, 0xdd, 0x6e, 0xd4, 0x3c,
 	0x10, 0xd5, 0xfe, 0x34, 0xdb, 0x9d, 0xfd, 0xbe, 0x16, 0x5c, 0x54, 0x59, 0x80, 0x50, 0x15, 0x21,

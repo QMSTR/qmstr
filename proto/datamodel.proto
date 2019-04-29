@@ -97,6 +97,7 @@ message QmstrStateNode {
     string uid = 1;
     string qmstrStateNodeType = 2;
     Phase phase = 3;
+    bool done = 4;
 }
 
 enum Phase {

@@ -25,9 +25,9 @@ type serverPhaseAnalysis struct {
 
 var src = rand.NewSource(time.Now().UnixNano())
 
-func newAnalysisPhase(masterConfig *config.MasterConfig, db *database.DataBase, server *server) serverPhase {
+func newAnalysisPhase(masterConfig *config.MasterConfig, db *database.DataBase, server *server, done bool) serverPhase {
 	return &serverPhaseAnalysis{
-		genericServerPhase{Name: "Analysis", masterConfig: masterConfig, db: db, server: server},
+		genericServerPhase{Name: "Analysis", masterConfig: masterConfig, db: db, server: server, done: done},
 		nil, src.Int63(), make(chan interface{}, 1)}
 }
 
@@ -64,13 +64,17 @@ func (phase *serverPhaseAnalysis) Activate() error {
 	}
 
 	phase.finished <- nil
+	phase.done = true
+	phase.server.persistPhase()
 	log.Println("Analysis phase finished")
 	return nil
 }
 
 func (phase *serverPhaseAnalysis) Shutdown() error {
-	log.Println("Waiting for analysis to be finished")
-	<-phase.finished
+	if !phase.done {
+		log.Println("Waiting for analysis to be finished")
+		<-phase.finished
+	}
 	return nil
 }
 
