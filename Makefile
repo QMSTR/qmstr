@@ -1,15 +1,7 @@
 include versions.env
 
-# Common stuff
+# Common variables
 OUTDIR := out/
-
-# The installation prefix defaults to /usr/local. It can be overwritten
-# by specifying the PREFIX variable on the command line:
-#     make PREFIX=/opt/qmstr
-prefix = /usr/local
-ifdef PREFIX
-prefix=$(PREFIX)
-endif
 
 PROTO_FILES := $(shell ls ./proto/*.proto)
 ALL_PYTHON_FILES := $(shell find . -path ./venv -prune -o -name *.py -print)
@@ -19,6 +11,14 @@ PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(ALL_PYTHON_FILES))
 GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
 GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
 
+# The installation prefix defaults to /usr/local. It can be overwritten
+# by specifying the PREFIX variable on the command line:
+#     make PREFIX=/opt/qmstr
+prefix = /usr/local
+ifdef PREFIX
+prefix=$(PREFIX)
+endif
+
 # those are intended to be a recursively expanded variables
 GO_SRCS = $(shell find . -name '*.go')
 FILTER = $(foreach v,$(2),$(if $(findstring $(1),$(v)),$(v),))
@@ -26,7 +26,6 @@ GO_MODULE_SRCS = $(call FILTER,module,$(GO_SRCS))
 
 GO_PATH := $(shell go env GOPATH)
 GO_BIN := $(GO_PATH)/bin
-GOMETALINTER := $(GO_BIN)/gometalinter
 PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
 
 GO_DEPS := $(PROTOC_GEN_GO) $(GO_SRCS)
@@ -44,11 +43,15 @@ CONTAINER_TAG_MASTER := qmstr/master
 CONTAINER_TAG_RUNTIME := qmstr/runtime
 CONTAINER_TAG_BUILDER := qmstr/master_build
 
-.PHONY: all
-all: install_qmstr_client master
+.PHONY: all clients install
+all: clients master
 
+# Clean-up targets:
 .PHONY: clean
 clean:
+	git clean -fxd
+
+squeakyclean:
 	git clean -ffxd
 
 .PHONY: cleanall
@@ -56,6 +59,7 @@ cleanall: clean
 	@docker rmi ${CONTAINER_TAG_DEV} ${CONTAINER_TAG_MASTER} ${CONTAINER_TAG_RUNTIME} || true
 	@docker image prune --all --force --filter=label=org.qmstr.image
 
+# Tests and code quality checks
 .go_module_test: $(GO_MODULE_SRCS)
 	go test ./modules/...
 	@touch .go_module_test
@@ -67,30 +71,25 @@ cleanall: clean
 .PHONY: gotest
 gotest: .go_qmstr_test .go_module_test
 
-$(GOMETALINTER):
-	go get -u github.com/alecthomas/gometalinter
-	gometalinter --install &> /dev/null
-
-.PHONY: golint
-golint:	$(GOMETALINTER)
-	gometalinter ./... --vendor
-
-.PHONY: govet
-govet: gotest
-	go vet ./lib/go-qmstr/wrapper/
-
 $(PROTOC_GEN_GO):
 	go get -u github.com/golang/protobuf/protoc-gen-go
 
+# Client build target
+clients: $(QMSTR_CLIENT_BINARIES)
+
+# Installation/uninstallation targets
+install: install_qmstr_client
+
+# Installation targets
 install_qmstr_server: $(QMSTR_SERVER_BINARIES)
-	cp $^ $(prefix)/bin
+	install -t $(prefix)/bin $^
 
 install_qmstr_client: $(QMSTR_CLIENT_BINARIES)
-	cp $^ $(prefix)/bin
+	install -t $(prefix)/bin $^
 
 install_qmstr_all: install_qmstr_client install_qmstr_server
 
-# Python related stuff
+# Python related targets
 venv: venv/bin/activate
 venv/bin/activate: requirements.txt
 	test -d venv || virtualenv -p python3 venv
