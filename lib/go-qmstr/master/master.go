@@ -218,6 +218,10 @@ func (s *server) switchPhase(requestedPhase service.Phase, done bool) error {
 		log.Println(errMsg)
 		return errors.New(errMsg)
 	}
+	defer func() {
+		s.pendingPhaseSwitch = 0
+	}()
+
 	if requestedPhase <= s.currentPhase.GetPhaseID() {
 		errMsg := fmt.Sprintf("Illegal phase transition %d->%d requested", s.currentPhase.GetPhaseID(), requestedPhase)
 		log.Println(errMsg)
@@ -240,7 +244,6 @@ func (s *server) switchPhase(requestedPhase service.Phase, done bool) error {
 			return err
 		}
 		s.currentPhase = phaseCtor(s.currentPhase.getMasterConfig(), db, s, done)
-		s.pendingPhaseSwitch = 0
 
 		if !s.currentPhase.getDone() {
 			if err = s.currentPhase.Activate(); err != nil {
