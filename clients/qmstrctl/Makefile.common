@@ -3,6 +3,9 @@ QMSTRCTL := qmstrctl
 .PHONY: $(QMSTRCTL)
 $(QMSTRCTL): $(OUTDIR)$(QMSTRCTL)
 
+# Setup the qmstr version
+LDFLAG=-ldflags "-X github.com/QMSTR/qmstr/lib/go-qmstr/cli.QmstrVersion=$(QMSTR_VERSION)"
+
 $(OUTDIR)$(QMSTRCTL): $(GO_DEPS)
 	go test ./clients/$(subst $(OUTDIR),,$@)
-	go build -o $@ ./clients/$(subst $(OUTDIR),,$@)
+	go build  ${LDFLAG} -o $@ ./clients/$(subst $(OUTDIR),,$@)
