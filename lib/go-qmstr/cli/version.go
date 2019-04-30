@@ -6,16 +6,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var major = 0
-var minor = 3
+// QmstrVersion holds the qmstr version
+// The variable is initialiazed in the makefile
+var QmstrVersion string
 
-// quitCmd represents the quit command
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "version of qmstrctl",
 	Long:  `prints the version of qmstrctl`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("This is qmstrctl version %d.%d.\n", major, minor)
+		fmt.Printf("This is qmstrctl version %s\n", QmstrVersion)
 	},
 }
 
