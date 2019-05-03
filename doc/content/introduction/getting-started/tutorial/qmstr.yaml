@@ -5,10 +5,6 @@ project:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   analysis:
-    - analyzer: git-analyzer
-      name: "Git Analyzer"
-      config:
-        workdir: "/buildroot/"
     - analyzer: spdx-identifier-analyzer
       name: "Simple SPDX Analyzer"
       config:

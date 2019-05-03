@@ -90,7 +90,7 @@ Let's start the master:
 
 	> cd json-c
 	> eval `qmstrctl start --wait --config ../qmstr.yaml`
-	> qmstrctl create package:json-c
+	> qmstrctl create package:json-c --version $(cd json-c && git describe --always)
 
 The `wait` flag makes sure that the command returns only after the
 master has finished starting up and is fully operational. The `config`
