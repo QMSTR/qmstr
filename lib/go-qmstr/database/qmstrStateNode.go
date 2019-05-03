@@ -32,7 +32,7 @@ func (db *DataBase) GetQmstrStateNode() (*service.QmstrStateNode, error) {
 
 	stateNodes := ret["getQmstrStateNode"]
 	if len(stateNodes) < 1 {
-		return nil, errors.New("No qmstr state node found")
+		return nil, errors.New("no qmstr state node found")
 	}
 
 	return stateNodes[0], nil
