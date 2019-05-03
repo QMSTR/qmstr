@@ -216,6 +216,7 @@ func (s *server) switchPhase(requestedPhase service.Phase, done bool) error {
 	}
 	defer func() {
 		s.pendingPhaseSwitch = 0
+		s.persistPhase()
 	}()
 
 	if requestedPhase <= s.currentPhase.GetPhaseID() {
@@ -225,7 +226,6 @@ func (s *server) switchPhase(requestedPhase service.Phase, done bool) error {
 	}
 	if phaseCtor, ok := phaseMap[requestedPhase]; ok {
 		log.Printf("Switching to phase %d", requestedPhase)
-		defer s.persistPhase()
 		s.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: fmt.Sprintf("Switching to phase %d", requestedPhase)})
 		err := s.currentPhase.Shutdown()
 		if err != nil {
