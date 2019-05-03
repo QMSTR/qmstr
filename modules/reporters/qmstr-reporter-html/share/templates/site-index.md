@@ -6,7 +6,7 @@ weight = 1
 
 # Quartermaster
 
-{{< package-list >}}
+{{< project-list >}}
 
 ## About Quartermaster
 

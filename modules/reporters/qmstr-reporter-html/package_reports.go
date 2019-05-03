@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/reporting"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
@@ -15,7 +17,45 @@ import (
 // CreatePackageLevelReports creates the top level report about the package.
 func (r *HTMLReporter) CreatePackageLevelReports(proj *service.ProjectNode, pkg *service.PackageNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
 	projectData := reporting.GetProjectData(proj, r.siteData)
-	packageData := reporting.GetPackageData(pkg, projectData)
+	packageData := reporting.GetPackageData(pkg, proj.Name)
+
+	for _, target := range packageData.Targets {
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+		resp, err := rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: target.Target.Uid, Infotype: "license", Datatype: "name"})
+		if err != nil {
+			return err
+		}
+		licenses := map[string]struct{}{}
+		for _, license := range resp.GetData() {
+			license = strings.TrimSpace(license)
+			if license != "" {
+				licenses[license] = struct{}{}
+			}
+		}
+
+		target.Licenses = []string{}
+		for license := range licenses {
+			target.Licenses = append(target.Licenses, license)
+		}
+
+		resp, err = rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: target.Target.Uid, Infotype: "copyright", Datatype: "author"})
+		if err != nil {
+			return err
+		}
+		authors := map[string]struct{}{}
+		for _, author := range resp.GetData() {
+			author = strings.TrimSpace(author)
+			if author != "" {
+				authors[author] = struct{}{}
+			}
+		}
+
+		target.Authors = []string{}
+		for author := range authors {
+			target.Authors = append(target.Authors, author)
+		}
+	}
 
 	contentDirectory := path.Join(r.workingDir, "content")
 	projectContentDirectory := path.Join(contentDirectory, proj.Name)

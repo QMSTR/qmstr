@@ -8,6 +8,8 @@ weight = 1
 
 ## {{{.Name}}} @ {{{.Version}}}
 
-{{< target-list >}}
+{{< licenses >}}
 
 {{< authors >}}
+
+{{< target-list >}}
