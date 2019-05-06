@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 import argparse
 from qmstr.service.datamodel_pb2 import FileNode, InfoNode, PackageNode
+from qmstr.service.controlservice_pb2 import GetFileNodeMessage
 from qmstr.service.analyzerservice_pb2 import InfoNodeMessage
 from qmstr.module.module import QMSTR_Analyzer
 from spdx.document import License
@@ -69,8 +70,10 @@ class SpdxAnalyzer(QMSTR_Analyzer):
 
     def _process_filenodes(self):
 
-        query_node = FileNode(
-            fileType=FileNode.SOURCE
+        query_node = GetFileNodeMessage(
+            fileNode = FileNode(
+                fileType=FileNode.SOURCE
+            )
         )
         stream_resp = self.cserv.GetFileNode(query_node)
 
@@ -117,7 +120,8 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         pass
 
     def _process_packagenode(self):
-        logging.info("Processing package node")
+        package_name = self.doc.package.name
+        logging.info("Processing package node {}".format(package_name))
 
         data_nodes = []
         for member in SpdxAnalyzer.__membersof(self.doc.package):
@@ -139,19 +143,21 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         )
 
         package_request = PackageNode(
+            name=package_name
         )
 
-        package_node = self.cserv.GetPackageNode(package_request)
+        package_stream = self.cserv.GetPackageNode(package_request)
 
-        info_nodes = []
-        info_nodes.append(InfoNodeMessage(
-            uid=package_node.uid,
-            token=self.token,
-            infonode=info_node))
+        for package_node in package_stream:
+            info_nodes = []
+            info_nodes.append(InfoNodeMessage(
+                uid=package_node.uid,
+                token=self.token,
+                infonode=info_node))
 
-        info_iterator = _generate_iterator(info_nodes)
+            info_iterator = _generate_iterator(info_nodes)
 
-        self.aserv.SendInfoNodes(info_iterator)
+            self.aserv.SendInfoNodes(info_iterator)
 
     def _parse_spdx(self):
         if not self.format in self.parse_func_map:

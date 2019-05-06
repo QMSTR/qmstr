@@ -129,6 +129,9 @@ func (gsp *genericServerPhase) SendDiagnosticNode(stream service.AnalysisService
 }
 
 func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, stream service.ControlService_GetFileNodeServer) error {
+	if in.GetFileNode() == nil {
+		return errors.New("passed nil query node")
+	}
 	db, err := gsp.getDataBase()
 	if err != nil {
 		return err
