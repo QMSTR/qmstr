@@ -195,6 +195,11 @@ func (s *server) Status(ctx context.Context, in *service.StatusMessage) (*servic
 		resp.Switching = atomic.LoadInt64(&s.pendingPhaseSwitch) == 1
 	}
 	resp.Error = s.currentPhase.getError()
+	db, err := s.currentPhase.getDataBase()
+	if err != nil {
+		return nil, err
+	}
+	resp.PendingInserts = db.GetPendingInserts()
 	return &resp, nil
 }
 

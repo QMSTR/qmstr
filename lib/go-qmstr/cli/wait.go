@@ -47,6 +47,11 @@ func awaitServer() {
 			os.Exit(ReturnCodeServerFailureError)
 		}
 		if res.PhaseID > service.Phase_INIT {
+			if res.PendingInserts != 0 {
+				Log.Printf("Pending inserts: %d", res.PendingInserts)
+				<-time.After(time.Second * time.Duration(1))
+				continue
+			}
 			return
 		}
 	}
