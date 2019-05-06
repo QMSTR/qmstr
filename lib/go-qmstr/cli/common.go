@@ -51,7 +51,7 @@ func getUniqueFileNode(fnode *service.FileNode) (*service.FileNode, error) {
 }
 
 func getUniquePackageNode(pnode *service.PackageNode) (*service.PackageNode, error) {
-	if !pnode.IsValid() {
+	if pnode.GetName() == "" {
 		return nil, errors.New("No package name given")
 	}
 	ctx, cancel := context.WithCancel(context.Background())
