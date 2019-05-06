@@ -27,8 +27,21 @@ func (db *DataBase) GetPackageNodeByName(name string) (*service.PackageNode, err
 	q := `query GetPackageNodeByName($Name: string){
 		  getPackageNodeByName(func: has(packageNodeType)) @filter(eq(name, $Name)) {
 			uid
+			buildConfig
+			hash
 			name
 			version
+			type
+			targets
+			derivedFrom
+			dependencies
+			fileType
+			path
+			additionalInfo
+			confidenceScore
+			analyzer
+			dataNodes
+			data
 		  }}`
 
 	vars := map[string]string{"$Name": name}
