@@ -73,12 +73,13 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 }
 
 // GetInfoDataByTrustLevel returns infonodes containing the datanodes detected from the most trusted analyzer
-func (db *DataBase) GetInfoDataByTrustLevel(fileID string, infotype string) ([]string, error) {
+func (db *DataBase) GetInfoDataByTrustLevel(fileID string, infotype string, datatype string) ([]string, error) {
 	var ret map[string][]*service.InfoNode
 
-	const q = `query InfoData($ID: string, $Itype: string){
+	const q = `query InfoData($ID: string, $Itype: string, $Dtype: string){
 		var(func: uid($ID)) @recurse(loop: false) {
 			name
+			derivedFrom
 			T as additionalInfo @filter(eq(type, $Itype))
 		}
 		var(func: uid(T)){
@@ -95,8 +96,7 @@ func (db *DataBase) GetInfoDataByTrustLevel(fileID string, infotype string) ([]s
 			name
 			type
 			analyzer @filter(eq(trustLevel, val(A)))
-			trustLevel
-			dataNodes
+			dataNodes @filter(eq(type, $Dtype))
 			data
 		}
 	  }`
@@ -106,10 +106,11 @@ func (db *DataBase) GetInfoDataByTrustLevel(fileID string, infotype string) ([]s
 	type QueryParams struct {
 		ID    string
 		Itype string
+		Dtype string
 	}
 	qp := QueryParams{}
 
-	vars := map[string]string{"$ID": fileID, "$Itype": infotype}
+	vars := map[string]string{"$ID": fileID, "$Itype": infotype, "$Dtype": datatype}
 
 	var b bytes.Buffer
 	err = queryTmpl.Execute(&b, qp)

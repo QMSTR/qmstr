@@ -83,7 +83,7 @@ func (phase *serverPhaseReport) GetInfoData(in *service.InfoDataRequest) (*servi
 			return nil, err
 		}
 	} else {
-		infos, err = db.GetInfoDataByTrustLevel(in.RootID, in.Infotype)
+		infos, err = db.GetInfoDataByTrustLevel(in.RootID, in.Infotype, in.Datatype)
 	}
 	if err != nil {
 		return nil, err
