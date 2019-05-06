@@ -24,7 +24,7 @@ func getNodesFromArgs(args []string) ([]interface{}, error) {
 			}
 			these = append(these, this)
 		case *service.PackageNode:
-			this, err := controlServiceClient.GetPackageNode(context.Background(), &service.PackageNode{Name: thisVal.Name})
+			this, err := getUniquePackageNode(thisVal)
 			if err != nil {
 				return nil, err
 			}
