@@ -109,7 +109,11 @@ func createNode(nodeIdent string, send bool) error {
 		}
 	case reflect.TypeOf((*service.PackageNode)(nil)):
 		if send {
-			br, err := buildServiceClient.CreatePackage(context.Background(), currentNode.(*service.PackageNode))
+			pkgNode := currentNode.(*service.PackageNode)
+			if pkgNode.Version == "" {
+				pkgNode.Version = "default"
+			}
+			br, err := buildServiceClient.CreatePackage(context.Background(), pkgNode)
 			if err != nil {
 				return err
 			}

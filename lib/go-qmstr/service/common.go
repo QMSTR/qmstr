@@ -96,7 +96,7 @@ func (fn *FileNode) IsValid() bool {
 }
 
 func (pn *PackageNode) IsValid() bool {
-	return pn.Name != ""
+	return pn.Name != "" && pn.Version != ""
 }
 
 func (prn *ProjectNode) IsValid() bool {
