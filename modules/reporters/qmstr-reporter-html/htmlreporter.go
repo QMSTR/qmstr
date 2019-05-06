@@ -26,7 +26,7 @@ const (
 	// ModuleName is used across QMSTR to reference this module
 	ModuleName         = "reporter-html"
 	themeDirectoryName = "theme"
-	cacheVersion       = "0.3"
+	cacheVersion       = "0.4"
 )
 
 // HTMLReporter is the context of the HTML reporter module
