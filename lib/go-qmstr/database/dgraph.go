@@ -100,6 +100,10 @@ func Setup(dbAddr string, queueWorkers int) (*DataBase, error) {
 	return db, nil
 }
 
+func (db *DataBase) GetPendingInserts() uint64 {
+	return atomic.LoadUint64(&db.pending)
+}
+
 func (db *DataBase) Sync() {
 	// TODO replace busy waiting with proper signaling
 	log.Println("Waiting for inserts")

@@ -44,6 +44,7 @@ message StatusResponse {
   Phase phaseID = 2;
   bool switching = 3;
   string error = 4;
+  uint64 pendingInserts = 5;
 }
 
 message EventMessage {
