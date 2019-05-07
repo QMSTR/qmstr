@@ -12,11 +12,17 @@ $(GOHUGO):
 	@cd $(HUGOTMP)/hugo && go install --tags extended
 	@rm -fr $(HUGOTMP)/hugo
 
-doc/documentation: $(HUGO)
+doc/content/reference/qmstrctl.md : clients
+	${OUTDIR}qmstrctl dev-generate-reference -b /reference doc/content/reference/
+
+doc/content/reference/qmstr.md : clients
+	${OUTDIR}qmstr dev-generate-reference -b /reference doc/content/reference/
+
+doc/documentation: $(HUGO) doc/content/reference/qmstrctl.md doc/content/reference/qmstr.md
 	@cd doc && $(HUGO) -d documentation
 
 doc/qmstr-doc.tar.bz2: doc/documentation
 	@cd doc && tar -cjvf qmstr-doc.tar.bz2 documentation
 
 cleandocs:
-	@rm -rf doc/documentation doc/qmstr-doc.tar.bz2
+	@git clean -fxd doc/
