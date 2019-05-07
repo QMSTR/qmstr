@@ -70,6 +70,8 @@ ADD go.mod /qmstr/go.mod
 ADD go.sum /qmstr/go.sum
 ADD versions.env /qmstr/versions.env
 
+ARG GOPROXY
+
 WORKDIR /qmstr
 RUN make gotest
 RUN make install_qmstr_all
