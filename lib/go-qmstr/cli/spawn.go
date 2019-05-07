@@ -1,4 +1,4 @@
-package cliqmstr
+package cli
 
 import (
 	"context"
@@ -12,10 +12,6 @@ import (
 	"github.com/QMSTR/qmstr/lib/go-qmstr/docker"
 
 	"github.com/spf13/cobra"
-)
-
-var (
-	container string // Image to spawn container from
 )
 
 var spawnCmd = &cobra.Command{
@@ -41,7 +37,7 @@ func executeSpawn(cmd *cobra.Command, args []string) {
 	}
 	masterContainerID, intPort, err := docker.GetMasterInfo(ctx, cli)
 	if err != nil {
-		Log.Fatalf("Unable to find qmstr-master container")
+		Log.Fatalf("Unable to find QMSTR master container")
 	}
 
 	var env []string
@@ -55,7 +51,7 @@ func executeSpawn(cmd *cobra.Command, args []string) {
 		mountpoints = append(mountpoints, mount.Mount{Type: mount.TypeBind, Source: val, Target: common.ContainerCcacheDir})
 	}
 
-	Log.Printf("starting build container")
+	Log.Printf("Starting container in master container network...")
 	err = docker.RunClientContainer(ctx, cli, &docker.ClientContainer{
 		Image:             container,
 		Cmd:               commands,
@@ -65,6 +61,6 @@ func executeSpawn(cmd *cobra.Command, args []string) {
 		Mount:             mountpoints,
 	})
 	if err != nil {
-		Log.Fatalf("Build container failed: %v", err)
+		Log.Fatalf("Launching in master container network failed: %v", err)
 	}
 }
