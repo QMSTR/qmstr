@@ -51,8 +51,8 @@ func executeRun(cmd *cobra.Command, args []string) {
 // Run does everything
 // It also makes sure that even though os.Exit() is called later, all defered functions are properly called.
 func Run(payloadCmd []string) int {
-	// Remind me why Go has no assertions?
 	if len(payloadCmd) == 0 && !keepTmpDirectories {
+		// This should have been caught by runCmd's Args validator:
 		panic(fmt.Errorf("command validation constraint violated"))
 	}
 
