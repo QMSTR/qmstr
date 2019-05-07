@@ -43,6 +43,8 @@ var createProjCmd = &cobra.Command{
 
 func create(cmd *cobra.Command, args []string) {
 	setUpBuildService()
+	setUpControlService()
+	awaitServer()
 	cmdFlags = cmd.Flags()
 	err := createNode(args[0], true)
 	if err != nil {

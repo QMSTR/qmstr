@@ -38,6 +38,7 @@ Connect to Node <that> Node(s) <this>. In case of multiple edges for the specifi
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpControlService()
 		setUpBuildService()
+		awaitServer()
 		if err := connectCmdRun(cmd, args); err != nil {
 			Log.Fatalf("Connect failed: %v", err)
 		}

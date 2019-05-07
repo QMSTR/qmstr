@@ -41,6 +41,7 @@ var updateProjCmd = &cobra.Command{
 func update(cmd *cobra.Command, args []string) {
 	setUpBuildService()
 	setUpControlService()
+	awaitServer()
 	cmdFlags = cmd.Flags()
 	err := updateNode(args[0])
 	if err != nil {
