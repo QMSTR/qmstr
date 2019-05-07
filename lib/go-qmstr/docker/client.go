@@ -37,16 +37,13 @@ func RunClientContainer(ctx context.Context, cli *client.Client, clientConfig *C
 		NetworkMode: container.NetworkMode(fmt.Sprintf("container:%s", clientConfig.MasterContainerID)),
 	}
 
-	containerCmd := []string{"qmstr"}
-	containerCmd = append(containerCmd, append([]string{"--"}, clientConfig.Cmd...)...)
-
 	clientConfig.Env = append(
 		[]string{fmt.Sprintf("QMSTR_MASTER=%s:%d", clientConfig.MasterContainerID[:12], clientConfig.QmstrInternalPort)},
 		clientConfig.Env...)
 
 	containerConf := &container.Config{
 		Image: clientConfig.Image,
-		Cmd:   containerCmd,
+		Cmd:   clientConfig.Cmd,
 		Tty:   true,
 		Env:   clientConfig.Env,
 	}
