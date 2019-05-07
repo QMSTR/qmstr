@@ -1,14 +1,15 @@
 from setuptools import setup
+import os
 
 setup(
     name='pyqmstr-spdx-analyzer',
-    version='0.2',
+    version=os.environ["QMSTR_VERSION"],
     description='QMSTR SPDX-Analyzer',
     url='http://qmstr.org',
     license='GPLv3',
 
     packages=['spdxanalyzer'],
-    install_requires=['pyqmstr', 'spdx-tools'],
+    install_requires=["pyqmstr=={}".format(os.environ["QMSTR_VERSION"]), 'spdx-tools'],
     entry_points={
         'console_scripts': [
             'pyqmstr-spdx-analyzer = spdxanalyzer.__main__:main',
