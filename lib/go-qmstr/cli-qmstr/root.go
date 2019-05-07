@@ -23,14 +23,6 @@ var rootCmd = &cobra.Command{
 	Short: "qmstr performs Quartermaster client-side operations",
 	Long: `qmstr performs Quartermaster operations that have only client-side effects.
 It does not require a QMSTR master to be available.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if verbose {
-			Debug = golog.New(os.Stderr, "DEBUG: ", golog.Ldate|golog.Ltime)
-		} else {
-			Debug = golog.New(ioutil.Discard, "", golog.Ldate|golog.Ltime)
-		}
-		Log = golog.New(os.Stderr, "", golog.Ldate|golog.Ltime)
-	},
 }
 
 func init() {
