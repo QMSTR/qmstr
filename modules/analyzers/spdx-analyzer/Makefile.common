@@ -4,7 +4,7 @@ SPDX_ANALYZER := spdx-analyzer
 $(SPDX_ANALYZER): $(OUTDIR)analyzers/$(SPDX_ANALYZER)
 
 $(OUTDIR)analyzers/$(SPDX_ANALYZER): venv/bin/pex wheels
-	venv/bin/pex modules/analyzers/$(SPDX_ANALYZER) pyqmstr -e spdxanalyzer.__main__:main --python=venv/bin/python3 --disable-cache -f ./wheels -o $@
+	QMSTR_VERSION=$(QMSTR_VERSION) venv/bin/pex modules/analyzers/$(SPDX_ANALYZER) pyqmstr -e spdxanalyzer.__main__:main --python=venv/bin/python3 --disable-cache -f ./wheels -o $@
 
 PYQMSTR_FILES := $(shell find lib/pyqmstr -name "*.py")
 wheels: venv $(PYQMSTR_FILES)
