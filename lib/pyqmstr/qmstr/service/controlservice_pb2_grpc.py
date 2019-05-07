@@ -30,7 +30,7 @@ class ControlServiceStub(object):
         request_serializer=controlservice__pb2.SwitchPhaseMessage.SerializeToString,
         response_deserializer=controlservice__pb2.SwitchPhaseResponse.FromString,
         )
-    self.GetPackageNode = channel.unary_unary(
+    self.GetPackageNode = channel.unary_stream(
         '/service.ControlService/GetPackageNode',
         request_serializer=datamodel__pb2.PackageNode.SerializeToString,
         response_deserializer=datamodel__pb2.PackageNode.FromString,
@@ -147,7 +147,7 @@ def add_ControlServiceServicer_to_server(servicer, server):
           request_deserializer=controlservice__pb2.SwitchPhaseMessage.FromString,
           response_serializer=controlservice__pb2.SwitchPhaseResponse.SerializeToString,
       ),
-      'GetPackageNode': grpc.unary_unary_rpc_method_handler(
+      'GetPackageNode': grpc.unary_stream_rpc_method_handler(
           servicer.GetPackageNode,
           request_deserializer=datamodel__pb2.PackageNode.FromString,
           response_serializer=datamodel__pb2.PackageNode.SerializeToString,

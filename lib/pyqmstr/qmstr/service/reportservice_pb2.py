@@ -12,7 +12,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from . import bom_pb2 as bom__pb2
+from . import datamodel_pb2 as datamodel__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +20,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='service',
   syntax='proto3',
   serialized_options=_b('\n\026org.qmstr.grpc.service'),
-  serialized_pb=_b('\n\x13reportservice.proto\x12\x07service\x1a\tbom.proto\"+\n\x15ReporterConfigRequest\x12\x12\n\nreporterID\x18\x01 \x01(\x05\"\x9b\x01\n\x16ReporterConfigResponse\x12\x41\n\tconfigMap\x18\x01 \x03(\x0b\x32..service.ReporterConfigResponse.ConfigMapEntry\x12\x0c\n\x04name\x18\x02 \x01(\t\x1a\x30\n\x0e\x43onfigMapEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"E\n\x0fInfoDataRequest\x12\x0e\n\x06rootID\x18\x01 \x01(\t\x12\x10\n\x08infotype\x18\x02 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x03 \x01(\t\" \n\x10InfoDataResponse\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\t\".\n\nBOMRequest\x12\x10\n\x08warnings\x18\x01 \x01(\x08\x12\x0e\n\x06\x65rrors\x18\x02 \x01(\x08\x32\xdc\x01\n\rReportService\x12V\n\x11GetReporterConfig\x12\x1e.service.ReporterConfigRequest\x1a\x1f.service.ReporterConfigResponse\"\x00\x12\x44\n\x0bGetInfoData\x12\x18.service.InfoDataRequest\x1a\x19.service.InfoDataResponse\"\x00\x12-\n\x06GetBOM\x12\x13.service.BOMRequest\x1a\x0c.service.BOM\"\x00\x42\x18\n\x16org.qmstr.grpc.serviceX\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x13reportservice.proto\x12\x07service\x1a\x0f\x64\x61tamodel.proto\"+\n\x15ReporterConfigRequest\x12\x12\n\nreporterID\x18\x01 \x01(\x05\"\x9b\x01\n\x16ReporterConfigResponse\x12\x41\n\tconfigMap\x18\x01 \x03(\x0b\x32..service.ReporterConfigResponse.ConfigMapEntry\x12\x0c\n\x04name\x18\x02 \x01(\t\x1a\x30\n\x0e\x43onfigMapEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"E\n\x0fInfoDataRequest\x12\x0e\n\x06rootID\x18\x01 \x01(\t\x12\x10\n\x08infotype\x18\x02 \x01(\t\x12\x10\n\x08\x64\x61tatype\x18\x03 \x01(\t\" \n\x10InfoDataResponse\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\t2\xed\x01\n\rReportService\x12V\n\x11GetReporterConfig\x12\x1e.service.ReporterConfigRequest\x1a\x1f.service.ReporterConfigResponse\"\x00\x12\x44\n\x0bGetInfoData\x12\x18.service.InfoDataRequest\x1a\x19.service.InfoDataResponse\"\x00\x12>\n\x0eGetProjectNode\x12\x14.service.ProjectNode\x1a\x14.service.ProjectNode\"\x00\x42\x18\n\x16org.qmstr.grpc.serviceX\x00\x62\x06proto3')
   ,
-  dependencies=[bom__pb2.DESCRIPTOR,])
+  dependencies=[datamodel__pb2.DESCRIPTOR,])
 
 
 
@@ -53,8 +53,8 @@ _REPORTERCONFIGREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=43,
-  serialized_end=86,
+  serialized_start=49,
+  serialized_end=92,
 )
 
 
@@ -91,8 +91,8 @@ _REPORTERCONFIGRESPONSE_CONFIGMAPENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=196,
-  serialized_end=244,
+  serialized_start=202,
+  serialized_end=250,
 )
 
 _REPORTERCONFIGRESPONSE = _descriptor.Descriptor(
@@ -128,8 +128,8 @@ _REPORTERCONFIGRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=89,
-  serialized_end=244,
+  serialized_start=95,
+  serialized_end=250,
 )
 
 
@@ -173,8 +173,8 @@ _INFODATAREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=246,
-  serialized_end=315,
+  serialized_start=252,
+  serialized_end=321,
 )
 
 
@@ -204,46 +204,8 @@ _INFODATARESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=317,
-  serialized_end=349,
-)
-
-
-_BOMREQUEST = _descriptor.Descriptor(
-  name='BOMRequest',
-  full_name='service.BOMRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='warnings', full_name='service.BOMRequest.warnings', index=0,
-      number=1, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='errors', full_name='service.BOMRequest.errors', index=1,
-      number=2, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=351,
-  serialized_end=397,
+  serialized_start=323,
+  serialized_end=355,
 )
 
 _REPORTERCONFIGRESPONSE_CONFIGMAPENTRY.containing_type = _REPORTERCONFIGRESPONSE
@@ -252,7 +214,6 @@ DESCRIPTOR.message_types_by_name['ReporterConfigRequest'] = _REPORTERCONFIGREQUE
 DESCRIPTOR.message_types_by_name['ReporterConfigResponse'] = _REPORTERCONFIGRESPONSE
 DESCRIPTOR.message_types_by_name['InfoDataRequest'] = _INFODATAREQUEST
 DESCRIPTOR.message_types_by_name['InfoDataResponse'] = _INFODATARESPONSE
-DESCRIPTOR.message_types_by_name['BOMRequest'] = _BOMREQUEST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ReporterConfigRequest = _reflection.GeneratedProtocolMessageType('ReporterConfigRequest', (_message.Message,), dict(
@@ -291,13 +252,6 @@ InfoDataResponse = _reflection.GeneratedProtocolMessageType('InfoDataResponse', 
   ))
 _sym_db.RegisterMessage(InfoDataResponse)
 
-BOMRequest = _reflection.GeneratedProtocolMessageType('BOMRequest', (_message.Message,), dict(
-  DESCRIPTOR = _BOMREQUEST,
-  __module__ = 'reportservice_pb2'
-  # @@protoc_insertion_point(class_scope:service.BOMRequest)
-  ))
-_sym_db.RegisterMessage(BOMRequest)
-
 
 DESCRIPTOR._options = None
 _REPORTERCONFIGRESPONSE_CONFIGMAPENTRY._options = None
@@ -308,8 +262,8 @@ _REPORTSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=400,
-  serialized_end=620,
+  serialized_start=358,
+  serialized_end=595,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetReporterConfig',
@@ -330,12 +284,12 @@ _REPORTSERVICE = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='GetBOM',
-    full_name='service.ReportService.GetBOM',
+    name='GetProjectNode',
+    full_name='service.ReportService.GetProjectNode',
     index=2,
     containing_service=None,
-    input_type=_BOMREQUEST,
-    output_type=bom__pb2._BOM,
+    input_type=datamodel__pb2._PROJECTNODE,
+    output_type=datamodel__pb2._PROJECTNODE,
     serialized_options=None,
   ),
 ])
