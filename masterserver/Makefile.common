@@ -11,6 +11,10 @@ ifdef https_proxy
 	DOCKER_BUILD_ARGS += --build-arg https_proxy=$(https_proxy)
 endif
 
+ifdef GOPROXY
+	DOCKER_BUILD_ARGS += --build-arg GOPROXY=$(GOPROXY)
+endif
+
 # container related
 .PHONY: buildercontainer
 buildercontainer: masterserver/Dockerfile
