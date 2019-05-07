@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+import os
 
 setup(
     name='pyqmstr',
-    version='0.2',
+    version=os.environ["QMSTR_VERSION"],
     description='Interface with qmstr-master from python',
     url='http://qmstr.org',
     license='GPLv3',

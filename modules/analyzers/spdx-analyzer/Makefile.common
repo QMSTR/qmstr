@@ -8,4 +8,4 @@ $(OUTDIR)analyzers/$(SPDX_ANALYZER): venv/bin/pex wheels
 
 PYQMSTR_FILES := $(shell find lib/pyqmstr -name "*.py")
 wheels: venv $(PYQMSTR_FILES)
-	venv/bin/pip wheel -w ./wheels lib/pyqmstr
+	QMSTR_VERSION=$(QMSTR_VERSION) venv/bin/pip wheel -w ./wheels lib/pyqmstr
