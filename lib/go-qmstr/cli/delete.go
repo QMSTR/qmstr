@@ -17,6 +17,7 @@ var deleteCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpBuildService()
 		setUpControlService()
+		awaitServer()
 		if err := deleteNode(args); err != nil {
 			Log.Fatalf("Delete failed: %v", err)
 		}

@@ -22,6 +22,7 @@ Disconnect from Node <that> Node(s) <this>.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpControlService()
 		setUpBuildService()
+		awaitServer()
 		if err := disconnectNodes(cmd, args); err != nil {
 			Log.Fatalf("Disconnect failed: %v", err)
 		}

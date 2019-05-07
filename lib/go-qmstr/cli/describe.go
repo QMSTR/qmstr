@@ -30,6 +30,7 @@ and value, the value of the attribute.
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpBuildService()
 		setUpControlService()
+		awaitServer()
 		if err := describeNode(args); err != nil {
 			Log.Fatalf("Describe failed: %v", err)
 		}

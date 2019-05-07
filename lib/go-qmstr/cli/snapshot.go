@@ -21,6 +21,7 @@ var snapshotCmd = &cobra.Command{
 	Long:  `Create a database export of the graph database`,
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpControlService()
+		awaitServer()
 		if err := exportGraph(); err != nil {
 			Log.Fatalf("snapshot creation failed: %v", err)
 		}
