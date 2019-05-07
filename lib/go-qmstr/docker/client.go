@@ -78,6 +78,7 @@ func RunClientContainer(ctx context.Context, cli *client.Client, clientConfig *C
 	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
 		return err
 	}
+	log.Printf("Build container %s started", resp.ID)
 
 	status, err := cli.ContainerWait(ctx, resp.ID)
 	if err != nil {

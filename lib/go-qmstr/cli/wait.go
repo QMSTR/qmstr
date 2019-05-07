@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"math"
 	"os"
 	"time"
 
@@ -28,10 +29,22 @@ func init() {
 }
 
 func awaitServer() {
+	var lastPending uint64 = math.MaxUint64
+	timer := time.NewTimer(time.Second * time.Duration(timeout))
+	cancel := make(chan interface{})
+	defer func() {
+		cancel <- nil
+	}()
 	go func() {
-		<-time.After(time.Second * time.Duration(timeout))
-		Log.Printf("wait for qmstr-master timed out after %d seconds\n", timeout)
-		os.Exit(ReturnCodeTimeout)
+		select {
+		case <-timer.C:
+			Log.Printf("wait for qmstr-master timed out after %d seconds\n", timeout)
+			os.Exit(ReturnCodeTimeout)
+		case <-cancel:
+			//time out canceled
+			timer.Stop()
+			return
+		}
 	}()
 	for {
 		res, err := controlServiceClient.Status(context.Background(), &service.StatusMessage{})
@@ -46,12 +59,20 @@ func awaitServer() {
 			os.Exit(ReturnCodeServerFailureError)
 		}
 		if res.PhaseID > service.Phase_INIT {
-			if res.PendingInserts != 0 {
-				Log.Printf("Pending inserts: %d", res.PendingInserts)
+			if lastPending > res.PendingInserts {
+				timer.Reset(time.Second * time.Duration(timeout))
+				lastPending = res.PendingInserts
+				Debug.Printf("Pending inserts: %d", res.PendingInserts)
 				<-time.After(time.Second * time.Duration(1))
 				continue
 			}
-			return
+
+			if res.PendingInserts == 0 {
+				return
+			}
+
+			<-time.After(time.Second * time.Duration(1))
+			continue
 		}
 	}
 
