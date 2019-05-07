@@ -24,16 +24,6 @@ class AnalysisServiceStub(object):
         request_serializer=analyzerservice__pb2.InfoNodeMessage.SerializeToString,
         response_deserializer=analyzerservice__pb2.SendResponse.FromString,
         )
-    self.SendFileNode = channel.stream_unary(
-        '/service.AnalysisService/SendFileNode',
-        request_serializer=analyzerservice__pb2.FileNodeMessage.SerializeToString,
-        response_deserializer=analyzerservice__pb2.SendResponse.FromString,
-        )
-    self.SendPackageNode = channel.stream_unary(
-        '/service.AnalysisService/SendPackageNode',
-        request_serializer=analyzerservice__pb2.PackageNodeMessage.SerializeToString,
-        response_deserializer=analyzerservice__pb2.SendResponse.FromString,
-        )
     self.SendDiagnosticNode = channel.stream_unary(
         '/service.AnalysisService/SendDiagnosticNode',
         request_serializer=analyzerservice__pb2.DiagnosticNodeMessage.SerializeToString,
@@ -59,20 +49,6 @@ class AnalysisServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def SendFileNode(self, request_iterator, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def SendPackageNode(self, request_iterator, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
   def SendDiagnosticNode(self, request_iterator, context):
     # missing associated documentation comment in .proto file
     pass
@@ -91,16 +67,6 @@ def add_AnalysisServiceServicer_to_server(servicer, server):
       'SendInfoNodes': grpc.stream_unary_rpc_method_handler(
           servicer.SendInfoNodes,
           request_deserializer=analyzerservice__pb2.InfoNodeMessage.FromString,
-          response_serializer=analyzerservice__pb2.SendResponse.SerializeToString,
-      ),
-      'SendFileNode': grpc.stream_unary_rpc_method_handler(
-          servicer.SendFileNode,
-          request_deserializer=analyzerservice__pb2.FileNodeMessage.FromString,
-          response_serializer=analyzerservice__pb2.SendResponse.SerializeToString,
-      ),
-      'SendPackageNode': grpc.stream_unary_rpc_method_handler(
-          servicer.SendPackageNode,
-          request_deserializer=analyzerservice__pb2.PackageNodeMessage.FromString,
           response_serializer=analyzerservice__pb2.SendResponse.SerializeToString,
       ),
       'SendDiagnosticNode': grpc.stream_unary_rpc_method_handler(

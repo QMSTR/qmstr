@@ -30,9 +30,9 @@ class BuildServiceStub(object):
         request_serializer=buildservice__pb2.PushFileMessage.SerializeToString,
         response_deserializer=buildservice__pb2.PushFileResponse.FromString,
         )
-    self.Package = channel.stream_unary(
-        '/service.BuildService/Package',
-        request_serializer=datamodel__pb2.FileNode.SerializeToString,
+    self.UpdatePackageNode = channel.unary_unary(
+        '/service.BuildService/UpdatePackageNode',
+        request_serializer=buildservice__pb2.UpdatePackageNodeMessage.SerializeToString,
         response_deserializer=buildservice__pb2.BuildResponse.FromString,
         )
     self.CreatePackage = channel.unary_unary(
@@ -43,6 +43,11 @@ class BuildServiceStub(object):
     self.CreateProject = channel.unary_unary(
         '/service.BuildService/CreateProject',
         request_serializer=datamodel__pb2.ProjectNode.SerializeToString,
+        response_deserializer=buildservice__pb2.BuildResponse.FromString,
+        )
+    self.UpdateProjectNode = channel.stream_unary(
+        '/service.BuildService/UpdateProjectNode',
+        request_serializer=datamodel__pb2.PackageNode.SerializeToString,
         response_deserializer=buildservice__pb2.BuildResponse.FromString,
         )
     self.GetProjectNode = channel.unary_unary(
@@ -87,7 +92,7 @@ class BuildServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def Package(self, request_iterator, context):
+  def UpdatePackageNode(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -102,6 +107,13 @@ class BuildServiceServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def CreateProject(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def UpdateProjectNode(self, request_iterator, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -147,9 +159,9 @@ def add_BuildServiceServicer_to_server(servicer, server):
           request_deserializer=buildservice__pb2.PushFileMessage.FromString,
           response_serializer=buildservice__pb2.PushFileResponse.SerializeToString,
       ),
-      'Package': grpc.stream_unary_rpc_method_handler(
-          servicer.Package,
-          request_deserializer=datamodel__pb2.FileNode.FromString,
+      'UpdatePackageNode': grpc.unary_unary_rpc_method_handler(
+          servicer.UpdatePackageNode,
+          request_deserializer=buildservice__pb2.UpdatePackageNodeMessage.FromString,
           response_serializer=buildservice__pb2.BuildResponse.SerializeToString,
       ),
       'CreatePackage': grpc.unary_unary_rpc_method_handler(
@@ -160,6 +172,11 @@ def add_BuildServiceServicer_to_server(servicer, server):
       'CreateProject': grpc.unary_unary_rpc_method_handler(
           servicer.CreateProject,
           request_deserializer=datamodel__pb2.ProjectNode.FromString,
+          response_serializer=buildservice__pb2.BuildResponse.SerializeToString,
+      ),
+      'UpdateProjectNode': grpc.stream_unary_rpc_method_handler(
+          servicer.UpdateProjectNode,
+          request_deserializer=datamodel__pb2.PackageNode.FromString,
           response_serializer=buildservice__pb2.BuildResponse.SerializeToString,
       ),
       'GetProjectNode': grpc.unary_unary_rpc_method_handler(
