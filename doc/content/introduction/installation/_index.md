@@ -94,7 +94,7 @@ If the installation completes successfully, the `qmstrctl` command is
 now available:
 
 	> qmstrctl version
-	This is qmstrctl version 0.3.
+	This is qmstrctl version 0.4
 
 Only the client side installation and the information about how to
 access the master are required on a system that builds software with
