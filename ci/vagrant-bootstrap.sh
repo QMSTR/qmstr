@@ -3,6 +3,8 @@ echo "Updating APT repositories..."
 apt-get update -qq
 echo "Installing protobuf compiler..."
 apt-get -yqq install protobuf-compiler
+echo "Installing build enviroment..."
+apt-get -yqq install make autoconf build-essential libtool
 echo "Installing JSON-C dependencies..."
 apt-get -yqq build-dep json-c
 echo "Installing Docker..."

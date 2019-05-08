@@ -29,7 +29,7 @@ Verify that the client side tools are available by querying the
 version of the `qmstrctl` tool:
 
     > qmstrctl version
-    This is qmstrctl version 0.3.
+    This is qmstrctl version 0.4
 
 To check that the master image exists, run
 
@@ -61,12 +61,13 @@ works with this tutorial:
 	> cd json-c
 	> git reset --hard bf29aa0f
 	...
+	> cd ..
 
 All JSON-C specific parts of the build have been automated in a [build
 script](tutorial/build-json-c.sh). Let's run it to make sure our
 environment is configured to build JSON-C from scratch:
 
-	> ../build-json-c.sh
+	> ./build-json-c.sh
 	...
 
 If this works, wonderful. If not, please dig into the output and check
@@ -74,6 +75,7 @@ for errors. Quartermaster tracks what sources are compiled and what
 targets are linked in your project. To be sure that everything gets
 compiled again after instrumentation, let's clean the repository:
 
+	> cd json-c
 	> git clean -fxd
 	...
 	> cd ..
@@ -88,9 +90,8 @@ avoiding to make changes to the project under analysis. If you want
 to learn how to fill in the configuration file, visit the [qmstr.yaml instructions](Qmstr.yaml.md). 
 Let's start the master:
 
-	> cd json-c
-	> eval `qmstrctl start --wait --config ../qmstr.yaml`
-	> qmstrctl create package:json-c --version $(cd json-c && git describe --always)
+	> eval `qmstrctl start --wait --config qmstr.yaml`
+	> qmstrctl create package:json-c --version someversion
 
 The `wait` flag makes sure that the command returns only after the
 master has finished starting up and is fully operational. The `config`
@@ -109,7 +110,7 @@ the shell environment. It modifies the environment for the command it
 executes, and then resets it again before exiting. In the next step,
 we will use this tool to call the build script from step 0 (above):
 
-	> qmstr ../build-json-c.sh
+	> qmstr run ./build-json-c.sh
 	...
 
 This script performs the same configure and build process as before,
@@ -179,8 +180,8 @@ The `quit` command makes the reporting results available in the
 `qmstr` subdirectory of the build directory (a different location may
 be specified in the configuration file):
 
-	> ls qmstr/qmstr-reporter-html/qmstr-reports.tar.bz2
-	qmstr/qmstr-reporter-html/qmstr-reports.tar.bz2
+	> ls qmstr/qmstr-reporter-html/Public_HTML_Reports/qmstr-reports.tar.bz2
+	qmstr/qmstr-reporter-html/Public_HTML_Reports/qmstr-reports.tar.bz2
 
 Once the master is shut down, all data that it collected during the
 build and analysis phases is destroyed. Any information that is
