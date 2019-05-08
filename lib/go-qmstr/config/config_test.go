@@ -44,8 +44,14 @@ project:
 	masterconf, err := ReadConfigFromBytes([]byte(config))
 	if err != nil {
 		t.Logf("Broken config %v", err)
-		t.Fail()
-	}
+		t.FailNow()
+  }
+  
+  for _, ana := range masterconf.Analysis {
+    if ana.TrustLevel == 0 {
+      t.Fail()
+    }
+  }
 
 	projNode := CreateProjectNode(masterconf)
 	value := projNode.GetMetaData("Vendor", "")
