@@ -46,8 +46,8 @@ type MasterConfig struct {
 	Name      string
 	MetaData  map[string]string
 	Server    *ServerConfig
-	Analysis  []Analysis
-	Reporting []Reporting
+	Analysis  []*Analysis
+	Reporting []*Reporting
 }
 
 type QmstrConfig struct {

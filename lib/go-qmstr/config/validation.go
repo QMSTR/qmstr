@@ -28,6 +28,9 @@ func validateConfig(configuration *MasterConfig) error {
 		if analyzer.PosixName == "" {
 			analyzer.PosixName = common.GetPosixFullyPortableFilename(analyzer.Name)
 		}
+		if analyzer.TrustLevel == 0 {
+			analyzer.TrustLevel = 1
+		}
 		err := validateFields(analyzer, uniqueFields, "Name", "Analyzer", "PosixName")
 		if err != nil {
 			return fmt.Errorf("%d. analyzer misconfigured %v", idx+1, err)
@@ -48,6 +51,14 @@ func validateConfig(configuration *MasterConfig) error {
 
 func validateFields(structure interface{}, uniqueFields map[string]map[string]struct{}, fields ...string) error {
 	v := reflect.ValueOf(structure)
+	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+		v = v.Elem()
+	}
+
+	if kind := v.Kind(); kind != reflect.Struct {
+		return fmt.Errorf("Not a struct: %v", kind)
+	}
+
 	for _, field := range fields {
 		trackSet := map[string]struct{}{}
 		if val, ok := uniqueFields[field]; ok {
