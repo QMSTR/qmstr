@@ -15,26 +15,26 @@ ifdef GOPROXY
 	DOCKER_BUILD_ARGS += --build-arg GOPROXY=$(GOPROXY)
 endif
 
+checkdocker:
+	@echo $(call CHECKCMDS,docker)
+
 # container related
-.PHONY: buildercontainer
-buildercontainer: masterserver/Dockerfile
+.PHONY: checkdocker buildercontainer container master devcontainer democontainer ratelimage
+
+buildercontainer: checkdocker masterserver/Dockerfile
 	docker build --no-cache -f masterserver/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target master $(DOCKER_BUILD_ARGS) .
 
-.PHONY: container master
-master container: masterserver/Dockerfile
+master container: checkdocker masterserver/Dockerfile
 	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master $(DOCKER_BUILD_ARGS) .
 
-.PHONY: devcontainer
-devcontainer: container
+devcontainer: checkdocker container
 	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_DEV} --target dev $(DOCKER_BUILD_ARGS) .
 
-.PHONY: democontainer
-democontainer: container
+democontainer: checkdocker container
 	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime $(DOCKER_BUILD_ARGS) .
 	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target builder $(DOCKER_BUILD_ARGS) .
 
-.PHONY: ratelimage
-ratelimage:
+ratelimage: checkdocker masterserver/Dockerfile
 	docker build -f masterserver/Dockerfile -t qmstr-ratel --target web $(DOCKER_BUILD_ARGS) .
 
 # go related
