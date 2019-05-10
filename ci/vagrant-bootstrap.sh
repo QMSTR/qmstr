@@ -4,7 +4,7 @@ apt-get update -qq
 echo "Installing protobuf compiler..."
 apt-get -yqq install protobuf-compiler
 echo "Installing build enviroment..."
-apt-get -yqq install make autoconf build-essential libtool
+apt-get -yqq install make autoconf build-essential libtool git
 echo "Installing JSON-C dependencies..."
 apt-get -yqq build-dep json-c
 echo "Installing Docker..."
@@ -19,5 +19,9 @@ tar -xf go.tar.gz
 export PATH=/opt/go/bin:$PATH
 echo export PATH=$PATH >> /etc/bash.bashrc
 echo "Installing shelldoc..."
-go get -u github.com/endocode/shelldoc/cmd/shelldoc && mv -f ~/go/bin/shelldoc /usr/local/bin/
+git clone https://github.com/endocode/shelldoc
+cd shelldoc
+make
+mv -f cmd/shelldoc/shelldoc /usr/local/bin/
+cd -
 echo "Done."
