@@ -3,6 +3,7 @@ include versions.env
 # Common variables
 OUTDIR := out/
 
+CHECKCMDS = $(foreach cmd,$(1),$(if $(shell which $(cmd)),$(shell which $(cmd)),$(error "Command [$(cmd)] not available. Please install it first.")))
 PROTO_FILES := $(shell ls ./proto/*.proto)
 ALL_PYTHON_FILES := $(shell find . -path ./venv -prune -o -name *.py -print)
 PROTO_PYTHON_FILES := $(patsubst ./proto/%,./lib/pyqmstr/qmstr/service/%,$(PROTO_FILES:.proto=_pb2.py)) $(patsubst ./proto/%,./lib/pyqmstr/qmstr/service/%,$(PROTO_FILES:.proto=_pb2_grpc.py))
@@ -24,7 +25,8 @@ GO_SRCS = $(shell find . -name '*.go')
 FILTER = $(foreach v,$(2),$(if $(findstring $(1),$(v)),$(v),))
 GO_MODULE_SRCS = $(call FILTER,module,$(GO_SRCS))
 
-GO_PATH := $(shell go env GOPATH)
+GO := $(call CHECKCMDS,go)
+GO_PATH := $(shell $(GO) env GOPATH)
 GO_BIN := $(GO_PATH)/bin
 PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
 
@@ -44,7 +46,7 @@ CONTAINER_TAG_RUNTIME := qmstr/runtime
 CONTAINER_TAG_BUILDER := qmstr/master_build
 
 .PHONY: all clients install
-all: clients master
+all: checkdocker clients master
 
 # Clean-up targets:
 .PHONY: clean
@@ -61,18 +63,18 @@ cleanall: clean
 
 # Tests and code quality checks
 .go_module_test: $(GO_MODULE_SRCS)
-	go test ./modules/...
+	$(GO) test ./modules/...
 	@touch .go_module_test
 
 .go_qmstr_test: $(GO_SRCS)
-	go test ./clients/... ./lib/go-qmstr/...
+	$(GO) test ./clients/... ./lib/go-qmstr/...
 	@touch .go_qmstr_test
 
 .PHONY: gotest
 gotest: .go_qmstr_test .go_module_test
 
 $(PROTOC_GEN_GO):
-	go get -u github.com/golang/protobuf/protoc-gen-go
+	$(GO) get -u github.com/golang/protobuf/protoc-gen-go
 
 # Client build target
 clients: $(QMSTR_CLIENT_BINARIES)
@@ -90,8 +92,14 @@ install_qmstr_client: $(QMSTR_CLIENT_BINARIES)
 install_qmstr_all: install_qmstr_client install_qmstr_server
 
 # Python related targets
+checkpython:
+	@echo $(call CHECKCMDS,python3)
+
+checkvirtualenv: checkpython
+	@echo $(call CHECKCMDS,virtualenv)
+
 venv: venv/bin/activate
-venv/bin/activate: requirements.txt
+venv/bin/activate: requirements.txt checkvirtualenv
 	test -d venv || virtualenv -p python3 venv
 	venv/bin/pip install -Ur requirements.txt
 	touch venv/bin/activate
