@@ -16,4 +16,4 @@ FILES="doc/content/introduction/installation/_index.md doc/content/introduction/
 # test the README:
 FILES="$FILES README.md"
 # Aaaand go...:
-shelldoc $FILES
+shelldoc run $FILES
