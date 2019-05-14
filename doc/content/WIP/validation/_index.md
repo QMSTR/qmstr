@@ -48,7 +48,8 @@ depends on which of the checks failed (1, 2 or 3). If the validation
 succeeds the return code is zero.
 
 Depending on the file format, the manifest file may be included in the
-package. Support for that may be added to the validator.
+package. Each container format has known metadata only files that are
+ignored by or used as manifests for the validator.
 
 ## Verifying distributions
 
@@ -57,8 +58,10 @@ shipped together as a unit. The validator can be used to evaluate
 distributions. The validation succeeds if the validation for each
 package contained in the distribution succeeds.
 
-TODO How this can be done has to be developed and depends on how
-distributions are represented.
+This can be invoked the same way as any other container format.
+
+    > qmstr validate ubuntu-bionic.img ubuntu-bionic.spdx
+    <TODO output>
 
 ## Development plan
 
