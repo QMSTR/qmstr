@@ -18,7 +18,7 @@ apply plugin: 'com.google.protobuf'
 apply plugin: 'maven'
 
 group = "org.qmstr"
-version = "0.3.0"
+version = "$System.env.QMSTR_VERSION"
 
 def grpcVersion = '1.18.0'
 
