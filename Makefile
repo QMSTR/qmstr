@@ -34,7 +34,7 @@ GO_DEPS := $(PROTOC_GEN_GO) $(GO_SRCS)
 
 QMSTR_ANALYZERS := $(foreach ana, $(shell ls modules/analyzers), $(OUTDIR)analyzers/$(ana))
 QMSTR_REPORTERS := $(foreach rep, $(shell ls modules/reporters), $(OUTDIR)reporters/$(rep))
-QMSTR_BUILDERS := $(foreach builder, $(shell ls modules/builders), $(OUTDIR)builders/$(builder))
+QMSTR_BUILDERS := $(filter-out, qmstr-gradle-plugin, $(foreach builder, $(shell ls modules/builders), $(OUTDIR)builders/$(builder)))
 
 QMSTR_MASTER := $(foreach bin, qmstr-master, ${OUTDIR}$(bin))
 QMSTR_SERVER_BINARIES := $(QMSTR_MASTER) $(QMSTR_REPORTERS) $(QMSTR_ANALYZERS) $(QMSTR_BUILDERS)

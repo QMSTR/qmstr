@@ -18,9 +18,13 @@ apply plugin: 'com.google.protobuf'
 apply plugin: 'maven'
 
 group = "org.qmstr"
-version = "$System.env.QMSTR_VERSION"
 
-def grpcVersion = "$System.env.GRPCIO_VERSION"
+def grpcVersion;
+def props = new Properties()
+file('../../versions.env').withInputStream { props.load(it) }
+
+version = props['QMSTR_VERSION']
+grpcVersion = props['GRPCIO_VERSION']
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8

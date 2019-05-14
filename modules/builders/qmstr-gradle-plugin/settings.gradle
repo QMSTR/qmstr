@@ -1,7 +1,3 @@
 rootProject.name = 'gradle-plugin'
-
-sourceControl {
-    gitRepository("https://github.com/QMSTR/java-qmstr") {
-        producesModule("org.qmstr:service")
-    }
-}
+include ":service"
+project(":service").projectDir = file("../../../lib/java-qmstr")

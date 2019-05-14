@@ -25,13 +25,18 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 group = "org.qmstr"
-version = "0.3.1"
+
+def Properties props = new Properties()
+def propFile = file('../../../versions.env')
+if (propFile.canRead()){
+  props.load(new FileInputStream(propFile))
+  version = props['QMSTR_VERSION']
+}
 
 dependencies {
   compile gradleApi()
   compile localGroovy()
-
-  implementation 'org.qmstr:service:0.3.1'
+  implementation project(":service")
 
   testCompile("org.junit.jupiter:junit-jupiter-api:5.1.0")
   testRuntime("org.junit.jupiter:junit-jupiter-engine:5.1.0")
