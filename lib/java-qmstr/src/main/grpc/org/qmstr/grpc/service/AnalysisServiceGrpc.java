@@ -91,70 +91,6 @@ public final class AnalysisServiceGrpc {
      return getSendInfoNodesMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Analyzerservice.FileNodeMessage,
-      org.qmstr.grpc.service.Analyzerservice.SendResponse> getSendFileNodeMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "SendFileNode",
-      requestType = org.qmstr.grpc.service.Analyzerservice.FileNodeMessage.class,
-      responseType = org.qmstr.grpc.service.Analyzerservice.SendResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING)
-  public static io.grpc.MethodDescriptor<org.qmstr.grpc.service.Analyzerservice.FileNodeMessage,
-      org.qmstr.grpc.service.Analyzerservice.SendResponse> getSendFileNodeMethod() {
-    io.grpc.MethodDescriptor<org.qmstr.grpc.service.Analyzerservice.FileNodeMessage, org.qmstr.grpc.service.Analyzerservice.SendResponse> getSendFileNodeMethod;
-    if ((getSendFileNodeMethod = AnalysisServiceGrpc.getSendFileNodeMethod) == null) {
-      synchronized (AnalysisServiceGrpc.class) {
-        if ((getSendFileNodeMethod = AnalysisServiceGrpc.getSendFileNodeMethod) == null) {
-          AnalysisServiceGrpc.getSendFileNodeMethod = getSendFileNodeMethod = 
-              io.grpc.MethodDescriptor.<org.qmstr.grpc.service.Analyzerservice.FileNodeMessage, org.qmstr.grpc.service.Analyzerservice.SendResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING)
-              .setFullMethodName(generateFullMethodName(
-                  "service.AnalysisService", "SendFileNode"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.qmstr.grpc.service.Analyzerservice.FileNodeMessage.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.qmstr.grpc.service.Analyzerservice.SendResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new AnalysisServiceMethodDescriptorSupplier("SendFileNode"))
-                  .build();
-          }
-        }
-     }
-     return getSendFileNodeMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Analyzerservice.PackageNodeMessage,
-      org.qmstr.grpc.service.Analyzerservice.SendResponse> getSendPackageNodeMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "SendPackageNode",
-      requestType = org.qmstr.grpc.service.Analyzerservice.PackageNodeMessage.class,
-      responseType = org.qmstr.grpc.service.Analyzerservice.SendResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING)
-  public static io.grpc.MethodDescriptor<org.qmstr.grpc.service.Analyzerservice.PackageNodeMessage,
-      org.qmstr.grpc.service.Analyzerservice.SendResponse> getSendPackageNodeMethod() {
-    io.grpc.MethodDescriptor<org.qmstr.grpc.service.Analyzerservice.PackageNodeMessage, org.qmstr.grpc.service.Analyzerservice.SendResponse> getSendPackageNodeMethod;
-    if ((getSendPackageNodeMethod = AnalysisServiceGrpc.getSendPackageNodeMethod) == null) {
-      synchronized (AnalysisServiceGrpc.class) {
-        if ((getSendPackageNodeMethod = AnalysisServiceGrpc.getSendPackageNodeMethod) == null) {
-          AnalysisServiceGrpc.getSendPackageNodeMethod = getSendPackageNodeMethod = 
-              io.grpc.MethodDescriptor.<org.qmstr.grpc.service.Analyzerservice.PackageNodeMessage, org.qmstr.grpc.service.Analyzerservice.SendResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.CLIENT_STREAMING)
-              .setFullMethodName(generateFullMethodName(
-                  "service.AnalysisService", "SendPackageNode"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.qmstr.grpc.service.Analyzerservice.PackageNodeMessage.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.qmstr.grpc.service.Analyzerservice.SendResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new AnalysisServiceMethodDescriptorSupplier("SendPackageNode"))
-                  .build();
-          }
-        }
-     }
-     return getSendPackageNodeMethod;
-  }
-
   private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Analyzerservice.DiagnosticNodeMessage,
       org.qmstr.grpc.service.Analyzerservice.SendResponse> getSendDiagnosticNodeMethod;
 
@@ -230,20 +166,6 @@ public final class AnalysisServiceGrpc {
 
     /**
      */
-    public io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.FileNodeMessage> sendFileNode(
-        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.SendResponse> responseObserver) {
-      return asyncUnimplementedStreamingCall(getSendFileNodeMethod(), responseObserver);
-    }
-
-    /**
-     */
-    public io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.PackageNodeMessage> sendPackageNode(
-        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.SendResponse> responseObserver) {
-      return asyncUnimplementedStreamingCall(getSendPackageNodeMethod(), responseObserver);
-    }
-
-    /**
-     */
     public io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.DiagnosticNodeMessage> sendDiagnosticNode(
         io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.SendResponse> responseObserver) {
       return asyncUnimplementedStreamingCall(getSendDiagnosticNodeMethod(), responseObserver);
@@ -265,20 +187,6 @@ public final class AnalysisServiceGrpc {
                 org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage,
                 org.qmstr.grpc.service.Analyzerservice.SendResponse>(
                   this, METHODID_SEND_INFO_NODES)))
-          .addMethod(
-            getSendFileNodeMethod(),
-            asyncClientStreamingCall(
-              new MethodHandlers<
-                org.qmstr.grpc.service.Analyzerservice.FileNodeMessage,
-                org.qmstr.grpc.service.Analyzerservice.SendResponse>(
-                  this, METHODID_SEND_FILE_NODE)))
-          .addMethod(
-            getSendPackageNodeMethod(),
-            asyncClientStreamingCall(
-              new MethodHandlers<
-                org.qmstr.grpc.service.Analyzerservice.PackageNodeMessage,
-                org.qmstr.grpc.service.Analyzerservice.SendResponse>(
-                  this, METHODID_SEND_PACKAGE_NODE)))
           .addMethod(
             getSendDiagnosticNodeMethod(),
             asyncClientStreamingCall(
@@ -322,22 +230,6 @@ public final class AnalysisServiceGrpc {
         io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.SendResponse> responseObserver) {
       return asyncClientStreamingCall(
           getChannel().newCall(getSendInfoNodesMethod(), getCallOptions()), responseObserver);
-    }
-
-    /**
-     */
-    public io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.FileNodeMessage> sendFileNode(
-        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.SendResponse> responseObserver) {
-      return asyncClientStreamingCall(
-          getChannel().newCall(getSendFileNodeMethod(), getCallOptions()), responseObserver);
-    }
-
-    /**
-     */
-    public io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.PackageNodeMessage> sendPackageNode(
-        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.SendResponse> responseObserver) {
-      return asyncClientStreamingCall(
-          getChannel().newCall(getSendPackageNodeMethod(), getCallOptions()), responseObserver);
     }
 
     /**
@@ -404,9 +296,7 @@ public final class AnalysisServiceGrpc {
 
   private static final int METHODID_GET_ANALYZER_CONFIG = 0;
   private static final int METHODID_SEND_INFO_NODES = 1;
-  private static final int METHODID_SEND_FILE_NODE = 2;
-  private static final int METHODID_SEND_PACKAGE_NODE = 3;
-  private static final int METHODID_SEND_DIAGNOSTIC_NODE = 4;
+  private static final int METHODID_SEND_DIAGNOSTIC_NODE = 2;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -441,12 +331,6 @@ public final class AnalysisServiceGrpc {
       switch (methodId) {
         case METHODID_SEND_INFO_NODES:
           return (io.grpc.stub.StreamObserver<Req>) serviceImpl.sendInfoNodes(
-              (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.SendResponse>) responseObserver);
-        case METHODID_SEND_FILE_NODE:
-          return (io.grpc.stub.StreamObserver<Req>) serviceImpl.sendFileNode(
-              (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.SendResponse>) responseObserver);
-        case METHODID_SEND_PACKAGE_NODE:
-          return (io.grpc.stub.StreamObserver<Req>) serviceImpl.sendPackageNode(
               (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Analyzerservice.SendResponse>) responseObserver);
         case METHODID_SEND_DIAGNOSTIC_NODE:
           return (io.grpc.stub.StreamObserver<Req>) serviceImpl.sendDiagnosticNode(
@@ -504,8 +388,6 @@ public final class AnalysisServiceGrpc {
               .setSchemaDescriptor(new AnalysisServiceFileDescriptorSupplier())
               .addMethod(getGetAnalyzerConfigMethod())
               .addMethod(getSendInfoNodesMethod())
-              .addMethod(getSendFileNodeMethod())
-              .addMethod(getSendPackageNodeMethod())
               .addMethod(getSendDiagnosticNodeMethod())
               .build();
         }

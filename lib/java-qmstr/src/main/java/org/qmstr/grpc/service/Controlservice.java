@@ -2893,23 +2893,42 @@ public final class Controlservice {
 
   }
 
-  public interface PackageRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:service.PackageRequest)
+  public interface GetFileNodeMessageOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:service.GetFileNodeMessage)
       com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.service.FileNode fileNode = 1;</code>
+     */
+    boolean hasFileNode();
+    /**
+     * <code>.service.FileNode fileNode = 1;</code>
+     */
+    org.qmstr.grpc.service.Datamodel.FileNode getFileNode();
+    /**
+     * <code>.service.FileNode fileNode = 1;</code>
+     */
+    org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder getFileNodeOrBuilder();
+
+    /**
+     * <code>bool uniqueNode = 2;</code>
+     */
+    boolean getUniqueNode();
   }
   /**
-   * Protobuf type {@code service.PackageRequest}
+   * Protobuf type {@code service.GetFileNodeMessage}
    */
-  public  static final class PackageRequest extends
+  public  static final class GetFileNodeMessage extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:service.PackageRequest)
-      PackageRequestOrBuilder {
+      // @@protoc_insertion_point(message_implements:service.GetFileNodeMessage)
+      GetFileNodeMessageOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use PackageRequest.newBuilder() to construct.
-    private PackageRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use GetFileNodeMessage.newBuilder() to construct.
+    private GetFileNodeMessage(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private PackageRequest() {
+    private GetFileNodeMessage() {
+      uniqueNode_ = false;
     }
 
     @java.lang.Override
@@ -2917,7 +2936,7 @@ public final class Controlservice {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private PackageRequest(
+    private GetFileNodeMessage(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -2925,6 +2944,7 @@ public final class Controlservice {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -2942,6 +2962,24 @@ public final class Controlservice {
               }
               break;
             }
+            case 10: {
+              org.qmstr.grpc.service.Datamodel.FileNode.Builder subBuilder = null;
+              if (fileNode_ != null) {
+                subBuilder = fileNode_.toBuilder();
+              }
+              fileNode_ = input.readMessage(org.qmstr.grpc.service.Datamodel.FileNode.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(fileNode_);
+                fileNode_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 16: {
+
+              uniqueNode_ = input.readBool();
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -2956,14 +2994,44 @@ public final class Controlservice {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.qmstr.grpc.service.Controlservice.internal_static_service_PackageRequest_descriptor;
+      return org.qmstr.grpc.service.Controlservice.internal_static_service_GetFileNodeMessage_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.qmstr.grpc.service.Controlservice.internal_static_service_PackageRequest_fieldAccessorTable
+      return org.qmstr.grpc.service.Controlservice.internal_static_service_GetFileNodeMessage_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.qmstr.grpc.service.Controlservice.PackageRequest.class, org.qmstr.grpc.service.Controlservice.PackageRequest.Builder.class);
+              org.qmstr.grpc.service.Controlservice.GetFileNodeMessage.class, org.qmstr.grpc.service.Controlservice.GetFileNodeMessage.Builder.class);
+    }
+
+    public static final int FILENODE_FIELD_NUMBER = 1;
+    private org.qmstr.grpc.service.Datamodel.FileNode fileNode_;
+    /**
+     * <code>.service.FileNode fileNode = 1;</code>
+     */
+    public boolean hasFileNode() {
+      return fileNode_ != null;
+    }
+    /**
+     * <code>.service.FileNode fileNode = 1;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.FileNode getFileNode() {
+      return fileNode_ == null ? org.qmstr.grpc.service.Datamodel.FileNode.getDefaultInstance() : fileNode_;
+    }
+    /**
+     * <code>.service.FileNode fileNode = 1;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder getFileNodeOrBuilder() {
+      return getFileNode();
+    }
+
+    public static final int UNIQUENODE_FIELD_NUMBER = 2;
+    private boolean uniqueNode_;
+    /**
+     * <code>bool uniqueNode = 2;</code>
+     */
+    public boolean getUniqueNode() {
+      return uniqueNode_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -2978,6 +3046,12 @@ public final class Controlservice {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (fileNode_ != null) {
+        output.writeMessage(1, getFileNode());
+      }
+      if (uniqueNode_ != false) {
+        output.writeBool(2, uniqueNode_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -2986,6 +3060,14 @@ public final class Controlservice {
       if (size != -1) return size;
 
       size = 0;
+      if (fileNode_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, getFileNode());
+      }
+      if (uniqueNode_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(2, uniqueNode_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2996,12 +3078,19 @@ public final class Controlservice {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.qmstr.grpc.service.Controlservice.PackageRequest)) {
+      if (!(obj instanceof org.qmstr.grpc.service.Controlservice.GetFileNodeMessage)) {
         return super.equals(obj);
       }
-      org.qmstr.grpc.service.Controlservice.PackageRequest other = (org.qmstr.grpc.service.Controlservice.PackageRequest) obj;
+      org.qmstr.grpc.service.Controlservice.GetFileNodeMessage other = (org.qmstr.grpc.service.Controlservice.GetFileNodeMessage) obj;
 
       boolean result = true;
+      result = result && (hasFileNode() == other.hasFileNode());
+      if (hasFileNode()) {
+        result = result && getFileNode()
+            .equals(other.getFileNode());
+      }
+      result = result && (getUniqueNode()
+          == other.getUniqueNode());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -3013,74 +3102,81 @@ public final class Controlservice {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasFileNode()) {
+        hash = (37 * hash) + FILENODE_FIELD_NUMBER;
+        hash = (53 * hash) + getFileNode().hashCode();
+      }
+      hash = (37 * hash) + UNIQUENODE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getUniqueNode());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
 
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseFrom(byte[] data)
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseFrom(java.io.InputStream input)
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseDelimitedFrom(java.io.InputStream input)
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseDelimitedFrom(
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3092,7 +3188,7 @@ public final class Controlservice {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.qmstr.grpc.service.Controlservice.PackageRequest prototype) {
+    public static Builder newBuilder(org.qmstr.grpc.service.Controlservice.GetFileNodeMessage prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -3107,25 +3203,25 @@ public final class Controlservice {
       return builder;
     }
     /**
-     * Protobuf type {@code service.PackageRequest}
+     * Protobuf type {@code service.GetFileNodeMessage}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:service.PackageRequest)
-        org.qmstr.grpc.service.Controlservice.PackageRequestOrBuilder {
+        // @@protoc_insertion_point(builder_implements:service.GetFileNodeMessage)
+        org.qmstr.grpc.service.Controlservice.GetFileNodeMessageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.qmstr.grpc.service.Controlservice.internal_static_service_PackageRequest_descriptor;
+        return org.qmstr.grpc.service.Controlservice.internal_static_service_GetFileNodeMessage_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.qmstr.grpc.service.Controlservice.internal_static_service_PackageRequest_fieldAccessorTable
+        return org.qmstr.grpc.service.Controlservice.internal_static_service_GetFileNodeMessage_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.qmstr.grpc.service.Controlservice.PackageRequest.class, org.qmstr.grpc.service.Controlservice.PackageRequest.Builder.class);
+                org.qmstr.grpc.service.Controlservice.GetFileNodeMessage.class, org.qmstr.grpc.service.Controlservice.GetFileNodeMessage.Builder.class);
       }
 
-      // Construct using org.qmstr.grpc.service.Controlservice.PackageRequest.newBuilder()
+      // Construct using org.qmstr.grpc.service.Controlservice.GetFileNodeMessage.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -3142,28 +3238,42 @@ public final class Controlservice {
       }
       public Builder clear() {
         super.clear();
+        if (fileNodeBuilder_ == null) {
+          fileNode_ = null;
+        } else {
+          fileNode_ = null;
+          fileNodeBuilder_ = null;
+        }
+        uniqueNode_ = false;
+
         return this;
       }
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.qmstr.grpc.service.Controlservice.internal_static_service_PackageRequest_descriptor;
+        return org.qmstr.grpc.service.Controlservice.internal_static_service_GetFileNodeMessage_descriptor;
       }
 
-      public org.qmstr.grpc.service.Controlservice.PackageRequest getDefaultInstanceForType() {
-        return org.qmstr.grpc.service.Controlservice.PackageRequest.getDefaultInstance();
+      public org.qmstr.grpc.service.Controlservice.GetFileNodeMessage getDefaultInstanceForType() {
+        return org.qmstr.grpc.service.Controlservice.GetFileNodeMessage.getDefaultInstance();
       }
 
-      public org.qmstr.grpc.service.Controlservice.PackageRequest build() {
-        org.qmstr.grpc.service.Controlservice.PackageRequest result = buildPartial();
+      public org.qmstr.grpc.service.Controlservice.GetFileNodeMessage build() {
+        org.qmstr.grpc.service.Controlservice.GetFileNodeMessage result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.qmstr.grpc.service.Controlservice.PackageRequest buildPartial() {
-        org.qmstr.grpc.service.Controlservice.PackageRequest result = new org.qmstr.grpc.service.Controlservice.PackageRequest(this);
+      public org.qmstr.grpc.service.Controlservice.GetFileNodeMessage buildPartial() {
+        org.qmstr.grpc.service.Controlservice.GetFileNodeMessage result = new org.qmstr.grpc.service.Controlservice.GetFileNodeMessage(this);
+        if (fileNodeBuilder_ == null) {
+          result.fileNode_ = fileNode_;
+        } else {
+          result.fileNode_ = fileNodeBuilder_.build();
+        }
+        result.uniqueNode_ = uniqueNode_;
         onBuilt();
         return result;
       }
@@ -3195,16 +3305,22 @@ public final class Controlservice {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.qmstr.grpc.service.Controlservice.PackageRequest) {
-          return mergeFrom((org.qmstr.grpc.service.Controlservice.PackageRequest)other);
+        if (other instanceof org.qmstr.grpc.service.Controlservice.GetFileNodeMessage) {
+          return mergeFrom((org.qmstr.grpc.service.Controlservice.GetFileNodeMessage)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.qmstr.grpc.service.Controlservice.PackageRequest other) {
-        if (other == org.qmstr.grpc.service.Controlservice.PackageRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.qmstr.grpc.service.Controlservice.GetFileNodeMessage other) {
+        if (other == org.qmstr.grpc.service.Controlservice.GetFileNodeMessage.getDefaultInstance()) return this;
+        if (other.hasFileNode()) {
+          mergeFileNode(other.getFileNode());
+        }
+        if (other.getUniqueNode() != false) {
+          setUniqueNode(other.getUniqueNode());
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -3218,17 +3334,160 @@ public final class Controlservice {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.qmstr.grpc.service.Controlservice.PackageRequest parsedMessage = null;
+        org.qmstr.grpc.service.Controlservice.GetFileNodeMessage parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.qmstr.grpc.service.Controlservice.PackageRequest) e.getUnfinishedMessage();
+          parsedMessage = (org.qmstr.grpc.service.Controlservice.GetFileNodeMessage) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
           }
         }
+        return this;
+      }
+
+      private org.qmstr.grpc.service.Datamodel.FileNode fileNode_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode.Builder, org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder> fileNodeBuilder_;
+      /**
+       * <code>.service.FileNode fileNode = 1;</code>
+       */
+      public boolean hasFileNode() {
+        return fileNodeBuilder_ != null || fileNode_ != null;
+      }
+      /**
+       * <code>.service.FileNode fileNode = 1;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.FileNode getFileNode() {
+        if (fileNodeBuilder_ == null) {
+          return fileNode_ == null ? org.qmstr.grpc.service.Datamodel.FileNode.getDefaultInstance() : fileNode_;
+        } else {
+          return fileNodeBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.service.FileNode fileNode = 1;</code>
+       */
+      public Builder setFileNode(org.qmstr.grpc.service.Datamodel.FileNode value) {
+        if (fileNodeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          fileNode_ = value;
+          onChanged();
+        } else {
+          fileNodeBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.service.FileNode fileNode = 1;</code>
+       */
+      public Builder setFileNode(
+          org.qmstr.grpc.service.Datamodel.FileNode.Builder builderForValue) {
+        if (fileNodeBuilder_ == null) {
+          fileNode_ = builderForValue.build();
+          onChanged();
+        } else {
+          fileNodeBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.service.FileNode fileNode = 1;</code>
+       */
+      public Builder mergeFileNode(org.qmstr.grpc.service.Datamodel.FileNode value) {
+        if (fileNodeBuilder_ == null) {
+          if (fileNode_ != null) {
+            fileNode_ =
+              org.qmstr.grpc.service.Datamodel.FileNode.newBuilder(fileNode_).mergeFrom(value).buildPartial();
+          } else {
+            fileNode_ = value;
+          }
+          onChanged();
+        } else {
+          fileNodeBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.service.FileNode fileNode = 1;</code>
+       */
+      public Builder clearFileNode() {
+        if (fileNodeBuilder_ == null) {
+          fileNode_ = null;
+          onChanged();
+        } else {
+          fileNode_ = null;
+          fileNodeBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.service.FileNode fileNode = 1;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.FileNode.Builder getFileNodeBuilder() {
+        
+        onChanged();
+        return getFileNodeFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.service.FileNode fileNode = 1;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder getFileNodeOrBuilder() {
+        if (fileNodeBuilder_ != null) {
+          return fileNodeBuilder_.getMessageOrBuilder();
+        } else {
+          return fileNode_ == null ?
+              org.qmstr.grpc.service.Datamodel.FileNode.getDefaultInstance() : fileNode_;
+        }
+      }
+      /**
+       * <code>.service.FileNode fileNode = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode.Builder, org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder> 
+          getFileNodeFieldBuilder() {
+        if (fileNodeBuilder_ == null) {
+          fileNodeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode.Builder, org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder>(
+                  getFileNode(),
+                  getParentForChildren(),
+                  isClean());
+          fileNode_ = null;
+        }
+        return fileNodeBuilder_;
+      }
+
+      private boolean uniqueNode_ ;
+      /**
+       * <code>bool uniqueNode = 2;</code>
+       */
+      public boolean getUniqueNode() {
+        return uniqueNode_;
+      }
+      /**
+       * <code>bool uniqueNode = 2;</code>
+       */
+      public Builder setUniqueNode(boolean value) {
+        
+        uniqueNode_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool uniqueNode = 2;</code>
+       */
+      public Builder clearUniqueNode() {
+        
+        uniqueNode_ = false;
+        onChanged();
         return this;
       }
       public final Builder setUnknownFields(
@@ -3242,39 +3501,39 @@ public final class Controlservice {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:service.PackageRequest)
+      // @@protoc_insertion_point(builder_scope:service.GetFileNodeMessage)
     }
 
-    // @@protoc_insertion_point(class_scope:service.PackageRequest)
-    private static final org.qmstr.grpc.service.Controlservice.PackageRequest DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:service.GetFileNodeMessage)
+    private static final org.qmstr.grpc.service.Controlservice.GetFileNodeMessage DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.qmstr.grpc.service.Controlservice.PackageRequest();
+      DEFAULT_INSTANCE = new org.qmstr.grpc.service.Controlservice.GetFileNodeMessage();
     }
 
-    public static org.qmstr.grpc.service.Controlservice.PackageRequest getDefaultInstance() {
+    public static org.qmstr.grpc.service.Controlservice.GetFileNodeMessage getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<PackageRequest>
-        PARSER = new com.google.protobuf.AbstractParser<PackageRequest>() {
-      public PackageRequest parsePartialFrom(
+    private static final com.google.protobuf.Parser<GetFileNodeMessage>
+        PARSER = new com.google.protobuf.AbstractParser<GetFileNodeMessage>() {
+      public GetFileNodeMessage parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new PackageRequest(input, extensionRegistry);
+        return new GetFileNodeMessage(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<PackageRequest> parser() {
+    public static com.google.protobuf.Parser<GetFileNodeMessage> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<PackageRequest> getParserForType() {
+    public com.google.protobuf.Parser<GetFileNodeMessage> getParserForType() {
       return PARSER;
     }
 
-    public org.qmstr.grpc.service.Controlservice.PackageRequest getDefaultInstanceForType() {
+    public org.qmstr.grpc.service.Controlservice.GetFileNodeMessage getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3833,6 +4092,11 @@ public final class Controlservice {
      */
     com.google.protobuf.ByteString
         getErrorBytes();
+
+    /**
+     * <code>uint64 pendingInserts = 5;</code>
+     */
+    long getPendingInserts();
   }
   /**
    * Protobuf type {@code service.StatusResponse}
@@ -3851,6 +4115,7 @@ public final class Controlservice {
       phaseID_ = 0;
       switching_ = false;
       error_ = "";
+      pendingInserts_ = 0L;
     }
 
     @java.lang.Override
@@ -3905,6 +4170,11 @@ public final class Controlservice {
               java.lang.String s = input.readStringRequireUtf8();
 
               error_ = s;
+              break;
+            }
+            case 40: {
+
+              pendingInserts_ = input.readUInt64();
               break;
             }
           }
@@ -4024,6 +4294,15 @@ public final class Controlservice {
       }
     }
 
+    public static final int PENDINGINSERTS_FIELD_NUMBER = 5;
+    private long pendingInserts_;
+    /**
+     * <code>uint64 pendingInserts = 5;</code>
+     */
+    public long getPendingInserts() {
+      return pendingInserts_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -4048,6 +4327,9 @@ public final class Controlservice {
       if (!getErrorBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, error_);
       }
+      if (pendingInserts_ != 0L) {
+        output.writeUInt64(5, pendingInserts_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -4069,6 +4351,10 @@ public final class Controlservice {
       }
       if (!getErrorBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, error_);
+      }
+      if (pendingInserts_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(5, pendingInserts_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -4093,6 +4379,8 @@ public final class Controlservice {
           == other.getSwitching());
       result = result && getError()
           .equals(other.getError());
+      result = result && (getPendingInserts()
+          == other.getPendingInserts());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -4113,6 +4401,9 @@ public final class Controlservice {
           getSwitching());
       hash = (37 * hash) + ERROR_FIELD_NUMBER;
       hash = (53 * hash) + getError().hashCode();
+      hash = (37 * hash) + PENDINGINSERTS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getPendingInserts());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4250,6 +4541,8 @@ public final class Controlservice {
 
         error_ = "";
 
+        pendingInserts_ = 0L;
+
         return this;
       }
 
@@ -4276,6 +4569,7 @@ public final class Controlservice {
         result.phaseID_ = phaseID_;
         result.switching_ = switching_;
         result.error_ = error_;
+        result.pendingInserts_ = pendingInserts_;
         onBuilt();
         return result;
       }
@@ -4330,6 +4624,9 @@ public final class Controlservice {
         if (!other.getError().isEmpty()) {
           error_ = other.error_;
           onChanged();
+        }
+        if (other.getPendingInserts() != 0L) {
+          setPendingInserts(other.getPendingInserts());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -4562,6 +4859,32 @@ public final class Controlservice {
   checkByteStringIsUtf8(value);
         
         error_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long pendingInserts_ ;
+      /**
+       * <code>uint64 pendingInserts = 5;</code>
+       */
+      public long getPendingInserts() {
+        return pendingInserts_;
+      }
+      /**
+       * <code>uint64 pendingInserts = 5;</code>
+       */
+      public Builder setPendingInserts(long value) {
+        
+        pendingInserts_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 pendingInserts = 5;</code>
+       */
+      public Builder clearPendingInserts() {
+        
+        pendingInserts_ = 0L;
         onChanged();
         return this;
       }
@@ -6029,10 +6352,10 @@ public final class Controlservice {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_service_SwitchPhaseResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_service_PackageRequest_descriptor;
+    internal_static_service_GetFileNodeMessage_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_service_PackageRequest_fieldAccessorTable;
+      internal_static_service_GetFileNodeMessage_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_service_StatusMessage_descriptor;
   private static final 
@@ -6073,30 +6396,33 @@ public final class Controlservice {
       "ge\022\014\n\004kill\030\001 \001(\010\"\037\n\014QuitResponse\022\017\n\007succ" +
       "ess\030\001 \001(\010\"3\n\022SwitchPhaseMessage\022\035\n\005phase" +
       "\030\001 \001(\0162\016.service.Phase\"5\n\023SwitchPhaseRes" +
-      "ponse\022\017\n\007success\030\001 \001(\010\022\r\n\005error\030\002 \001(\t\"\020\n" +
-      "\016PackageRequest\".\n\rStatusMessage\022\r\n\005phas" +
-      "e\030\001 \001(\010\022\016\n\006switch\030\002 \001(\010\"b\n\016StatusRespons" +
-      "e\022\r\n\005phase\030\001 \001(\t\022\037\n\007phaseID\030\002 \001(\0162\016.serv" +
-      "ice.Phase\022\021\n\tswitching\030\003 \001(\010\022\r\n\005error\030\004 " +
-      "\001(\t\"2\n\014EventMessage\022\"\n\005class\030\001 \001(\0162\023.ser" +
-      "vice.EventClass\"\035\n\rExportRequest\022\014\n\004wait" +
-      "\030\001 \001(\010\"!\n\016ExportResponse\022\017\n\007success\030\001 \001(" +
-      "\0102\316\004\n\016ControlService\0222\n\003Log\022\023.service.Lo" +
-      "gMessage\032\024.service.LogResponse\"\000\0225\n\004Quit" +
-      "\022\024.service.QuitMessage\032\025.service.QuitRes" +
-      "ponse\"\000\022J\n\013SwitchPhase\022\033.service.SwitchP" +
-      "haseMessage\032\034.service.SwitchPhaseRespons" +
-      "e\"\000\022A\n\016GetPackageNode\022\027.service.PackageR" +
-      "equest\032\024.service.PackageNode\"\000\0227\n\013GetFil" +
-      "eNode\022\021.service.FileNode\032\021.service.FileN" +
-      "ode\"\0000\001\022I\n\021GetDiagnosticNode\022\027.service.D" +
-      "iagnosticNode\032\027.service.DiagnosticNode\"\000" +
-      "0\001\022;\n\006Status\022\026.service.StatusMessage\032\027.s" +
-      "ervice.StatusResponse\"\000\022<\n\017SubscribeEven" +
-      "ts\022\025.service.EventMessage\032\016.service.Even" +
-      "t\"\0000\001\022C\n\016ExportSnapshot\022\026.service.Export" +
-      "Request\032\027.service.ExportResponse\"\000B\030\n\026or" +
-      "g.qmstr.grpc.serviceX\000b\006proto3"
+      "ponse\022\017\n\007success\030\001 \001(\010\022\r\n\005error\030\002 \001(\t\"M\n" +
+      "\022GetFileNodeMessage\022#\n\010fileNode\030\001 \001(\0132\021." +
+      "service.FileNode\022\022\n\nuniqueNode\030\002 \001(\010\".\n\r" +
+      "StatusMessage\022\r\n\005phase\030\001 \001(\010\022\016\n\006switch\030\002" +
+      " \001(\010\"z\n\016StatusResponse\022\r\n\005phase\030\001 \001(\t\022\037\n" +
+      "\007phaseID\030\002 \001(\0162\016.service.Phase\022\021\n\tswitch" +
+      "ing\030\003 \001(\010\022\r\n\005error\030\004 \001(\t\022\026\n\016pendingInser" +
+      "ts\030\005 \001(\004\"2\n\014EventMessage\022\"\n\005class\030\001 \001(\0162" +
+      "\023.service.EventClass\"\035\n\rExportRequest\022\014\n" +
+      "\004wait\030\001 \001(\010\"!\n\016ExportResponse\022\017\n\007success" +
+      "\030\001 \001(\0102\327\004\n\016ControlService\0222\n\003Log\022\023.servi" +
+      "ce.LogMessage\032\024.service.LogResponse\"\000\0225\n" +
+      "\004Quit\022\024.service.QuitMessage\032\025.service.Qu" +
+      "itResponse\"\000\022J\n\013SwitchPhase\022\033.service.Sw" +
+      "itchPhaseMessage\032\034.service.SwitchPhaseRe" +
+      "sponse\"\000\022@\n\016GetPackageNode\022\024.service.Pac" +
+      "kageNode\032\024.service.PackageNode\"\0000\001\022A\n\013Ge" +
+      "tFileNode\022\033.service.GetFileNodeMessage\032\021" +
+      ".service.FileNode\"\0000\001\022I\n\021GetDiagnosticNo" +
+      "de\022\027.service.DiagnosticNode\032\027.service.Di" +
+      "agnosticNode\"\0000\001\022;\n\006Status\022\026.service.Sta" +
+      "tusMessage\032\027.service.StatusResponse\"\000\022<\n" +
+      "\017SubscribeEvents\022\025.service.EventMessage\032" +
+      "\016.service.Event\"\0000\001\022C\n\016ExportSnapshot\022\026." +
+      "service.ExportRequest\032\027.service.ExportRe" +
+      "sponse\"\000B\030\n\026org.qmstr.grpc.serviceX\000b\006pr" +
+      "oto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -6147,12 +6473,12 @@ public final class Controlservice {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_SwitchPhaseResponse_descriptor,
         new java.lang.String[] { "Success", "Error", });
-    internal_static_service_PackageRequest_descriptor =
+    internal_static_service_GetFileNodeMessage_descriptor =
       getDescriptor().getMessageTypes().get(6);
-    internal_static_service_PackageRequest_fieldAccessorTable = new
+    internal_static_service_GetFileNodeMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_service_PackageRequest_descriptor,
-        new java.lang.String[] { });
+        internal_static_service_GetFileNodeMessage_descriptor,
+        new java.lang.String[] { "FileNode", "UniqueNode", });
     internal_static_service_StatusMessage_descriptor =
       getDescriptor().getMessageTypes().get(7);
     internal_static_service_StatusMessage_fieldAccessorTable = new
@@ -6164,7 +6490,7 @@ public final class Controlservice {
     internal_static_service_StatusResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_StatusResponse_descriptor,
-        new java.lang.String[] { "Phase", "PhaseID", "Switching", "Error", });
+        new java.lang.String[] { "Phase", "PhaseID", "Switching", "Error", "PendingInserts", });
     internal_static_service_EventMessage_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_service_EventMessage_fieldAccessorTable = new

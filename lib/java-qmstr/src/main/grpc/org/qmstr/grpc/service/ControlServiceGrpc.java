@@ -123,28 +123,28 @@ public final class ControlServiceGrpc {
      return getSwitchPhaseMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.PackageRequest,
+  private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Datamodel.PackageNode,
       org.qmstr.grpc.service.Datamodel.PackageNode> getGetPackageNodeMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetPackageNode",
-      requestType = org.qmstr.grpc.service.Controlservice.PackageRequest.class,
+      requestType = org.qmstr.grpc.service.Datamodel.PackageNode.class,
       responseType = org.qmstr.grpc.service.Datamodel.PackageNode.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.PackageRequest,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+  public static io.grpc.MethodDescriptor<org.qmstr.grpc.service.Datamodel.PackageNode,
       org.qmstr.grpc.service.Datamodel.PackageNode> getGetPackageNodeMethod() {
-    io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.PackageRequest, org.qmstr.grpc.service.Datamodel.PackageNode> getGetPackageNodeMethod;
+    io.grpc.MethodDescriptor<org.qmstr.grpc.service.Datamodel.PackageNode, org.qmstr.grpc.service.Datamodel.PackageNode> getGetPackageNodeMethod;
     if ((getGetPackageNodeMethod = ControlServiceGrpc.getGetPackageNodeMethod) == null) {
       synchronized (ControlServiceGrpc.class) {
         if ((getGetPackageNodeMethod = ControlServiceGrpc.getGetPackageNodeMethod) == null) {
           ControlServiceGrpc.getGetPackageNodeMethod = getGetPackageNodeMethod = 
-              io.grpc.MethodDescriptor.<org.qmstr.grpc.service.Controlservice.PackageRequest, org.qmstr.grpc.service.Datamodel.PackageNode>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              io.grpc.MethodDescriptor.<org.qmstr.grpc.service.Datamodel.PackageNode, org.qmstr.grpc.service.Datamodel.PackageNode>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
               .setFullMethodName(generateFullMethodName(
                   "service.ControlService", "GetPackageNode"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.qmstr.grpc.service.Controlservice.PackageRequest.getDefaultInstance()))
+                  org.qmstr.grpc.service.Datamodel.PackageNode.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.qmstr.grpc.service.Datamodel.PackageNode.getDefaultInstance()))
                   .setSchemaDescriptor(new ControlServiceMethodDescriptorSupplier("GetPackageNode"))
@@ -155,28 +155,28 @@ public final class ControlServiceGrpc {
      return getGetPackageNodeMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Datamodel.FileNode,
+  private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.GetFileNodeMessage,
       org.qmstr.grpc.service.Datamodel.FileNode> getGetFileNodeMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetFileNode",
-      requestType = org.qmstr.grpc.service.Datamodel.FileNode.class,
+      requestType = org.qmstr.grpc.service.Controlservice.GetFileNodeMessage.class,
       responseType = org.qmstr.grpc.service.Datamodel.FileNode.class,
       methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
-  public static io.grpc.MethodDescriptor<org.qmstr.grpc.service.Datamodel.FileNode,
+  public static io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.GetFileNodeMessage,
       org.qmstr.grpc.service.Datamodel.FileNode> getGetFileNodeMethod() {
-    io.grpc.MethodDescriptor<org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode> getGetFileNodeMethod;
+    io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.GetFileNodeMessage, org.qmstr.grpc.service.Datamodel.FileNode> getGetFileNodeMethod;
     if ((getGetFileNodeMethod = ControlServiceGrpc.getGetFileNodeMethod) == null) {
       synchronized (ControlServiceGrpc.class) {
         if ((getGetFileNodeMethod = ControlServiceGrpc.getGetFileNodeMethod) == null) {
           ControlServiceGrpc.getGetFileNodeMethod = getGetFileNodeMethod = 
-              io.grpc.MethodDescriptor.<org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode>newBuilder()
+              io.grpc.MethodDescriptor.<org.qmstr.grpc.service.Controlservice.GetFileNodeMessage, org.qmstr.grpc.service.Datamodel.FileNode>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
               .setFullMethodName(generateFullMethodName(
                   "service.ControlService", "GetFileNode"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.qmstr.grpc.service.Datamodel.FileNode.getDefaultInstance()))
+                  org.qmstr.grpc.service.Controlservice.GetFileNodeMessage.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   org.qmstr.grpc.service.Datamodel.FileNode.getDefaultInstance()))
                   .setSchemaDescriptor(new ControlServiceMethodDescriptorSupplier("GetFileNode"))
@@ -365,14 +365,14 @@ public final class ControlServiceGrpc {
 
     /**
      */
-    public void getPackageNode(org.qmstr.grpc.service.Controlservice.PackageRequest request,
+    public void getPackageNode(org.qmstr.grpc.service.Datamodel.PackageNode request,
         io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Datamodel.PackageNode> responseObserver) {
       asyncUnimplementedUnaryCall(getGetPackageNodeMethod(), responseObserver);
     }
 
     /**
      */
-    public void getFileNode(org.qmstr.grpc.service.Datamodel.FileNode request,
+    public void getFileNode(org.qmstr.grpc.service.Controlservice.GetFileNodeMessage request,
         io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Datamodel.FileNode> responseObserver) {
       asyncUnimplementedUnaryCall(getGetFileNodeMethod(), responseObserver);
     }
@@ -430,16 +430,16 @@ public final class ControlServiceGrpc {
                   this, METHODID_SWITCH_PHASE)))
           .addMethod(
             getGetPackageNodeMethod(),
-            asyncUnaryCall(
+            asyncServerStreamingCall(
               new MethodHandlers<
-                org.qmstr.grpc.service.Controlservice.PackageRequest,
+                org.qmstr.grpc.service.Datamodel.PackageNode,
                 org.qmstr.grpc.service.Datamodel.PackageNode>(
                   this, METHODID_GET_PACKAGE_NODE)))
           .addMethod(
             getGetFileNodeMethod(),
             asyncServerStreamingCall(
               new MethodHandlers<
-                org.qmstr.grpc.service.Datamodel.FileNode,
+                org.qmstr.grpc.service.Controlservice.GetFileNodeMessage,
                 org.qmstr.grpc.service.Datamodel.FileNode>(
                   this, METHODID_GET_FILE_NODE)))
           .addMethod(
@@ -518,15 +518,15 @@ public final class ControlServiceGrpc {
 
     /**
      */
-    public void getPackageNode(org.qmstr.grpc.service.Controlservice.PackageRequest request,
+    public void getPackageNode(org.qmstr.grpc.service.Datamodel.PackageNode request,
         io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Datamodel.PackageNode> responseObserver) {
-      asyncUnaryCall(
+      asyncServerStreamingCall(
           getChannel().newCall(getGetPackageNodeMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void getFileNode(org.qmstr.grpc.service.Datamodel.FileNode request,
+    public void getFileNode(org.qmstr.grpc.service.Controlservice.GetFileNodeMessage request,
         io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Datamodel.FileNode> responseObserver) {
       asyncServerStreamingCall(
           getChannel().newCall(getGetFileNodeMethod(), getCallOptions()), request, responseObserver);
@@ -606,15 +606,16 @@ public final class ControlServiceGrpc {
 
     /**
      */
-    public org.qmstr.grpc.service.Datamodel.PackageNode getPackageNode(org.qmstr.grpc.service.Controlservice.PackageRequest request) {
-      return blockingUnaryCall(
+    public java.util.Iterator<org.qmstr.grpc.service.Datamodel.PackageNode> getPackageNode(
+        org.qmstr.grpc.service.Datamodel.PackageNode request) {
+      return blockingServerStreamingCall(
           getChannel(), getGetPackageNodeMethod(), getCallOptions(), request);
     }
 
     /**
      */
     public java.util.Iterator<org.qmstr.grpc.service.Datamodel.FileNode> getFileNode(
-        org.qmstr.grpc.service.Datamodel.FileNode request) {
+        org.qmstr.grpc.service.Controlservice.GetFileNodeMessage request) {
       return blockingServerStreamingCall(
           getChannel(), getGetFileNodeMethod(), getCallOptions(), request);
     }
@@ -694,14 +695,6 @@ public final class ControlServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.qmstr.grpc.service.Datamodel.PackageNode> getPackageNode(
-        org.qmstr.grpc.service.Controlservice.PackageRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGetPackageNodeMethod(), getCallOptions()), request);
-    }
-
-    /**
-     */
     public com.google.common.util.concurrent.ListenableFuture<org.qmstr.grpc.service.Controlservice.StatusResponse> status(
         org.qmstr.grpc.service.Controlservice.StatusMessage request) {
       return futureUnaryCall(
@@ -757,11 +750,11 @@ public final class ControlServiceGrpc {
               (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Controlservice.SwitchPhaseResponse>) responseObserver);
           break;
         case METHODID_GET_PACKAGE_NODE:
-          serviceImpl.getPackageNode((org.qmstr.grpc.service.Controlservice.PackageRequest) request,
+          serviceImpl.getPackageNode((org.qmstr.grpc.service.Datamodel.PackageNode) request,
               (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Datamodel.PackageNode>) responseObserver);
           break;
         case METHODID_GET_FILE_NODE:
-          serviceImpl.getFileNode((org.qmstr.grpc.service.Datamodel.FileNode) request,
+          serviceImpl.getFileNode((org.qmstr.grpc.service.Controlservice.GetFileNodeMessage) request,
               (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Datamodel.FileNode>) responseObserver);
           break;
         case METHODID_GET_DIAGNOSTIC_NODE:
