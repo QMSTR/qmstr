@@ -1,0 +1,58 @@
+repositories {
+  maven {
+    url "https://maven-central.storage-download.googleapis.com/repos/central/data/"
+  }
+}
+
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.8'
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
+apply plugin: 'maven'
+
+group = "org.qmstr"
+version = "0.3.0"
+
+def grpcVersion = '1.18.0'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+  compile "io.grpc:grpc-netty:${grpcVersion}"
+  compile "io.grpc:grpc-protobuf:${grpcVersion}"
+  compile "io.grpc:grpc-stub:${grpcVersion}"
+  compileOnly 'javax.annotation:jsr250-api:1.0'
+}
+
+protobuf {
+  generatedFilesBaseDir = "$projectDir/src"
+  protoc {
+    artifact = 'com.google.protobuf:protoc:3.5.1-1'
+  }
+  plugins {
+    grpc {
+      artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+    }
+  }
+  generateProtoTasks {
+    all()*.plugins {
+      grpc {}
+    }
+  }
+}
+
+jar {
+  manifest {
+    attributes('Implementation-Title': project.name,
+      'Implementation-Version': project.version)
+  }
+  exclude('**/*.proto')
+}
