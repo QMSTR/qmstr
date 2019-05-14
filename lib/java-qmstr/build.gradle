@@ -20,7 +20,7 @@ apply plugin: 'maven'
 group = "org.qmstr"
 version = "$System.env.QMSTR_VERSION"
 
-def grpcVersion = '1.18.0'
+def grpcVersion = "$System.env.GRPCIO_VERSION"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
