@@ -1,4 +1,3 @@
-
 lib/go-qmstr/service/%.pb.go: proto/%.proto
 	$(GO) get -u google.golang.org/grpc@v$(GRPCIO_VERSION)
 	protoc -I proto --go_out=plugins=grpc:lib/go-qmstr/service proto/*.proto

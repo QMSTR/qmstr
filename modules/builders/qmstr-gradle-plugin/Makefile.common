@@ -1,0 +1,7 @@
+.PHONY := $(QMSTR_GRADLE_PLUGIN)
+QMSTR_GRADLE_PLUGIN := qmstr-gradle-plugin
+
+$(QMSTR_GRADLE_PLUGIN): $(OUTDIR)builders/$(QMSTR_GRADLE_PLUGIN)/build/libs/gradle-plugin-$(QMSTR_VERSION).jar
+
+$(OUTDIR)builders/$(QMSTR_GRADLE_PLUGIN)/build/libs/gradle-plugin-$(QMSTR_VERSION).jar:
+	cd modules/builders/qmstr-gradle-plugin && ./gradlew install
