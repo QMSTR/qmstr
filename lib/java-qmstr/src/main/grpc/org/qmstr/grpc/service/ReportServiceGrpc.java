@@ -91,36 +91,36 @@ public final class ReportServiceGrpc {
      return getGetInfoDataMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Reportservice.BOMRequest,
-      org.qmstr.grpc.service.Bom.BOM> getGetBOMMethod;
+  private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Datamodel.ProjectNode,
+      org.qmstr.grpc.service.Datamodel.ProjectNode> getGetProjectNodeMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "GetBOM",
-      requestType = org.qmstr.grpc.service.Reportservice.BOMRequest.class,
-      responseType = org.qmstr.grpc.service.Bom.BOM.class,
+      fullMethodName = SERVICE_NAME + '/' + "GetProjectNode",
+      requestType = org.qmstr.grpc.service.Datamodel.ProjectNode.class,
+      responseType = org.qmstr.grpc.service.Datamodel.ProjectNode.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<org.qmstr.grpc.service.Reportservice.BOMRequest,
-      org.qmstr.grpc.service.Bom.BOM> getGetBOMMethod() {
-    io.grpc.MethodDescriptor<org.qmstr.grpc.service.Reportservice.BOMRequest, org.qmstr.grpc.service.Bom.BOM> getGetBOMMethod;
-    if ((getGetBOMMethod = ReportServiceGrpc.getGetBOMMethod) == null) {
+  public static io.grpc.MethodDescriptor<org.qmstr.grpc.service.Datamodel.ProjectNode,
+      org.qmstr.grpc.service.Datamodel.ProjectNode> getGetProjectNodeMethod() {
+    io.grpc.MethodDescriptor<org.qmstr.grpc.service.Datamodel.ProjectNode, org.qmstr.grpc.service.Datamodel.ProjectNode> getGetProjectNodeMethod;
+    if ((getGetProjectNodeMethod = ReportServiceGrpc.getGetProjectNodeMethod) == null) {
       synchronized (ReportServiceGrpc.class) {
-        if ((getGetBOMMethod = ReportServiceGrpc.getGetBOMMethod) == null) {
-          ReportServiceGrpc.getGetBOMMethod = getGetBOMMethod = 
-              io.grpc.MethodDescriptor.<org.qmstr.grpc.service.Reportservice.BOMRequest, org.qmstr.grpc.service.Bom.BOM>newBuilder()
+        if ((getGetProjectNodeMethod = ReportServiceGrpc.getGetProjectNodeMethod) == null) {
+          ReportServiceGrpc.getGetProjectNodeMethod = getGetProjectNodeMethod = 
+              io.grpc.MethodDescriptor.<org.qmstr.grpc.service.Datamodel.ProjectNode, org.qmstr.grpc.service.Datamodel.ProjectNode>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(
-                  "service.ReportService", "GetBOM"))
+                  "service.ReportService", "GetProjectNode"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.qmstr.grpc.service.Reportservice.BOMRequest.getDefaultInstance()))
+                  org.qmstr.grpc.service.Datamodel.ProjectNode.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  org.qmstr.grpc.service.Bom.BOM.getDefaultInstance()))
-                  .setSchemaDescriptor(new ReportServiceMethodDescriptorSupplier("GetBOM"))
+                  org.qmstr.grpc.service.Datamodel.ProjectNode.getDefaultInstance()))
+                  .setSchemaDescriptor(new ReportServiceMethodDescriptorSupplier("GetProjectNode"))
                   .build();
           }
         }
      }
-     return getGetBOMMethod;
+     return getGetProjectNodeMethod;
   }
 
   /**
@@ -166,9 +166,9 @@ public final class ReportServiceGrpc {
 
     /**
      */
-    public void getBOM(org.qmstr.grpc.service.Reportservice.BOMRequest request,
-        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Bom.BOM> responseObserver) {
-      asyncUnimplementedUnaryCall(getGetBOMMethod(), responseObserver);
+    public void getProjectNode(org.qmstr.grpc.service.Datamodel.ProjectNode request,
+        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Datamodel.ProjectNode> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetProjectNodeMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -188,12 +188,12 @@ public final class ReportServiceGrpc {
                 org.qmstr.grpc.service.Reportservice.InfoDataResponse>(
                   this, METHODID_GET_INFO_DATA)))
           .addMethod(
-            getGetBOMMethod(),
+            getGetProjectNodeMethod(),
             asyncUnaryCall(
               new MethodHandlers<
-                org.qmstr.grpc.service.Reportservice.BOMRequest,
-                org.qmstr.grpc.service.Bom.BOM>(
-                  this, METHODID_GET_BOM)))
+                org.qmstr.grpc.service.Datamodel.ProjectNode,
+                org.qmstr.grpc.service.Datamodel.ProjectNode>(
+                  this, METHODID_GET_PROJECT_NODE)))
           .build();
     }
   }
@@ -234,10 +234,10 @@ public final class ReportServiceGrpc {
 
     /**
      */
-    public void getBOM(org.qmstr.grpc.service.Reportservice.BOMRequest request,
-        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Bom.BOM> responseObserver) {
+    public void getProjectNode(org.qmstr.grpc.service.Datamodel.ProjectNode request,
+        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Datamodel.ProjectNode> responseObserver) {
       asyncUnaryCall(
-          getChannel().newCall(getGetBOMMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getGetProjectNodeMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -275,9 +275,9 @@ public final class ReportServiceGrpc {
 
     /**
      */
-    public org.qmstr.grpc.service.Bom.BOM getBOM(org.qmstr.grpc.service.Reportservice.BOMRequest request) {
+    public org.qmstr.grpc.service.Datamodel.ProjectNode getProjectNode(org.qmstr.grpc.service.Datamodel.ProjectNode request) {
       return blockingUnaryCall(
-          getChannel(), getGetBOMMethod(), getCallOptions(), request);
+          getChannel(), getGetProjectNodeMethod(), getCallOptions(), request);
     }
   }
 
@@ -317,16 +317,16 @@ public final class ReportServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<org.qmstr.grpc.service.Bom.BOM> getBOM(
-        org.qmstr.grpc.service.Reportservice.BOMRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<org.qmstr.grpc.service.Datamodel.ProjectNode> getProjectNode(
+        org.qmstr.grpc.service.Datamodel.ProjectNode request) {
       return futureUnaryCall(
-          getChannel().newCall(getGetBOMMethod(), getCallOptions()), request);
+          getChannel().newCall(getGetProjectNodeMethod(), getCallOptions()), request);
     }
   }
 
   private static final int METHODID_GET_REPORTER_CONFIG = 0;
   private static final int METHODID_GET_INFO_DATA = 1;
-  private static final int METHODID_GET_BOM = 2;
+  private static final int METHODID_GET_PROJECT_NODE = 2;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -353,9 +353,9 @@ public final class ReportServiceGrpc {
           serviceImpl.getInfoData((org.qmstr.grpc.service.Reportservice.InfoDataRequest) request,
               (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Reportservice.InfoDataResponse>) responseObserver);
           break;
-        case METHODID_GET_BOM:
-          serviceImpl.getBOM((org.qmstr.grpc.service.Reportservice.BOMRequest) request,
-              (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Bom.BOM>) responseObserver);
+        case METHODID_GET_PROJECT_NODE:
+          serviceImpl.getProjectNode((org.qmstr.grpc.service.Datamodel.ProjectNode) request,
+              (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Datamodel.ProjectNode>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -420,7 +420,7 @@ public final class ReportServiceGrpc {
               .setSchemaDescriptor(new ReportServiceFileDescriptorSupplier())
               .addMethod(getGetReporterConfigMethod())
               .addMethod(getGetInfoDataMethod())
-              .addMethod(getGetBOMMethod())
+              .addMethod(getGetProjectNodeMethod())
               .build();
         }
       }

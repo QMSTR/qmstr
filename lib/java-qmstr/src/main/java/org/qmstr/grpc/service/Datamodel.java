@@ -483,6 +483,30 @@ public final class Datamodel {
      */
     org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder getDiagnosticInfoOrBuilder(
         int index);
+
+    /**
+     * <code>repeated .service.FileNode dependencies = 11;</code>
+     */
+    java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> 
+        getDependenciesList();
+    /**
+     * <code>repeated .service.FileNode dependencies = 11;</code>
+     */
+    org.qmstr.grpc.service.Datamodel.FileNode getDependencies(int index);
+    /**
+     * <code>repeated .service.FileNode dependencies = 11;</code>
+     */
+    int getDependenciesCount();
+    /**
+     * <code>repeated .service.FileNode dependencies = 11;</code>
+     */
+    java.util.List<? extends org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder> 
+        getDependenciesOrBuilderList();
+    /**
+     * <code>repeated .service.FileNode dependencies = 11;</code>
+     */
+    org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder getDependenciesOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code service.FileNode}
@@ -507,6 +531,7 @@ public final class Datamodel {
       derivedFrom_ = java.util.Collections.emptyList();
       additionalInfo_ = java.util.Collections.emptyList();
       diagnosticInfo_ = java.util.Collections.emptyList();
+      dependencies_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -608,6 +633,15 @@ public final class Datamodel {
                   input.readMessage(org.qmstr.grpc.service.Datamodel.DiagnosticNode.parser(), extensionRegistry));
               break;
             }
+            case 90: {
+              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+                dependencies_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.FileNode>();
+                mutable_bitField0_ |= 0x00000400;
+              }
+              dependencies_.add(
+                  input.readMessage(org.qmstr.grpc.service.Datamodel.FileNode.parser(), extensionRegistry));
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -624,6 +658,9 @@ public final class Datamodel {
         }
         if (((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
           diagnosticInfo_ = java.util.Collections.unmodifiableList(diagnosticInfo_);
+        }
+        if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+          dependencies_ = java.util.Collections.unmodifiableList(dependencies_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -1058,6 +1095,41 @@ public final class Datamodel {
       return diagnosticInfo_.get(index);
     }
 
+    public static final int DEPENDENCIES_FIELD_NUMBER = 11;
+    private java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> dependencies_;
+    /**
+     * <code>repeated .service.FileNode dependencies = 11;</code>
+     */
+    public java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> getDependenciesList() {
+      return dependencies_;
+    }
+    /**
+     * <code>repeated .service.FileNode dependencies = 11;</code>
+     */
+    public java.util.List<? extends org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder> 
+        getDependenciesOrBuilderList() {
+      return dependencies_;
+    }
+    /**
+     * <code>repeated .service.FileNode dependencies = 11;</code>
+     */
+    public int getDependenciesCount() {
+      return dependencies_.size();
+    }
+    /**
+     * <code>repeated .service.FileNode dependencies = 11;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.FileNode getDependencies(int index) {
+      return dependencies_.get(index);
+    }
+    /**
+     * <code>repeated .service.FileNode dependencies = 11;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder getDependenciesOrBuilder(
+        int index) {
+      return dependencies_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -1099,6 +1171,9 @@ public final class Datamodel {
       }
       for (int i = 0; i < diagnosticInfo_.size(); i++) {
         output.writeMessage(10, diagnosticInfo_.get(i));
+      }
+      for (int i = 0; i < dependencies_.size(); i++) {
+        output.writeMessage(11, dependencies_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -1143,6 +1218,10 @@ public final class Datamodel {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(10, diagnosticInfo_.get(i));
       }
+      for (int i = 0; i < dependencies_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(11, dependencies_.get(i));
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -1178,6 +1257,8 @@ public final class Datamodel {
           .equals(other.getAdditionalInfoList());
       result = result && getDiagnosticInfoList()
           .equals(other.getDiagnosticInfoList());
+      result = result && getDependenciesList()
+          .equals(other.getDependenciesList());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -1215,6 +1296,10 @@ public final class Datamodel {
       if (getDiagnosticInfoCount() > 0) {
         hash = (37 * hash) + DIAGNOSTICINFO_FIELD_NUMBER;
         hash = (53 * hash) + getDiagnosticInfoList().hashCode();
+      }
+      if (getDependenciesCount() > 0) {
+        hash = (37 * hash) + DEPENDENCIES_FIELD_NUMBER;
+        hash = (53 * hash) + getDependenciesList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -1344,6 +1429,7 @@ public final class Datamodel {
           getDerivedFromFieldBuilder();
           getAdditionalInfoFieldBuilder();
           getDiagnosticInfoFieldBuilder();
+          getDependenciesFieldBuilder();
         }
       }
       public Builder clear() {
@@ -1379,6 +1465,12 @@ public final class Datamodel {
           bitField0_ = (bitField0_ & ~0x00000200);
         } else {
           diagnosticInfoBuilder_.clear();
+        }
+        if (dependenciesBuilder_ == null) {
+          dependencies_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000400);
+        } else {
+          dependenciesBuilder_.clear();
         }
         return this;
       }
@@ -1437,6 +1529,15 @@ public final class Datamodel {
           result.diagnosticInfo_ = diagnosticInfo_;
         } else {
           result.diagnosticInfo_ = diagnosticInfoBuilder_.build();
+        }
+        if (dependenciesBuilder_ == null) {
+          if (((bitField0_ & 0x00000400) == 0x00000400)) {
+            dependencies_ = java.util.Collections.unmodifiableList(dependencies_);
+            bitField0_ = (bitField0_ & ~0x00000400);
+          }
+          result.dependencies_ = dependencies_;
+        } else {
+          result.dependencies_ = dependenciesBuilder_.build();
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -1581,6 +1682,32 @@ public final class Datamodel {
                    getDiagnosticInfoFieldBuilder() : null;
             } else {
               diagnosticInfoBuilder_.addAllMessages(other.diagnosticInfo_);
+            }
+          }
+        }
+        if (dependenciesBuilder_ == null) {
+          if (!other.dependencies_.isEmpty()) {
+            if (dependencies_.isEmpty()) {
+              dependencies_ = other.dependencies_;
+              bitField0_ = (bitField0_ & ~0x00000400);
+            } else {
+              ensureDependenciesIsMutable();
+              dependencies_.addAll(other.dependencies_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.dependencies_.isEmpty()) {
+            if (dependenciesBuilder_.isEmpty()) {
+              dependenciesBuilder_.dispose();
+              dependenciesBuilder_ = null;
+              dependencies_ = other.dependencies_;
+              bitField0_ = (bitField0_ & ~0x00000400);
+              dependenciesBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getDependenciesFieldBuilder() : null;
+            } else {
+              dependenciesBuilder_.addAllMessages(other.dependencies_);
             }
           }
         }
@@ -2745,6 +2872,246 @@ public final class Datamodel {
           diagnosticInfo_ = null;
         }
         return diagnosticInfoBuilder_;
+      }
+
+      private java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> dependencies_ =
+        java.util.Collections.emptyList();
+      private void ensureDependenciesIsMutable() {
+        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
+          dependencies_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.FileNode>(dependencies_);
+          bitField0_ |= 0x00000400;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode.Builder, org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder> dependenciesBuilder_;
+
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> getDependenciesList() {
+        if (dependenciesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(dependencies_);
+        } else {
+          return dependenciesBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public int getDependenciesCount() {
+        if (dependenciesBuilder_ == null) {
+          return dependencies_.size();
+        } else {
+          return dependenciesBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.FileNode getDependencies(int index) {
+        if (dependenciesBuilder_ == null) {
+          return dependencies_.get(index);
+        } else {
+          return dependenciesBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public Builder setDependencies(
+          int index, org.qmstr.grpc.service.Datamodel.FileNode value) {
+        if (dependenciesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDependenciesIsMutable();
+          dependencies_.set(index, value);
+          onChanged();
+        } else {
+          dependenciesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public Builder setDependencies(
+          int index, org.qmstr.grpc.service.Datamodel.FileNode.Builder builderForValue) {
+        if (dependenciesBuilder_ == null) {
+          ensureDependenciesIsMutable();
+          dependencies_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          dependenciesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public Builder addDependencies(org.qmstr.grpc.service.Datamodel.FileNode value) {
+        if (dependenciesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDependenciesIsMutable();
+          dependencies_.add(value);
+          onChanged();
+        } else {
+          dependenciesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public Builder addDependencies(
+          int index, org.qmstr.grpc.service.Datamodel.FileNode value) {
+        if (dependenciesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureDependenciesIsMutable();
+          dependencies_.add(index, value);
+          onChanged();
+        } else {
+          dependenciesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public Builder addDependencies(
+          org.qmstr.grpc.service.Datamodel.FileNode.Builder builderForValue) {
+        if (dependenciesBuilder_ == null) {
+          ensureDependenciesIsMutable();
+          dependencies_.add(builderForValue.build());
+          onChanged();
+        } else {
+          dependenciesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public Builder addDependencies(
+          int index, org.qmstr.grpc.service.Datamodel.FileNode.Builder builderForValue) {
+        if (dependenciesBuilder_ == null) {
+          ensureDependenciesIsMutable();
+          dependencies_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          dependenciesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public Builder addAllDependencies(
+          java.lang.Iterable<? extends org.qmstr.grpc.service.Datamodel.FileNode> values) {
+        if (dependenciesBuilder_ == null) {
+          ensureDependenciesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, dependencies_);
+          onChanged();
+        } else {
+          dependenciesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public Builder clearDependencies() {
+        if (dependenciesBuilder_ == null) {
+          dependencies_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000400);
+          onChanged();
+        } else {
+          dependenciesBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public Builder removeDependencies(int index) {
+        if (dependenciesBuilder_ == null) {
+          ensureDependenciesIsMutable();
+          dependencies_.remove(index);
+          onChanged();
+        } else {
+          dependenciesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.FileNode.Builder getDependenciesBuilder(
+          int index) {
+        return getDependenciesFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder getDependenciesOrBuilder(
+          int index) {
+        if (dependenciesBuilder_ == null) {
+          return dependencies_.get(index);  } else {
+          return dependenciesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public java.util.List<? extends org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder> 
+           getDependenciesOrBuilderList() {
+        if (dependenciesBuilder_ != null) {
+          return dependenciesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(dependencies_);
+        }
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.FileNode.Builder addDependenciesBuilder() {
+        return getDependenciesFieldBuilder().addBuilder(
+            org.qmstr.grpc.service.Datamodel.FileNode.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.FileNode.Builder addDependenciesBuilder(
+          int index) {
+        return getDependenciesFieldBuilder().addBuilder(
+            index, org.qmstr.grpc.service.Datamodel.FileNode.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .service.FileNode dependencies = 11;</code>
+       */
+      public java.util.List<org.qmstr.grpc.service.Datamodel.FileNode.Builder> 
+           getDependenciesBuilderList() {
+        return getDependenciesFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode.Builder, org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder> 
+          getDependenciesFieldBuilder() {
+        if (dependenciesBuilder_ == null) {
+          dependenciesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode.Builder, org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder>(
+                  dependencies_,
+                  ((bitField0_ & 0x00000400) == 0x00000400),
+                  getParentForChildren(),
+                  isClean());
+          dependencies_ = null;
+        }
+        return dependenciesBuilder_;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -8499,6 +8866,16 @@ public final class Datamodel {
         getNameBytes();
 
     /**
+     * <code>string version = 3;</code>
+     */
+    java.lang.String getVersion();
+    /**
+     * <code>string version = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getVersionBytes();
+
+    /**
      * <code>string packageNodeType = 4;</code>
      */
     java.lang.String getPackageNodeType();
@@ -8605,6 +8982,7 @@ public final class Datamodel {
     private PackageNode() {
       uid_ = "";
       name_ = "";
+      version_ = "";
       packageNodeType_ = "";
       targets_ = java.util.Collections.emptyList();
       additionalInfo_ = java.util.Collections.emptyList();
@@ -8655,6 +9033,12 @@ public final class Datamodel {
               name_ = s;
               break;
             }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              version_ = s;
+              break;
+            }
             case 34: {
               java.lang.String s = input.readStringRequireUtf8();
 
@@ -8662,18 +9046,18 @@ public final class Datamodel {
               break;
             }
             case 42: {
-              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
                 targets_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.FileNode>();
-                mutable_bitField0_ |= 0x00000008;
+                mutable_bitField0_ |= 0x00000010;
               }
               targets_.add(
                   input.readMessage(org.qmstr.grpc.service.Datamodel.FileNode.parser(), extensionRegistry));
               break;
             }
             case 50: {
-              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
                 additionalInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.InfoNode>();
-                mutable_bitField0_ |= 0x00000010;
+                mutable_bitField0_ |= 0x00000020;
               }
               additionalInfo_.add(
                   input.readMessage(org.qmstr.grpc.service.Datamodel.InfoNode.parser(), extensionRegistry));
@@ -8686,9 +9070,9 @@ public final class Datamodel {
               break;
             }
             case 66: {
-              if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
                 diagnosticInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.DiagnosticNode>();
-                mutable_bitField0_ |= 0x00000040;
+                mutable_bitField0_ |= 0x00000080;
               }
               diagnosticInfo_.add(
                   input.readMessage(org.qmstr.grpc.service.Datamodel.DiagnosticNode.parser(), extensionRegistry));
@@ -8702,13 +9086,13 @@ public final class Datamodel {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
           targets_ = java.util.Collections.unmodifiableList(targets_);
         }
-        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
           additionalInfo_ = java.util.Collections.unmodifiableList(additionalInfo_);
         }
-        if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
+        if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
           diagnosticInfo_ = java.util.Collections.unmodifiableList(diagnosticInfo_);
         }
         this.unknownFields = unknownFields.build();
@@ -8790,6 +9174,40 @@ public final class Datamodel {
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int VERSION_FIELD_NUMBER = 3;
+    private volatile java.lang.Object version_;
+    /**
+     * <code>string version = 3;</code>
+     */
+    public java.lang.String getVersion() {
+      java.lang.Object ref = version_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        version_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string version = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getVersionBytes() {
+      java.lang.Object ref = version_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        version_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -8987,6 +9405,9 @@ public final class Datamodel {
       if (!getNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
       }
+      if (!getVersionBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, version_);
+      }
       if (!getPackageNodeTypeBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, packageNodeType_);
       }
@@ -9015,6 +9436,9 @@ public final class Datamodel {
       }
       if (!getNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
+      }
+      if (!getVersionBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, version_);
       }
       if (!getPackageNodeTypeBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, packageNodeType_);
@@ -9054,6 +9478,8 @@ public final class Datamodel {
           .equals(other.getUid());
       result = result && getName()
           .equals(other.getName());
+      result = result && getVersion()
+          .equals(other.getVersion());
       result = result && getPackageNodeType()
           .equals(other.getPackageNodeType());
       result = result && getTargetsList()
@@ -9079,6 +9505,8 @@ public final class Datamodel {
       hash = (53 * hash) + getUid().hashCode();
       hash = (37 * hash) + NAME_FIELD_NUMBER;
       hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + VERSION_FIELD_NUMBER;
+      hash = (53 * hash) + getVersion().hashCode();
       hash = (37 * hash) + PACKAGENODETYPE_FIELD_NUMBER;
       hash = (53 * hash) + getPackageNodeType().hashCode();
       if (getTargetsCount() > 0) {
@@ -9231,17 +9659,19 @@ public final class Datamodel {
 
         name_ = "";
 
+        version_ = "";
+
         packageNodeType_ = "";
 
         if (targetsBuilder_ == null) {
           targets_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000010);
         } else {
           targetsBuilder_.clear();
         }
         if (additionalInfoBuilder_ == null) {
           additionalInfo_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000020);
         } else {
           additionalInfoBuilder_.clear();
         }
@@ -9249,7 +9679,7 @@ public final class Datamodel {
 
         if (diagnosticInfoBuilder_ == null) {
           diagnosticInfo_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000040);
+          bitField0_ = (bitField0_ & ~0x00000080);
         } else {
           diagnosticInfoBuilder_.clear();
         }
@@ -9279,20 +9709,21 @@ public final class Datamodel {
         int to_bitField0_ = 0;
         result.uid_ = uid_;
         result.name_ = name_;
+        result.version_ = version_;
         result.packageNodeType_ = packageNodeType_;
         if (targetsBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          if (((bitField0_ & 0x00000010) == 0x00000010)) {
             targets_ = java.util.Collections.unmodifiableList(targets_);
-            bitField0_ = (bitField0_ & ~0x00000008);
+            bitField0_ = (bitField0_ & ~0x00000010);
           }
           result.targets_ = targets_;
         } else {
           result.targets_ = targetsBuilder_.build();
         }
         if (additionalInfoBuilder_ == null) {
-          if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          if (((bitField0_ & 0x00000020) == 0x00000020)) {
             additionalInfo_ = java.util.Collections.unmodifiableList(additionalInfo_);
-            bitField0_ = (bitField0_ & ~0x00000010);
+            bitField0_ = (bitField0_ & ~0x00000020);
           }
           result.additionalInfo_ = additionalInfo_;
         } else {
@@ -9300,9 +9731,9 @@ public final class Datamodel {
         }
         result.buildConfig_ = buildConfig_;
         if (diagnosticInfoBuilder_ == null) {
-          if (((bitField0_ & 0x00000040) == 0x00000040)) {
+          if (((bitField0_ & 0x00000080) == 0x00000080)) {
             diagnosticInfo_ = java.util.Collections.unmodifiableList(diagnosticInfo_);
-            bitField0_ = (bitField0_ & ~0x00000040);
+            bitField0_ = (bitField0_ & ~0x00000080);
           }
           result.diagnosticInfo_ = diagnosticInfo_;
         } else {
@@ -9358,6 +9789,10 @@ public final class Datamodel {
           name_ = other.name_;
           onChanged();
         }
+        if (!other.getVersion().isEmpty()) {
+          version_ = other.version_;
+          onChanged();
+        }
         if (!other.getPackageNodeType().isEmpty()) {
           packageNodeType_ = other.packageNodeType_;
           onChanged();
@@ -9366,7 +9801,7 @@ public final class Datamodel {
           if (!other.targets_.isEmpty()) {
             if (targets_.isEmpty()) {
               targets_ = other.targets_;
-              bitField0_ = (bitField0_ & ~0x00000008);
+              bitField0_ = (bitField0_ & ~0x00000010);
             } else {
               ensureTargetsIsMutable();
               targets_.addAll(other.targets_);
@@ -9379,7 +9814,7 @@ public final class Datamodel {
               targetsBuilder_.dispose();
               targetsBuilder_ = null;
               targets_ = other.targets_;
-              bitField0_ = (bitField0_ & ~0x00000008);
+              bitField0_ = (bitField0_ & ~0x00000010);
               targetsBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getTargetsFieldBuilder() : null;
@@ -9392,7 +9827,7 @@ public final class Datamodel {
           if (!other.additionalInfo_.isEmpty()) {
             if (additionalInfo_.isEmpty()) {
               additionalInfo_ = other.additionalInfo_;
-              bitField0_ = (bitField0_ & ~0x00000010);
+              bitField0_ = (bitField0_ & ~0x00000020);
             } else {
               ensureAdditionalInfoIsMutable();
               additionalInfo_.addAll(other.additionalInfo_);
@@ -9405,7 +9840,7 @@ public final class Datamodel {
               additionalInfoBuilder_.dispose();
               additionalInfoBuilder_ = null;
               additionalInfo_ = other.additionalInfo_;
-              bitField0_ = (bitField0_ & ~0x00000010);
+              bitField0_ = (bitField0_ & ~0x00000020);
               additionalInfoBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getAdditionalInfoFieldBuilder() : null;
@@ -9422,7 +9857,7 @@ public final class Datamodel {
           if (!other.diagnosticInfo_.isEmpty()) {
             if (diagnosticInfo_.isEmpty()) {
               diagnosticInfo_ = other.diagnosticInfo_;
-              bitField0_ = (bitField0_ & ~0x00000040);
+              bitField0_ = (bitField0_ & ~0x00000080);
             } else {
               ensureDiagnosticInfoIsMutable();
               diagnosticInfo_.addAll(other.diagnosticInfo_);
@@ -9435,7 +9870,7 @@ public final class Datamodel {
               diagnosticInfoBuilder_.dispose();
               diagnosticInfoBuilder_ = null;
               diagnosticInfo_ = other.diagnosticInfo_;
-              bitField0_ = (bitField0_ & ~0x00000040);
+              bitField0_ = (bitField0_ & ~0x00000080);
               diagnosticInfoBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getDiagnosticInfoFieldBuilder() : null;
@@ -9610,6 +10045,75 @@ public final class Datamodel {
         return this;
       }
 
+      private java.lang.Object version_ = "";
+      /**
+       * <code>string version = 3;</code>
+       */
+      public java.lang.String getVersion() {
+        java.lang.Object ref = version_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          version_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string version = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getVersionBytes() {
+        java.lang.Object ref = version_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          version_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string version = 3;</code>
+       */
+      public Builder setVersion(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        version_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string version = 3;</code>
+       */
+      public Builder clearVersion() {
+        
+        version_ = getDefaultInstance().getVersion();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string version = 3;</code>
+       */
+      public Builder setVersionBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        version_ = value;
+        onChanged();
+        return this;
+      }
+
       private java.lang.Object packageNodeType_ = "";
       /**
        * <code>string packageNodeType = 4;</code>
@@ -9682,9 +10186,9 @@ public final class Datamodel {
       private java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> targets_ =
         java.util.Collections.emptyList();
       private void ensureTargetsIsMutable() {
-        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
           targets_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.FileNode>(targets_);
-          bitField0_ |= 0x00000008;
+          bitField0_ |= 0x00000010;
          }
       }
 
@@ -9834,7 +10338,7 @@ public final class Datamodel {
       public Builder clearTargets() {
         if (targetsBuilder_ == null) {
           targets_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000010);
           onChanged();
         } else {
           targetsBuilder_.clear();
@@ -9911,7 +10415,7 @@ public final class Datamodel {
           targetsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode.Builder, org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder>(
                   targets_,
-                  ((bitField0_ & 0x00000008) == 0x00000008),
+                  ((bitField0_ & 0x00000010) == 0x00000010),
                   getParentForChildren(),
                   isClean());
           targets_ = null;
@@ -9922,9 +10426,9 @@ public final class Datamodel {
       private java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> additionalInfo_ =
         java.util.Collections.emptyList();
       private void ensureAdditionalInfoIsMutable() {
-        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
           additionalInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.InfoNode>(additionalInfo_);
-          bitField0_ |= 0x00000010;
+          bitField0_ |= 0x00000020;
          }
       }
 
@@ -10074,7 +10578,7 @@ public final class Datamodel {
       public Builder clearAdditionalInfo() {
         if (additionalInfoBuilder_ == null) {
           additionalInfo_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000020);
           onChanged();
         } else {
           additionalInfoBuilder_.clear();
@@ -10151,7 +10655,7 @@ public final class Datamodel {
           additionalInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder>(
                   additionalInfo_,
-                  ((bitField0_ & 0x00000010) == 0x00000010),
+                  ((bitField0_ & 0x00000020) == 0x00000020),
                   getParentForChildren(),
                   isClean());
           additionalInfo_ = null;
@@ -10231,9 +10735,9 @@ public final class Datamodel {
       private java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode> diagnosticInfo_ =
         java.util.Collections.emptyList();
       private void ensureDiagnosticInfoIsMutable() {
-        if (!((bitField0_ & 0x00000040) == 0x00000040)) {
+        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
           diagnosticInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.DiagnosticNode>(diagnosticInfo_);
-          bitField0_ |= 0x00000040;
+          bitField0_ |= 0x00000080;
          }
       }
 
@@ -10383,7 +10887,7 @@ public final class Datamodel {
       public Builder clearDiagnosticInfo() {
         if (diagnosticInfoBuilder_ == null) {
           diagnosticInfo_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000040);
+          bitField0_ = (bitField0_ & ~0x00000080);
           onChanged();
         } else {
           diagnosticInfoBuilder_.clear();
@@ -10460,7 +10964,7 @@ public final class Datamodel {
           diagnosticInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               org.qmstr.grpc.service.Datamodel.DiagnosticNode, org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder, org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder>(
                   diagnosticInfo_,
-                  ((bitField0_ & 0x00000040) == 0x00000040),
+                  ((bitField0_ & 0x00000080) == 0x00000080),
                   getParentForChildren(),
                   isClean());
           diagnosticInfo_ = null;
@@ -10511,6 +11015,1544 @@ public final class Datamodel {
     }
 
     public org.qmstr.grpc.service.Datamodel.PackageNode getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ProjectNodeOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:service.ProjectNode)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string uid = 1;</code>
+     */
+    java.lang.String getUid();
+    /**
+     * <code>string uid = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getUidBytes();
+
+    /**
+     * <code>string name = 2;</code>
+     */
+    java.lang.String getName();
+    /**
+     * <code>string name = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getNameBytes();
+
+    /**
+     * <code>string projectNodeType = 3;</code>
+     */
+    java.lang.String getProjectNodeType();
+    /**
+     * <code>string projectNodeType = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getProjectNodeTypeBytes();
+
+    /**
+     * <code>repeated .service.PackageNode packages = 4;</code>
+     */
+    java.util.List<org.qmstr.grpc.service.Datamodel.PackageNode> 
+        getPackagesList();
+    /**
+     * <code>repeated .service.PackageNode packages = 4;</code>
+     */
+    org.qmstr.grpc.service.Datamodel.PackageNode getPackages(int index);
+    /**
+     * <code>repeated .service.PackageNode packages = 4;</code>
+     */
+    int getPackagesCount();
+    /**
+     * <code>repeated .service.PackageNode packages = 4;</code>
+     */
+    java.util.List<? extends org.qmstr.grpc.service.Datamodel.PackageNodeOrBuilder> 
+        getPackagesOrBuilderList();
+    /**
+     * <code>repeated .service.PackageNode packages = 4;</code>
+     */
+    org.qmstr.grpc.service.Datamodel.PackageNodeOrBuilder getPackagesOrBuilder(
+        int index);
+
+    /**
+     * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+     */
+    java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> 
+        getAdditionalInfoList();
+    /**
+     * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+     */
+    org.qmstr.grpc.service.Datamodel.InfoNode getAdditionalInfo(int index);
+    /**
+     * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+     */
+    int getAdditionalInfoCount();
+    /**
+     * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+     */
+    java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
+        getAdditionalInfoOrBuilderList();
+    /**
+     * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+     */
+    org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getAdditionalInfoOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code service.ProjectNode}
+   */
+  public  static final class ProjectNode extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:service.ProjectNode)
+      ProjectNodeOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ProjectNode.newBuilder() to construct.
+    private ProjectNode(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ProjectNode() {
+      uid_ = "";
+      name_ = "";
+      projectNodeType_ = "";
+      packages_ = java.util.Collections.emptyList();
+      additionalInfo_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ProjectNode(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              uid_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              projectNodeType_ = s;
+              break;
+            }
+            case 34: {
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                packages_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.PackageNode>();
+                mutable_bitField0_ |= 0x00000008;
+              }
+              packages_.add(
+                  input.readMessage(org.qmstr.grpc.service.Datamodel.PackageNode.parser(), extensionRegistry));
+              break;
+            }
+            case 42: {
+              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+                additionalInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.InfoNode>();
+                mutable_bitField0_ |= 0x00000010;
+              }
+              additionalInfo_.add(
+                  input.readMessage(org.qmstr.grpc.service.Datamodel.InfoNode.parser(), extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+          packages_ = java.util.Collections.unmodifiableList(packages_);
+        }
+        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+          additionalInfo_ = java.util.Collections.unmodifiableList(additionalInfo_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.qmstr.grpc.service.Datamodel.internal_static_service_ProjectNode_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.qmstr.grpc.service.Datamodel.internal_static_service_ProjectNode_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.qmstr.grpc.service.Datamodel.ProjectNode.class, org.qmstr.grpc.service.Datamodel.ProjectNode.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int UID_FIELD_NUMBER = 1;
+    private volatile java.lang.Object uid_;
+    /**
+     * <code>string uid = 1;</code>
+     */
+    public java.lang.String getUid() {
+      java.lang.Object ref = uid_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        uid_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string uid = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getUidBytes() {
+      java.lang.Object ref = uid_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        uid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int NAME_FIELD_NUMBER = 2;
+    private volatile java.lang.Object name_;
+    /**
+     * <code>string name = 2;</code>
+     */
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string name = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PROJECTNODETYPE_FIELD_NUMBER = 3;
+    private volatile java.lang.Object projectNodeType_;
+    /**
+     * <code>string projectNodeType = 3;</code>
+     */
+    public java.lang.String getProjectNodeType() {
+      java.lang.Object ref = projectNodeType_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        projectNodeType_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string projectNodeType = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getProjectNodeTypeBytes() {
+      java.lang.Object ref = projectNodeType_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        projectNodeType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PACKAGES_FIELD_NUMBER = 4;
+    private java.util.List<org.qmstr.grpc.service.Datamodel.PackageNode> packages_;
+    /**
+     * <code>repeated .service.PackageNode packages = 4;</code>
+     */
+    public java.util.List<org.qmstr.grpc.service.Datamodel.PackageNode> getPackagesList() {
+      return packages_;
+    }
+    /**
+     * <code>repeated .service.PackageNode packages = 4;</code>
+     */
+    public java.util.List<? extends org.qmstr.grpc.service.Datamodel.PackageNodeOrBuilder> 
+        getPackagesOrBuilderList() {
+      return packages_;
+    }
+    /**
+     * <code>repeated .service.PackageNode packages = 4;</code>
+     */
+    public int getPackagesCount() {
+      return packages_.size();
+    }
+    /**
+     * <code>repeated .service.PackageNode packages = 4;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.PackageNode getPackages(int index) {
+      return packages_.get(index);
+    }
+    /**
+     * <code>repeated .service.PackageNode packages = 4;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.PackageNodeOrBuilder getPackagesOrBuilder(
+        int index) {
+      return packages_.get(index);
+    }
+
+    public static final int ADDITIONALINFO_FIELD_NUMBER = 5;
+    private java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> additionalInfo_;
+    /**
+     * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+     */
+    public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> getAdditionalInfoList() {
+      return additionalInfo_;
+    }
+    /**
+     * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+     */
+    public java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
+        getAdditionalInfoOrBuilderList() {
+      return additionalInfo_;
+    }
+    /**
+     * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+     */
+    public int getAdditionalInfoCount() {
+      return additionalInfo_.size();
+    }
+    /**
+     * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.InfoNode getAdditionalInfo(int index) {
+      return additionalInfo_.get(index);
+    }
+    /**
+     * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getAdditionalInfoOrBuilder(
+        int index) {
+      return additionalInfo_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!getUidBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uid_);
+      }
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
+      }
+      if (!getProjectNodeTypeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, projectNodeType_);
+      }
+      for (int i = 0; i < packages_.size(); i++) {
+        output.writeMessage(4, packages_.get(i));
+      }
+      for (int i = 0; i < additionalInfo_.size(); i++) {
+        output.writeMessage(5, additionalInfo_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getUidBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uid_);
+      }
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
+      }
+      if (!getProjectNodeTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, projectNodeType_);
+      }
+      for (int i = 0; i < packages_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, packages_.get(i));
+      }
+      for (int i = 0; i < additionalInfo_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, additionalInfo_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.qmstr.grpc.service.Datamodel.ProjectNode)) {
+        return super.equals(obj);
+      }
+      org.qmstr.grpc.service.Datamodel.ProjectNode other = (org.qmstr.grpc.service.Datamodel.ProjectNode) obj;
+
+      boolean result = true;
+      result = result && getUid()
+          .equals(other.getUid());
+      result = result && getName()
+          .equals(other.getName());
+      result = result && getProjectNodeType()
+          .equals(other.getProjectNodeType());
+      result = result && getPackagesList()
+          .equals(other.getPackagesList());
+      result = result && getAdditionalInfoList()
+          .equals(other.getAdditionalInfoList());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + UID_FIELD_NUMBER;
+      hash = (53 * hash) + getUid().hashCode();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + PROJECTNODETYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getProjectNodeType().hashCode();
+      if (getPackagesCount() > 0) {
+        hash = (37 * hash) + PACKAGES_FIELD_NUMBER;
+        hash = (53 * hash) + getPackagesList().hashCode();
+      }
+      if (getAdditionalInfoCount() > 0) {
+        hash = (37 * hash) + ADDITIONALINFO_FIELD_NUMBER;
+        hash = (53 * hash) + getAdditionalInfoList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.qmstr.grpc.service.Datamodel.ProjectNode prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code service.ProjectNode}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:service.ProjectNode)
+        org.qmstr.grpc.service.Datamodel.ProjectNodeOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.qmstr.grpc.service.Datamodel.internal_static_service_ProjectNode_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.qmstr.grpc.service.Datamodel.internal_static_service_ProjectNode_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.qmstr.grpc.service.Datamodel.ProjectNode.class, org.qmstr.grpc.service.Datamodel.ProjectNode.Builder.class);
+      }
+
+      // Construct using org.qmstr.grpc.service.Datamodel.ProjectNode.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+          getPackagesFieldBuilder();
+          getAdditionalInfoFieldBuilder();
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        uid_ = "";
+
+        name_ = "";
+
+        projectNodeType_ = "";
+
+        if (packagesBuilder_ == null) {
+          packages_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+        } else {
+          packagesBuilder_.clear();
+        }
+        if (additionalInfoBuilder_ == null) {
+          additionalInfo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000010);
+        } else {
+          additionalInfoBuilder_.clear();
+        }
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.qmstr.grpc.service.Datamodel.internal_static_service_ProjectNode_descriptor;
+      }
+
+      public org.qmstr.grpc.service.Datamodel.ProjectNode getDefaultInstanceForType() {
+        return org.qmstr.grpc.service.Datamodel.ProjectNode.getDefaultInstance();
+      }
+
+      public org.qmstr.grpc.service.Datamodel.ProjectNode build() {
+        org.qmstr.grpc.service.Datamodel.ProjectNode result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.qmstr.grpc.service.Datamodel.ProjectNode buildPartial() {
+        org.qmstr.grpc.service.Datamodel.ProjectNode result = new org.qmstr.grpc.service.Datamodel.ProjectNode(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        result.uid_ = uid_;
+        result.name_ = name_;
+        result.projectNodeType_ = projectNodeType_;
+        if (packagesBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008)) {
+            packages_ = java.util.Collections.unmodifiableList(packages_);
+            bitField0_ = (bitField0_ & ~0x00000008);
+          }
+          result.packages_ = packages_;
+        } else {
+          result.packages_ = packagesBuilder_.build();
+        }
+        if (additionalInfoBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) == 0x00000010)) {
+            additionalInfo_ = java.util.Collections.unmodifiableList(additionalInfo_);
+            bitField0_ = (bitField0_ & ~0x00000010);
+          }
+          result.additionalInfo_ = additionalInfo_;
+        } else {
+          result.additionalInfo_ = additionalInfoBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.qmstr.grpc.service.Datamodel.ProjectNode) {
+          return mergeFrom((org.qmstr.grpc.service.Datamodel.ProjectNode)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.qmstr.grpc.service.Datamodel.ProjectNode other) {
+        if (other == org.qmstr.grpc.service.Datamodel.ProjectNode.getDefaultInstance()) return this;
+        if (!other.getUid().isEmpty()) {
+          uid_ = other.uid_;
+          onChanged();
+        }
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          onChanged();
+        }
+        if (!other.getProjectNodeType().isEmpty()) {
+          projectNodeType_ = other.projectNodeType_;
+          onChanged();
+        }
+        if (packagesBuilder_ == null) {
+          if (!other.packages_.isEmpty()) {
+            if (packages_.isEmpty()) {
+              packages_ = other.packages_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+            } else {
+              ensurePackagesIsMutable();
+              packages_.addAll(other.packages_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.packages_.isEmpty()) {
+            if (packagesBuilder_.isEmpty()) {
+              packagesBuilder_.dispose();
+              packagesBuilder_ = null;
+              packages_ = other.packages_;
+              bitField0_ = (bitField0_ & ~0x00000008);
+              packagesBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getPackagesFieldBuilder() : null;
+            } else {
+              packagesBuilder_.addAllMessages(other.packages_);
+            }
+          }
+        }
+        if (additionalInfoBuilder_ == null) {
+          if (!other.additionalInfo_.isEmpty()) {
+            if (additionalInfo_.isEmpty()) {
+              additionalInfo_ = other.additionalInfo_;
+              bitField0_ = (bitField0_ & ~0x00000010);
+            } else {
+              ensureAdditionalInfoIsMutable();
+              additionalInfo_.addAll(other.additionalInfo_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.additionalInfo_.isEmpty()) {
+            if (additionalInfoBuilder_.isEmpty()) {
+              additionalInfoBuilder_.dispose();
+              additionalInfoBuilder_ = null;
+              additionalInfo_ = other.additionalInfo_;
+              bitField0_ = (bitField0_ & ~0x00000010);
+              additionalInfoBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getAdditionalInfoFieldBuilder() : null;
+            } else {
+              additionalInfoBuilder_.addAllMessages(other.additionalInfo_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.qmstr.grpc.service.Datamodel.ProjectNode parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.qmstr.grpc.service.Datamodel.ProjectNode) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object uid_ = "";
+      /**
+       * <code>string uid = 1;</code>
+       */
+      public java.lang.String getUid() {
+        java.lang.Object ref = uid_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          uid_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string uid = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getUidBytes() {
+        java.lang.Object ref = uid_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          uid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string uid = 1;</code>
+       */
+      public Builder setUid(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        uid_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string uid = 1;</code>
+       */
+      public Builder clearUid() {
+        
+        uid_ = getDefaultInstance().getUid();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string uid = 1;</code>
+       */
+      public Builder setUidBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        uid_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object name_ = "";
+      /**
+       * <code>string name = 2;</code>
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string name = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string name = 2;</code>
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 2;</code>
+       */
+      public Builder clearName() {
+        
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 2;</code>
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        name_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object projectNodeType_ = "";
+      /**
+       * <code>string projectNodeType = 3;</code>
+       */
+      public java.lang.String getProjectNodeType() {
+        java.lang.Object ref = projectNodeType_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          projectNodeType_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string projectNodeType = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getProjectNodeTypeBytes() {
+        java.lang.Object ref = projectNodeType_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          projectNodeType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string projectNodeType = 3;</code>
+       */
+      public Builder setProjectNodeType(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        projectNodeType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string projectNodeType = 3;</code>
+       */
+      public Builder clearProjectNodeType() {
+        
+        projectNodeType_ = getDefaultInstance().getProjectNodeType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string projectNodeType = 3;</code>
+       */
+      public Builder setProjectNodeTypeBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        projectNodeType_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<org.qmstr.grpc.service.Datamodel.PackageNode> packages_ =
+        java.util.Collections.emptyList();
+      private void ensurePackagesIsMutable() {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+          packages_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.PackageNode>(packages_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          org.qmstr.grpc.service.Datamodel.PackageNode, org.qmstr.grpc.service.Datamodel.PackageNode.Builder, org.qmstr.grpc.service.Datamodel.PackageNodeOrBuilder> packagesBuilder_;
+
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public java.util.List<org.qmstr.grpc.service.Datamodel.PackageNode> getPackagesList() {
+        if (packagesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(packages_);
+        } else {
+          return packagesBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public int getPackagesCount() {
+        if (packagesBuilder_ == null) {
+          return packages_.size();
+        } else {
+          return packagesBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.PackageNode getPackages(int index) {
+        if (packagesBuilder_ == null) {
+          return packages_.get(index);
+        } else {
+          return packagesBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public Builder setPackages(
+          int index, org.qmstr.grpc.service.Datamodel.PackageNode value) {
+        if (packagesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePackagesIsMutable();
+          packages_.set(index, value);
+          onChanged();
+        } else {
+          packagesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public Builder setPackages(
+          int index, org.qmstr.grpc.service.Datamodel.PackageNode.Builder builderForValue) {
+        if (packagesBuilder_ == null) {
+          ensurePackagesIsMutable();
+          packages_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          packagesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public Builder addPackages(org.qmstr.grpc.service.Datamodel.PackageNode value) {
+        if (packagesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePackagesIsMutable();
+          packages_.add(value);
+          onChanged();
+        } else {
+          packagesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public Builder addPackages(
+          int index, org.qmstr.grpc.service.Datamodel.PackageNode value) {
+        if (packagesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePackagesIsMutable();
+          packages_.add(index, value);
+          onChanged();
+        } else {
+          packagesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public Builder addPackages(
+          org.qmstr.grpc.service.Datamodel.PackageNode.Builder builderForValue) {
+        if (packagesBuilder_ == null) {
+          ensurePackagesIsMutable();
+          packages_.add(builderForValue.build());
+          onChanged();
+        } else {
+          packagesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public Builder addPackages(
+          int index, org.qmstr.grpc.service.Datamodel.PackageNode.Builder builderForValue) {
+        if (packagesBuilder_ == null) {
+          ensurePackagesIsMutable();
+          packages_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          packagesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public Builder addAllPackages(
+          java.lang.Iterable<? extends org.qmstr.grpc.service.Datamodel.PackageNode> values) {
+        if (packagesBuilder_ == null) {
+          ensurePackagesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, packages_);
+          onChanged();
+        } else {
+          packagesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public Builder clearPackages() {
+        if (packagesBuilder_ == null) {
+          packages_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000008);
+          onChanged();
+        } else {
+          packagesBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public Builder removePackages(int index) {
+        if (packagesBuilder_ == null) {
+          ensurePackagesIsMutable();
+          packages_.remove(index);
+          onChanged();
+        } else {
+          packagesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.PackageNode.Builder getPackagesBuilder(
+          int index) {
+        return getPackagesFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.PackageNodeOrBuilder getPackagesOrBuilder(
+          int index) {
+        if (packagesBuilder_ == null) {
+          return packages_.get(index);  } else {
+          return packagesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public java.util.List<? extends org.qmstr.grpc.service.Datamodel.PackageNodeOrBuilder> 
+           getPackagesOrBuilderList() {
+        if (packagesBuilder_ != null) {
+          return packagesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(packages_);
+        }
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.PackageNode.Builder addPackagesBuilder() {
+        return getPackagesFieldBuilder().addBuilder(
+            org.qmstr.grpc.service.Datamodel.PackageNode.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.PackageNode.Builder addPackagesBuilder(
+          int index) {
+        return getPackagesFieldBuilder().addBuilder(
+            index, org.qmstr.grpc.service.Datamodel.PackageNode.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .service.PackageNode packages = 4;</code>
+       */
+      public java.util.List<org.qmstr.grpc.service.Datamodel.PackageNode.Builder> 
+           getPackagesBuilderList() {
+        return getPackagesFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          org.qmstr.grpc.service.Datamodel.PackageNode, org.qmstr.grpc.service.Datamodel.PackageNode.Builder, org.qmstr.grpc.service.Datamodel.PackageNodeOrBuilder> 
+          getPackagesFieldBuilder() {
+        if (packagesBuilder_ == null) {
+          packagesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              org.qmstr.grpc.service.Datamodel.PackageNode, org.qmstr.grpc.service.Datamodel.PackageNode.Builder, org.qmstr.grpc.service.Datamodel.PackageNodeOrBuilder>(
+                  packages_,
+                  ((bitField0_ & 0x00000008) == 0x00000008),
+                  getParentForChildren(),
+                  isClean());
+          packages_ = null;
+        }
+        return packagesBuilder_;
+      }
+
+      private java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> additionalInfo_ =
+        java.util.Collections.emptyList();
+      private void ensureAdditionalInfoIsMutable() {
+        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+          additionalInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.InfoNode>(additionalInfo_);
+          bitField0_ |= 0x00000010;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> additionalInfoBuilder_;
+
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> getAdditionalInfoList() {
+        if (additionalInfoBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(additionalInfo_);
+        } else {
+          return additionalInfoBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public int getAdditionalInfoCount() {
+        if (additionalInfoBuilder_ == null) {
+          return additionalInfo_.size();
+        } else {
+          return additionalInfoBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNode getAdditionalInfo(int index) {
+        if (additionalInfoBuilder_ == null) {
+          return additionalInfo_.get(index);
+        } else {
+          return additionalInfoBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public Builder setAdditionalInfo(
+          int index, org.qmstr.grpc.service.Datamodel.InfoNode value) {
+        if (additionalInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAdditionalInfoIsMutable();
+          additionalInfo_.set(index, value);
+          onChanged();
+        } else {
+          additionalInfoBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public Builder setAdditionalInfo(
+          int index, org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
+        if (additionalInfoBuilder_ == null) {
+          ensureAdditionalInfoIsMutable();
+          additionalInfo_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          additionalInfoBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public Builder addAdditionalInfo(org.qmstr.grpc.service.Datamodel.InfoNode value) {
+        if (additionalInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAdditionalInfoIsMutable();
+          additionalInfo_.add(value);
+          onChanged();
+        } else {
+          additionalInfoBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public Builder addAdditionalInfo(
+          int index, org.qmstr.grpc.service.Datamodel.InfoNode value) {
+        if (additionalInfoBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAdditionalInfoIsMutable();
+          additionalInfo_.add(index, value);
+          onChanged();
+        } else {
+          additionalInfoBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public Builder addAdditionalInfo(
+          org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
+        if (additionalInfoBuilder_ == null) {
+          ensureAdditionalInfoIsMutable();
+          additionalInfo_.add(builderForValue.build());
+          onChanged();
+        } else {
+          additionalInfoBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public Builder addAdditionalInfo(
+          int index, org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
+        if (additionalInfoBuilder_ == null) {
+          ensureAdditionalInfoIsMutable();
+          additionalInfo_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          additionalInfoBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public Builder addAllAdditionalInfo(
+          java.lang.Iterable<? extends org.qmstr.grpc.service.Datamodel.InfoNode> values) {
+        if (additionalInfoBuilder_ == null) {
+          ensureAdditionalInfoIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, additionalInfo_);
+          onChanged();
+        } else {
+          additionalInfoBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public Builder clearAdditionalInfo() {
+        if (additionalInfoBuilder_ == null) {
+          additionalInfo_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000010);
+          onChanged();
+        } else {
+          additionalInfoBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public Builder removeAdditionalInfo(int index) {
+        if (additionalInfoBuilder_ == null) {
+          ensureAdditionalInfoIsMutable();
+          additionalInfo_.remove(index);
+          onChanged();
+        } else {
+          additionalInfoBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNode.Builder getAdditionalInfoBuilder(
+          int index) {
+        return getAdditionalInfoFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getAdditionalInfoOrBuilder(
+          int index) {
+        if (additionalInfoBuilder_ == null) {
+          return additionalInfo_.get(index);  } else {
+          return additionalInfoBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
+           getAdditionalInfoOrBuilderList() {
+        if (additionalInfoBuilder_ != null) {
+          return additionalInfoBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(additionalInfo_);
+        }
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNode.Builder addAdditionalInfoBuilder() {
+        return getAdditionalInfoFieldBuilder().addBuilder(
+            org.qmstr.grpc.service.Datamodel.InfoNode.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNode.Builder addAdditionalInfoBuilder(
+          int index) {
+        return getAdditionalInfoFieldBuilder().addBuilder(
+            index, org.qmstr.grpc.service.Datamodel.InfoNode.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 5;</code>
+       */
+      public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode.Builder> 
+           getAdditionalInfoBuilderList() {
+        return getAdditionalInfoFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
+          getAdditionalInfoFieldBuilder() {
+        if (additionalInfoBuilder_ == null) {
+          additionalInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder>(
+                  additionalInfo_,
+                  ((bitField0_ & 0x00000010) == 0x00000010),
+                  getParentForChildren(),
+                  isClean());
+          additionalInfo_ = null;
+        }
+        return additionalInfoBuilder_;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:service.ProjectNode)
+    }
+
+    // @@protoc_insertion_point(class_scope:service.ProjectNode)
+    private static final org.qmstr.grpc.service.Datamodel.ProjectNode DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.qmstr.grpc.service.Datamodel.ProjectNode();
+    }
+
+    public static org.qmstr.grpc.service.Datamodel.ProjectNode getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ProjectNode>
+        PARSER = new com.google.protobuf.AbstractParser<ProjectNode>() {
+      public ProjectNode parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ProjectNode(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ProjectNode> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ProjectNode> getParserForType() {
+      return PARSER;
+    }
+
+    public org.qmstr.grpc.service.Datamodel.ProjectNode getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -11165,6 +13207,11 @@ public final class Datamodel {
      * <code>.service.Phase phase = 3;</code>
      */
     org.qmstr.grpc.service.Datamodel.Phase getPhase();
+
+    /**
+     * <code>bool done = 4;</code>
+     */
+    boolean getDone();
   }
   /**
    * Protobuf type {@code service.QmstrStateNode}
@@ -11182,6 +13229,7 @@ public final class Datamodel {
       uid_ = "";
       qmstrStateNodeType_ = "";
       phase_ = 0;
+      done_ = false;
     }
 
     @java.lang.Override
@@ -11231,6 +13279,11 @@ public final class Datamodel {
               int rawValue = input.readEnum();
 
               phase_ = rawValue;
+              break;
+            }
+            case 32: {
+
+              done_ = input.readBool();
               break;
             }
           }
@@ -11341,6 +13394,15 @@ public final class Datamodel {
       return result == null ? org.qmstr.grpc.service.Datamodel.Phase.UNRECOGNIZED : result;
     }
 
+    public static final int DONE_FIELD_NUMBER = 4;
+    private boolean done_;
+    /**
+     * <code>bool done = 4;</code>
+     */
+    public boolean getDone() {
+      return done_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -11362,6 +13424,9 @@ public final class Datamodel {
       if (phase_ != org.qmstr.grpc.service.Datamodel.Phase.INIT.getNumber()) {
         output.writeEnum(3, phase_);
       }
+      if (done_ != false) {
+        output.writeBool(4, done_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -11379,6 +13444,10 @@ public final class Datamodel {
       if (phase_ != org.qmstr.grpc.service.Datamodel.Phase.INIT.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, phase_);
+      }
+      if (done_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(4, done_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -11401,6 +13470,8 @@ public final class Datamodel {
       result = result && getQmstrStateNodeType()
           .equals(other.getQmstrStateNodeType());
       result = result && phase_ == other.phase_;
+      result = result && (getDone()
+          == other.getDone());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -11418,6 +13489,9 @@ public final class Datamodel {
       hash = (53 * hash) + getQmstrStateNodeType().hashCode();
       hash = (37 * hash) + PHASE_FIELD_NUMBER;
       hash = (53 * hash) + phase_;
+      hash = (37 * hash) + DONE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getDone());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11553,6 +13627,8 @@ public final class Datamodel {
 
         phase_ = 0;
 
+        done_ = false;
+
         return this;
       }
 
@@ -11578,6 +13654,7 @@ public final class Datamodel {
         result.uid_ = uid_;
         result.qmstrStateNodeType_ = qmstrStateNodeType_;
         result.phase_ = phase_;
+        result.done_ = done_;
         onBuilt();
         return result;
       }
@@ -11629,6 +13706,9 @@ public final class Datamodel {
         }
         if (other.phase_ != 0) {
           setPhaseValue(other.getPhaseValue());
+        }
+        if (other.getDone() != false) {
+          setDone(other.getDone());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -11838,6 +13918,32 @@ public final class Datamodel {
         onChanged();
         return this;
       }
+
+      private boolean done_ ;
+      /**
+       * <code>bool done = 4;</code>
+       */
+      public boolean getDone() {
+        return done_;
+      }
+      /**
+       * <code>bool done = 4;</code>
+       */
+      public Builder setDone(boolean value) {
+        
+        done_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool done = 4;</code>
+       */
+      public Builder clearDone() {
+        
+        done_ = false;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -11923,6 +14029,11 @@ public final class Datamodel {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_service_PackageNode_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_service_ProjectNode_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_service_ProjectNode_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_service_Event_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -11941,45 +14052,51 @@ public final class Datamodel {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\017datamodel.proto\022\007service\"\322\002\n\010FileNode\022" +
+      "\n\017datamodel.proto\022\007service\"\373\002\n\010FileNode\022" +
       "\013\n\003uid\030\001 \001(\t\022\024\n\014fileNodeType\030\002 \001(\t\022(\n\010fi" +
       "leType\030\003 \001(\0162\026.service.FileNode.Type\022\014\n\004" +
       "path\030\004 \001(\t\022\014\n\004name\030\005 \001(\t\022\014\n\004hash\030\006 \001(\t\022\016" +
       "\n\006broken\030\007 \001(\010\022&\n\013derivedFrom\030\010 \003(\0132\021.se" +
       "rvice.FileNode\022)\n\016additionalInfo\030\t \003(\0132\021" +
       ".service.InfoNode\022/\n\016diagnosticInfo\030\n \003(" +
-      "\0132\027.service.DiagnosticNode\";\n\004Type\022\t\n\005UN" +
-      "DEF\020\000\022\n\n\006SOURCE\020\001\022\020\n\014INTERMEDIATE\020\002\022\n\n\006T" +
-      "ARGET\020\003\"\346\001\n\010InfoNode\022\013\n\003uid\030\001 \001(\t\022\024\n\014inf" +
-      "oNodeType\030\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\027\n\017confide" +
-      "nceScore\030\004 \001(\001\022#\n\010analyzer\030\005 \003(\0132\021.servi" +
-      "ce.Analyzer\022-\n\tdataNodes\030\006 \003(\0132\032.service" +
-      ".InfoNode.DataNode\032<\n\010DataNode\022\024\n\014dataNo" +
-      "deType\030\001 \001(\t\022\014\n\004type\030\002 \001(\t\022\014\n\004data\030\003 \001(\t" +
-      "\"\334\001\n\016DiagnosticNode\022\013\n\003uid\030\001 \001(\t\022\032\n\022diag" +
-      "nosticNodeType\030\002 \001(\t\0222\n\010severity\030\003 \001(\0162 " +
-      ".service.DiagnosticNode.Severity\022\017\n\007mess" +
-      "age\030\004 \001(\t\022#\n\010analyzer\030\005 \003(\0132\021.service.An" +
-      "alyzer\"7\n\010Severity\022\t\n\005UNDEF\020\000\022\010\n\004INFO\020\001\022" +
-      "\013\n\007WARNING\020\002\022\t\n\005ERROR\020\003\"\177\n\010Analyzer\022\013\n\003u" +
-      "id\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\030\n\020analyzerNodeTy" +
-      "pe\030\003 \001(\t\022\022\n\ntrustLevel\030\004 \001(\003\022*\n\007pathSub\030" +
-      "\005 \003(\0132\031.service.PathSubstitution\",\n\020Path" +
-      "Substitution\022\013\n\003old\030\001 \001(\t\022\013\n\003new\030\002 \001(\t\"\326" +
-      "\001\n\013PackageNode\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001(" +
-      "\t\022\027\n\017packageNodeType\030\004 \001(\t\022\"\n\007targets\030\005 " +
-      "\003(\0132\021.service.FileNode\022)\n\016additionalInfo" +
-      "\030\006 \003(\0132\021.service.InfoNode\022\023\n\013buildConfig" +
-      "\030\007 \001(\t\022/\n\016diagnosticInfo\030\010 \003(\0132\027.service" +
-      ".DiagnosticNode\"<\n\005Event\022\"\n\005class\030\001 \001(\0162" +
-      "\023.service.EventClass\022\017\n\007message\030\002 \001(\t\"X\n" +
-      "\016QmstrStateNode\022\013\n\003uid\030\001 \001(\t\022\032\n\022qmstrSta" +
-      "teNodeType\030\002 \001(\t\022\035\n\005phase\030\003 \001(\0162\016.servic" +
-      "e.Phase*,\n\nEventClass\022\007\n\003ALL\020\000\022\t\n\005PHASE\020" +
-      "\001\022\n\n\006MODULE\020\002*@\n\005Phase\022\010\n\004INIT\020\000\022\t\n\005BUIL" +
-      "D\020\001\022\014\n\010ANALYSIS\020\002\022\n\n\006REPORT\020\003\022\010\n\004FAIL\020\004*" +
-      "\'\n\rExceptionType\022\t\n\005ERROR\020\000\022\013\n\007WARNING\020\001" +
-      "B\030\n\026org.qmstr.grpc.serviceb\006proto3"
+      "\0132\027.service.DiagnosticNode\022\'\n\014dependenci" +
+      "es\030\013 \003(\0132\021.service.FileNode\";\n\004Type\022\t\n\005U" +
+      "NDEF\020\000\022\n\n\006SOURCE\020\001\022\020\n\014INTERMEDIATE\020\002\022\n\n\006" +
+      "TARGET\020\003\"\346\001\n\010InfoNode\022\013\n\003uid\030\001 \001(\t\022\024\n\014in" +
+      "foNodeType\030\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\027\n\017confid" +
+      "enceScore\030\004 \001(\001\022#\n\010analyzer\030\005 \003(\0132\021.serv" +
+      "ice.Analyzer\022-\n\tdataNodes\030\006 \003(\0132\032.servic" +
+      "e.InfoNode.DataNode\032<\n\010DataNode\022\024\n\014dataN" +
+      "odeType\030\001 \001(\t\022\014\n\004type\030\002 \001(\t\022\014\n\004data\030\003 \001(" +
+      "\t\"\334\001\n\016DiagnosticNode\022\013\n\003uid\030\001 \001(\t\022\032\n\022dia" +
+      "gnosticNodeType\030\002 \001(\t\0222\n\010severity\030\003 \001(\0162" +
+      " .service.DiagnosticNode.Severity\022\017\n\007mes" +
+      "sage\030\004 \001(\t\022#\n\010analyzer\030\005 \003(\0132\021.service.A" +
+      "nalyzer\"7\n\010Severity\022\t\n\005UNDEF\020\000\022\010\n\004INFO\020\001" +
+      "\022\013\n\007WARNING\020\002\022\t\n\005ERROR\020\003\"\177\n\010Analyzer\022\013\n\003" +
+      "uid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\030\n\020analyzerNodeT" +
+      "ype\030\003 \001(\t\022\022\n\ntrustLevel\030\004 \001(\003\022*\n\007pathSub" +
+      "\030\005 \003(\0132\031.service.PathSubstitution\",\n\020Pat" +
+      "hSubstitution\022\013\n\003old\030\001 \001(\t\022\013\n\003new\030\002 \001(\t\"" +
+      "\347\001\n\013PackageNode\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001" +
+      "(\t\022\017\n\007version\030\003 \001(\t\022\027\n\017packageNodeType\030\004" +
+      " \001(\t\022\"\n\007targets\030\005 \003(\0132\021.service.FileNode" +
+      "\022)\n\016additionalInfo\030\006 \003(\0132\021.service.InfoN" +
+      "ode\022\023\n\013buildConfig\030\007 \001(\t\022/\n\016diagnosticIn" +
+      "fo\030\010 \003(\0132\027.service.DiagnosticNode\"\224\001\n\013Pr" +
+      "ojectNode\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\027\n\017" +
+      "projectNodeType\030\003 \001(\t\022&\n\010packages\030\004 \003(\0132" +
+      "\024.service.PackageNode\022)\n\016additionalInfo\030" +
+      "\005 \003(\0132\021.service.InfoNode\"<\n\005Event\022\"\n\005cla" +
+      "ss\030\001 \001(\0162\023.service.EventClass\022\017\n\007message" +
+      "\030\002 \001(\t\"f\n\016QmstrStateNode\022\013\n\003uid\030\001 \001(\t\022\032\n" +
+      "\022qmstrStateNodeType\030\002 \001(\t\022\035\n\005phase\030\003 \001(\016" +
+      "2\016.service.Phase\022\014\n\004done\030\004 \001(\010*,\n\nEventC" +
+      "lass\022\007\n\003ALL\020\000\022\t\n\005PHASE\020\001\022\n\n\006MODULE\020\002*@\n\005" +
+      "Phase\022\010\n\004INIT\020\000\022\t\n\005BUILD\020\001\022\014\n\010ANALYSIS\020\002" +
+      "\022\n\n\006REPORT\020\003\022\010\n\004FAIL\020\004*\'\n\rExceptionType\022" +
+      "\t\n\005ERROR\020\000\022\013\n\007WARNING\020\001B\030\n\026org.qmstr.grp" +
+      "c.serviceb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -11998,7 +14115,7 @@ public final class Datamodel {
     internal_static_service_FileNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_FileNode_descriptor,
-        new java.lang.String[] { "Uid", "FileNodeType", "FileType", "Path", "Name", "Hash", "Broken", "DerivedFrom", "AdditionalInfo", "DiagnosticInfo", });
+        new java.lang.String[] { "Uid", "FileNodeType", "FileType", "Path", "Name", "Hash", "Broken", "DerivedFrom", "AdditionalInfo", "DiagnosticInfo", "Dependencies", });
     internal_static_service_InfoNode_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_service_InfoNode_fieldAccessorTable = new
@@ -12034,19 +14151,25 @@ public final class Datamodel {
     internal_static_service_PackageNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_PackageNode_descriptor,
-        new java.lang.String[] { "Uid", "Name", "PackageNodeType", "Targets", "AdditionalInfo", "BuildConfig", "DiagnosticInfo", });
-    internal_static_service_Event_descriptor =
+        new java.lang.String[] { "Uid", "Name", "Version", "PackageNodeType", "Targets", "AdditionalInfo", "BuildConfig", "DiagnosticInfo", });
+    internal_static_service_ProjectNode_descriptor =
       getDescriptor().getMessageTypes().get(6);
+    internal_static_service_ProjectNode_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_service_ProjectNode_descriptor,
+        new java.lang.String[] { "Uid", "Name", "ProjectNodeType", "Packages", "AdditionalInfo", });
+    internal_static_service_Event_descriptor =
+      getDescriptor().getMessageTypes().get(7);
     internal_static_service_Event_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_Event_descriptor,
         new java.lang.String[] { "Class_", "Message", });
     internal_static_service_QmstrStateNode_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_service_QmstrStateNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_QmstrStateNode_descriptor,
-        new java.lang.String[] { "Uid", "QmstrStateNodeType", "Phase", });
+        new java.lang.String[] { "Uid", "QmstrStateNodeType", "Phase", "Done", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
