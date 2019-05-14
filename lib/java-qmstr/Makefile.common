@@ -1,7 +1,7 @@
-JAVAQMSTR := java-qmstr.jar
+JAVAQMSTR := java-qmstr
 
 .PHONY := $(JAVAQMSTR)
 $(JAVAQMSTR): $(OUTDIR)$(JAVAQMSTR)
 
 $(OUTDIR)$(JAVAQMSTR): $(JAVASRCS)
-	cd lib/java-qmstr && QMSTR_VERSION=$(QMSTR_VERSION) ./gradlew install
+	cd lib/java-qmstr && GRPCIO_VERSION=$(GRPCIO_VERSION) QMSTR_VERSION=$(QMSTR_VERSION) ./gradlew install
