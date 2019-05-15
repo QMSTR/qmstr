@@ -12,8 +12,7 @@
 
   <name>qmstr-maven-plugin Maven Plugin</name>
 
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url>http://qmstr.org</url>
 
   <prerequisites>
     <maven>${maven.version}</maven>
