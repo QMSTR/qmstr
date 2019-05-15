@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import java.io.File;
 
-public class MyMojoTest
+public class QmstrMojoTest
 {
     @Rule
     public MojoRule rule = new MojoRule()
@@ -36,17 +36,13 @@ public class MyMojoTest
         assertNotNull( pom );
         assertTrue( pom.exists() );
 
-        MyMojo myMojo = ( MyMojo ) rule.lookupConfiguredMojo( pom, "touch" );
+        QmstrMojo myMojo = ( QmstrMojo ) rule.lookupConfiguredMojo( pom, "qmstrbuild" );
         assertNotNull( myMojo );
         myMojo.execute();
 
-        File outputDirectory = ( File ) rule.getVariableValueFromObject( myMojo, "outputDirectory" );
-        assertNotNull( outputDirectory );
-        assertTrue( outputDirectory.exists() );
-
-        File touch = new File( outputDirectory, "touch.txt" );
-        assertTrue( touch.exists() );
-
+        String qmstrAddress = ( String ) rule.getVariableValueFromObject( myMojo, "qmstrAddress" );
+        assertNotNull( qmstrAddress );
+        assertTrue( qmstrAddress.equals("localhost") );
     }
 
     /** Do not need the MojoRule. */

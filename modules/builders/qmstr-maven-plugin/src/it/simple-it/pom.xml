@@ -21,10 +21,9 @@
         <version>@project.version@</version>
         <executions>
           <execution>
-            <id>touch</id>
-            <phase>validate</phase>
+            <id>compile</id>
             <goals>
-              <goal>touch</goal>
+              <goal>qmstrbuild</goal>
             </goals>
           </execution>
         </executions>

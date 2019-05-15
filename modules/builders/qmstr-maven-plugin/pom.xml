@@ -68,6 +68,11 @@
       <version>3.3.0</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.qmstr</groupId>
+      <artifactId>service</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
