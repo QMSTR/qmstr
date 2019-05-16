@@ -18,9 +18,10 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 
 	const q = `
 	query Node($id: string){
-		node(func: uid($id)) @filter(has(packageNodeType) or has(fileNodeType)) @recurse(loop: false) {
+		node(func: uid($id)) @filter(has(projectNodeType) or has(packageNodeType) or has(fileNodeType)) @recurse(loop: false) {
 			uid
 			additionalInfo
+			projectNodeType
 			packageNodeType
 			fileNodeType
 		}
@@ -50,7 +51,15 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 	}
 	additionalInfo = append(additionalInfo, infonodes...)
 
-	if _, ok := receiverNode["packageNodeType"]; ok {
+	if _, ok := receiverNode["projectNodeType"]; ok {
+		projectNode := service.ProjectNode{}
+		projectNode.Uid = nodeID
+		projectNode.AdditionalInfo = additionalInfo
+		_, err = dbInsert(db.client, &projectNode)
+		if err != nil {
+			return err
+		}
+	} else if _, ok := receiverNode["packageNodeType"]; ok {
 		packageNode := service.PackageNode{}
 		packageNode.Uid = nodeID
 		packageNode.AdditionalInfo = additionalInfo
