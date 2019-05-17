@@ -6,6 +6,7 @@ repositories {
 
 buildscript {
   repositories {
+    mavenLocal()
     mavenCentral()
   }
   dependencies {
