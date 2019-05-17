@@ -88,23 +88,22 @@ public class FilenodeUtils {
             String[] filename = relSrcPath.getFileName().toString().split("\\.");
             filename[filename.length-1] = "class";
             String className = String.join(".", filename);
-            Path packageDirs = relSrcPath.getParent();
+            Path packageDirs = relSrcPath.getParent() != null ? relSrcPath.getParent() : Paths.get(".");
             Path classesRelPath = packageDirs.resolve(className);
 
-            if (packageDirs != null) {
-                return outDirs.stream()
-                        .filter(od -> FilenodeUtils.isActualClassDir(od, classesRelPath))
-                        .map(outdir -> {
-                            Path classesPath = outdir.toPath().resolve(classesRelPath);
-                            Set<Path> nested = FilenodeUtils.getNestedClasses(outdir.toPath().resolve(packageDirs), filename[filename.length - 2]);
-                            nested.add(classesPath);
-                            return nested.stream()
-                                    .map(p -> FilenodeUtils.getFileNode(p, FilenodeUtils.getTypeByFile(p.getFileName().toString())))
-                                    .map(node -> node.toBuilder().addDerivedFrom(sourceNode).build())
-                                    .collect(Collectors.toSet());
-                        }).flatMap(sets -> sets.stream())
-                        .collect(Collectors.toSet());
-            }
+            return outDirs.stream()
+                    .filter(od -> FilenodeUtils.isActualClassDir(od, classesRelPath))
+                    .map(outdir -> {
+                        Path classesPath = outdir.toPath().resolve(classesRelPath);
+                        Set<Path> nested = FilenodeUtils.getNestedClasses(outdir.toPath().resolve(packageDirs), filename[filename.length - 2]);
+                        nested.add(classesPath);
+                        return nested.stream()
+                                .map(p -> FilenodeUtils.getFileNode(p, FilenodeUtils.getTypeByFile(p.getFileName().toString())))
+                                .map(node -> node.toBuilder().addDerivedFrom(sourceNode).build())
+                                .collect(Collectors.toSet());
+                    }).flatMap(sets -> sets.stream())
+                    .collect(Collectors.toSet());
+
         } catch (FileNotFoundException fnfe) {
             //TODO
         }
