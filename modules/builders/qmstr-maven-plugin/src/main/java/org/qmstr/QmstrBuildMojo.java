@@ -1,12 +1,10 @@
 package org.qmstr;
 
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -21,15 +19,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * add built files to qmstr master server
  */
-@Mojo( name = "qmstr", defaultPhase = LifecyclePhase.PACKAGE )
-public class QmstrMojo extends AbstractMojo
+@Mojo( name = "qmstrbuild", defaultPhase = LifecyclePhase.PROCESS_CLASSES )
+public class QmstrBuildMojo extends AbstractMojo
 {
     private final String qmstrMasterAddress =System.getenv("QMSTR_MASTER");
 
@@ -62,24 +59,22 @@ public class QmstrMojo extends AbstractMojo
             return;
         }
 
-        Artifact art = project.getArtifact();
-        if (art == null) {
-            getLog().error("No artifact");
-            throw new MojoExecutionException("qmstr: no artifact found");
-        }
-
-        Set<String> directArtIds = project.getDependencies().stream()
-                .map(d -> d.getArtifactId())
+        Set<File> sourceDirs = project.getCompileSourceRoots().stream()
+                .map(sds -> Paths.get(sds).toFile())
                 .collect(Collectors.toSet());
 
-        Set<File> directDeps = project.getArtifacts().stream()
-                .filter(artifact -> directArtIds.contains(artifact.getArtifactId()))
-                .map(artifact -> artifact.getFile())
-                .collect(Collectors.toSet());
+        Set<File> sources = getSourceFiles(project.getCompileSourceRoots());
 
-        Optional<Datamodel.FileNode> pkgFileNodeOpt = FilenodeUtils.processArtifact(art.getFile(), directDeps);
+        getLog().info("Puttn stuff to " + outputDirectory.toString());
 
-        Datamodel.FileNode pkgFileNode = pkgFileNodeOpt.orElseThrow(() -> new MojoExecutionException("qmstr: no package found"));
+        sources.stream().forEach(s ->
+        {
+            getLog().info(s.toString());
+            getLog().info(sourceDirs.stream().map(sd -> sd.toString()).collect(Collectors.joining(",")));
+            Set<Datamodel.FileNode> fileNodes = FilenodeUtils.processSourceFile(s, sourceDirs, Collections.singleton(outputDirectory));
+            fileNodes.stream().
+                    forEach(fileNode -> getLog().info(String.format("Found %s build from %s", fileNode.getName(), fileNode.getDerivedFromList().stream().map(fileNode1 -> fileNode1.getName()).collect(Collectors.joining(",")))));
+        });
 
 
     }
