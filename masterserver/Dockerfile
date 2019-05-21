@@ -51,7 +51,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # install dependecies
 RUN apt-get update && apt-get install -y \
-    curl autoconf make git libgit2-dev libio-captureoutput-perl virtualenv tar build-essential pkg-config \
+    curl autoconf make git libgit2-dev libio-captureoutput-perl virtualenv tar build-essential pkg-config protobuf-compiler \
     && rm -rf /var/lib/apt/lists/*
 
 ARG GO_VERSION
