@@ -130,7 +130,7 @@ public class FilenodeUtils {
                         .map(f -> FilenodeUtils.getFileNode(f.toPath()))
                         .filter(o -> o.isPresent())
                         .map(o -> o.get())
-                        .forEach(depNode -> rootNodeBuilder.addDerivedFrom(depNode));
+                        .forEach(depNode -> rootNodeBuilder.addDependencies(depNode));
 
                 rootNode = rootNodeBuilder.build();
                 return Optional.ofNullable(rootNode);
