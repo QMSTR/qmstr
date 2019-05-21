@@ -43,6 +43,7 @@ var (
 		"-r":                        struct{}{},
 		"--compress-debug-sections": struct{}{},
 		"-export-dynamic":           struct{}{},
+		"-dumpmachine":              struct{}{},
 	}
 
 	StringArgs = map[string]struct{}{
