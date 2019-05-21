@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import java.io.File;
 
-public class QmstrMojoTest
+public class QmstrBuildMojoTest
 {
     @Rule
     public MojoRule rule = new MojoRule()
@@ -36,7 +36,7 @@ public class QmstrMojoTest
         assertNotNull( pom );
         assertTrue( pom.exists() );
 
-        QmstrMojo myMojo = ( QmstrMojo ) rule.lookupConfiguredMojo( pom, "qmstrbuild" );
+        QmstrBuildMojo myMojo = ( QmstrBuildMojo ) rule.lookupConfiguredMojo( pom, "qmstrbuild" );
         assertNotNull( myMojo );
         myMojo.execute();
 
