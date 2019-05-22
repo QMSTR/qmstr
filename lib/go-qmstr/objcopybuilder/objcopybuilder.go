@@ -68,7 +68,7 @@ func (o *ObjcopyBuilder) processFlags(args []string) error {
 		case "-R", "-j", "-K", "-N", "-L", "-G", "-W", "-b":
 			cleanIdx = append(cleanIdx, idx, idx+1)
 			continue
-		case "-S", "-p", "-D", "-U", "-g", "-w", "-x", "-X", "-M":
+		case "-S", "-p", "-D", "-U", "-g", "-w", "-x", "-X", "-M", "--only-keep-debug", "--add-gnu-debuglink":
 			cleanIdx = append(cleanIdx, idx)
 			continue
 		}
@@ -78,6 +78,7 @@ func (o *ObjcopyBuilder) processFlags(args []string) error {
 
 	objCpFlags := pflag.NewFlagSet("objcopy", pflag.ContinueOnError)
 	objCpFlags.StringP("output-target", "O", undef, "output-target")
+	objCpFlags.BoolP("strip-debug", "g", false, "Do not copy debugging symbols or sections from the source file")
 	objCpFlags.StringP("input-target", "I", undef, "input-target")
 	objCpFlags.StringP("target", "F", undef, "target")
 
@@ -112,6 +113,9 @@ func (o *ObjcopyBuilder) processFlags(args []string) error {
 			default:
 				return errors.New("Output format not implemented")
 			}
+		}
+		if stripBool, err := objCpFlags.GetBool("strip-debug"); err == nil && stripBool {
+			o.Output = o.Input
 		}
 		return nil
 	}
