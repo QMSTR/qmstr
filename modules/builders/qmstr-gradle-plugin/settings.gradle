@@ -1,3 +1,1 @@
 rootProject.name = 'gradle-plugin'
-include ":service"
-project(":service").projectDir = file("../../../lib/java-qmstr")
