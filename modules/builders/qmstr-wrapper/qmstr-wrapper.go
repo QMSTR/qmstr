@@ -69,59 +69,62 @@ func main() {
 		log.Fatalf("failed to create wrapper for %s: %v", commandLine, err)
 	}
 	defer w.Exit()
-	w.Wrap()
 
 	fileNodes, err := w.Builder.Analyze(commandLine)
-	switch err {
-	case nil:
-		stream, err := buildServiceClient.Build(context.Background())
-		defer func() {
-			res, err := stream.CloseAndRecv()
-			if err != nil {
-				log.Fatalf("Failed to close the filenode stream: %v", err)
-			}
-			if !res.Success {
-				log.Fatalln("Server filenode stream failed")
-			}
-		}()
-		if err != nil {
-			log.Fatalf("could not greet: %v", err)
+	if err != nil {
+		if err == builder.ErrBuilderModeNotImplemented {
+			logger.Printf("WARNING for %s: \"%s\": %v", w.Builder.GetName(), commandLine, err)
+			sendBuildException(service.ExceptionType_WARNING, fmt.Sprintf("Warning while analyzing [%s]: %v", commandLine, err))
+		} else {
+			logger.Printf("%s failed for \"%s\": %v", w.Builder.GetName(), commandLine, err)
+			sendBuildException(service.ExceptionType_ERROR, fmt.Sprintf("Failed to analyze build [%s] due to %v", commandLine, err))
 		}
-		for _, fileNode := range fileNodes {
-			pushFileMsg, err := w.Builder.GetPushFile()
-			if err != nil {
-				if err != builder.ErrNoPushFile {
-					errMsg := fmt.Sprintf("%s failed to get file for upload: %v", w.Builder.GetName(), err)
-					sendBuildException(service.ExceptionType_ERROR, errMsg)
-					logger.Println(errMsg)
-				}
-			}
-			if pushFileMsg != nil {
-				remotePath, err := pushFile(pushFileMsg)
-				if err != nil {
-					errMsg := fmt.Sprintf("%s failed to upload file", pushFileMsg.Hash)
-					sendBuildException(service.ExceptionType_ERROR, errMsg)
-					logger.Println(errMsg)
-				}
-				for _, dep := range fileNode.DerivedFrom {
-					if dep.Name == "-" {
-						dep.Hash = pushFileMsg.Hash
-						dep.Path = remotePath
-					}
-				}
-			}
-			if err := stream.Send(fileNode); err != nil {
-				log.Fatalf("Failed to send filenode to server")
-			}
-		}
-	case builder.ErrBuilderModeNotImplemented:
-		logger.Printf("WARNING for %s: \"%s\": %v", w.Builder.GetName(), commandLine, err)
-		sendBuildException(service.ExceptionType_WARNING, fmt.Sprintf("Warning while analyzing [%s]: %v", commandLine, err))
-	default:
-		logger.Printf("%s failed for \"%s\": %v", w.Builder.GetName(), commandLine, err)
-		sendBuildException(service.ExceptionType_ERROR, fmt.Sprintf("Failed to analyze build [%s] due to %v", commandLine, err))
 	}
-
+	w.Wrap()
+	err = w.Builder.ProcessOutput(fileNodes)
+	if err != nil {
+		logger.Fatalf("Failed to process output: %v", err)
+	}
+	stream, err := buildServiceClient.Build(context.Background())
+	defer func() {
+		res, err := stream.CloseAndRecv()
+		if err != nil {
+			log.Fatalf("Failed to close the filenode stream: %v", err)
+		}
+		if !res.Success {
+			log.Fatalln("Server filenode stream failed")
+		}
+	}()
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	for _, fileNode := range fileNodes {
+		pushFileMsg, err := w.Builder.GetPushFile()
+		if err != nil {
+			if err != builder.ErrNoPushFile {
+				errMsg := fmt.Sprintf("%s failed to get file for upload: %v", w.Builder.GetName(), err)
+				sendBuildException(service.ExceptionType_ERROR, errMsg)
+				logger.Println(errMsg)
+			}
+		}
+		if pushFileMsg != nil {
+			remotePath, err := pushFile(pushFileMsg)
+			if err != nil {
+				errMsg := fmt.Sprintf("%s failed to upload file", pushFileMsg.Hash)
+				sendBuildException(service.ExceptionType_ERROR, errMsg)
+				logger.Println(errMsg)
+			}
+			for _, dep := range fileNode.DerivedFrom {
+				if dep.Name == "-" {
+					dep.Hash = pushFileMsg.Hash
+					dep.Path = remotePath
+				}
+			}
+		}
+		if err := stream.Send(fileNode); err != nil {
+			log.Fatalf("Failed to send filenode to server")
+		}
+	}
 }
 
 func pushFile(pushMsg *service.PushFileMessage) (string, error) {

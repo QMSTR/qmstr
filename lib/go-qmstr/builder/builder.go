@@ -20,6 +20,7 @@ var (
 
 type Builder interface {
 	Analyze(commandline []string) ([]*service.FileNode, error)
+	ProcessOutput([]*service.FileNode) error
 	GetPushFile() (*service.PushFileMessage, error)
 	GetName() string
 	GetPrefix() (string, error)
@@ -47,6 +48,17 @@ func (gb *GeneralBuilder) GetPushFile() (*service.PushFileMessage, error) {
 	return nil, ErrNoPushFile
 }
 
+func (gb *GeneralBuilder) ProcessOutput(filenodes []*service.FileNode) error {
+	for _, output := range filenodes {
+		var err error
+		output.Hash, err = common.HashFile(output.Path)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (gb *GeneralBuilder) Setup() error {
 	return nil
 }
@@ -55,15 +67,18 @@ func (gb *GeneralBuilder) TearDown() error {
 	return nil
 }
 
-func NewFileNode(path string, fileType service.FileNode_Type) *service.FileNode {
+func NewFileNode(path string, fileType service.FileNode_Type, hash bool) *service.FileNode {
 	filename := filepath.Base(path)
-	hash, err := common.HashFile(path)
-	broken := false
-	if err != nil {
-		hash = "nohash" + path
-		broken = true
+	if hash {
+		hash, err := common.HashFile(path)
+		broken := false
+		if err != nil {
+			hash = "nohash" + path
+			broken = true
+		}
+		return &service.FileNode{Name: filename, FileType: fileType, Path: path, Hash: hash, Broken: broken}
 	}
-	return &service.FileNode{Name: filename, FileType: fileType, Path: path, Hash: hash, Broken: broken}
+	return &service.FileNode{Name: filename, FileType: fileType, Path: path, Broken: true}
 }
 
 func CleanCmd(commandline []string, cleanIdx []int, debug bool, logger *log.Logger) []string {

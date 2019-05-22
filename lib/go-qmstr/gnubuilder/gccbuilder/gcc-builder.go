@@ -118,23 +118,23 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			g.Logger.Printf("%s linking", g.Builder)
 		}
 		fileNodes := []*pb.FileNode{}
-		linkedTarget := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[0], false), pb.FileNode_TARGET)
+		linkedTarget := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[0], false), pb.FileNode_TARGET, false)
 		libraries := []*pb.FileNode{}
 		dependencies := []*pb.FileNode{}
 		for _, inFile := range g.Input {
 			inputFileNode := &pb.FileNode{}
 			ext := filepath.Ext(inFile)
 			if ext == ".o" {
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_INTERMEDIATE)
+				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_INTERMEDIATE, true)
 				libraries = append(libraries, inputFileNode)
 			} else if ext == ".c" || ext == ".cc" || ext == ".cpp" || ext == ".c++" || ext == ".cp" || ext == ".cxx" {
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_SOURCE)
+				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_SOURCE, true)
 				libraries = append(libraries, inputFileNode)
 			} else if strings.HasSuffix(inFile, ".so") {
-				depFileNode := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_TARGET)
+				depFileNode := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_TARGET, true)
 				dependencies = append(dependencies, depFileNode)
 			} else {
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_TARGET)
+				inputFileNode = builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_TARGET, true)
 				libraries = append(libraries, inputFileNode)
 			}
 		}
@@ -144,10 +144,10 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 		}
 		for _, actualLib := range g.ActualLibs {
 			if strings.HasSuffix(actualLib, ".so") {
-				runtimeDep := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, actualLib, false), pb.FileNode_TARGET)
+				runtimeDep := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, actualLib, false), pb.FileNode_TARGET, true)
 				dependencies = append(dependencies, runtimeDep)
 			} else {
-				linkLib := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, actualLib, false), pb.FileNode_TARGET)
+				linkLib := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, actualLib, false), pb.FileNode_TARGET, true)
 				libraries = append(libraries, linkLib)
 			}
 		}
@@ -166,8 +166,8 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			if g.Debug {
 				g.Logger.Printf("This is the source file %s indexed %d", inFile, idx)
 			}
-			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_SOURCE)
-			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), pb.FileNode_INTERMEDIATE)
+			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_SOURCE, true)
+			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), pb.FileNode_INTERMEDIATE, false)
 			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
 			fileNodes = append(fileNodes, targetFile)
 		}
@@ -183,8 +183,8 @@ func (g *GccBuilder) Analyze(commandline []string) ([]*pb.FileNode, error) {
 			if g.Debug {
 				g.Logger.Printf("This is the source file %s indexed %d", inFile, idx)
 			}
-			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_SOURCE)
-			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), pb.FileNode_SOURCE)
+			sourceFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, inFile, false), pb.FileNode_SOURCE, true)
+			targetFile := builder.NewFileNode(common.BuildCleanPath(g.WorkDir, g.Output[idx], false), pb.FileNode_SOURCE, false)
 			targetFile.DerivedFrom = []*pb.FileNode{sourceFile}
 			fileNodes = append(fileNodes, targetFile)
 		}
