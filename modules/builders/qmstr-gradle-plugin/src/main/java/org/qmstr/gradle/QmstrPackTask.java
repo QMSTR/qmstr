@@ -5,6 +5,7 @@ import org.gradle.api.artifacts.PublishArtifact;
 import org.gradle.api.tasks.TaskAction;
 import org.qmstr.client.BuildServiceClient;
 import org.qmstr.util.FilenodeUtils;
+import org.qmstr.util.PackagenodeUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -29,18 +30,22 @@ public class QmstrPackTask extends QmstrTask {
 
         bsc = new BuildServiceClient(buildServiceAddress, buildServicePort);
 
-        HashMap<PublishArtifact, Set<File>> arts = new HashMap<>();
-        this.config
+
+        Set<File> artifactFiles = this.config
                 .parallelStream()
                 .filter(c -> c.isCanBeResolved())
-                .forEach(c -> c.getAllArtifacts().forEach(art -> arts.put(art, c.getResolvedConfiguration().getFiles())));
+                .flatMap(c -> c.getAllArtifacts().stream())
+                .map(art -> art.getFile())
+                .collect(Collectors.toSet());
 
-        bsc.SendBuildFileNodes(arts.entrySet().parallelStream()
-                .map(artEntry -> FilenodeUtils.processArtifact(artEntry.getKey().getFile(), artEntry.getValue()))
+
+        artifactFiles.stream()
+                .map(art -> PackagenodeUtils.processArtifact(art, this.getProject().getVersion().toString()))
                 .filter(o -> o.isPresent())
                 .map(o -> o.get())
-                .collect(Collectors.toSet())); 
-        
+                .forEach(art -> bsc.SendPackageNode(art));
+
+
     
     }
 

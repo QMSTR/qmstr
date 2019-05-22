@@ -13,6 +13,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.qmstr.grpc.service.Datamodel;
 import org.qmstr.util.FilenodeUtils;
+import org.qmstr.client.BuildServiceClient;
+import org.qmstr.util.PackagenodeUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,32 +30,32 @@ import java.util.stream.Collectors;
 /**
  * add built files to qmstr master server
  */
-@Mojo( name = "qmstr", defaultPhase = LifecyclePhase.PACKAGE )
-public class QmstrMojo extends AbstractMojo
-{
-    private final String qmstrMasterAddress =System.getenv("QMSTR_MASTER");
+@Mojo(name = "qmstr", defaultPhase = LifecyclePhase.PACKAGE)
+public class QmstrMojo extends AbstractMojo {
+    private final String qmstrMasterAddress = System.getenv("QMSTR_MASTER");
 
     /**
      * address to connect to
      */
-    @Parameter( defaultValue = "localhost", property = "qmstrAddress", required = true )
+    @Parameter(defaultValue = "localhost", property = "qmstrAddress", required = true)
     private String qmstrAddress;
 
-    @Parameter( defaultValue = "${session}", readonly = true )
+    @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession session;
- 
-    @Parameter( defaultValue = "${project}", readonly = true )
+
+    @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
     /**
      * The directory for compiled classes.
-     *
      */
-    @Parameter( readonly = true, required = true, defaultValue = "${project.build.outputDirectory}" )
+    @Parameter(readonly = true, required = true, defaultValue = "${project.build.outputDirectory}")
     private File outputDirectory;
 
-    public void execute() throws MojoExecutionException
-    {
+    public void execute() throws MojoExecutionException {
+        BuildServiceClient bsc = new BuildServiceClient(qmstrAddress);
+
+
         getLog().info("I got triggered for " + project.getName());
 
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
@@ -68,19 +70,11 @@ public class QmstrMojo extends AbstractMojo
             throw new MojoExecutionException("qmstr: no artifact found");
         }
 
-        Set<String> directArtIds = project.getDependencies().stream()
-                .map(d -> d.getArtifactId())
-                .collect(Collectors.toSet());
+        Optional<Datamodel.PackageNode> pkgFileNodeOpt = PackagenodeUtils.processArtifact(art.getFile(), project.getVersion());
 
-        Set<File> directDeps = project.getArtifacts().stream()
-                .filter(artifact -> directArtIds.contains(artifact.getArtifactId()))
-                .map(artifact -> artifact.getFile())
-                .collect(Collectors.toSet());
+        Datamodel.PackageNode pkgFileNode = pkgFileNodeOpt.orElseThrow(() -> new MojoExecutionException("qmstr: no package found"));
 
-        Optional<Datamodel.FileNode> pkgFileNodeOpt = FilenodeUtils.processArtifact(art.getFile(), directDeps);
-
-        Datamodel.FileNode pkgFileNode = pkgFileNodeOpt.orElseThrow(() -> new MojoExecutionException("qmstr: no package found"));
-
+        bsc.SendPackageNode(pkgFileNode);
 
     }
 
