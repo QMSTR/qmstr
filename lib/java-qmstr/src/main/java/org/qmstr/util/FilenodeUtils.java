@@ -110,38 +110,6 @@ public class FilenodeUtils {
         return null;
     }
 
-    public static Optional<Datamodel.FileNode> processArtifact(File artifact, Set<File> dependencySet) {
-        PathMatcher jarMatcher = FileSystems.getDefault().getPathMatcher("glob:*.jar");
-        if (jarMatcher.matches(artifact.toPath())) {
-            try {
-                Set<Datamodel.FileNode> classes = new HashSet<>();
-                JarFile jar = new JarFile(artifact);
-                jar.stream().parallel()
-                        .filter(je -> FilenodeUtils.isSupportedFile(je.getName()))
-                        .forEach(je -> {
-                            String hash = FilenodeUtils.getHash(jar, je);
-                            classes.add(FilenodeUtils.getFileNode(je.getName(), hash, FilenodeUtils.getTypeByFile(je.getName())));
-                        });
-                Datamodel.FileNode rootNode = getFileNode(artifact.toPath(), FilenodeUtils.getTypeByFile(artifact.getName()));
-                Datamodel.FileNode.Builder rootNodeBuilder = rootNode.toBuilder();
-                classes.forEach(c -> rootNodeBuilder.addDerivedFrom(c));
-
-                dependencySet.parallelStream()
-                        .map(f -> FilenodeUtils.getFileNode(f.toPath()))
-                        .filter(o -> o.isPresent())
-                        .map(o -> o.get())
-                        .forEach(depNode -> rootNodeBuilder.addDependencies(depNode));
-
-                rootNode = rootNodeBuilder.build();
-                return Optional.ofNullable(rootNode);
-
-            } catch (IOException ioe) {
-                //TODO
-            }
-        }
-        return Optional.empty();
-    }
-
     private static boolean isActualSourceDir(File sourceDir, File sourceFile) {
         return sourceFile.toString().startsWith(sourceDir.toString());
     }
