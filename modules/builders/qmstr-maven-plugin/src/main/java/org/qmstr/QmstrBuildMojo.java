@@ -9,6 +9,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.qmstr.client.BuildServiceClient;
 import org.qmstr.grpc.service.Datamodel;
 import org.qmstr.util.FilenodeUtils;
 
@@ -51,6 +52,8 @@ public class QmstrBuildMojo extends AbstractMojo
 
     public void execute() throws MojoExecutionException
     {
+        BuildServiceClient bsc = new BuildServiceClient(qmstrAddress);
+
         getLog().info("I got triggered for " + project.getName());
 
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
@@ -74,6 +77,8 @@ public class QmstrBuildMojo extends AbstractMojo
             Set<Datamodel.FileNode> fileNodes = FilenodeUtils.processSourceFile(s, sourceDirs, Collections.singleton(outputDirectory));
             fileNodes.stream().
                     forEach(fileNode -> getLog().info(String.format("Found %s build from %s", fileNode.getName(), fileNode.getDerivedFromList().stream().map(fileNode1 -> fileNode1.getName()).collect(Collectors.joining(",")))));
+
+            bsc.SendBuildFileNodes(fileNodes);
         });
 
 
