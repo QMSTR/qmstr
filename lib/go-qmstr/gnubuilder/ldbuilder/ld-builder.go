@@ -81,23 +81,23 @@ func (ld *LdBuilder) Analyze(commandline []string) ([]*service.FileNode, error) 
 		ld.Logger.Printf("ld linking")
 	}
 	fileNodes := []*service.FileNode{}
-	linkedTarget := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, ld.Output[0], false), service.FileNode_TARGET)
+	linkedTarget := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, ld.Output[0], false), service.FileNode_TARGET, false)
 	libraries := []*service.FileNode{}
 	dependencies := []*service.FileNode{}
 	for _, inFile := range ld.Input {
 		inputFileNode := &service.FileNode{}
 		ext := filepath.Ext(inFile)
 		if ext == ".o" {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_INTERMEDIATE)
+			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_INTERMEDIATE, true)
 			libraries = append(libraries, inputFileNode)
 		} else if ext == ".c" {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_SOURCE)
+			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_SOURCE, true)
 			libraries = append(libraries, inputFileNode)
 		} else if strings.HasSuffix(inFile, ".so") {
-			depFileNode := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_TARGET)
+			depFileNode := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_TARGET, true)
 			dependencies = append(dependencies, depFileNode)
 		} else {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_TARGET)
+			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_TARGET, true)
 			libraries = append(libraries, inputFileNode)
 		}
 	}
@@ -107,10 +107,10 @@ func (ld *LdBuilder) Analyze(commandline []string) ([]*service.FileNode, error) 
 	}
 	for _, actualLib := range ld.ActualLibs {
 		if strings.HasSuffix(actualLib, ".so") {
-			runtimeDep := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, actualLib, false), service.FileNode_TARGET)
+			runtimeDep := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, actualLib, false), service.FileNode_TARGET, true)
 			dependencies = append(dependencies, runtimeDep)
 		} else {
-			linkLib := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, actualLib, false), service.FileNode_TARGET)
+			linkLib := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, actualLib, false), service.FileNode_TARGET, true)
 			libraries = append(libraries, linkLib)
 		}
 	}
