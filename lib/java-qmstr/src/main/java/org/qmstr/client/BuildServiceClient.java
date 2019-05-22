@@ -31,6 +31,31 @@ public class BuildServiceClient {
         blockingControlStub = ControlServiceGrpc.newBlockingStub(channel);
     }
 
+    public void SendPackageNode(Datamodel.PackageNode pkg) {
+        final CountDownLatch finishLatch = new CountDownLatch(1);
+        StreamObserver<Buildservice.BuildResponse> responseObserver = new StreamObserver<Buildservice.BuildResponse>() {
+            @Override
+            public void onNext(Buildservice.BuildResponse response) {
+                if (!response.getSuccess()){
+                    SendLogMessage("failed to create package");
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                SendLogMessage("Failed to create package: " + Status.fromThrowable(t));
+                finishLatch.countDown();
+            }
+
+            @Override
+            public void onCompleted() {
+                finishLatch.countDown();
+            }
+        };
+
+        asyncStub.createPackage(pkg, responseObserver);
+    }
+
     public void SendBuildFileNodes(Set<Datamodel.FileNode> fileNodes) {
         if (fileNodes == null || fileNodes.isEmpty()) {
             SendLogMessage("Build with empty set");            
@@ -69,7 +94,7 @@ public class BuildServiceClient {
             });
             requestObserver.onCompleted();
             if (!finishLatch.await(1, TimeUnit.MINUTES)) {
-                SendLogMessage("WARNING BuildMessage can not finish within 1 minutes");
+                SendLogMessage("WARNING BuildMessage could not finish within 1 minutes");
             }
         } catch (RuntimeException  e) {
             requestObserver.onError(e);
