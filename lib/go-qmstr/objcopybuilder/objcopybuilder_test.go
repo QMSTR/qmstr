@@ -81,3 +81,39 @@ func TestTargetTypeFlag(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestOnlyDebug(t *testing.T) {
+	o := getTestBuilder()
+	o.Analyze([]string{"objcopy", "--only-keep-debug", "foo", "foo.dbg"})
+	if len(o.Args) != 2 {
+		t.Logf("%v", o.Args)
+		t.Fail()
+	}
+	if o.Input != "foo" && o.Output != "foo.dbg" {
+		t.Fail()
+	}
+}
+
+func TestStripDebug(t *testing.T) {
+	o := getTestBuilder()
+	o.Analyze([]string{"objcopy", "--strip-debug", "foo"})
+	if len(o.Args) != 2 {
+		t.Logf("%v", o.Args)
+		t.Fail()
+	}
+	if o.Input != "foo" && o.Output != "foo" {
+		t.Fail()
+	}
+}
+
+func TestDebugLink(t *testing.T) {
+	o := getTestBuilder()
+	o.Analyze([]string{"objcopy", "--add-gnu-debuglink", "foo.dbg", "foo"})
+	if len(o.Args) != 2 {
+		t.Logf("%v", o.Args)
+		t.Fail()
+	}
+	if o.Input != "foo.dbg" && o.Output != "foo" {
+		t.Fail()
+	}
+}
