@@ -17,6 +17,10 @@ public class BuildServiceClient {
     private final BuildServiceGrpc.BuildServiceStub asyncStub;
     private final ControlServiceGrpc.ControlServiceBlockingStub blockingControlStub;
 
+    public BuildServiceClient(String qmstrAddress) {
+        this(ManagedChannelBuilder.forTarget(qmstrAddress).usePlaintext());
+    }
+
     public BuildServiceClient(String host, int port) {
         this(ManagedChannelBuilder.forAddress(host, port).usePlaintext());
     }
