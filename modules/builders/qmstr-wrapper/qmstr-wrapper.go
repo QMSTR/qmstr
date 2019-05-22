@@ -70,7 +70,11 @@ func main() {
 	}
 	defer w.Exit()
 
-	fileNodes, err := w.Builder.Analyze(commandLine)
+	// create a commandLine copy for the builder
+	commandLineCopy := make([]string, len(commandLine))
+	copy(commandLineCopy, commandLine)
+
+	fileNodes, err := w.Builder.Analyze(commandLineCopy)
 	if err != nil {
 		if err == builder.ErrBuilderModeNotImplemented {
 			logger.Printf("WARNING for %s: \"%s\": %v", w.Builder.GetName(), commandLine, err)
