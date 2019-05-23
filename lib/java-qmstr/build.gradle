@@ -35,10 +35,17 @@ dependencies {
   compile "io.grpc:grpc-protobuf:${grpcVersion}"
   compile "io.grpc:grpc-stub:${grpcVersion}"
   compileOnly 'javax.annotation:jsr250-api:1.0'
+
+  testCompile("org.junit.jupiter:junit-jupiter-api:5.1.0")
+  testRuntime("org.junit.jupiter:junit-jupiter-engine:5.1.0")
 }
 
 sourceSets {
+
   main {
+    java {
+      srcDirs 'src/main/grpc'
+        }
     proto {
       // In addition to the default 'src/main/proto'
       srcDir '../../proto'
