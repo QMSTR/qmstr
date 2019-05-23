@@ -1,0 +1,8 @@
+.PHONY := $(QMSTR_MAVEN_PLUGIN)
+QMSTR_MAVEN_PLUGIN := qmstr-maven-plugin
+
+$(QMSTR_MAVEN_PLUGIN): modules/builders/$(QMSTR_MAVEN_PLUGIN)/target/$(QMSTR_MAVEN_PLUGIN)-$(QMSTR_VERSION).jar
+
+modules/builders/$(QMSTR_MAVEN_PLUGIN)/target/$(QMSTR_MAVEN_PLUGIN)-$(QMSTR_VERSION).jar:
+	@echo $(call CHECKCMDS,mvn)
+	cd modules/builders/$(QMSTR_MAVEN_PLUGIN) && mvn install
