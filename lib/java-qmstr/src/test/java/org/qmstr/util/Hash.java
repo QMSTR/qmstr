@@ -2,10 +2,9 @@ package org.qmstr.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-        import org.junit.jupiter.api.Test;
-
 import java.io.File;
-import java.io.FileNotFoundException;
+
+import org.junit.jupiter.api.Test;
 
 class HashTests{
 

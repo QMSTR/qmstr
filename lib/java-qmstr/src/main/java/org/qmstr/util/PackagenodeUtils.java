@@ -1,7 +1,5 @@
 package org.qmstr.util;
 
-import org.qmstr.grpc.service.Datamodel;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -11,9 +9,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.jar.JarFile;
 
+import org.qmstr.grpc.service.Datamodel;
+
 public class PackagenodeUtils {
     public static Optional<Datamodel.PackageNode> processArtifact(File artifact, String version) {
-        PathMatcher jarMatcher = FileSystems.getDefault().getPathMatcher("glob:*.jar");
+        PathMatcher jarMatcher = FileSystems.getDefault().getPathMatcher("glob:**.jar");
         if (jarMatcher.matches(artifact.toPath())) {
             try {
                 Set<Datamodel.FileNode> classes = new HashSet<>();

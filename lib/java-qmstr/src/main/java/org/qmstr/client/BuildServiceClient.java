@@ -1,15 +1,21 @@
 package org.qmstr.client;
 
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import com.google.protobuf.ByteString;
+
+import org.qmstr.grpc.service.BuildServiceGrpc;
+import org.qmstr.grpc.service.Buildservice;
+import org.qmstr.grpc.service.ControlServiceGrpc;
+import org.qmstr.grpc.service.Controlservice;
+import org.qmstr.grpc.service.Datamodel;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-
-import org.qmstr.grpc.service.*;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 public class BuildServiceClient {
 
