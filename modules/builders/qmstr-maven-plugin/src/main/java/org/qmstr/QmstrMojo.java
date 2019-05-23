@@ -76,6 +76,12 @@ public class QmstrMojo extends AbstractMojo {
 
         bsc.SendPackageNode(pkgFileNode);
 
+        try {
+            bsc.close();
+        } catch (InterruptedException e) {
+            throw new MojoExecutionException("qmstr: failed to close grpc channel " + e.getMessage());
+        }
+
     }
 
     private Set<File> getSourceFiles(List<String> sourceDirs) {
