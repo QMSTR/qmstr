@@ -1,13 +1,14 @@
 package org.qmstr;
 
 
+import static org.junit.Assert.*;
+
+import java.io.File;
+
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.WithoutMojo;
-
 import org.junit.Rule;
-import static org.junit.Assert.*;
 import org.junit.Test;
-import java.io.File;
 
 public class QmstrBuildMojoTest
 {
@@ -29,7 +30,7 @@ public class QmstrBuildMojoTest
      * @throws Exception if any
      */
     @Test
-    public void testSomething()
+    public void testMojo()
             throws Exception
     {
         File pom = new File( "target/test-classes/project-to-test/" );
@@ -38,11 +39,6 @@ public class QmstrBuildMojoTest
 
         QmstrBuildMojo myMojo = ( QmstrBuildMojo ) rule.lookupConfiguredMojo( pom, "qmstrbuild" );
         assertNotNull( myMojo );
-        myMojo.execute();
-
-        String qmstrAddress = ( String ) rule.getVariableValueFromObject( myMojo, "qmstrAddress" );
-        assertNotNull( qmstrAddress );
-        assertTrue( qmstrAddress.equals("localhost") );
     }
 
     /** Do not need the MojoRule. */
