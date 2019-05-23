@@ -24,6 +24,7 @@ hs_err_pid*
 # Gradle
 .gradle/
 build/
+bin/
 
 # Intellij IDEA
 .idea/
