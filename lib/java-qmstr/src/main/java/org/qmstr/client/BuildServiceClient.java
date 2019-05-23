@@ -31,6 +31,11 @@ public class BuildServiceClient {
         blockingControlStub = ControlServiceGrpc.newBlockingStub(channel);
     }
 
+    public void close() throws InterruptedException {
+        channel.shutdown();
+        channel.awaitTermination(1, TimeUnit.MINUTES);
+    }
+
     public void SendPackageNode(Datamodel.PackageNode pkg) {
         final CountDownLatch finishLatch = new CountDownLatch(1);
         StreamObserver<Buildservice.BuildResponse> responseObserver = new StreamObserver<Buildservice.BuildResponse>() {
