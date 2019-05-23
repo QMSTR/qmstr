@@ -81,6 +81,11 @@ public class QmstrBuildMojo extends AbstractMojo
             bsc.SendBuildFileNodes(fileNodes);
         });
 
+        try {
+            bsc.close();
+        } catch (InterruptedException e) {
+            throw new MojoExecutionException("qmstr: failed to close grpc channel " + e.getMessage());
+        }
 
     }
 
