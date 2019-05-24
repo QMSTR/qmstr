@@ -15,9 +15,9 @@ import (
 )
 
 var (
-	keepTmpDirectories bool                                                  // Keep intermediate files
-	instdir            string                                                // create instrumentation in this dir
-	wrappedCmds        = []string{"gcc", "g++", "ar", "ld", "as", "objcopy"} // constant (which Go does not do with arrays)
+	keepTmpDirectories bool                                                           // Keep intermediate files
+	instdir            string                                                         // create instrumentation in this dir
+	wrappedCmds        = []string{"gcc", "g++", "ar", "ld", "as", "objcopy", "strip"} // constant (which Go does not do with arrays)
 )
 
 var runCmd = &cobra.Command{
