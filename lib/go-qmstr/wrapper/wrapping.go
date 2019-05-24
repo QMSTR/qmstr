@@ -18,6 +18,7 @@ import (
 	"github.com/QMSTR/qmstr/lib/go-qmstr/gnubuilder/asbuilder"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/gnubuilder/gccbuilder"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/gnubuilder/ldbuilder"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/stripbuilder"
 )
 
 // Wrapper represents a wrapper to call a program
@@ -60,6 +61,8 @@ func getBuilder(prog string, workDir string, logger *log.Logger, debug bool) (bu
 		currentBuilder, err = asbuilder.NewAsBuilder(workDir, logger, debug), nil
 	case "objcopy":
 		currentBuilder, err = objcopybuilder.NewObjcopyBuilder(workDir, logger, debug), nil
+	case "strip":
+		currentBuilder, err = stripbuilder.NewStripBuilder(workDir, logger, debug), nil
 	default:
 		err = fmt.Errorf("Builder %s not available", prog)
 	}
