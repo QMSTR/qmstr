@@ -20,14 +20,14 @@ type ObjcopyBuilder struct {
 	Args       []string
 	Workdir    string
 	Targets    []string
-	Input      string
+	Input      []string
 	Output     string
 	OutputType string
 	builder.GeneralBuilder
 }
 
 func NewObjcopyBuilder(workDir string, logger *log.Logger, debug bool) *ObjcopyBuilder {
-	return &ObjcopyBuilder{[]string{}, workDir, []string{}, "", "", "", builder.NewGeneralBuilder(logger, debug)}
+	return &ObjcopyBuilder{[]string{}, workDir, []string{}, []string{}, "", "", builder.NewGeneralBuilder(logger, debug)}
 }
 
 func (o *ObjcopyBuilder) GetPrefix() (string, error) {
@@ -50,10 +50,13 @@ func (o *ObjcopyBuilder) Analyze(commandline []string) ([]*service.FileNode, err
 		return nil, err
 	}
 
+	dependencies := []*service.FileNode{}
 	outputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, o.Output, false), service.FileNode_TARGET, false)
-	inputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, o.Input, false), service.FileNode_TARGET, true)
-	outputTarget.DerivedFrom = []*service.FileNode{inputTarget}
-
+	for _, input := range o.Input {
+		inputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, input, false), service.FileNode_TARGET, true)
+		dependencies = append(dependencies, inputTarget)
+	}
+	outputTarget.DerivedFrom = dependencies
 	return []*service.FileNode{outputTarget}, nil
 }
 
@@ -68,7 +71,7 @@ func (o *ObjcopyBuilder) processFlags(args []string) error {
 		case "-R", "-j", "-K", "-N", "-L", "-G", "-W", "-b":
 			cleanIdx = append(cleanIdx, idx, idx+1)
 			continue
-		case "-S", "-p", "-D", "-U", "-g", "-w", "-x", "-X", "-M", "--only-keep-debug", "--add-gnu-debuglink":
+		case "-S", "-p", "-D", "-U", "-g", "-w", "-x", "-X", "-M", "--only-keep-debug", "--compress-debug-sections":
 			cleanIdx = append(cleanIdx, idx)
 			continue
 		}
@@ -78,7 +81,8 @@ func (o *ObjcopyBuilder) processFlags(args []string) error {
 
 	objCpFlags := pflag.NewFlagSet("objcopy", pflag.ContinueOnError)
 	objCpFlags.StringP("output-target", "O", undef, "output-target")
-	objCpFlags.BoolP("strip-debug", "g", false, "Do not copy debugging symbols or sections from the source file")
+	objCpFlags.BoolP("strip-debug", "g", false, "do not copy debugging symbols or sections from the source file")
+	objCpFlags.String("add-gnu-debuglink", undef, "create a .gnu_debuglink section")
 	objCpFlags.StringP("input-target", "I", undef, "input-target")
 	objCpFlags.StringP("target", "F", undef, "target")
 
@@ -96,12 +100,12 @@ func (o *ObjcopyBuilder) processFlags(args []string) error {
 	if len(o.Targets) <= 0 {
 		return builder.ErrNoTargetsProvided
 	}
-	o.Input = o.Targets[0]
+	o.Input = append(o.Input, o.Targets[0])
 	if len(o.Targets) == 1 {
 		if outputType, err := objCpFlags.GetString("output-target"); err == nil && outputType != undef {
 			switch outputType {
 			case "binary":
-				o.Output = strings.TrimSuffix(o.Input, filepath.Ext(o.Input)) + ".bin"
+				o.Output = strings.TrimSuffix(o.Input[0], filepath.Ext(o.Input[0])) + ".bin"
 			default:
 				return errors.New("Output format not implemented")
 			}
@@ -109,13 +113,17 @@ func (o *ObjcopyBuilder) processFlags(args []string) error {
 		if targetType, err := objCpFlags.GetString("target"); err == nil && targetType != undef {
 			switch targetType {
 			case "binary":
-				o.Output = strings.TrimSuffix(o.Input, filepath.Ext(o.Input)) + ".bin"
+				o.Output = strings.TrimSuffix(o.Input[0], filepath.Ext(o.Input[0])) + ".bin"
 			default:
 				return errors.New("Output format not implemented")
 			}
 		}
 		if stripBool, err := objCpFlags.GetBool("strip-debug"); err == nil && stripBool {
-			o.Output = o.Input
+			o.Output = o.Input[0]
+		}
+		if debugFile, err := objCpFlags.GetString("add-gnu-debuglink"); err == nil && debugFile != undef {
+			o.Output = o.Input[0]
+			o.Input = append(o.Input, debugFile)
 		}
 		return nil
 	}

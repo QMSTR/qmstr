@@ -31,7 +31,7 @@ func TestSimpleArgs(t *testing.T) {
 		t.Logf("%v", o.Args)
 		t.Fail()
 	}
-	if o.Input != "a" && o.Output != "a.bin" {
+	if o.Input[0] != "a" && o.Output != "a.bin" {
 		t.Fail()
 	}
 }
@@ -47,7 +47,7 @@ func TestOutputTargetFlag(t *testing.T) {
 		t.Logf("%v", o.Targets)
 		t.Fail()
 	}
-	if o.Input != "a.elf" && o.Output != "a.bin" {
+	if o.Input[0] != "a.elf" && o.Output != "a.bin" {
 		t.Fail()
 	}
 
@@ -61,7 +61,7 @@ func TestOutputTargetFlag(t *testing.T) {
 		t.Logf("%v", o.Targets)
 		t.Fail()
 	}
-	if o.Input != "a.elf" && o.Output != "a.bin" {
+	if o.Input[0] != "a.elf" && o.Output != "a.bin" {
 		t.Fail()
 	}
 }
@@ -77,7 +77,7 @@ func TestTargetTypeFlag(t *testing.T) {
 		t.Logf("%v", o.Targets)
 		t.Fail()
 	}
-	if o.Input != "a.bin" && o.Output != "a.bin" {
+	if o.Input[0] != "a.bin" && o.Output != "a.bin" {
 		t.Fail()
 	}
 }
@@ -89,7 +89,7 @@ func TestOnlyDebug(t *testing.T) {
 		t.Logf("%v", o.Args)
 		t.Fail()
 	}
-	if o.Input != "foo" && o.Output != "foo.dbg" {
+	if o.Input[0] != "foo" && o.Output != "foo.dbg" {
 		t.Fail()
 	}
 }
@@ -101,7 +101,7 @@ func TestStripDebug(t *testing.T) {
 		t.Logf("%v", o.Args)
 		t.Fail()
 	}
-	if o.Input != "foo" && o.Output != "foo" {
+	if o.Input[0] != "foo" && o.Output != "foo" {
 		t.Fail()
 	}
 }
@@ -109,11 +109,11 @@ func TestStripDebug(t *testing.T) {
 func TestDebugLink(t *testing.T) {
 	o := getTestBuilder()
 	o.Analyze([]string{"objcopy", "--add-gnu-debuglink", "foo.dbg", "foo"})
-	if len(o.Args) != 2 {
+	if len(o.Args) != 3 {
 		t.Logf("%v", o.Args)
 		t.Fail()
 	}
-	if o.Input != "foo.dbg" && o.Output != "foo" {
+	if o.Input[0] != "foo" && o.Input[1] != "foo.dbg" && o.Output != "foo" {
 		t.Fail()
 	}
 }
