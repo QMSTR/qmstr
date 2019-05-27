@@ -22,6 +22,7 @@ public class BuildServiceClient {
     private final ManagedChannel channel;
     private final BuildServiceGrpc.BuildServiceStub asyncStub;
     private final ControlServiceGrpc.ControlServiceBlockingStub blockingControlStub;
+    private final BuildServiceGrpc.BuildServiceBlockingStub blockingBuildStub;
 
     public BuildServiceClient(String qmstrAddress) {
         this(ManagedChannelBuilder.forTarget(qmstrAddress).usePlaintext());
@@ -34,6 +35,7 @@ public class BuildServiceClient {
     public BuildServiceClient(ManagedChannelBuilder<?> channelBuilder) {
         channel = channelBuilder.build();
         asyncStub = BuildServiceGrpc.newStub(channel);
+        blockingBuildStub = BuildServiceGrpc.newBlockingStub(channel);
         blockingControlStub = ControlServiceGrpc.newBlockingStub(channel);
     }
 
@@ -42,29 +44,9 @@ public class BuildServiceClient {
         channel.awaitTermination(1, TimeUnit.MINUTES);
     }
 
-    public void SendPackageNode(Datamodel.PackageNode pkg) {
-        final CountDownLatch finishLatch = new CountDownLatch(1);
-        StreamObserver<Buildservice.BuildResponse> responseObserver = new StreamObserver<Buildservice.BuildResponse>() {
-            @Override
-            public void onNext(Buildservice.BuildResponse response) {
-                if (!response.getSuccess()){
-                    SendLogMessage("failed to create package");
-                }
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                SendLogMessage("Failed to create package: " + Status.fromThrowable(t));
-                finishLatch.countDown();
-            }
-
-            @Override
-            public void onCompleted() {
-                finishLatch.countDown();
-            }
-        };
-
-        asyncStub.createPackage(pkg, responseObserver);
+    public boolean SendPackageNode(Datamodel.PackageNode pkg) {
+        Buildservice.BuildResponse resp = blockingBuildStub.createPackage(pkg);
+        return resp.getSuccess();
     }
 
     public void SendBuildFileNodes(Set<Datamodel.FileNode> fileNodes) {

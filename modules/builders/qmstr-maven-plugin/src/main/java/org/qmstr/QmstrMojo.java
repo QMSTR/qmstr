@@ -75,12 +75,16 @@ public class QmstrMojo extends AbstractMojo {
 
         Datamodel.PackageNode pkgFileNode = pkgFileNodeOpt.orElseThrow(() -> new MojoExecutionException("qmstr: no package found"));
 
-        bsc.SendPackageNode(pkgFileNode);
-
         try {
-            bsc.close();
-        } catch (InterruptedException e) {
-            throw new MojoExecutionException("qmstr: failed to close grpc channel " + e.getMessage());
+            if (!bsc.SendPackageNode(pkgFileNode)) {
+                throw new MojoExecutionException("qmstr: sending package node failed");
+            }
+        } finally {
+            try {
+                bsc.close();
+            } catch (InterruptedException e) {
+                throw new MojoExecutionException("qmstr: failed to close grpc channel " + e.getMessage());
+            }
         }
     }
 }
