@@ -12,19 +12,18 @@ import java.util.jar.JarFile;
 import org.qmstr.grpc.service.Datamodel;
 
 public class PackagenodeUtils {
-    public static Optional<Datamodel.PackageNode> processArtifact(File artifact, String version) {
+    public static Optional<Datamodel.PackageNode> processArtifact(File artifact, String packageName, String version) {
         PathMatcher jarMatcher = FileSystems.getDefault().getPathMatcher("glob:**.jar");
         if (jarMatcher.matches(artifact.toPath())) {
-            try {
+            try (JarFile jar = new JarFile(artifact)){
                 Set<Datamodel.FileNode> classes = new HashSet<>();
-                JarFile jar = new JarFile(artifact);
                 jar.stream().parallel()
                         .filter(je -> FilenodeUtils.isSupportedFile(je.getName()))
                         .forEach(je -> {
                             String hash = FilenodeUtils.getHash(jar, je);
                             classes.add(FilenodeUtils.getFileNode(je.getName(), hash, FilenodeUtils.getTypeByFile(je.getName())));
                         });
-                Datamodel.PackageNode rootNode = getPackageNode(artifact.toPath().getFileName().toString(), version);
+                Datamodel.PackageNode rootNode = getPackageNode(packageName, version);
                 Datamodel.PackageNode.Builder rootNodeBuilder = rootNode.toBuilder();
                 classes.forEach(c -> rootNodeBuilder.addTargets(c));
 
@@ -32,7 +31,7 @@ public class PackagenodeUtils {
                 return Optional.ofNullable(rootNode);
 
             } catch (IOException ioe) {
-                //TODO
+                // Default to returning empty optional
             }
         }
         return Optional.empty();
