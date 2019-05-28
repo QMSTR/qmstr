@@ -40,15 +40,11 @@ public class QmstrPackTask extends QmstrTask {
 
 
         artifactFiles.stream()
-                .map(art -> PackagenodeUtils.processArtifact(art, this.getProject().getVersion().toString()))
+                .map(art -> PackagenodeUtils.processArtifact(art, this.getProject().getPath(), this.getProject().getVersion().toString()))
                 .filter(o -> o.isPresent())
                 .map(o -> o.get())
                 .forEach(art -> bsc.SendPackageNode(art));
-
-
-    
     }
-
 }
 
 

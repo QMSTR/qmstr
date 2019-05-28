@@ -71,7 +71,7 @@ public class QmstrMojo extends AbstractMojo {
             return;
         }
         getLog().info("Processing artifact " + art.getFile());
-        Optional<Datamodel.PackageNode> pkgFileNodeOpt = PackagenodeUtils.processArtifact(art.getFile(), project.getVersion());
+        Optional<Datamodel.PackageNode> pkgFileNodeOpt = PackagenodeUtils.processArtifact(art.getFile(), String.format("%s:%s", project.getGroupId(), project.getArtifactId()), project.getVersion());
 
         Datamodel.PackageNode pkgFileNode = pkgFileNodeOpt.orElseThrow(() -> new MojoExecutionException("qmstr: no package found"));
 
