@@ -7,6 +7,7 @@ replace github.com/Sirupsen/logrus => github.com/sirupsen/logrus v1.4.0
 require (
 	github.com/Microsoft/go-winio v0.4.12 // indirect
 	github.com/Sirupsen/logrus v0.0.0-00010101000000-000000000000 // indirect
+	github.com/blakesmith/ar v0.0.0-20190502131153-809d4375e1fb
 	github.com/cpuguy83/go-md2man v1.0.10 // indirect
 	github.com/dgraph-io/dgo v0.0.0-20190306204622-95299da439fd
 	github.com/docker/distribution v2.7.1+incompatible // indirect
@@ -20,11 +21,12 @@ require (
 	github.com/opencontainers/runc v0.1.1 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/sirupsen/logrus v1.4.1 // indirect
-	github.com/spdx/tools-golang v0.0.0-20190306141254-3dcceb5b869a
+	github.com/spdx/tools-golang v0.0.0-20190418005930-ea86b81b8378
 	github.com/spf13/afero v1.2.2
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3
 	github.com/stretchr/testify v1.2.2
+	github.com/ulikunitz/xz v0.5.6
 	golang.org/x/crypto v0.0.0-20190513172903-22d7a77e9e5f // indirect
 	golang.org/x/net v0.0.0-20190509222800-a4d6f7feada5
 	golang.org/x/sync v0.0.0-20181108010431-42b317875d0f // indirect
