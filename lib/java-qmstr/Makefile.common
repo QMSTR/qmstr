@@ -1,7 +1,8 @@
 JAVAQMSTR := java-qmstr
+QMSTR_JAVALIB_SRC := $(shell find lib/$(JAVAQMSTR)/src -name "*.java")
 
 .PHONY := $(JAVAQMSTR)
-$(JAVAQMSTR): $(OUTDIR)$(JAVAQMSTR)
+$(JAVAQMSTR): lib/$(JAVAQMSTR)/build/libs/service-$(QMSTR_VERSION).jar
 
-$(OUTDIR)$(JAVAQMSTR): $(JAVASRCS)
+lib/$(JAVAQMSTR)/build/libs/service-$(QMSTR_VERSION).jar: $(QMSTR_JAVALIB_SRC)
 	cd lib/java-qmstr && ./gradlew install
