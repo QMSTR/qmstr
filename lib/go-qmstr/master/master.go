@@ -87,7 +87,7 @@ func (s *server) UpdatePackageNode(ctx context.Context, in *service.UpdatePackag
 		return nil, err
 	}
 	in.Package.Targets = append(in.Package.Targets, in.Targets...)
-	log.Printf("Adding package node %s", in.Package.Name)
+	log.Printf("Updating package node %s", in.Package.Name)
 	db.AddPackageNode(in.Package)
 	return &service.BuildResponse{Success: true}, nil
 }
@@ -122,7 +122,7 @@ func (s *server) GetPackageNode(in *service.PackageNode, stream service.ControlS
 		return err
 	}
 	var packages []*service.PackageNode
-	if in.IsValid() {
+	if !in.IsEmpty() {
 		node, err := db.GetPackageNodeByName(in.Name)
 		if err != nil {
 			return err

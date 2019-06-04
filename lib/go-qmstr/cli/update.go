@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"golang.org/x/net/context"
@@ -98,13 +99,13 @@ func updateNode(nodeIdent string) error {
 			return fmt.Errorf("Failed sending FileNode: %v", err)
 		}
 	case *service.PackageNode:
-		currentNode, err = controlServiceClient.GetPackageNode(context.Background(), cNode)
+		currentNode, err := getUniquePackageNode(cNode)
 		if err != nil {
 			return fmt.Errorf("Failed to get package node: %v", err)
 		}
 		// set fields of node according to flags
 		cmdFlags.Visit(visitNodeFlag)
-		res, err := buildServiceClient.CreatePackage(context.Background(), currentNode.(*service.PackageNode))
+		res, err := buildServiceClient.CreatePackage(context.Background(), currentNode)
 		if err != nil {
 			return err
 		}
