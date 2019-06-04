@@ -1,8 +1,10 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"path/filepath"
+	"reflect"
 	"strings"
 )
 
@@ -97,6 +99,28 @@ func (fn *FileNode) IsValid() bool {
 
 func (pn *PackageNode) IsValid() bool {
 	return pn.Name != "" && pn.Version != ""
+}
+
+func checkEmpty(structure interface{}) error {
+	val := reflect.ValueOf(structure)
+	for val.Kind() == reflect.Ptr || val.Kind() == reflect.Interface {
+		val = val.Elem()
+	}
+
+	if val.Kind() != reflect.Struct {
+		return errors.New("provided non-struct")
+	}
+
+	if !reflect.DeepEqual(val.Interface(), reflect.Zero(val.Type()).Interface()) {
+		return errors.New("non empty struct")
+	}
+
+	return nil
+}
+
+func (pn *PackageNode) IsEmpty() bool {
+	err := checkEmpty(pn)
+	return err == nil
 }
 
 func (prn *ProjectNode) IsValid() bool {
