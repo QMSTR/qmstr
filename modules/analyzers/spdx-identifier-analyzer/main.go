@@ -54,6 +54,10 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 			break
 		}
 
+		if err != nil {
+			return err
+		}
+
 		diagnosticNodeMsg := service.DiagnosticNodeMessage{}
 
 		log.Printf("Analyzing file %s", fileNode.Path)
