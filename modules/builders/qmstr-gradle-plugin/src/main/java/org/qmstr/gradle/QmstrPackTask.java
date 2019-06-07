@@ -30,7 +30,6 @@ public class QmstrPackTask extends QmstrTask {
 
         bsc = new BuildServiceClient(buildServiceAddress, buildServicePort);
 
-
         Set<File> artifactFiles = this.config
                 .parallelStream()
                 .filter(c -> c.isCanBeResolved())
