@@ -11,40 +11,15 @@ import org.gradle.api.tasks.SourceSet;
 import java.util.Collections;
 import java.util.Set;
 
+import org.qmstr.gradle.java.QmstrJavaAction;
+
 public class QmstrPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
         project.getExtensions().create("qmstr", QmstrPluginExtension.class);
 
-        project.getPluginManager().apply(JavaPlugin.class);
-        project.getPluginManager().apply(DistributionPlugin.class);
-
         // Apply plugin for all java subprojects
         project.getAllprojects().stream()
-                .filter(pro -> pro.getPlugins().hasPlugin(JavaPlugin.class))
-                .forEach(pro -> pro.getPluginManager().apply(QmstrPlugin.class));
-
-
-        Set<Task> jarTask = project.getTasksByName("jar", false);
-        Set<Task> classes = project.getTasksByName("classes", false);
-
-        Task qmstrCompile = project.getTasks().create("qmstrbuild", QmstrCompileTask.class, (task) -> {
-            task.setSourceSets(getJavaSourceSets(project));
-            task.dependsOn(classes);
-        });
-
-        project.getTasks().create("qmstr", QmstrPackTask.class, (task) -> {
-            task.dependsOn(qmstrCompile, jarTask);
-            task.setProjectConfig(project.getConfigurations());
-        });
-    }
-
-    private static Iterable<SourceSet> getJavaSourceSets(Project project) {
-        JavaPluginConvention plugin = project.getConvention()
-                .getPlugin(JavaPluginConvention.class);
-        if (plugin == null) {
-            return Collections.emptyList();
-        }
-        return plugin.getSourceSets();
+            .forEach(pro -> pro.getPluginManager().withPlugin("java", new QmstrJavaAction(pro)));
     }
 }
