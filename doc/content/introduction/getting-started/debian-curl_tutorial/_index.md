@@ -51,7 +51,7 @@ process. Every Quartermaster master needs a configuration file,
 usually called [qmstr.yaml](qmstr.yaml). The configuration
 file is located in the tutorial/ directory because in our case, we are
 avoiding to make changes to the project under analysis. If you want
-to learn how to fill in the configuration file, visit the [qmstr.yaml instructions](Qmstr.yaml.md).
+to learn how to fill in the configuration file, visit the [qmstr.yaml instructions](../../../configuration/_index.md).
 Let's start the master:
 
 	> eval `qmstrctl start --wait --config qmstr.yaml`
