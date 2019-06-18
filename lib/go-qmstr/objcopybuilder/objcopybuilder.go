@@ -39,10 +39,8 @@ func (o *ObjcopyBuilder) GetName() string {
 }
 
 func (o *ObjcopyBuilder) Analyze(commandline []string) ([]*service.FileNode, error) {
-	o.Logger.Printf("Objcopy copying binary file")
-
 	if o.Debug {
-		o.Logger.Printf("Parsing commandline %v", commandline)
+		o.Logger.Printf("%s parsing commandline %v", o.GetName(), commandline)
 	}
 
 	err := o.processFlags(commandline[1:])
@@ -55,6 +53,7 @@ func (o *ObjcopyBuilder) Analyze(commandline []string) ([]*service.FileNode, err
 	for _, input := range o.Input {
 		inputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, input, false), service.FileNode_TARGET, true)
 		dependencies = append(dependencies, inputTarget)
+		o.Logger.Printf("%s copying from %s:%s to %s", o.GetName(), inputTarget.GetPath(), inputTarget.GetHash(), o.Output)
 	}
 	outputTarget.DerivedFrom = dependencies
 	return []*service.FileNode{outputTarget}, nil

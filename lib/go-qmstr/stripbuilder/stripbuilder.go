@@ -30,10 +30,8 @@ func (s *StripBuilder) GetName() string {
 }
 
 func (s *StripBuilder) Analyze(commandline []string) ([]*service.FileNode, error) {
-	s.Logger.Printf("Strip discards symbols from object files")
-
 	if s.Debug {
-		s.Logger.Printf("Parsing commandline %v", commandline)
+		s.Logger.Printf("%s parsing commandline %v", s.GetName(), commandline)
 	}
 
 	err := s.processFlags(commandline[1:])
@@ -47,7 +45,9 @@ func (s *StripBuilder) Analyze(commandline []string) ([]*service.FileNode, error
 		outputTarget := builder.NewFileNode(common.BuildCleanPath(s.Workdir, input, false), service.FileNode_TARGET, false)
 		outputTarget.DerivedFrom = []*service.FileNode{inputTarget}
 		fileNodes = append(fileNodes, outputTarget)
+		s.Logger.Printf("Striping %s:%s", inputTarget.GetPath(), inputTarget.GetHash())
 	}
+
 	return fileNodes, nil
 }
 
