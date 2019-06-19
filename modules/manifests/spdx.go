@@ -34,6 +34,16 @@ func NewSPDXManifest(r io.Reader) (validation.Manifest, error) {
 	}
 
 	for _, f := range doc.Packages[0].Files {
+		if f.LicenseConcluded == "NOASSERTION" || f.LicenseConcluded == "" {
+			return nil, validation.MissingLicenseInfoError{
+				Name: f.FileName,
+			}
+		}
+		if f.FileCopyrightText == "NOASSERTION" || f.FileCopyrightText == "" {
+			return nil, validation.MissingCopyrightInfoError{
+				Name: f.FileName,
+			}
+		}
 		mani.fi = append(mani.fi, validation.FileInfo{
 			Name: f.FileName,
 			SHA1: f.FileChecksumSHA1,
