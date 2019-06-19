@@ -3,6 +3,7 @@ package cliqmstr
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/validation"
 	"github.com/QMSTR/qmstr/modules/manifests"
@@ -30,8 +31,14 @@ For example: qmstr validate curl-a.b.c.deb curl-a.b.c.deb.spdx`,
 		}
 		err = pkg.Validate(mani)
 		if err != nil {
-			log.Fatalf("Validation fail: %v", err)
+			verr, ok := err.(validation.Error)
+			if !ok {
+				log.Fatalf("Validation fail: %v", err)
+			}
+			log.Printf("Validation fail: %v", verr.Error())
+			os.Exit(verr.ExitCode())
 		}
+
 		fmt.Println("Validation successful!")
 		return
 	},
