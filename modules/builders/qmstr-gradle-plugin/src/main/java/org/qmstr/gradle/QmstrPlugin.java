@@ -8,6 +8,8 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 
+import org.qmstr.gradle.android.QmstrAndroidAction;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -17,9 +19,14 @@ public class QmstrPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
         project.getExtensions().create("qmstr", QmstrPluginExtension.class);
+        project.getLogger().lifecycle("THIS IS DA QMSTR plugin being applied!");
 
         // Apply plugin for all java subprojects
         project.getAllprojects().stream()
-            .forEach(pro -> pro.getPluginManager().withPlugin("java", new QmstrJavaAction(pro)));
+            .forEach(pro -> {
+                pro.getPluginManager().withPlugin("java", new QmstrJavaAction(pro));
+                pro.getPluginManager().withPlugin("com.android.library", new QmstrAndroidAction(pro));
+                pro.getPluginManager().withPlugin("com.android.application", new QmstrAndroidAction(pro));
+            });
     }
 }
