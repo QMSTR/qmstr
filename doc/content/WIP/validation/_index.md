@@ -38,7 +38,7 @@ The validator validates one package, however "traversing into elements". That me
 * *Package*: A package is a concrete "form of archive" intended for distribution that is created during a build. It could be a tarball, a Debian or RPM package, or even a file system overlay that contains only what was packaged. For the first implementation, we want to focus specifically on Debian packages and then abstract the concept.
 * *Distribution*: A distribution is a collection of packages. The concept is not related to "Linux distribution", but to a software delivery. It is a file-like entity, not a process (as in handover).
 * *Software delivery*: A software delivery is the handover and acceptance of a package (or set of packages, a distribution) from a supplier to a customer. If *distribution* is imagined as a file, it is also a *package*. The concepts are purposefully recursive, so that validation can be applied to both exactly the same way.
-* *Manifest*: A manifest in the context of validation is a SPDX file that that describes exactly one package, including its sub-packages (which are files). The manifest for a distribution describes the content of the distribution (the package in the collection). The elements of the distribution contain or bring their own manifests.
+* *Manifest*: A manifest in the context of validation is a SPDX file that that describes exactly one package, including its sub-packages (which are files). The manifest for a distribution describes the content of the distribution (the packages in the collection). The elements of the distribution contain or bring their own manifests.
 
 ## Invoking the QMSTR Validator
 
@@ -86,7 +86,7 @@ For QMSTR 0.6, validation is suppossed to reach [H2020 TRL 6](https://ec.europa.
   * On the build side, the demo should build curl and create the .deb packages for it, as well as the manifests for the packages.
   * On the validation side, the demo should validate the packages against the generated manifests.
 
-The valudation feature will be merged into the QMSTR master branch after this deminstration.
+The valudation feature will be merged into the QMSTR master branch after this demonstration.
 
 ### QMSTR 0.7: TRL 7
 
