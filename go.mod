@@ -5,6 +5,7 @@ go 1.12
 replace github.com/Sirupsen/logrus => github.com/sirupsen/logrus v1.4.0
 
 require (
+	cloud.google.com/go v0.39.0 // indirect
 	github.com/Microsoft/go-winio v0.4.12 // indirect
 	github.com/Sirupsen/logrus v0.0.0-00010101000000-000000000000 // indirect
 	github.com/blakesmith/ar v0.0.0-20190502131153-809d4375e1fb
@@ -14,9 +15,16 @@ require (
 	github.com/docker/docker v1.13.1
 	github.com/docker/go-connections v0.4.0
 	github.com/docker/go-units v0.3.3 // indirect
+	github.com/golang/mock v1.3.1 // indirect
 	github.com/golang/protobuf v1.3.1
+	github.com/google/btree v1.0.0 // indirect
+	github.com/google/go-cmp v0.3.0 // indirect
+	github.com/google/pprof v0.0.0-20190515194954-54271f7e092f // indirect
+	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/hashicorp/go-version v1.1.0
+	github.com/hashicorp/golang-lru v0.5.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/kr/pty v1.1.5 // indirect
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/opencontainers/runc v0.1.1 // indirect
 	github.com/pkg/errors v0.8.1
@@ -27,13 +35,21 @@ require (
 	github.com/spf13/pflag v1.0.3
 	github.com/stretchr/testify v1.2.2
 	github.com/ulikunitz/xz v0.5.6
-	golang.org/x/crypto v0.0.0-20190513172903-22d7a77e9e5f // indirect
-	golang.org/x/net v0.0.0-20190509222800-a4d6f7feada5
-	golang.org/x/sync v0.0.0-20181108010431-42b317875d0f // indirect
-	golang.org/x/sys v0.0.0-20190509141414-a5b02f93d862 // indirect
-	golang.org/x/text v0.3.2 // indirect
-	google.golang.org/appengine v1.4.0 // indirect
-	google.golang.org/genproto v0.0.0-20190513181449-d00d292a067c // indirect
+	golang.org/x/crypto v0.0.0-20190621222207-cc06ce4a13d4 // indirect
+	golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522 // indirect
+	golang.org/x/image v0.0.0-20190622003408-7e034cad6442 // indirect
+	golang.org/x/lint v0.0.0-20190409202823-959b441ac422 // indirect
+	golang.org/x/mobile v0.0.0-20190607214518-6fa95d984e88 // indirect
+	golang.org/x/mod v0.1.0 // indirect
+	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45 // indirect
+	golang.org/x/sys v0.0.0-20190624142023-c5567b49c5d0 // indirect
+	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4 // indirect
+	golang.org/x/tools v0.0.0-20190624222133-a101b041ded4 // indirect
+	google.golang.org/appengine v1.6.1 // indirect
+	google.golang.org/genproto v0.0.0-20190620144150-6af8c5fc6601 // indirect
 	google.golang.org/grpc v1.20.0
 	gopkg.in/yaml.v2 v2.2.2
+	honnef.co/go/tools v0.0.0-20190623190502-86b08b5391b7 // indirect
+	rsc.io/binaryregexp v0.2.0 // indirect
 )
