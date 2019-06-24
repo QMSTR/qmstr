@@ -20,6 +20,7 @@ message FileNode {
     repeated InfoNode additionalInfo = 9;
     repeated DiagnosticNode diagnosticInfo = 10;
     repeated FileNode dependencies = 11;
+    int64 timestamp = 12;
 }
 
 message InfoNode {
@@ -33,8 +34,10 @@ message InfoNode {
         string dataNodeType = 1;
         string type = 2;
         string data = 3;
+        int64 timestamp = 4;
     }
     repeated DataNode dataNodes = 6;
+    int64 timestamp = 7;
 }
 
 message DiagnosticNode {
@@ -49,6 +52,7 @@ message DiagnosticNode {
     Severity severity = 3;
     string message = 4;
     repeated Analyzer analyzer = 5;
+    int64 timestamp = 6;
 }
 
 message Analyzer {
@@ -73,6 +77,7 @@ message PackageNode {
     repeated InfoNode additionalInfo = 6;
     string buildConfig = 7;
     repeated DiagnosticNode diagnosticInfo = 8;
+    int64 timestamp = 9;
 }
 
 message ProjectNode {
@@ -81,6 +86,7 @@ message ProjectNode {
     string projectNodeType = 3;
     repeated PackageNode packages = 4;
     repeated InfoNode additionalInfo = 5;
+    int64 timestamp = 6;
 }
 
 message Event {
@@ -99,6 +105,7 @@ message QmstrStateNode {
     string qmstrStateNodeType = 2;
     Phase phase = 3;
     bool done = 4;
+    int64 timestamp = 5;
 }
 
 enum Phase {
