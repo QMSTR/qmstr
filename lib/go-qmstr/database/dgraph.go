@@ -273,7 +273,7 @@ func (db *DataBase) insertProjectNode(node *service.ProjectNode) {
 	db.insertMutex.Unlock()
 }
 
-func fixTypeField(field *reflect.Value) error {
+func fixNodeFields(field *reflect.Value) error {
 	switch field.Kind() {
 	case reflect.Struct:
 		for i := 0; i < field.NumField(); i++ {
@@ -284,29 +284,35 @@ func fixTypeField(field *reflect.Value) error {
 					continue
 				}
 				return fmt.Errorf("%s not settable", field.Type().Field(i).Name)
+			} else if fieldVal.Kind() == reflect.Int32 && field.Type().Field(i).Name == "Timestamp" {
+				if fieldVal.CanSet() {
+					fieldVal.SetInt(time.Now().Unix())
+					continue
+				}
+				return fmt.Errorf("%s not settable", field.Type().Field(i).Name)
 			}
-			fixTypeField(&fieldVal)
+			fixNodeFields(&fieldVal)
 		}
 	case reflect.Slice, reflect.Array:
 		for i := 0; i < field.Len(); i++ {
 			fieldVal := field.Index(i).Elem()
-			fixTypeField(&fieldVal)
+			fixNodeFields(&fieldVal)
 		}
 	}
 	return nil
 }
 
-// fill in the type value to work around omitting empty values on serialization
-func fillTypeField(data interface{}) error {
+// fill in the type and timestamp value to work around omitting empty values on serialization
+func fillNodeFields(data interface{}) error {
 	val := reflect.ValueOf(data)
 	if val.Kind() != reflect.Ptr {
-		return errors.New("you shall not call fillTypeField by value")
+		return errors.New("you shall not call fillNodeFields by value")
 	}
 	for val.Kind() == reflect.Ptr || val.Kind() == reflect.Interface {
 		val = val.Elem()
 	}
 
-	return fixTypeField(&val)
+	return fixNodeFields(&val)
 }
 
 // the data should be JSON marshalable
@@ -314,7 +320,7 @@ func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
 	txn := c.NewTxn()
 	defer txn.Discard(context.Background())
 
-	if err := fillTypeField(&data); err != nil {
+	if err := fillNodeFields(&data); err != nil {
 		return "", err
 	}
 

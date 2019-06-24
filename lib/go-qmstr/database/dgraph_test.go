@@ -23,11 +23,19 @@ func TestVarNameCalculation(t *testing.T) {
 
 func TestFillType(t *testing.T) {
 	pkgNode := service.PackageNode{Targets: []*service.FileNode{&service.FileNode{Name: "Test"}}}
-	fillTypeField(&pkgNode)
+	fillNodeFields(&pkgNode)
 	if pkgNode.PackageNodeType != "_" {
 		t.Fail()
 	}
+	if pkgNode.Timestamp == 0 {
+		t.Logf("Timestamp is not set for %v", pkgNode)
+		t.Fail()
+	}
 	if pkgNode.Targets[0].FileNodeType != "_" {
+		t.Fail()
+	}
+	if pkgNode.Targets[0].Timestamp == 0 {
+		t.Logf("Timestamp is not set for %v", pkgNode.Targets[0])
 		t.Fail()
 	}
 }
