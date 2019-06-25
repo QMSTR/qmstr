@@ -107,6 +107,7 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 			  name
 			  path
 			  type
+			  timestamp
 			  derivedFrom
 			  dependencies
 			  additionalInfo

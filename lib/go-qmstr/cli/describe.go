@@ -14,19 +14,8 @@ var less bool
 var describeCmd = &cobra.Command{
 	Use:   "describe [type_of_node:attribute:value]",
 	Short: "Print description of the node",
-	Long: `Print description of the node and traverse the tree 
-to print the description of the nodes connected to it.
-
-input: [type_of_node:attribute:value], where type_of_node can be:
-	- package
-	- target 
-attribute can be:
-	- name
-	- path 
-	- type
-	- hash
-and value, the value of the attribute.
-	`,
+	Long: `Print description of the node and traverse the tree
+to print the description of the nodes connected to it.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpBuildService()
 		setUpControlService()
