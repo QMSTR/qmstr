@@ -51,7 +51,7 @@ func (in *InfoNode) Describe(indent string) string {
 }
 
 func (fn *FileNode) Describe(less bool, indent string) string {
-	describe := []string{fmt.Sprintf("%s|- Name: %s, Path: %s, Hash: %s", indent, fn.Name, fn.Path, fn.Hash)}
+	describe := []string{fmt.Sprintf("%s|- Name: %s, Path: %s, Hash: %s, Timestamp: %v", indent, fn.Name, fn.Path, fn.Hash, fn.Timestamp)}
 	indent = indent + "\t"
 	if !less {
 		for _, inode := range fn.AdditionalInfo {
