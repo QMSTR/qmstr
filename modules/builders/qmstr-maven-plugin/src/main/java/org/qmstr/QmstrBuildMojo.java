@@ -29,7 +29,7 @@ import org.qmstr.util.FilenodeUtils;
 @Mojo( name = "qmstrbuild", defaultPhase = LifecyclePhase.PROCESS_CLASSES )
 public class QmstrBuildMojo extends AbstractMojo
 {
-    private final String qmstrMasterAddress =System.getenv("QMSTR_MASTER");
+    private final String qmstrMasterAddress = System.getenv("QMSTR_MASTER");
 
     /**
      * address to connect to
