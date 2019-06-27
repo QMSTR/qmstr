@@ -1,8 +1,0 @@
-SPDX_REPORTER := spdx-reporter
-
-.PHONY: $(SPDX_REPORTER)
-$(SPDX_REPORTER): $(OUTDIR)reporters/$(SPDX_REPORTER)
-
-$(OUTDIR)reporters/$(SPDX_REPORTER): $(GO_SRCS)
-	go test ./modules/$(subst $(OUTDIR),,$@)
-	go build -o $@ ./modules/$(subst $(OUTDIR),,$@)

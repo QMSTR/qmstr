@@ -1,0 +1,8 @@
+PKG_MANIFEST_REPORTER := package-manifest-reporter
+
+.PHONY: $(PKG_MANIFEST_REPORTER)
+$(PKG_MANIFEST_REPORTER): $(OUTDIR)reporters/$(PKG_MANIFEST_REPORTER)
+
+$(OUTDIR)reporters/$(PKG_MANIFEST_REPORTER): $(GO_SRCS)
+	go test ./modules/$(subst $(OUTDIR),,$@)
+	go build -o $@ ./modules/$(subst $(OUTDIR),,$@)
