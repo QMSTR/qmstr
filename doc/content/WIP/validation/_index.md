@@ -7,18 +7,18 @@ weight: 10
 
 The QMSTR Validator is a command line program that validates the
 manifests for a package or a distribution. It verifies the content
-of packages against the compliance documentation and answers three
+of packages against the compliance manifest and answers three
 questions:
 
-* Does the manifest match the package? The documentation matches
+* Does the manifest match the package? The manifest matches
   the package if the checksums for the files contained in the package
-  match the information in the documentation. This check will fail,
+  match the information in the manifest. This check will fail,
   for example, if a binary has been changed or rebuilt after the
   documentation was created so that the checksums do not match.
 * Does the package only contain files that are documented? This test
   will fail if there are files in the package that are not described
-  in the documentation.
-* Is the documentation complete? The documentation is complete if it
+  in the manifest.
+* Is the documentation complete? The manifest is complete if it
   describes all files in the package and contains all required
   information about these files. This check will fail, for example,
   if license or authorship information is missing even though the file
@@ -55,10 +55,10 @@ distribution file into a directory, you get the element packages.
 * *Software delivery*: A software delivery is the handover and
   acceptance of a package (or set of packages, a distribution) from a
   supplier to a customer. Software delivery always involves two
-  parties, one that provides a package with a maniest and one that
+  parties, one that provides a package with a manifest and one that
   receives those and validates them against each other.
 * *Manifest*: A manifest in the context of validation is a SPDX file
-  that that describes exactly one package, including its sub-packages
+  that describes exactly one package, including its sub-packages
   (which are files), but not the content of the sub-packages. The
   manifest for a distribution describes the content of the
   distribution (the packages in the collection). The elements of the
@@ -71,9 +71,9 @@ manifest file:
 
 	> qmstr validate curl-a.b.c.deb curl-a.b.c.deb.spdx
 	Verifying package content against manifest curl-a.b.c.deb.spdx...
-	* documentation matches the package content
+	* manifest matches the package content
 	* all files in the package are documented
-	* documentation is complete
+	* manifest is complete
 	Package validation passed.
 
 In case of a validation error, the return code of the validator
