@@ -17,18 +17,18 @@ import (
 )
 
 const (
-	ModuleName  = "reporter-spdx"
+	ModuleName  = "reporter-package-manifest"
 	outFileName = "%s.spdx"
 )
 
-type SPDXReporter struct {
+type PkgManifestReporter struct {
 	enableWarnings bool
 	enableErrors   bool
 	outputdir      string
 	nsURI          string
 }
 
-func (r *SPDXReporter) Configure(config map[string]string) error {
+func (r *PkgManifestReporter) Configure(config map[string]string) error {
 	if outDir, ok := config["outputdir"]; ok {
 		r.outputdir = outDir
 	} else {
@@ -45,7 +45,7 @@ func (r *SPDXReporter) Configure(config map[string]string) error {
 	return nil
 }
 
-func (r *SPDXReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
+func (r *PkgManifestReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	pkgStream, err := cserv.GetPackageNode(ctx, &service.PackageNode{})
@@ -65,7 +65,7 @@ func (r *SPDXReporter) Report(cserv service.ControlServiceClient, rserv service.
 	}
 }
 
-func (r *SPDXReporter) generateSPDX(pkgNode *service.PackageNode) error {
+func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode) error {
 	files := []*spdx.File2_1{}
 	hashes := []string{}
 
@@ -129,7 +129,7 @@ func (r *SPDXReporter) generateSPDX(pkgNode *service.PackageNode) error {
 	return nil
 }
 
-func (r *SPDXReporter) PostReport() error {
+func (r *PkgManifestReporter) PostReport() error {
 	return nil
 }
 

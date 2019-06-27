@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	reporter := reporting.NewReporter(&SPDXReporter{})
+	reporter := reporting.NewReporter(&PkgManifestReporter{})
 	if err := reporter.RunReporterModule(); err != nil {
 		log.Printf("%v failed: %v\n", ModuleName, err)
 		os.Exit(master.ReturnReporterFailed)
