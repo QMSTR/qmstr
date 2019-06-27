@@ -4,10 +4,6 @@ project:
     Vendor: "Endocode"
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
-  server:
-    rpcaddress: ":50051"
-    dbaddress: "localhost:9080"
-    dbworkers: 4
   analysis:
     - analyzer: spdx-identifier-analyzer
       name: "Simple SPDX Analyzer"
@@ -31,6 +27,5 @@ project:
     - reporter: qmstr-reporter-html
       name: "HTML Reporter"
       config:
-        #generatehtml: "no"
         siteprovider: "Endocode"
         baseurl: "http://localhost:8080/"
