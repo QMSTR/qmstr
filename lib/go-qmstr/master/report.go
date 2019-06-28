@@ -6,6 +6,7 @@ import (
 	"log"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/config"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/database"
@@ -85,8 +86,20 @@ func (phase *serverPhaseReport) GetInfoData(in *service.InfoDataRequest) (*servi
 	} else {
 		infos, err = db.GetInfoDataByTrustLevel(in.RootID, in.Infotype, in.Datatype)
 	}
+	// remove duplicate data
+	datamap := map[string]struct{}{}
+	for _, info := range infos {
+		info = strings.TrimSpace(info)
+		if info != "" {
+			datamap[info] = struct{}{}
+		}
+	}
+	var data []string
+	for value := range datamap {
+		data = append(data, value)
+	}
 	if err != nil {
 		return nil, err
 	}
-	return &service.InfoDataResponse{Data: infos}, nil
+	return &service.InfoDataResponse{Data: data}, nil
 }
