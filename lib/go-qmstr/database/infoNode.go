@@ -88,8 +88,9 @@ func (db *DataBase) GetInfoDataByTrustLevel(fileID string, infotype string, data
 	const q = `query InfoData($ID: string, $Itype: string, $Dtype: string){
 		var(func: uid($ID)) @recurse(loop: false) {
 			name
+			targets
 			derivedFrom
-			T as additionalInfo @filter(eq(type, $Itype))
+			T as additionalInfo @filter(eq(type, $Itype))(orderdesc: confidenceScore, first: 1)
 		}
 		var(func: uid(T)){
 			type
