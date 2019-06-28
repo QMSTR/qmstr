@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"path"
-	"strings"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/reporting"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
@@ -26,35 +25,13 @@ func (r *HTMLReporter) CreatePackageLevelReports(proj *service.ProjectNode, pkg 
 		if err != nil {
 			return err
 		}
-		licenses := map[string]struct{}{}
-		for _, license := range resp.GetData() {
-			license = strings.TrimSpace(license)
-			if license != "" {
-				licenses[license] = struct{}{}
-			}
-		}
-
-		target.Licenses = []string{}
-		for license := range licenses {
-			target.Licenses = append(target.Licenses, license)
-		}
+		target.Licenses = append(target.Licenses, resp.Data...)
 
 		resp, err = rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: target.Target.Uid, Infotype: "copyright", Datatype: "author"})
 		if err != nil {
 			return err
 		}
-		authors := map[string]struct{}{}
-		for _, author := range resp.GetData() {
-			author = strings.TrimSpace(author)
-			if author != "" {
-				authors[author] = struct{}{}
-			}
-		}
-
-		target.Authors = []string{}
-		for author := range authors {
-			target.Authors = append(target.Authors, author)
-		}
+		target.Authors = append(target.Authors, resp.Data...)
 	}
 
 	contentDirectory := path.Join(r.workingDir, "content")
