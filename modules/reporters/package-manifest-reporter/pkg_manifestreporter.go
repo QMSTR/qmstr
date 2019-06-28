@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/common"
@@ -58,18 +59,25 @@ func (r *PkgManifestReporter) Report(cserv service.ControlServiceClient, rserv s
 		if err != nil {
 			return err
 		}
-		if err = r.generateSPDX(pkg); err != nil {
+		if err = r.generateSPDX(pkg, rserv, ctx); err != nil {
 			return err
 		}
 
 	}
 }
 
-func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode) error {
+func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode, rserv service.ReportServiceClient, ctx context.Context) error {
 	files := []*spdx.File2_1{}
 	hashes := []string{}
-
 	for _, trgt := range pkgNode.Targets {
+		licenses, err := rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: trgt.Uid, Infotype: "license", Datatype: "name"})
+		if err != nil {
+			return err
+		}
+		copyrights, err := rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: trgt.Uid, Infotype: "copyright", Datatype: "author"})
+		if err != nil {
+			return err
+		}
 		fl := &spdx.File2_1{
 			FileName: trgt.Name,
 			// this should be unique
@@ -78,6 +86,15 @@ func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode) error {
 			LicenseConcluded:   "NOASSERTION",
 			LicenseInfoInFile:  []string{"NOASSERTION"},
 			FileCopyrightText:  "NOASSERTION",
+		}
+		if len(licenses.Data) != 0 {
+			fl.LicenseInfoInFile = licenses.Data
+			lic := strings.Join(licenses.Data, " AND ")
+			fl.LicenseConcluded = lic
+		}
+		if len(copyrights.Data) != 0 {
+			cprights := strings.Join(copyrights.Data, " AND ")
+			fl.FileCopyrightText = cprights
 		}
 		files = append(files, fl)
 		hashes = append(hashes, trgt.Hash)
@@ -94,8 +111,8 @@ func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode) error {
 		// this is the license we detect
 		PackageLicenseConcluded:     "NOASSERTION",
 		PackageLicenseInfoFromFiles: []string{"NOASSERTION"},
-		PackageLicenseDeclared:      pkgNode.GetMetaData("LicenseDeclared", "NOASSERTION"),
-		PackageCopyrightText:        "NOASSERTION",
+		PackageLicenseDeclared:      pkgNode.GetMetaData("license_declared", "NOASSERTION"),
+		PackageCopyrightText:        pkgNode.GetMetaData("cr_text", "NOASSERTION"),
 		Files:                       files,
 	}
 
