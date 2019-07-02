@@ -7,9 +7,9 @@ import org.gradle.api.tasks.TaskAction;
 import org.qmstr.client.BuildServiceClient;
 import org.qmstr.grpc.service.Datamodel;
 import org.qmstr.util.FilenodeUtils;
+import org.qmstr.util.transformations.*;
 
 import java.util.Set;
-
 
 public class QmstrCompileTask extends QmstrTask {
     private Iterable<SourceSet> sourceSets;
@@ -21,8 +21,7 @@ public class QmstrCompileTask extends QmstrTask {
 
     @TaskAction
     void build() {
-        QmstrPluginExtension extension = (QmstrPluginExtension) getProject()
-                .getExtensions().findByName("qmstr");
+        QmstrPluginExtension extension = (QmstrPluginExtension) getProject().getExtensions().findByName("qmstr");
 
         this.setBuildServiceAddress(extension.qmstrAddress);
 
@@ -32,10 +31,16 @@ public class QmstrCompileTask extends QmstrTask {
             FileCollection sourceDirs = set.getAllJava().getSourceDirectories();
             SourceSetOutput outDirs = set.getOutput();
             set.getAllJava().forEach(js -> {
-                    Set<Datamodel.FileNode> nodes = FilenodeUtils.processSourceFile(js, sourceDirs.getFiles(), outDirs.getFiles());
+                Set<Datamodel.FileNode> nodes;
+                try {
+                    nodes = FilenodeUtils.processSourceFile(Transform.COMPILEJAVA, js,
+                            sourceDirs.getFiles(), outDirs.getFiles());
                     if (!nodes.isEmpty()) {
                         bsc.SendBuildFileNodes(nodes);
                     }
+                } catch (TransformationException e) {
+                    e.printStackTrace();
+                }
             });
         });
 
