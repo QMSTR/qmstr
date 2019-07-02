@@ -1,7 +1,8 @@
-{{ $data := index .Site.Data .Page.Params.project .Page.Params.package .Page.Params.version "data" }}
+{{ with $data := index .Site.Data .Page.Params.project .Page.Params.package .Page.Params.version "data" }}
 <h3>Targets:</h3>
 {{ range $data.Targets }}
     <p> Filename: <b>{{ .Target.path }}</b></p>
     SHA-1: {{ .Target.hash }} <br/>
     licenses: {{ delimit .Licenses ", " }}<br/>
+{{ end }}
 {{ end }}

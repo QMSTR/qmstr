@@ -2,6 +2,7 @@ package reporting
 
 import (
 	"encoding/json"
+
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
@@ -37,7 +38,7 @@ func GetPackageData(pkg *service.PackageNode, projectName string) *PackageData {
 		// reduce returned data
 		fileNode.DerivedFrom = []*service.FileNode{}
 		fileNode.Dependencies = []*service.FileNode{}
-		targets = append(targets, &Target{Target: fileNode})
+		targets = append(targets, &Target{Target: fileNode, Licenses: []string{}, Authors: []string{}})
 	}
 	packageData.Targets = targets
 

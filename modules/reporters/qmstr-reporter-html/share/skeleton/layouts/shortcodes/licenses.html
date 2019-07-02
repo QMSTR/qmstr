@@ -1,7 +1,8 @@
-{{ $data := index .Site.Data .Page.Params.project .Page.Params.package .Page.Params.version "data" }} 
+{{ with $data := index .Site.Data .Page.Params.project .Page.Params.package .Page.Params.version "data" }}
 <h3>Licenses</h3>
 <ul>
 {{ range $data.Licenses }}
     <li>{{ . }}</li>
     {{ end }}
 </ul>
+{{ end }}
