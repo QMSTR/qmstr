@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha1"
 	"fmt"
+	"io"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -51,19 +52,22 @@ func (r *PkgManifestReporter) Report(cserv service.ControlServiceClient, rserv s
 	defer cancel()
 	pkgStream, err := cserv.GetPackageNode(ctx, &service.PackageNode{})
 	if err != nil {
-		return err
+		return fmt.Errorf("Couldn't get package node, %v", err)
 	}
 
 	for {
 		pkg, err := pkgStream.Recv()
+		if err == io.EOF {
+			break
+		}
 		if err != nil {
-			return err
+			return fmt.Errorf("Error receiving package nodes, %v", err)
 		}
 		if err = r.generateSPDX(pkg, rserv, ctx); err != nil {
-			return err
+			return fmt.Errorf("Error while generating SPDX, %v", err)
 		}
-
 	}
+	return nil
 }
 
 func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode, rserv service.ReportServiceClient, ctx context.Context) error {
@@ -72,11 +76,11 @@ func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode, rserv s
 	for _, trgt := range pkgNode.Targets {
 		licenses, err := rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: trgt.Uid, Infotype: "license", Datatype: "name"})
 		if err != nil {
-			return err
+			return fmt.Errorf("Couldn't get license node, %v", err)
 		}
 		copyrights, err := rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: trgt.Uid, Infotype: "copyright", Datatype: "author"})
 		if err != nil {
-			return err
+			return fmt.Errorf("Couldn't get copyright node, %v", err)
 		}
 		fl := &spdx.File2_1{
 			FileName: trgt.Name,
