@@ -5,8 +5,9 @@ public class DexClassTransformation implements TransformationFunction<String, St
     @Override
     public String apply(String s) throws TransformationException {
         String[] filename = s.split("\\.");
-        if (filename[filename.length-1] != "class") {
-            throw new TransformationException("Invalid input; must be class file");
+        String extension = filename[filename.length-1];
+        if (!extension.equals("class")) {
+            throw new TransformationException(String.format("Invalid input %s; must be class file", s));
         }
         filename[filename.length-1] = "dex";
         return String.join(".", filename);

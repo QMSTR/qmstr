@@ -1,7 +1,7 @@
 package org.qmstr.gradle;
 
 public class QmstrPluginExtension {
-    String qmstrAddress;
+    public String qmstrAddress;
 
     public QmstrPluginExtension() {
         this.qmstrAddress = "localhost:50051";

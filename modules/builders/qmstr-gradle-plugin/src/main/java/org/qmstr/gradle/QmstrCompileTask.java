@@ -9,6 +9,7 @@ import org.qmstr.grpc.service.Datamodel;
 import org.qmstr.util.FilenodeUtils;
 import org.qmstr.util.transformations.*;
 
+import java.io.FileNotFoundException;
 import java.util.Set;
 
 public class QmstrCompileTask extends QmstrTask {
@@ -39,7 +40,9 @@ public class QmstrCompileTask extends QmstrTask {
                         bsc.SendBuildFileNodes(nodes);
                     }
                 } catch (TransformationException e) {
-                    e.printStackTrace();
+                    getLogger().warn("{} failed: {}", this.getClass().getName(), e.getMessage());
+                } catch (FileNotFoundException fnfe) {
+                    getLogger().warn("{} failed: {}", this.getClass().getName(), fnfe.getMessage());
                 }
             });
         });
