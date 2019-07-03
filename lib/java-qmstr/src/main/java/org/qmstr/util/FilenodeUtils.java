@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.util.*;
-import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -82,12 +81,13 @@ public class FilenodeUtils {
     }
 
     public static String getDestination(Transform transform, String source) throws TransformationException {
-        TransformationFunction<String,String> transformFct = srcDestMap.getOrDefault(transform, t -> "");
+        TransformationFunction<String, String> transformFct = srcDestMap.getOrDefault(transform, t -> "");
         return transformFct.apply(source);
     }
 
     public static Set<Datamodel.FileNode> processSourceFile(Transform transform, File sourcefile,
-            Collection<File> sourceDirs, Collection<File> outDirs) throws TransformationException {
+            Collection<File> sourceDirs, Collection<File> outDirs)
+            throws TransformationException, FileNotFoundException {
 
         Datamodel.FileNode sourceNode = FilenodeUtils.getFileNode(sourcefile.toPath(),
                 FilenodeUtils.getTypeByFile(sourcefile.getName()));
@@ -95,28 +95,24 @@ public class FilenodeUtils {
         Optional<File> actualSourceDir = sourceDirs.stream().filter(sd -> isActualSourceDir(sd, sourcefile))
                 .findFirst();
 
-        try {
-            Path relSrcPath = actualSourceDir.orElseThrow(FileNotFoundException::new).toPath()
-                    .relativize(sourcefile.toPath());
+        Path relSrcPath = actualSourceDir
+                .orElseThrow(() -> new FileNotFoundException(
+                        String.format("No source dir found for %s", sourcefile.getAbsolutePath())))
+                .toPath().relativize(sourcefile.toPath());
 
-            String targetFileName = getDestination(transform, relSrcPath.getFileName().toString());
+        String targetFileName = getDestination(transform, relSrcPath.getFileName().toString());
 
-            Path packageDirs = relSrcPath.getParent() != null ? relSrcPath.getParent() : Paths.get(".");
-            Path classesRelPath = packageDirs.resolve(targetFileName);
+        Path packageDirs = relSrcPath.getParent() != null ? relSrcPath.getParent() : Paths.get(".");
+        Path classesRelPath = packageDirs.resolve(targetFileName);
 
-            return outDirs.stream().filter(od -> FilenodeUtils.isActualClassDir(od, classesRelPath)).map(outdir -> {
-                Path classesPath = outdir.toPath().resolve(classesRelPath);
-                Set<Path> nested = FilenodeUtils.getNestedClasses(outdir.toPath().resolve(packageDirs), targetFileName);
-                nested.add(classesPath);
-                return nested.stream()
-                        .map(p -> FilenodeUtils.getFileNode(p, FilenodeUtils.getTypeByFile(p.getFileName().toString())))
-                        .map(node -> node.toBuilder().addDerivedFrom(sourceNode).build()).collect(Collectors.toSet());
-            }).flatMap(sets -> sets.stream()).collect(Collectors.toSet());
-
-        } catch (FileNotFoundException fnfe) {
-            // TODO
-        }
-        return null;
+        return outDirs.stream().filter(od -> FilenodeUtils.isActualClassDir(od, classesRelPath)).map(outdir -> {
+            Path classesPath = outdir.toPath().resolve(classesRelPath);
+            Set<Path> nested = FilenodeUtils.getNestedClasses(outdir.toPath().resolve(packageDirs), targetFileName);
+            nested.add(classesPath);
+            return nested.stream()
+                    .map(p -> FilenodeUtils.getFileNode(p, FilenodeUtils.getTypeByFile(p.getFileName().toString())))
+                    .map(node -> node.toBuilder().addDerivedFrom(sourceNode).build()).collect(Collectors.toSet());
+        }).flatMap(sets -> sets.stream()).collect(Collectors.toSet());
     }
 
     private static boolean isActualSourceDir(File sourceDir, File sourceFile) {
