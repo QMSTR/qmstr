@@ -3,6 +3,7 @@ package org.qmstr.gradle.android;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.AppliedPlugin;
+import com.android.build.gradle.AppPlugin;
 
 public class QmstrAndroidAction implements Action<AppliedPlugin> {
 
@@ -13,11 +14,11 @@ public class QmstrAndroidAction implements Action<AppliedPlugin> {
     }
 
     @Override
-    public void execute(AppliedPlugin androidPlugin) {
-        // recurse loop?
-        //project.getPluginManager().apply(QmstrPlugin.class);
+    public void execute(AppliedPlugin plugin) {
+        // project.getLogger().warn(plugin.getName());
+        // project.getLogger().warn(plugin.getClass().getName());
 
-        //project.getGradle().getTaskGraph().whenReady(new TaskExecutionGraphReadyAction(project));
+        // install actions/listeners to the task graph
         project.getGradle().getTaskGraph().beforeTask(new AndroidPreTaskAction(project));
         project.getGradle().getTaskGraph().afterTask(new AndroidPostTaskAction(project));
 

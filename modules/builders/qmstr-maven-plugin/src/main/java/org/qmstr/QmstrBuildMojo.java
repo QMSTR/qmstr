@@ -1,6 +1,7 @@
 package org.qmstr;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,7 +70,9 @@ public class QmstrBuildMojo extends AbstractMojo {
                         sourceDirs, Collections.singleton(outputDirectory));
                 bsc.SendBuildFileNodes(fileNodes);
             } catch (TransformationException e) {
-                e.printStackTrace();
+                // ("qmstr plugin could not transform source to target " + e.getMessage());
+            } catch (FileNotFoundException fnfe) {
+                //throw new MojoExecutionException("qmstr plugin could not find the source file " + fnfe.getMessage());
             }
         });
 

@@ -14,6 +14,7 @@ repositories {
   // The google mirror is less flaky than mavenCentral()
     url "https://maven-central.storage-download.googleapis.com/repos/central/data/"
   }
+  google()
 }
 
 apply plugin: 'java'
@@ -37,6 +38,7 @@ if (propFile.canRead()){
 dependencies {
   compile gradleApi()
   compile localGroovy()
+  compile 'com.android.tools.build:gradle:3.3.1'
   implementation "org.qmstr:service:${version}"
 
   testCompile("org.junit.jupiter:junit-jupiter-api:5.1.0")
