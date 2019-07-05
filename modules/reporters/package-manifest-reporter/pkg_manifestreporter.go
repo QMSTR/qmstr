@@ -83,7 +83,7 @@ func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode, rserv s
 			return fmt.Errorf("Couldn't get copyright node, %v", err)
 		}
 		fl := &spdx.File2_1{
-			FileName: trgt.Name,
+			FileName: trgt.Path,
 			// this should be unique
 			FileSPDXIdentifier: "SPDXRef-file-" + trgt.Name,
 			FileChecksumSHA1:   trgt.Hash,
