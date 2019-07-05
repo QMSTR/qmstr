@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -28,6 +29,9 @@ type PkgManifestReporter struct {
 	enableErrors   bool
 	outputdir      string
 	nsURI          string
+	pathRegexp   string
+	pathReplace string
+	
 }
 
 func (r *PkgManifestReporter) Configure(config map[string]string) error {
@@ -35,6 +39,14 @@ func (r *PkgManifestReporter) Configure(config map[string]string) error {
 		r.outputdir = outDir
 	} else {
 		return fmt.Errorf("no output directory configured")
+	}
+	if str, ok := config["pathSubst"]; ok {
+		arr := strings.Split(str, "||")
+		if len(arr) != 2 {
+			return fmt.Errorf("invalid pathSubst: %s", str)
+		}
+		r.pathRegexp = arr[0]
+		r.pathReplace = arr[1]
 	}
 
 	if nsURI, ok := config["namespaceURI"]; ok {
@@ -79,6 +91,17 @@ func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode, rserv s
 			return fmt.Errorf("Couldn't get license node, %v", err)
 		}
 		copyrights, err := rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: trgt.Uid, Infotype: "copyright", Datatype: "author"})
+		if err != nil {
+			return fmt.Errorf("Couldn't get copyright node, %v", err)
+		}
+		if r.pathRegexp != "" {
+			re, err := regexp.Compile(r.pathRegexp)
+			if err != nil {
+				return fmt.Errorf("failed to compile regexp: %v, %s", err, r.pathRegexp)
+			}
+			trgt.Path = re.ReplaceAllString(trgt.Path, r.pathReplace)
+		}
+
 		if err != nil {
 			return fmt.Errorf("Couldn't get copyright node, %v", err)
 		}
