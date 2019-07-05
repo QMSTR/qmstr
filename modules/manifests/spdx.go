@@ -34,12 +34,12 @@ func NewSPDXManifest(r io.Reader) (validation.Manifest, error) {
 	}
 
 	for _, f := range doc.Packages[0].Files {
-		if f.LicenseConcluded == "NOASSERTION" || f.LicenseConcluded == "" {
+		if f.LicenseConcluded == "" {
 			return nil, validation.MissingLicenseInfoError{
 				Name: f.FileName,
 			}
 		}
-		if f.FileCopyrightText == "NOASSERTION" || f.FileCopyrightText == "" {
+		if f.FileCopyrightText == "" {
 			return nil, validation.MissingCopyrightInfoError{
 				Name: f.FileName,
 			}
