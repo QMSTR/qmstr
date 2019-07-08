@@ -25,7 +25,12 @@ project:
       config:
         siteprovider: "Endocode"
     - reporter: qmstr-reporter-html
-      name: "HTML Reporter"
+      name: "Public HTML Reports"
       config:
         siteprovider: "Endocode"
         baseurl: "http://localhost:8080/"
+    - reporter: package-manifest-reporter
+      name: "Package manifest Reporter"
+      config:
+        outputdir: "/buildroot"
+        pathSubst: ".+?/.+?/.+?/(.+)||./$1"
