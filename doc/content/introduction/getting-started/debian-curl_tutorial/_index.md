@@ -158,8 +158,32 @@ be specified in the configuration file):
 	> ls qmstr/qmstr-reporter-html/Public_HTML_Reports/qmstr-reports.tar.bz2
 	qmstr/qmstr-reporter-html/Public_HTML_Reports/qmstr-reports.tar.bz2
 
+    > ls qmstr/package-manifest-reporter/Package_manifest_Reporter/curl_7.64.0-3_amd64.deb.spdx
+    qmstr/package-manifest-reporter/Package_manifest_Reporter/curl_7.64.0-3_amd64.deb.spdx
+
 Once the master is shut down, all data that it collected during the
 build and analysis phases is destroyed. Any information that is
 needed in later stages has to be "reported" as a build artifact by one
 of the reporting modules.
 
+## Strep 6: Validate manifest
+
+Validate the generated manifest(generated from the package-manifest-reporter)
+against the debian curl package.
+
+    > qmstr validate curl_7.64.0-3_amd64.deb qmstr/package-manifest-reporter/Package_manifest_Reporter/curl_7.64.0-3_amd64.deb.spdx
+    Validation successful!
+
+The validate command verifies the content of packages against the
+compliance manifest and answers three questions:
+
+    1. Does the manifest match the package? The manifest matches the package if the checksums
+    for the files contained in the package match the information in the manifest. This check
+    will fail, for example, if a binary has been changed or rebuilt after the documentation
+    was created so that the checksums do not match.
+    2. Does the package only contain files that are documented? This test will fail if there are
+    files in the package that are not described in the manifest.
+    3. Is the documentation complete? The manifest is complete if it describes all files in the
+    package and contains all required information about these files. This check will fail,
+    for example, if license or authorship information is missing even though the file is listed
+    in the manifest.
