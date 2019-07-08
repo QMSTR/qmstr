@@ -62,15 +62,9 @@ flag points to the configuration file. If it is not specified,
 `qmstrctl` looks for a file called `qmstr.yaml` in  the current
 directory.
 
-And create the debian packages in the database:
+And create the debian curl package in the database:
 
 	> qmstrctl create package:curl_7.64.0-3_amd64.deb --version $(cd curl && git describe --tags --dirty --long)
-    > qmstrctl create package:libcurl4_7.64.0-3_amd64.deb
-    > qmstrctl create package:libcurl3-gnutls_7.64.0-3_amd64.deb
-    > qmstrctl create package:libcurl3-nss_7.64.0-3_amd64.deb
-    > qmstrctl create package:libcurl4-openssl-dev_7.64.0-3_amd64.deb
-    > qmstrctl create package:libcurl4-gnutls-dev_7.64.0-3_amd64.deb
-    > qmstrctl create package:libcurl4-nss-dev_7.64.0-3_amd64.deb
 
 
 ## Step 2: Build (this time under instrumentation)
@@ -95,8 +89,8 @@ completely unchanged, including the build system and configuration
 files.
 
 After the [build script](build.sh) has finished successfully run the
-following file to connect the targets, that have been created while
-building debian Curl, to the debian packages:
+[targets script](targets.sh) to connect the targets, that have been
+created while building debian curl, to the debian curl package:
 
     > ./targets.sh
 
