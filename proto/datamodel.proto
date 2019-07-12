@@ -12,7 +12,7 @@ message FileNode {
         TARGET = 3;
     }
     Type fileType = 3;
-    string path = 4;
+    repeated PathInfo paths = 4;
     string name = 5;
     string hash = 6;
     bool broken = 7;
@@ -21,6 +21,18 @@ message FileNode {
     repeated DiagnosticNode diagnosticInfo = 10;
     repeated FileNode dependencies = 11;
     int64 timestamp = 12;
+}
+
+message PathInfo {
+    string uid = 1;
+    enum Phase {
+        UNDEF = 0;
+        Build = 1;
+        Packaging = 2;
+    }
+    Phase phase = 2;
+    string link = 3;
+    string path = 4;
 }
 
 message InfoNode {
