@@ -101,14 +101,7 @@ func TestCallByValue(t *testing.T) {
 }
 
 func TestFileNodeParsing(t *testing.T) {
-	fileNode, err := ParseNodeID("file:/dev/null")
-	if err != nil {
-		t.FailNow()
-	}
-	if fileNode.(*service.FileNode).Path != "/dev/null" {
-		t.Fail()
-	}
-	fileNode, err = ParseNodeID("file:hash:deadbeef")
+	fileNode, err := ParseNodeID("file:hash:deadbeef")
 	if err != nil {
 		t.FailNow()
 	}

@@ -14,11 +14,11 @@ func TestStringFlagNodeCreation(t *testing.T) {
 	if err != nil {
 		log.Printf("%v", err)
 	}
-	cmdFlags.Parse([]string{"--name", "foobar", "--path", "/dev/null"})
+	cmdFlags.Parse([]string{"--name", "foobar"})
 	if err = createNode("file:hash:12345", false); err != nil {
 		t.FailNow()
 	}
-	if currentNode.(*service.FileNode).Hash != "12345" || currentNode.(*service.FileNode).Name != "foobar" || currentNode.(*service.FileNode).Path != "/dev/null" {
+	if currentNode.(*service.FileNode).Hash != "12345" || currentNode.(*service.FileNode).Name != "foobar" {
 		t.Fail()
 	}
 }
