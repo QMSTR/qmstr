@@ -89,7 +89,7 @@ func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceC
 		if test == "TestPackageNode" {
 			testfunction = TestPackageNode
 		} else if test == "TestCalcBuildGraph" {
-			expectedTargets = []string{"Calculator/calc", "Calculator/libcalc.so"}
+			expectedTargets = []string{"Calculator/libcalc.a", "Calculator/calcs", "Calculator/libcalc.so", "Calculator/calc"}
 			testfunction = TestBuildGraph
 		} else if test == "TestCurlBuildGraph" {
 			expectedTargets = []string{"curl/build/src/curl", "curl/build/lib/libcurl.so"}
@@ -132,9 +132,15 @@ func TestBuildGraph(t *testing.T) {
 		t.Fail()
 	} else {
 		for _, target := range pkgNode.Targets {
-			if target.Path != expectedTargets[0] && target.Path != expectedTargets[1] {
-				t.Logf("Package node %v is not connected to the configured linked target", pkgNode.Name)
-				t.Logf("Package node %v is connected to %v", pkgNode.Name, target.Path)
+			found := false
+			for _, expTarget := range expectedTargets {
+				if service.GetFilePath(target) == expTarget {
+					found = true
+				}
+			}
+			if !found {
+				t.Logf("Package node %v is not connected to the configured linked targets", pkgNode.Name)
+				t.Logf("Package node %v is connected to %v", pkgNode.Name, service.GetFilePath(target))
 				t.Fail()
 			}
 		}
