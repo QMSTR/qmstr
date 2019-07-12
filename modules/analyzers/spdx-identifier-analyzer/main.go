@@ -56,8 +56,10 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 
 		diagnosticNodeMsg := service.DiagnosticNodeMessage{}
 
-		log.Printf("Analyzing file %s", fileNode.Path)
-		spdxIdent, lineNo, columnNo, err := detectSPDXLicense(fileNode.Path)
+		filePath := service.GetFilePath(fileNode)
+		log.Printf("Analyzing file %s", filePath)
+
+		spdxIdent, lineNo, columnNo, err := detectSPDXLicense(filePath)
 		if err != nil {
 			log.Printf("%v", err)
 			// Adding warning node
@@ -66,7 +68,7 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 		} else if _, ok := spdxLicenses[spdxIdent]; !ok {
 			log.Printf("Found invalid spdx license identifier %v.", spdxIdent)
 			// Adding error node
-			file, err := filepath.Rel(spdxalizer.basedir, fileNode.Path)
+			file, err := filepath.Rel(spdxalizer.basedir, filePath)
 			if err != nil {
 				return err
 			}

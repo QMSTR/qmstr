@@ -147,7 +147,7 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 	}
 	for _, nodeFile := range nodeFiles {
 		if gsp.server.currentPhase.GetPhaseID() == service.Phase_ANALYSIS {
-			nodeFile.Path = filepath.Join(gsp.masterConfig.Server.BuildPath, nodeFile.Path)
+			nodeFile.Paths[(len(nodeFile.Paths))-1].Path = filepath.Join(gsp.masterConfig.Server.BuildPath, service.GetFilePath(nodeFile))
 		}
 		stream.Send(nodeFile)
 	}
