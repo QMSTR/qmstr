@@ -92,6 +92,29 @@ func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 	return ret["hasNode"][0].Uid, nil
 }
 
+func (db *DataBase) GetPathUid(path string) (string, error) {
+	var ret map[string][]*service.PathInfo
+
+	q := `query Node($Path: string){
+		  hasPath(func: eq(path, $Path)) {
+			uid
+		  }}`
+
+	vars := map[string]string{"$Path": path}
+
+	err := db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return "", err
+	}
+
+	// no path with such uid
+	if len(ret["hasPath"]) == 0 {
+		return "", nil
+	}
+	return ret["hasPath"][0].Uid, nil
+
+}
+
 // GetFileNodesByFileNode queries filenodes on a specific attribute of a provided filenode.
 // For instance, you can provide a filenode with a certain filetype and get all the filenodes
 // with this filetype.

@@ -44,7 +44,7 @@ func TestCheckSchema(t *testing.T) {
 	const schema = `data:string @index(hash) .
 hash:string @index(exact) .
 name:string @index(hash) .
-path:string @index(hash,trigram) .
+path:string @index(exact) .
 type:string @index(hash) .
 trustLevel:string @index(hash) .
 fileType:int @index(int) .
