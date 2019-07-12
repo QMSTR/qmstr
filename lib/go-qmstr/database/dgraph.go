@@ -24,7 +24,7 @@ import (
 )
 
 const schema = `
-path:string @index(hash,trigram) .
+path:string @index(exact) .
 hash:string @index(exact) .
 fileType:int @index(int) .
 type:string @index(hash) .
@@ -165,8 +165,29 @@ func (db *DataBase) queueWorker() {
 	}
 }
 
+func (db *DataBase) findPathUID(node *service.FileNode, ready bool) {
+	for idx, pathinfo := range node.Paths {
+		if pathinfo.Uid == "" {
+			// missing path
+			ready = false
+			// look up path in db
+			uid, err := db.GetPathUid(pathinfo.Path)
+			if err != nil {
+				panic(err)
+			}
+			// found uid
+			if uid != "" {
+				node.Paths[idx].Uid = uid
+			}
+		}
+	}
+}
+
 func (db *DataBase) insertFileNode(node *service.FileNode) {
 	ready := true
+	// check path uid
+	db.findPathUID(node, ready)
+
 	for idx, dep := range node.DerivedFrom {
 		if dep.Uid == "" {
 			// missing dep
@@ -181,6 +202,7 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 				node.DerivedFrom[idx].Uid = uid
 			}
 		}
+		db.findPathUID(dep, ready)
 	}
 
 	for idx, dep := range node.Dependencies {
@@ -197,6 +219,7 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 				node.Dependencies[idx].Uid = uid
 			}
 		}
+		db.findPathUID(dep, ready)
 	}
 
 	if !ready {
