@@ -36,7 +36,10 @@ func (db *DataBase) GetPackageNodeByName(name string) (*service.PackageNode, err
 			derivedFrom
 			dependencies
 			fileType
+			paths
 			path
+			phase
+			link
 			additionalInfo
 			confidenceScore
 			analyzer
@@ -73,7 +76,10 @@ func (db *DataBase) GetPackageNode() ([]*service.PackageNode, error) {
 			derivedFrom
 			dependencies
 			fileType
+			paths
 			path
+			phase
+			link
 			additionalInfo
 			confidenceScore
 			analyzer

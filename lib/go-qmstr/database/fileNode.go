@@ -105,6 +105,9 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 			  uid
 			  hash
 			  name
+			  paths
+			  phase
+			  link
 			  path
 			  type
 			  timestamp
@@ -151,8 +154,8 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 		qp.Query = "@filter(eq(name, $Filter))"
 		vars["$Filter"] = qp.Filter
 	}
-	if filenode.Path != "" {
-		qp.Filter = filenode.Path
+	if len(filenode.Paths) > 0 {
+		qp.Filter = service.GetFilePath(filenode)
 		qp.Query = "@filter(eq(path, $Filter))"
 		vars["$Filter"] = qp.Filter
 	}

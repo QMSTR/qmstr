@@ -54,17 +54,19 @@ func IsFileExist(file string) bool {
 }
 
 func SetRelativePath(node *service.FileNode, buildPath string, pathSub []*service.PathSubstitution) error {
-	for _, substitution := range pathSub {
-		node.Path = strings.Replace(node.Path, substitution.Old, substitution.New, 1)
+	for _, pathInfo := range node.Paths {
+		for _, substitution := range pathSub {
+			pathInfo.Path = strings.Replace(pathInfo.Path, substitution.Old, substitution.New, 1)
+		}
+		if !filepath.IsAbs(pathInfo.Path) {
+			return nil
+		}
+		relPath, err := filepath.Rel(buildPath, pathInfo.Path)
+		if err != nil {
+			return err
+		}
+		pathInfo.Path = relPath
 	}
-	if !filepath.IsAbs(node.Path) {
-		return nil
-	}
-	relPath, err := filepath.Rel(buildPath, node.Path)
-	if err != nil {
-		return err
-	}
-	node.Path = relPath
 	return nil
 }
 
@@ -120,19 +122,20 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 	if err := SetRelativePath(f, base, pathSub); err != nil {
 		return err
 	}
+	filePath := service.GetFilePath(f)
 	if f.Hash == "" {
-		log.Printf("No hash for file %s", f.Path)
+		log.Printf("No hash for file %s", filePath)
 		var hash string
 		var err error
-		if f.Path == parentPath {
+		if filePath == parentPath {
 			log.Println("Override detected")
-			hash, err = db.GetFileNodeHashByPath(f.Path)
+			hash, err = db.GetFileNodeHashByPath(filePath)
 			if err != nil {
 				return fmt.Errorf("Corrupted data provided. File does not exist: %v", err)
 			}
 			log.Printf("Found original hash %s in database\n", hash)
 		} else {
-			hash, err = HashFile(filepath.Join(base, f.Path))
+			hash, err = HashFile(filepath.Join(base, filePath))
 			if err != nil {
 				return err
 			}
@@ -140,19 +143,19 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 		}
 		f.Hash = hash
 	}
-	fileParts := strings.Split(f.Path, "/")
+	fileParts := strings.Split(filePath, "/")
 	// catch tmp files
 	if fileParts[0] == ".." && f.FileType == service.FileNode_SOURCE {
 		f.FileType = service.FileNode_INTERMEDIATE
 	}
 
 	for _, d := range f.DerivedFrom {
-		if err := SanitizeFileNode(d, base, pathSub, db, f.Path); err != nil {
+		if err := SanitizeFileNode(d, base, pathSub, db, filePath); err != nil {
 			return err
 		}
 	}
 	for _, dep := range f.Dependencies {
-		if err := SanitizeFileNode(dep, base, pathSub, db, f.Path); err != nil {
+		if err := SanitizeFileNode(dep, base, pathSub, db, filePath); err != nil {
 			return err
 		}
 	}
