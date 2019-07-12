@@ -121,7 +121,7 @@ func main() {
 			for _, dep := range fileNode.DerivedFrom {
 				if dep.Name == "-" {
 					dep.Hash = pushFileMsg.Hash
-					dep.Path = remotePath
+					dep.Paths = append(dep.Paths, &service.PathInfo{Phase: service.PathInfo_Build, Path: remotePath})
 				}
 			}
 		}

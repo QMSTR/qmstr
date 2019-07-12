@@ -9,10 +9,11 @@ import (
 )
 
 func NewFileNode(path string, hash string) FileNode {
+	p := []*PathInfo{&PathInfo{Phase: PathInfo_Build, Path: path}}
 	node := FileNode{
-		Path: path,
-		Hash: hash,
-		Name: filepath.Base(path),
+		Paths: p,
+		Hash:  hash,
+		Name:  filepath.Base(path),
 	}
 	return node
 }
@@ -51,7 +52,7 @@ func (in *InfoNode) Describe(indent string) string {
 }
 
 func (fn *FileNode) Describe(less bool, indent string) string {
-	describe := []string{fmt.Sprintf("%s|- Name: %s, Path: %s, Hash: %s, Timestamp: %v", indent, fn.Name, fn.Path, fn.Hash, fn.Timestamp)}
+	describe := []string{fmt.Sprintf("%s|- Name: %s, Path: %s, Hash: %s, Timestamp: %v", indent, fn.Name, GetFilePath(fn), fn.Hash, fn.Timestamp)}
 	indent = indent + "\t"
 	if !less {
 		for _, inode := range fn.AdditionalInfo {
@@ -94,7 +95,15 @@ func (pn *ProjectNode) Describe(less bool) string {
 }
 
 func (fn *FileNode) IsValid() bool {
-	return fn.Path != ""
+	if len(fn.Paths) < 0 {
+		return false
+	}
+	for _, pathInfo := range fn.Paths {
+		if pathInfo.Path == "" {
+			return false
+		}
+	}
+	return true
 }
 
 func (pn *PackageNode) IsValid() bool {
@@ -159,4 +168,10 @@ func getMetaData(key string, info []*InfoNode) (string, error) {
 func RemoveSlash(value string) string {
 	newvalue := strings.Replace(value, "/", "_", -1)
 	return newvalue
+}
+
+//GetFilePath returns the last path added to the node
+func GetFilePath(node *FileNode) string {
+	i := len(node.Paths)
+	return node.Paths[i-1].Path
 }
