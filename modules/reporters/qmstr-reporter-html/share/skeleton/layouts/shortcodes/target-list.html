@@ -1,7 +1,7 @@
 {{ $data := index .Site.Data .Page.Params.project .Page.Params.package .Page.Params.version "data" }}
 <h3>Targets:</h3>
 {{ range $data.Targets }}
-    <p> Filename: <b>{{ .Target.path }}</b></p>
+    <p> Filename: {{ range .Target.paths }} <b>{{ .path }}</b> {{ end }} </p>
     SHA-1: {{ .Target.hash }} <br/>
     Licenses: 
     {{ with .Licenses -}}

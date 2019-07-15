@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/common"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/reporting"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	"github.com/spdx/tools-golang/v0/spdx"
 	"github.com/spdx/tools-golang/v0/tvsaver"
@@ -29,9 +30,8 @@ type PkgManifestReporter struct {
 	enableErrors   bool
 	outputdir      string
 	nsURI          string
-	pathRegexp   string
-	pathReplace string
-	
+	pathRegexp     string
+	pathReplace    string
 }
 
 func (r *PkgManifestReporter) Configure(config map[string]string) error {
@@ -94,19 +94,21 @@ func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode, rserv s
 		if err != nil {
 			return fmt.Errorf("Couldn't get copyright node, %v", err)
 		}
+		trgtPathInfo := reporting.GetTrgtPathInfo(trgt, pkgNode)
+
 		if r.pathRegexp != "" {
 			re, err := regexp.Compile(r.pathRegexp)
 			if err != nil {
 				return fmt.Errorf("failed to compile regexp: %v, %s", err, r.pathRegexp)
 			}
-			trgt.Path = re.ReplaceAllString(trgt.Path, r.pathReplace)
+			trgtPathInfo.Path = re.ReplaceAllString(trgtPathInfo.Path, r.pathReplace)
 		}
 
 		if err != nil {
 			return fmt.Errorf("Couldn't get copyright node, %v", err)
 		}
 		fl := &spdx.File2_1{
-			FileName: trgt.Path,
+			FileName: trgtPathInfo.Path,
 			// this should be unique
 			FileSPDXIdentifier: "SPDXRef-file-" + trgt.Name,
 			FileChecksumSHA1:   trgt.Hash,

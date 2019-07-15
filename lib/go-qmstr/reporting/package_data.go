@@ -42,6 +42,7 @@ func GetPackageData(pkg *service.PackageNode, projectName string) *PackageData {
 		// reduce returned data
 		fileNode.DerivedFrom = []*service.FileNode{}
 		fileNode.Dependencies = []*service.FileNode{}
+		fileNode.Paths = []*service.PathInfo{GetTrgtPathInfo(fileNode, pkg)}
 		targets = append(targets, &Target{Target: fileNode})
 	}
 	packageData.Targets = targets
