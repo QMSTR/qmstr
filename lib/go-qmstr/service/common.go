@@ -170,3 +170,9 @@ func GetFilePath(node *FileNode) string {
 	i := len(node.Paths)
 	return node.Paths[i-1].Path
 }
+
+//GetPathInfo returns the last pathInfo added to the node
+func GetPathInfo(node *FileNode) *PathInfo {
+	i := len(node.Paths)
+	return node.Paths[i-1]
+}

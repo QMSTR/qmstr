@@ -92,3 +92,12 @@ func (r *Reporter) RunReporterModule() error {
 
 	return nil
 }
+
+func GetTrgtPathInfo(trgt *service.FileNode, pkgNode *service.PackageNode) *service.PathInfo {
+	for _, pathInfo := range trgt.Paths {
+		if pathInfo.Link == pkgNode.Name {
+			return pathInfo
+		}
+	}
+	return service.GetPathInfo(trgt)
+}
