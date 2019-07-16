@@ -7,7 +7,11 @@ import (
 	"strings"
 
 	"github.com/spf13/pflag"
+
+	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
+
+const path = "path"
 
 func generateFlags(structure interface{}, targetFlagSet *pflag.FlagSet) error {
 	val := reflect.ValueOf(structure)
@@ -64,6 +68,11 @@ func setField(nodeStruct interface{}, attribute string, value interface{}) error
 
 	if kind := val.Kind(); kind != reflect.Struct {
 		return fmt.Errorf("Not a struct: %v", kind)
+	}
+
+	if attribute == path && reflect.TypeOf(nodeStruct) == reflect.TypeOf((*service.FileNode)(nil)) {
+		nodeStruct.(*service.FileNode).Paths = []*service.PathInfo{&service.PathInfo{Path: value.(string)}}
+		return nil
 	}
 
 	// find right field
