@@ -86,6 +86,11 @@ func setFieldValue(nodeStruct interface{}, attribute string, value string) error
 		return fmt.Errorf("Not a struct: %v", kind)
 	}
 
+	if attribute == strings.Title(path) && reflect.TypeOf(nodeStruct) == reflect.TypeOf((*service.FileNode)(nil)) {
+		nodeStruct.(*service.FileNode).Paths = []*service.PathInfo{&service.PathInfo{Path: value}}
+		return nil
+	}
+
 	field := val.FieldByName(attribute)
 	if !field.IsValid() {
 		return ErrInvalidAttribute
