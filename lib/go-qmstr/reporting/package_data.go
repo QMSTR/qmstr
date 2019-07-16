@@ -2,6 +2,7 @@ package reporting
 
 import (
 	"encoding/json"
+
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
@@ -31,6 +32,10 @@ func GetPackageData(pkg *service.PackageNode, projectName string) *PackageData {
 	if packageData.Version == "" {
 		packageData.Version = "default"
 	}
+
+	packageData.Project = service.RemoveSlash(packageData.Project)
+	packageData.Name = service.RemoveSlash(packageData.Name)
+	packageData.Version = service.RemoveSlash(packageData.Version)
 
 	targets := []*Target{}
 	for _, fileNode := range pkg.GetTargets() {

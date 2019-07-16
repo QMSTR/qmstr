@@ -35,14 +35,14 @@ func (r *HTMLReporter) CreatePackageLevelReports(proj *service.ProjectNode, pkg 
 	}
 
 	contentDirectory := path.Join(r.workingDir, "content")
-	projectContentDirectory := path.Join(contentDirectory, proj.Name)
-	packageContentDirectory := path.Join(projectContentDirectory, pkg.Name)
-	versionContentDirectory := path.Join(packageContentDirectory, pkg.Version)
+	projectContentDirectory := path.Join(contentDirectory, packageData.Project)
+	packageContentDirectory := path.Join(projectContentDirectory, packageData.Name)
+	versionContentDirectory := path.Join(packageContentDirectory, packageData.Version)
 
 	dataDirectory := path.Join(r.workingDir, "data")
-	projectDirectory := path.Join(dataDirectory, proj.Name)
-	packageDirectory := path.Join(projectDirectory, pkg.Name)
-	versionDirectory := path.Join(packageDirectory, pkg.Version)
+	projectDirectory := path.Join(dataDirectory, packageData.Project)
+	packageDirectory := path.Join(projectDirectory, packageData.Name)
+	versionDirectory := path.Join(packageDirectory, packageData.Version)
 
 	if err := os.MkdirAll(versionDirectory, os.ModePerm); err != nil {
 		return fmt.Errorf("error creating package metadata directory: %v", err)
