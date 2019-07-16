@@ -155,3 +155,8 @@ func getMetaData(key string, info []*InfoNode) (string, error) {
 	}
 	return "", fmt.Errorf("No metadata found for key %s", key)
 }
+
+func RemoveSlash(value string) string {
+	newvalue := strings.Replace(value, "/", "_", -1)
+	return newvalue
+}
