@@ -20,6 +20,13 @@ var createCmd = &cobra.Command{
 	Long:  "create a new node described by a node identifier",
 }
 
+var createPathCmd = &cobra.Command{
+	Use:   "pathInfo",
+	Short: "Create a new path",
+	Long:  "create a new path for a file node",
+	Run:   create,
+}
+
 var createFileCmd = &cobra.Command{
 	Use:   "file",
 	Short: "Create a new file node",
@@ -58,6 +65,14 @@ func init() {
 	generatedFlags := &pflag.FlagSet{}
 	rootCmd.AddCommand(createCmd)
 
+	err = generateFlags(&service.PathInfo{}, generatedFlags)
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+	createPathCmd.Flags().AddFlagSet(generatedFlags)
+	createCmd.AddCommand(createPathCmd)
+
+	generatedFlags = &pflag.FlagSet{}
 	err = generateFlags(&service.FileNode{}, generatedFlags)
 	if err != nil {
 		log.Fatalf("%v", err)
@@ -94,6 +109,17 @@ func createNode(nodeIdent string, send bool) error {
 	cmdFlags.Visit(visitNodeFlag)
 
 	switch reflect.TypeOf(currentNode) {
+	case reflect.TypeOf((*service.PathInfo)(nil)):
+		if send {
+			br, err := buildServiceClient.CreatePathInfo(context.Background(), currentNode.(*service.PathInfo))
+			if err != nil {
+				return err
+			}
+			if !br.Success {
+				return errors.New("sending path info failed")
+			}
+			return nil
+		}
 	case reflect.TypeOf((*service.FileNode)(nil)):
 		if send {
 			stream, err := buildServiceClient.Build(context.Background())
