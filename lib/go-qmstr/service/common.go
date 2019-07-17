@@ -110,6 +110,10 @@ func (pn *PackageNode) IsValid() bool {
 	return pn.Name != "" && pn.Version != ""
 }
 
+func (pi *PathInfo) IsValid() bool {
+	return pi.Path != ""
+}
+
 func checkEmpty(structure interface{}) error {
 	val := reflect.ValueOf(structure)
 	for val.Kind() == reflect.Ptr || val.Kind() == reflect.Interface {

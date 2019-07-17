@@ -14,6 +14,8 @@ import (
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
+var ErrNoSuchPath = errors.New("no such path")
+
 // AddBuildFileNode adds a node to the insert queue in build phase
 func (db *DataBase) AddFileNode(node *service.FileNode) {
 	atomic.AddUint64(&db.pending, 1)
@@ -23,6 +25,12 @@ func (db *DataBase) AddFileNode(node *service.FileNode) {
 	for _, dep := range node.Dependencies {
 		db.AddFileNode(dep)
 	}
+	db.insertQueue <- node
+}
+
+// AddPathInfo adds a pathInfo node to the insert queue in build phase
+func (db *DataBase) AddPathInfo(node *service.PathInfo) {
+	atomic.AddUint64(&db.pending, 1)
 	db.insertQueue <- node
 }
 
@@ -222,4 +230,29 @@ func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {
 		return "", errors.New("No node with such path")
 	}
 	return ret["hasNode"][0].Hash, nil
+}
+
+func (db *DataBase) GetPathInfobyPath(path string) (*service.PathInfo, error) {
+	var ret map[string][]*service.PathInfo
+
+	q := `query GetPathInfoByPath($Path: string){
+		getPathInfoByPath(func: eq(path, $Path)) {
+			uid
+			path
+			phase
+			link
+		}}`
+
+	vars := map[string]string{"$Path": path}
+
+	err := db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	// no such pathInfo node
+	if len(ret["getPathInfoByPath"]) == 0 {
+		return nil, ErrNoSuchPath
+	}
+	return ret["getPathInfoByPath"][0], nil
 }

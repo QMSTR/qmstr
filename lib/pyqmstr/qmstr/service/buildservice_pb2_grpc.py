@@ -35,6 +35,11 @@ class BuildServiceStub(object):
         request_serializer=buildservice__pb2.UpdatePackageNodeMessage.SerializeToString,
         response_deserializer=buildservice__pb2.BuildResponse.FromString,
         )
+    self.CreatePathInfo = channel.unary_unary(
+        '/service.BuildService/CreatePathInfo',
+        request_serializer=datamodel__pb2.PathInfo.SerializeToString,
+        response_deserializer=buildservice__pb2.BuildResponse.FromString,
+        )
     self.CreatePackage = channel.unary_unary(
         '/service.BuildService/CreatePackage',
         request_serializer=datamodel__pb2.PackageNode.SerializeToString,
@@ -93,6 +98,13 @@ class BuildServiceServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def UpdatePackageNode(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def CreatePathInfo(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -162,6 +174,11 @@ def add_BuildServiceServicer_to_server(servicer, server):
       'UpdatePackageNode': grpc.unary_unary_rpc_method_handler(
           servicer.UpdatePackageNode,
           request_deserializer=buildservice__pb2.UpdatePackageNodeMessage.FromString,
+          response_serializer=buildservice__pb2.BuildResponse.SerializeToString,
+      ),
+      'CreatePathInfo': grpc.unary_unary_rpc_method_handler(
+          servicer.CreatePathInfo,
+          request_deserializer=datamodel__pb2.PathInfo.FromString,
           response_serializer=buildservice__pb2.BuildResponse.SerializeToString,
       ),
       'CreatePackage': grpc.unary_unary_rpc_method_handler(

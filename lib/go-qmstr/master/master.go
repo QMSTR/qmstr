@@ -49,6 +49,10 @@ func (s *server) PushFile(ctx context.Context, in *service.PushFileMessage) (*se
 	return s.currentPhase.PushFile(in)
 }
 
+func (s *server) CreatePathInfo(ctx context.Context, in *service.PathInfo) (*service.BuildResponse, error) {
+	return s.currentPhase.CreatePathInfo(in)
+}
+
 func (s *server) CreatePackage(ctx context.Context, in *service.PackageNode) (*service.BuildResponse, error) {
 	return s.currentPhase.CreatePackage(in)
 }

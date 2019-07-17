@@ -159,6 +159,8 @@ func (db *DataBase) queueWorker() {
 			db.insertPkgNode(node.(*service.PackageNode))
 		case reflect.TypeOf((*service.FileNode)(nil)):
 			db.insertFileNode(node.(*service.FileNode))
+		case reflect.TypeOf((*service.PathInfo)(nil)):
+			db.insertPathInfoNode(node.(*service.PathInfo))
 		default:
 			log.Printf("Wrong node type %s trying to be inserted in the database", nodeType.String())
 		}
@@ -181,6 +183,23 @@ func (db *DataBase) findPathUID(node *service.FileNode, ready bool) {
 			}
 		}
 	}
+}
+
+func (db *DataBase) insertPathInfoNode(node *service.PathInfo) {
+	db.insertMutex.Lock()
+	uid, err := db.GetPathUid(node.Path)
+	if err != nil {
+		panic(err)
+	}
+	if uid != "" {
+		node.Uid = uid
+	}
+	_, err = dbInsert(db.client, node)
+	if err != nil {
+		panic(err)
+	}
+	atomic.AddUint64(&db.pending, ^uint64(0))
+	db.insertMutex.Unlock()
 }
 
 func (db *DataBase) insertFileNode(node *service.FileNode) {
