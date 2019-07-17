@@ -40,6 +40,7 @@ type serverPhase interface {
 	getPostInitPhase() service.Phase
 	getPostInitPhaseDone() bool
 	PushFile(*service.PushFileMessage) (*service.PushFileResponse, error)
+	CreatePathInfo(*service.PathInfo) (*service.BuildResponse, error)
 	CreateProject(*service.ProjectNode) (*service.BuildResponse, error)
 	CreatePackage(*service.PackageNode) (*service.BuildResponse, error)
 }
@@ -93,6 +94,10 @@ func (gsp *genericServerPhase) Build(stream service.BuildService_BuildServer) er
 }
 
 func (gsp *genericServerPhase) PushFile(in *service.PushFileMessage) (*service.PushFileResponse, error) {
+	return nil, errors.New("Wrong phase")
+}
+
+func (gsp *genericServerPhase) CreatePathInfo(in *service.PathInfo) (*service.BuildResponse, error) {
 	return nil, errors.New("Wrong phase")
 }
 

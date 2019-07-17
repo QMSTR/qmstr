@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='service',
   syntax='proto3',
   serialized_options=_b('\n\026org.qmstr.grpc.service'),
-  serialized_pb=_b('\n\x12\x62uildservice.proto\x12\x07service\x1a\x0f\x64\x61tamodel.proto\" \n\rBuildResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\";\n\x0fPushFileMessage\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04hash\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\" \n\x10PushFileResponse\x12\x0c\n\x04path\x18\x01 \x01(\t\"*\n\rDeleteMessage\x12\x0b\n\x03uid\x18\x01 \x01(\t\x12\x0c\n\x04\x65\x64ge\x18\x02 \x01(\t\"e\n\x18UpdatePackageNodeMessage\x12%\n\x07package\x18\x01 \x01(\x0b\x32\x14.service.PackageNode\x12\"\n\x07targets\x18\x02 \x03(\x0b\x32\x11.service.FileNode2\xa5\x05\n\x0c\x42uildService\x12\x36\n\x05\x42uild\x12\x11.service.FileNode\x1a\x16.service.BuildResponse\"\x00(\x01\x12=\n\x0eSendBuildError\x12\x11.service.InfoNode\x1a\x16.service.BuildResponse\"\x00\x12\x41\n\x08PushFile\x12\x18.service.PushFileMessage\x1a\x19.service.PushFileResponse\"\x00\x12P\n\x11UpdatePackageNode\x12!.service.UpdatePackageNodeMessage\x1a\x16.service.BuildResponse\"\x00\x12?\n\rCreatePackage\x12\x14.service.PackageNode\x1a\x16.service.BuildResponse\"\x00\x12?\n\rCreateProject\x12\x14.service.ProjectNode\x1a\x16.service.BuildResponse\"\x00\x12\x45\n\x11UpdateProjectNode\x12\x14.service.PackageNode\x1a\x16.service.BuildResponse\"\x00(\x01\x12>\n\x0eGetProjectNode\x12\x14.service.ProjectNode\x1a\x14.service.ProjectNode\"\x00\x12@\n\nDeleteNode\x12\x16.service.DeleteMessage\x1a\x16.service.BuildResponse\"\x00(\x01\x12>\n\nDeleteEdge\x12\x16.service.DeleteMessage\x1a\x16.service.BuildResponse\"\x00\x42\x18\n\x16org.qmstr.grpc.serviceX\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x12\x62uildservice.proto\x12\x07service\x1a\x0f\x64\x61tamodel.proto\" \n\rBuildResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\";\n\x0fPushFileMessage\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04hash\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\" \n\x10PushFileResponse\x12\x0c\n\x04path\x18\x01 \x01(\t\"*\n\rDeleteMessage\x12\x0b\n\x03uid\x18\x01 \x01(\t\x12\x0c\n\x04\x65\x64ge\x18\x02 \x01(\t\"e\n\x18UpdatePackageNodeMessage\x12%\n\x07package\x18\x01 \x01(\x0b\x32\x14.service.PackageNode\x12\"\n\x07targets\x18\x02 \x03(\x0b\x32\x11.service.FileNode2\xe4\x05\n\x0c\x42uildService\x12\x36\n\x05\x42uild\x12\x11.service.FileNode\x1a\x16.service.BuildResponse\"\x00(\x01\x12=\n\x0eSendBuildError\x12\x11.service.InfoNode\x1a\x16.service.BuildResponse\"\x00\x12\x41\n\x08PushFile\x12\x18.service.PushFileMessage\x1a\x19.service.PushFileResponse\"\x00\x12P\n\x11UpdatePackageNode\x12!.service.UpdatePackageNodeMessage\x1a\x16.service.BuildResponse\"\x00\x12=\n\x0e\x43reatePathInfo\x12\x11.service.PathInfo\x1a\x16.service.BuildResponse\"\x00\x12?\n\rCreatePackage\x12\x14.service.PackageNode\x1a\x16.service.BuildResponse\"\x00\x12?\n\rCreateProject\x12\x14.service.ProjectNode\x1a\x16.service.BuildResponse\"\x00\x12\x45\n\x11UpdateProjectNode\x12\x14.service.PackageNode\x1a\x16.service.BuildResponse\"\x00(\x01\x12>\n\x0eGetProjectNode\x12\x14.service.ProjectNode\x1a\x14.service.ProjectNode\"\x00\x12@\n\nDeleteNode\x12\x16.service.DeleteMessage\x1a\x16.service.BuildResponse\"\x00(\x01\x12>\n\nDeleteEdge\x12\x16.service.DeleteMessage\x1a\x16.service.BuildResponse\"\x00\x42\x18\n\x16org.qmstr.grpc.serviceX\x00\x62\x06proto3')
   ,
   dependencies=[datamodel__pb2.DESCRIPTOR,])
 
@@ -264,7 +264,7 @@ _BUILDSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   serialized_start=325,
-  serialized_end=1002,
+  serialized_end=1065,
   methods=[
   _descriptor.MethodDescriptor(
     name='Build',
@@ -303,9 +303,18 @@ _BUILDSERVICE = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
+    name='CreatePathInfo',
+    full_name='service.BuildService.CreatePathInfo',
+    index=4,
+    containing_service=None,
+    input_type=datamodel__pb2._PATHINFO,
+    output_type=_BUILDRESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
     name='CreatePackage',
     full_name='service.BuildService.CreatePackage',
-    index=4,
+    index=5,
     containing_service=None,
     input_type=datamodel__pb2._PACKAGENODE,
     output_type=_BUILDRESPONSE,
@@ -314,7 +323,7 @@ _BUILDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='CreateProject',
     full_name='service.BuildService.CreateProject',
-    index=5,
+    index=6,
     containing_service=None,
     input_type=datamodel__pb2._PROJECTNODE,
     output_type=_BUILDRESPONSE,
@@ -323,7 +332,7 @@ _BUILDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='UpdateProjectNode',
     full_name='service.BuildService.UpdateProjectNode',
-    index=6,
+    index=7,
     containing_service=None,
     input_type=datamodel__pb2._PACKAGENODE,
     output_type=_BUILDRESPONSE,
@@ -332,7 +341,7 @@ _BUILDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='GetProjectNode',
     full_name='service.BuildService.GetProjectNode',
-    index=7,
+    index=8,
     containing_service=None,
     input_type=datamodel__pb2._PROJECTNODE,
     output_type=datamodel__pb2._PROJECTNODE,
@@ -341,7 +350,7 @@ _BUILDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='DeleteNode',
     full_name='service.BuildService.DeleteNode',
-    index=8,
+    index=9,
     containing_service=None,
     input_type=_DELETEMESSAGE,
     output_type=_BUILDRESPONSE,
@@ -350,7 +359,7 @@ _BUILDSERVICE = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='DeleteEdge',
     full_name='service.BuildService.DeleteEdge',
-    index=9,
+    index=10,
     containing_service=None,
     input_type=_DELETEMESSAGE,
     output_type=_BUILDRESPONSE,

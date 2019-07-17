@@ -110,6 +110,18 @@ func (phase *serverPhaseBuild) ExportGraph(in *service.ExportRequest) (*service.
 	return &service.ExportResponse{Success: true}, nil
 }
 
+func (phase *serverPhaseBuild) CreatePathInfo(in *service.PathInfo) (*service.BuildResponse, error) {
+	if !in.IsValid() {
+		return nil, errors.New("invalid path info node")
+	}
+	if _, err := phase.db.GetPathInfobyPath(in.Path); err != database.ErrNoSuchPath {
+		return nil, errors.New("path already created")
+	}
+	log.Printf("Adding path info node %s", in.Path)
+	phase.db.AddPathInfo(in)
+	return &service.BuildResponse{Success: true}, nil
+}
+
 func (phase *serverPhaseBuild) CreatePackage(in *service.PackageNode) (*service.BuildResponse, error) {
 	if !in.IsValid() {
 		return nil, errors.New("invalid package node")
