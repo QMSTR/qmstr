@@ -43,6 +43,8 @@ func ParseNodeID(nodeid string) (interface{}, error) {
 		return nil, fmt.Errorf("%s not yet supported", nodeType)
 	case "data":
 		return nil, fmt.Errorf("%s not yet supported", nodeType)
+	case "pathInfo":
+		return createResult(&service.PathInfo{}, "Path", nodeIDTokens)
 	default:
 		return nil, fmt.Errorf("Unsupported node type %s", nodeType)
 	}
