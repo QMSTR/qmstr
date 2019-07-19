@@ -141,20 +141,41 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 	if err != nil {
 		return err
 	}
-	nodeFiles, err := db.GetFileNodesByFileNode(in.FileNode, true)
-	if err != nil {
-		return err
-	}
-	if in.UniqueNode {
-		if len(nodeFiles) != 1 {
-			return fmt.Errorf("more than one FileNode match %v. Please provide a better identifier", in.FileNode)
+	fileNodes := []*service.FileNode{}
+	if len(in.GetFileNode().Paths) != 0 {
+		// Query first for the hash
+		nodesWithHash, err := db.GetFileNodeHashByPath(service.GetFilePath(in.GetFileNode()))
+		if err != nil {
+			return err
+		}
+		if in.UniqueNode {
+			if len(nodesWithHash) > 1 {
+				return fmt.Errorf("more than one FileNode match %v. Please provide a better identifier", in.FileNode)
+			}
+		}
+		for _, node := range nodesWithHash {
+			fileNode, err := db.GetFileNodesByFileNode(node, true)
+			if err != nil {
+				return err
+			}
+			fileNodes = append(fileNodes, fileNode...)
+		}
+	} else {
+		fileNodes, err = db.GetFileNodesByFileNode(in.FileNode, true)
+		if err != nil {
+			return err
+		}
+		if in.UniqueNode {
+			if len(fileNodes) > 1 {
+				return fmt.Errorf("more than one FileNode match %v. Please provide a better identifier", in.FileNode)
+			}
 		}
 	}
-	for _, nodeFile := range nodeFiles {
+	for _, fileNode := range fileNodes {
 		if gsp.server.currentPhase.GetPhaseID() == service.Phase_ANALYSIS {
-			nodeFile.Paths[(len(nodeFile.Paths))-1].Path = filepath.Join(gsp.masterConfig.Server.BuildPath, service.GetFilePath(nodeFile))
+			fileNode.Paths[(len(fileNode.Paths))-1].Path = filepath.Join(gsp.masterConfig.Server.BuildPath, service.GetFilePath(fileNode))
 		}
-		stream.Send(nodeFile)
+		stream.Send(fileNode)
 	}
 	return nil
 }
