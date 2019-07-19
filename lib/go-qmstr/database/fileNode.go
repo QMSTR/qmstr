@@ -142,6 +142,7 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 			  path
 			  type
 			  timestamp
+			  fileNodeType
 			  derivedFrom
 			  dependencies
 			  additionalInfo
@@ -185,11 +186,6 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 		qp.Query = "@filter(eq(name, $Filter))"
 		vars["$Filter"] = qp.Filter
 	}
-	if len(filenode.Paths) > 0 {
-		qp.Filter = service.GetFilePath(filenode)
-		qp.Query = "@filter(eq(path, $Filter))"
-		vars["$Filter"] = qp.Filter
-	}
 
 	var b bytes.Buffer
 	err = queryTmpl.Execute(&b, qp)
@@ -206,15 +202,17 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 	if len(fileNodes) < 1 {
 		return nil, fmt.Errorf("No file node %v found in the database", filenode)
 	}
-	return ret["getFileNodeByFileNode"], nil
+	return fileNodes, nil
 }
 
-func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {
-
+func (db *DataBase) GetFileNodeHashByPath(path string) ([]*service.FileNode, error) {
 	var ret map[string][]*service.FileNode
 
 	q := `query Node($Path: string){
-		  hasNode(func: eq(path, $Path)) {
+		  hasNode(func: has(fileNodeType)) @cascade {
+			paths @filter(eq(path, $Path)){
+				path
+			}
 			hash
 		  }}`
 
@@ -222,14 +220,15 @@ func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {
 
 	err := db.queryNodes(q, vars, &ret)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
+	nodes := ret["hasNode"]
 	// no node with such path
-	if len(ret["hasNode"]) == 0 {
-		return "", errors.New("No node with such path")
+	if len(nodes) == 0 {
+		return nil, errors.New("No node with such path")
 	}
-	return ret["hasNode"][0].Hash, nil
+	return nodes, nil
 }
 
 func (db *DataBase) GetPathInfobyPath(path string) (*service.PathInfo, error) {

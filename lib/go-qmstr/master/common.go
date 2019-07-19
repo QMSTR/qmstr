@@ -141,13 +141,34 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 	if err != nil {
 		return err
 	}
-	nodeFiles, err := db.GetFileNodesByFileNode(in.FileNode, true)
-	if err != nil {
-		return err
-	}
-	if in.UniqueNode {
-		if len(nodeFiles) != 1 {
-			return fmt.Errorf("more than one FileNode match %v. Please provide a better identifier", in.FileNode)
+	nodeFiles := []*service.FileNode{}
+	if len(in.GetFileNode().Paths) != 0 {
+		// Query first for the hash
+		nodes, err := db.GetFileNodeHashByPath(service.GetFilePath(in.GetFileNode()))
+		if err != nil {
+			return err
+		}
+		if in.UniqueNode {
+			if len(nodes) > 1 {
+				return fmt.Errorf("more than one FileNode match %v. Please provide a better identifier", in.FileNode)
+			}
+		}
+		for _, node := range nodes {
+			n, err := db.GetFileNodesByFileNode(node, true)
+			if err != nil {
+				return err
+			}
+			nodeFiles = append(nodeFiles, n...)
+		}
+	} else {
+		nodeFiles, err = db.GetFileNodesByFileNode(in.FileNode, true)
+		if err != nil {
+			return err
+		}
+		if in.UniqueNode {
+			if len(nodeFiles) > 1 {
+				return fmt.Errorf("more than one FileNode match %v. Please provide a better identifier", in.FileNode)
+			}
 		}
 	}
 	for _, nodeFile := range nodeFiles {

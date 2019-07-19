@@ -2,6 +2,7 @@ package common
 
 import (
 	"crypto/sha1"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -129,10 +130,14 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 		var err error
 		if filePath == parentPath {
 			log.Println("Override detected")
-			hash, err = db.GetFileNodeHashByPath(filePath)
+			nodes, err := db.GetFileNodeHashByPath(filePath)
 			if err != nil {
-				return fmt.Errorf("Corrupted data provided. File does not exist: %v", err)
+				return fmt.Errorf("Corrupted data provided. %v", err)
 			}
+			if len(nodes) > 1 {
+				return errors.New("More than one files have the same path in the db")
+			}
+			hash = nodes[0].Hash
 			log.Printf("Found original hash %s in database\n", hash)
 		} else {
 			hash, err = HashFile(filepath.Join(base, filePath))

@@ -25,7 +25,7 @@ func (db *DataBase) GetPackageNodeByName(name string) (*service.PackageNode, err
 	var ret map[string][]*service.PackageNode
 
 	q := `query GetPackageNodeByName($Name: string){
-		  getPackageNodeByName(func: has(packageNodeType)) @filter(eq(name, $Name)) {
+		  getPackageNodeByName(func: has(packageNodeType)) @filter(eq(name, $Name)) @recurse(loop: false) {
 			uid
 			buildConfig
 			hash
