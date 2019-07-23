@@ -36,6 +36,21 @@ class SpdxAnalyzer(QMSTR_Analyzer):
     def __membersof(t):
         return [attr for attr in dir(t) if not callable(getattr(t, attr)) and not attr.startswith("_")]
 
+    @staticmethod
+    def __get_last_path_info(fnode):
+        """
+        Returns the last pathInfo added to the file node
+        """
+        if not isinstance(fnode, FileNode):
+            logging.error("'{}' is not an instance of FileNode.".format(fnode))
+            sys.exit(3)
+
+        if fnode.paths and fnode.paths[-1].path:
+            return fnode.paths[-1]
+
+        logging.error("No path found in FileNode: {}".format(fnode))
+        sys.exit(3)
+
     def __init__(self, address, aid):
         super(SpdxAnalyzer, self).__init__(address, aid)
         self.parse_func_map = {
@@ -77,13 +92,15 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         )
         stream_resp = self.cserv.GetFileNode(query_node)
 
+        logging.info("Starting to analyze nodes ...")
         for node in stream_resp:
-            logging.info("Analyze node {}".format(node.path))
+            path_info = SpdxAnalyzer.__get_last_path_info(node)
+            logging.info("Analyze node {}".format(path_info.path))
             filtered_files = list(filter(
-                lambda f: node.path.endswith(f.name), self.doc.files))
+                lambda f: path_info.path.endswith(f.name), self.doc.files))
             if not filtered_files:
                 logging.warn(
-                    "File {} not found in SPDX document".format(node.path))
+                    "File {} not found in SPDX document".format(path_info.path))
                 continue
             spdx_doc_file_info = filtered_files[0]
             if not isinstance(spdx_doc_file_info.conc_lics, License):
@@ -156,7 +173,6 @@ class SpdxAnalyzer(QMSTR_Analyzer):
                 infonode=info_node))
 
             info_iterator = _generate_iterator(info_nodes)
-
             self.aserv.SendInfoNodes(info_iterator)
 
     def _parse_spdx(self):
