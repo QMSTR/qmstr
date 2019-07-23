@@ -24,7 +24,8 @@ import (
 )
 
 const schema = `
-path:string @index(exact) .
+path:string @index(hash) .
+paths:uid @reverse .
 hash:string @index(exact) .
 fileType:int @index(int) .
 type:string @index(hash) .
