@@ -165,7 +165,7 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 			fileNodes = append(fileNodes, fileNode...)
 		}
 	} else {
-		fileNodes, err = db.GetFileNodesByFileNode(in.FileNode, true)
+		fileNodes, err = db.GetFileNodesByFileNode(in.FileNode, false)
 		if err != nil {
 			return err
 		}

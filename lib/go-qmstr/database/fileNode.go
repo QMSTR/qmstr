@@ -115,7 +115,7 @@ func (db *DataBase) GetPathUid(path string) (string, error) {
 		return "", err
 	}
 
-	// no path with such uid
+	// no uid with such path
 	if len(ret["hasPath"]) == 0 {
 		return "", nil
 	}
@@ -128,7 +128,7 @@ func (db *DataBase) GetPathUid(path string) (string, error) {
 // with this filetype.
 // You can query for just one attribute. For instance, if you set filetype and hash, only the
 // hash will be used in the query.
-func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool) ([]*service.FileNode, error) {
+func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recurseLoop bool) ([]*service.FileNode, error) {
 	var ret map[string][]*service.FileNode
 
 	q := `query FileNodeByFileNode($Filter: string, $TypeFilter: int){
@@ -164,7 +164,10 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 	qp := QueryParams{}
 	vars := map[string]string{}
 
-	if recursive {
+	if recurseLoop {
+		// TODO: depth:6 is an arbitrary number
+		qp.Recurse = "@recurse(depth: 6, loop: true)"
+	} else {
 		qp.Recurse = "@recurse(loop: false)"
 	}
 	if filenode.FileType != 0 {
