@@ -133,14 +133,18 @@ func TestBuildGraph(t *testing.T) {
 	} else {
 		for _, target := range pkgNode.Targets {
 			found := false
+			path, err := service.GetFilePath(target)
+			if err != nil {
+				t.Log(err)
+			}
 			for _, expTarget := range expectedTargets {
-				if service.GetFilePath(target) == expTarget {
+				if path == expTarget {
 					found = true
 				}
 			}
 			if !found {
 				t.Logf("Package node %v is not connected to the configured linked targets", pkgNode.Name)
-				t.Logf("Package node %v is connected to %v", pkgNode.Name, service.GetFilePath(target))
+				t.Logf("Package node %v is connected to %v", pkgNode.Name, path)
 				t.Fail()
 			}
 		}

@@ -143,8 +143,12 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 	}
 	nodeFiles := []*service.FileNode{}
 	if len(in.GetFileNode().Paths) != 0 {
+		path, err := service.GetFilePath(in.GetFileNode())
+		if err != nil {
+			return err
+		}
 		// Query first for the hash
-		nodes, err := db.GetFileNodeHashByPath(service.GetFilePath(in.GetFileNode()))
+		nodes, err := db.GetFileNodeHashByPath(path)
 		if err != nil {
 			return err
 		}
@@ -173,7 +177,11 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 	}
 	for _, nodeFile := range nodeFiles {
 		if gsp.server.currentPhase.GetPhaseID() == service.Phase_ANALYSIS {
-			nodeFile.Paths[(len(nodeFile.Paths))-1].Path = filepath.Join(gsp.masterConfig.Server.BuildPath, service.GetFilePath(nodeFile))
+			path, err := service.GetFilePath(nodeFile)
+			if err != nil {
+				return err
+			}
+			nodeFile.Paths[(len(nodeFile.Paths))-1].Path = filepath.Join(gsp.masterConfig.Server.BuildPath, path)
 		}
 		stream.Send(nodeFile)
 	}

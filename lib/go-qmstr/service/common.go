@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"log"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -52,7 +53,11 @@ func (in *InfoNode) Describe(indent string) string {
 }
 
 func (fn *FileNode) Describe(less bool, indent string) string {
-	describe := []string{fmt.Sprintf("%s|- Name: %s, Path: %s, Hash: %s, Timestamp: %v", indent, fn.Name, GetFilePath(fn), fn.Hash, fn.Timestamp)}
+	path, err := GetFilePath(fn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	describe := []string{fmt.Sprintf("%s|- Name: %s, Path: %s, Hash: %s, Timestamp: %v", indent, fn.Name, path, fn.Hash, fn.Timestamp)}
 	indent = indent + "\t"
 	if !less {
 		for _, inode := range fn.AdditionalInfo {
@@ -95,7 +100,7 @@ func (pn *ProjectNode) Describe(less bool) string {
 }
 
 func (fn *FileNode) IsValid() bool {
-	if len(fn.Paths) < 0 {
+	if len(fn.Paths) == 0 {
 		return false
 	}
 	for _, pathInfo := range fn.Paths {
@@ -170,13 +175,19 @@ func getMetaData(key string, info []*InfoNode) (string, error) {
 }
 
 //GetFilePath returns the last path added to the node
-func GetFilePath(node *FileNode) string {
+func GetFilePath(node *FileNode) (string, error) {
+	if !node.IsValid() {
+		return "", fmt.Errorf("Node %s, %s, %s does not have a path", node.Uid, node.Name, node.Hash)
+	}
 	i := len(node.Paths)
-	return node.Paths[i-1].Path
+	return node.Paths[i-1].Path, nil
 }
 
 //GetPathInfo returns the last pathInfo added to the node
-func GetPathInfo(node *FileNode) *PathInfo {
+func GetPathInfo(node *FileNode) (*PathInfo, error) {
+	if !node.IsValid() {
+		return nil, fmt.Errorf("Node %v does not have a path", node)
+	}
 	i := len(node.Paths)
-	return node.Paths[i-1]
+	return node.Paths[i-1], nil
 }
