@@ -60,7 +60,11 @@ func addMissingPieces(args []string) error {
 		if err := stream.Send(fnode); err != nil {
 			log.Fatalf("Failed to send filenode to server")
 		}
-		log.Printf("added filenode %s", service.GetFilePath(fnode))
+		path, err := service.GetFilePath(fnode)
+		if err != nil {
+			return err
+		}
+		log.Printf("added filenode %s", path)
 	}
 	return nil
 }

@@ -56,7 +56,10 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 
 		diagnosticNodeMsg := service.DiagnosticNodeMessage{}
 
-		filePath := service.GetFilePath(fileNode)
+		filePath, err := service.GetFilePath(fileNode)
+		if err != nil {
+			return err
+		}
 		log.Printf("Analyzing file %s", filePath)
 
 		spdxIdent, lineNo, columnNo, err := detectSPDXLicense(filePath)

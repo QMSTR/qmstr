@@ -51,7 +51,11 @@ func (gb *GeneralBuilder) GetPushFile() (*service.PushFileMessage, error) {
 func (gb *GeneralBuilder) ProcessOutput(filenodes []*service.FileNode) error {
 	for _, output := range filenodes {
 		var err error
-		output.Hash, err = common.HashFile(service.GetFilePath(output))
+		path, err := service.GetFilePath(output)
+		if err != nil {
+			return err
+		}
+		output.Hash, err = common.HashFile(path)
 		if err != nil {
 			return err
 		}

@@ -99,5 +99,9 @@ func GetTrgtPathInfo(trgt *service.FileNode, pkgNode *service.PackageNode) *serv
 			return pathInfo
 		}
 	}
-	return service.GetPathInfo(trgt)
+	path, err := service.GetPathInfo(trgt)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return path
 }

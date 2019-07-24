@@ -84,7 +84,10 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServic
 			break
 		}
 
-		filePath := service.GetFilePath(fileNode)
+		filePath, err := service.GetFilePath(fileNode)
+		if err != nil {
+			return err
+		}
 		log.Printf("Analyzing file %s", filePath)
 
 		licenseInfo, err := scanalyzer.detectLicenses(filePath)
