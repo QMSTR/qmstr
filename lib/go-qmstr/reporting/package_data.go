@@ -16,9 +16,10 @@ type PackageData struct {
 }
 
 type Target struct {
-	Target   *service.FileNode
-	Licenses []string
-	Authors  []string
+	Target     *service.FileNode
+	Licenses   []string
+	Authors    []string
+	Copyrights []string
 }
 
 func GetPackageData(pkg *service.PackageNode, projectName string) *PackageData {
@@ -47,6 +48,22 @@ func GetPackageData(pkg *service.PackageNode, projectName string) *PackageData {
 	packageData.Targets = targets
 
 	return &packageData
+}
+
+func (p *PackageData) GetCopyrights() []string {
+	copyrights := map[string]struct{}{}
+	for _, target := range p.Targets {
+		for _, copyright := range target.Copyrights {
+			copyrights[copyright] = struct{}{}
+		}
+	}
+
+	uniqCopyrights := []string{}
+
+	for copyright := range copyrights {
+		uniqCopyrights = append(uniqCopyrights, copyright)
+	}
+	return uniqCopyrights
 }
 
 func (p *PackageData) GetAuthors() []string {
@@ -84,12 +101,14 @@ func (p *PackageData) GetLicenses() []string {
 func (p *PackageData) MarshalJSON() ([]byte, error) {
 	type Alias PackageData
 	return json.Marshal(&struct {
-		Authors  []string
-		Licenses []string
+		Authors    []string
+		Licenses   []string
+		Copyrights []string
 		*Alias
 	}{
-		Authors:  p.GetAuthors(),
-		Licenses: p.GetLicenses(),
-		Alias:    (*Alias)(p),
+		Authors:    p.GetAuthors(),
+		Licenses:   p.GetLicenses(),
+		Copyrights: p.GetCopyrights(),
+		Alias:      (*Alias)(p),
 	})
 }

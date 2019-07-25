@@ -32,6 +32,12 @@ func (r *HTMLReporter) CreatePackageLevelReports(proj *service.ProjectNode, pkg 
 			return err
 		}
 		target.Authors = append(target.Authors, resp.Data...)
+
+		resp, err = rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: target.Target.Uid, Infotype: "copyright", Datatype: "text"})
+		if err != nil {
+			return err
+		}
+		target.Copyrights = append(target.Copyrights, resp.Data...)
 	}
 
 	contentDirectory := path.Join(r.workingDir, "content")
