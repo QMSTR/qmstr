@@ -105,7 +105,7 @@ func TestFileNodeParsing(t *testing.T) {
 	if err != nil {
 		t.FailNow()
 	}
-	if fileNode.(*service.FileNode).Path != "/dev/null" {
+	if fileNode.(*service.FileNode).Paths[0].Path != "/dev/null" {
 		t.Fail()
 	}
 	fileNode, err = ParseNodeID("file:hash:deadbeef")
