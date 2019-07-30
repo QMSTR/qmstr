@@ -93,7 +93,7 @@ func NewDebPackage(in io.Reader) (*DebPackage, error) {
 			return nil, fmt.Errorf("deb pkg: data archive: %v", err)
 		}
 
-		if !thdr.FileInfo().IsDir() {
+		if thdr.FileInfo().Mode().IsRegular() {
 			h, err := common.Hash(tarr)
 			if err != nil {
 				return nil, fmt.Errorf("deb pkg: hashing file %s: %v", thdr.Name, err)
