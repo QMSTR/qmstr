@@ -179,14 +179,14 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recurseLo
 		//convert it to string to query it
 		vars["$TypeFilter"] = strconv.Itoa(nt)
 	}
-	if filenode.Hash != "" {
-		qp.Filter = filenode.Hash
-		qp.Query = "@filter(eq(hash, $Filter))"
-		vars["$Filter"] = qp.Filter
-	}
 	if filenode.Name != "" {
 		qp.Filter = filenode.Name
 		qp.Query = "@filter(eq(name, $Filter))"
+		vars["$Filter"] = qp.Filter
+	}
+	if filenode.Hash != "" {
+		qp.Filter = filenode.Hash
+		qp.Query = "@filter(eq(hash, $Filter))"
 		vars["$Filter"] = qp.Filter
 	}
 
