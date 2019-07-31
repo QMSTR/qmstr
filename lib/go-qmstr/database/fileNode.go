@@ -165,9 +165,6 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recurseLo
 	vars := map[string]string{}
 
 	if recurseLoop {
-		// TODO: depth:6 is an arbitrary number
-		qp.Recurse = "@recurse(depth: 6, loop: true)"
-	} else {
 		qp.Recurse = "@recurse(loop: false)"
 	}
 	if filenode.FileType != 0 {

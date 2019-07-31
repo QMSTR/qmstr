@@ -148,6 +148,7 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 			return err
 		}
 		// Query first for the hash
+		// Provided the hash then we query for the file node
 		nodesWithHash, err := db.GetFileNodeHashByPath(path)
 		if err != nil {
 			return err
@@ -165,7 +166,7 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 			fileNodes = append(fileNodes, fileNode...)
 		}
 	} else {
-		fileNodes, err = db.GetFileNodesByFileNode(in.FileNode, false)
+		fileNodes, err = db.GetFileNodesByFileNode(in.FileNode, true)
 		if err != nil {
 			return err
 		}
@@ -182,6 +183,10 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 				return err
 			}
 			fileNode.Paths[(len(fileNode.Paths))-1].Path = filepath.Join(gsp.masterConfig.Server.BuildPath, path)
+		}
+		err = checkPathInfoIntegrity(db, fileNode)
+		if err != nil {
+			return err
 		}
 		stream.Send(fileNode)
 	}
@@ -285,5 +290,29 @@ func (gsp *genericServerPhase) requestExport() error {
 
 	log.Printf("dgraph export: %s", body)
 
+	return nil
+}
+
+func checkPathInfoIntegrity(db *database.DataBase, fileNode *service.FileNode) error {
+	if !fileNode.IsValid() {
+		log.Printf("Quering for missing path info for node: %s, %s, %s", fileNode.Uid, fileNode.Name, fileNode.Hash)
+		nodes, err := db.GetFileNodesByFileNode(fileNode, true)
+		if err != nil {
+			return err
+		}
+		*fileNode = *nodes[0]
+	}
+	for _, derivedFrom := range fileNode.DerivedFrom {
+		err := checkPathInfoIntegrity(db, derivedFrom)
+		if err != nil {
+			return err
+		}
+	}
+	for _, dep := range fileNode.Dependencies {
+		err := checkPathInfoIntegrity(db, dep)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
