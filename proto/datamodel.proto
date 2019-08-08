@@ -14,13 +14,16 @@ message FileNode {
     Type fileType = 3;
     string path = 4;
     string name = 5;
-    string hash = 6;
-    bool broken = 7;
+    message FileDataNode {
+        string uid = 1;
+        string hash = 2;
+        repeated InfoNode additionalInfo = 3;
+        repeated DiagnosticNode diagnosticInfo = 4;
+    }
+    FileDataNode fileData = 6;
+    int64 timestamp = 7;
     repeated FileNode derivedFrom = 8;
-    repeated InfoNode additionalInfo = 9;
-    repeated DiagnosticNode diagnosticInfo = 10;
-    repeated FileNode dependencies = 11;
-    int64 timestamp = 12;
+    repeated FileNode dependencies = 9;
 }
 
 message InfoNode {
