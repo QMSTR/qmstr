@@ -165,14 +165,30 @@ func (db *DataBase) queueWorker() {
 	}
 }
 
+func (db *DataBase) checkFileData(node *service.FileNode) {
+	fDataUID, err := db.GetFileDataUID(node.FileData.Hash)
+	if err != nil {
+		panic(err)
+	}
+	if fDataUID != "" {
+		node.FileData.Uid = fDataUID
+	}
+}
+
 func (db *DataBase) insertFileNode(node *service.FileNode) {
 	ready := true
+	// check if fileData already exist in db
+	db.checkFileData(node)
+
 	for idx, dep := range node.DerivedFrom {
+		// check if fileData already exist in db
+		db.checkFileData(dep)
+
 		if dep.Uid == "" {
 			// missing dep
 			ready = false
 			// look up dep in db
-			uid, err := db.GetFileNodeUid(dep.Hash)
+			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.Hash)
 			if err != nil {
 				panic(err)
 			}
@@ -184,11 +200,14 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 	}
 
 	for idx, dep := range node.Dependencies {
+		// check if fileData already exist in db
+		db.checkFileData(dep)
+
 		if dep.Uid == "" {
 			// missing dep
 			ready = false
 			// look up dep in db
-			uid, err := db.GetFileNodeUid(dep.Hash)
+			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.Hash)
 			if err != nil {
 				panic(err)
 			}
@@ -207,7 +226,7 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 
 	// we are ready to insert the node
 	db.insertMutex.Lock()
-	uid, err := db.GetFileNodeUid(node.Hash)
+	uid, err := db.GetFileNodeUid(node.Path, node.FileData.Hash)
 	if err != nil {
 		panic(err)
 	}
@@ -229,7 +248,7 @@ func (db *DataBase) insertPkgNode(node *service.PackageNode) {
 			// missing dep
 			ready = false
 			// look up dep in db
-			uid, err := db.GetFileNodeUid(dep.Hash)
+			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.Hash)
 			if err != nil {
 				panic(err)
 			}

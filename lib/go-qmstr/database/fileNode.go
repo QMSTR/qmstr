@@ -7,14 +7,16 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"reflect"
 	"strconv"
+	"strings"
 	"sync/atomic"
 	"text/template"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
-// AddBuildFileNode adds a node to the insert queue in build phase
+// AddFileNode adds a node to the insert queue in build phase
 func (db *DataBase) AddFileNode(node *service.FileNode) {
 	atomic.AddUint64(&db.pending, 1)
 	for _, file := range node.DerivedFrom {
@@ -69,12 +71,35 @@ func (db *DataBase) AddFileNodes(nodeID string, filenodes ...*service.FileNode) 
 }
 
 // GetFileNodeUid returns the UID of the node if exists otherwise ""
-func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
-
+func (db *DataBase) GetFileNodeUid(path string, hash string) (string, error) {
 	var ret map[string][]*service.FileNode
 
-	q := `query Node($Hash: string){
-		  hasNode(func: eq(hash, $Hash)) {
+	q := `query Node($Path: string, $Hash: string){
+		  hasNode(func: eq(path, $Path)) @cascade{
+			uid
+			fileData @filter(eq(hash, $Hash))
+		  }}`
+
+	vars := map[string]string{"$Path": path, "$Hash": hash}
+
+	err := db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return "", err
+	}
+
+	// no node with such path and hash
+	if len(ret["hasNode"]) == 0 {
+		return "", nil
+	}
+	return ret["hasNode"][0].Uid, nil
+}
+
+// GetFileDataUID returns the UID of the fileData node if exists in the db
+func (db *DataBase) GetFileDataUID(hash string) (string, error) {
+	var ret map[string][]*service.FileNode_FileDataNode
+
+	q := `query FileData($Hash: string){
+		  hasFileData(func: eq(hash, $Hash)){
 			uid
 		  }}`
 
@@ -85,11 +110,11 @@ func (db *DataBase) GetFileNodeUid(hash string) (string, error) {
 		return "", err
 	}
 
-	// no node with such hash
-	if len(ret["hasNode"]) == 0 {
+	// no fileData node with such hash
+	if len(ret["hasFileData"]) == 0 {
 		return "", nil
 	}
-	return ret["hasNode"][0].Uid, nil
+	return ret["hasFileData"][0].Uid, nil
 }
 
 // GetFileNodesByFileNode queries filenodes on a specific attribute of a provided filenode.
@@ -181,7 +206,9 @@ func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {
 
 	q := `query Node($Path: string){
 		  hasNode(func: eq(path, $Path)) {
-			hash
+			fileData{
+				hash
+			}
 		  }}`
 
 	vars := map[string]string{"$Path": path}
@@ -195,5 +222,5 @@ func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {
 	if len(ret["hasNode"]) == 0 {
 		return "", errors.New("No node with such path")
 	}
-	return ret["hasNode"][0].Hash, nil
+	return ret["hasNode"][0].FileData.Hash, nil
 }

@@ -51,10 +51,11 @@ func (gb *GeneralBuilder) GetPushFile() (*service.PushFileMessage, error) {
 func (gb *GeneralBuilder) ProcessOutput(filenodes []*service.FileNode) error {
 	for _, output := range filenodes {
 		var err error
-		output.Hash, err = common.HashFile(output.Path)
+		hash, err := common.HashFile(output.Path)
 		if err != nil {
 			return err
 		}
+		output.FileData = &service.FileNode_FileDataNode{Hash: hash}
 	}
 	return nil
 }
@@ -71,14 +72,12 @@ func NewFileNode(path string, fileType service.FileNode_Type, hash bool) *servic
 	filename := filepath.Base(path)
 	if hash {
 		hash, err := common.HashFile(path)
-		broken := false
 		if err != nil {
 			hash = "nohash" + path
-			broken = true
 		}
-		return &service.FileNode{Name: filename, FileType: fileType, Path: path, Hash: hash, Broken: broken}
+		return &service.FileNode{Name: filename, FileType: fileType, Path: path, FileData: &service.FileNode_FileDataNode{Hash: hash}}
 	}
-	return &service.FileNode{Name: filename, FileType: fileType, Path: path, Broken: true}
+	return &service.FileNode{Name: filename, FileType: fileType, Path: path}
 }
 
 func CleanCmd(commandline []string, cleanIdx []int, debug bool, logger *log.Logger) []string {

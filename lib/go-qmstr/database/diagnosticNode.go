@@ -62,7 +62,7 @@ func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnodes ...*servic
 	} else if _, ok := receiverNode["fileNodeType"]; ok {
 		fileNode := service.FileNode{}
 		fileNode.Uid = nodeID
-		fileNode.DiagnosticInfo = diagnosticInfo
+		fileNode.FileData.DiagnosticInfo = diagnosticInfo
 		_, err = dbInsert(db.client, &fileNode)
 		if err != nil {
 			return err
