@@ -120,7 +120,7 @@ func main() {
 			}
 			for _, dep := range fileNode.DerivedFrom {
 				if dep.Name == "-" {
-					dep.Hash = pushFileMsg.Hash
+					dep.FileData.Hash = pushFileMsg.Hash
 					dep.Path = remotePath
 				}
 			}

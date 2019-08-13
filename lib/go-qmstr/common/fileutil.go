@@ -120,7 +120,7 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 	if err := SetRelativePath(f, base, pathSub); err != nil {
 		return err
 	}
-	if f.Hash == "" {
+	if f.FileData.Hash == "" {
 		log.Printf("No hash for file %s", f.Path)
 		var hash string
 		var err error
@@ -138,7 +138,7 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 			}
 			log.Printf("Calculated hash %s\n", hash)
 		}
-		f.Hash = hash
+		f.FileData.Hash = hash
 	}
 	fileParts := strings.Split(f.Path, "/")
 	// catch tmp files

@@ -3,19 +3,9 @@ package service
 import (
 	"errors"
 	"fmt"
-	"path/filepath"
 	"reflect"
 	"strings"
 )
-
-func NewFileNode(path string, hash string) FileNode {
-	node := FileNode{
-		Path: path,
-		Hash: hash,
-		Name: filepath.Base(path),
-	}
-	return node
-}
 
 func CreateInfoNode(infoType string, dataNodes ...*InfoNode_DataNode) *InfoNode {
 	return &InfoNode{
@@ -51,10 +41,10 @@ func (in *InfoNode) Describe(indent string) string {
 }
 
 func (fn *FileNode) Describe(less bool, indent string) string {
-	describe := []string{fmt.Sprintf("%s|- Name: %s, Path: %s, Hash: %s, Timestamp: %v", indent, fn.Name, fn.Path, fn.Hash, fn.Timestamp)}
+	describe := []string{fmt.Sprintf("%s|- Name: %s, Path: %s, Hash: %s, Timestamp: %v", indent, fn.Name, fn.Path, fn.FileData.Hash, fn.Timestamp)}
 	indent = indent + "\t"
 	if !less {
-		for _, inode := range fn.AdditionalInfo {
+		for _, inode := range fn.FileData.AdditionalInfo {
 			describe = append(describe, inode.Describe(indent))
 		}
 	}
