@@ -303,9 +303,14 @@ func fixNodeFields(field *reflect.Value) error {
 					continue
 				}
 				return fmt.Errorf("%s not settable", field.Type().Field(i).Name)
-			} else if fieldVal.Kind() == reflect.Int64 && field.Type().Field(i).Name == "Timestamp" {
+			} else if fieldVal.Kind() == reflect.String && field.Type().Field(i).Name == "Timestamp" {
 				if fieldVal.CanSet() {
-					fieldVal.SetInt(time.Now().UnixNano())
+					timeInBytes, err := time.Now().MarshalText()
+					if err != nil {
+						return err
+					}
+					time := string(timeInBytes)
+					fieldVal.SetString(time)
 					continue
 				}
 				return fmt.Errorf("%s not settable", field.Type().Field(i).Name)
