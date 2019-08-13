@@ -123,14 +123,16 @@ func (db *DataBase) GetFileDataUID(hash string) (string, error) {
 // You can query for just one attribute. For instance, if you set filetype and hash, only the
 // hash will be used in the query.
 func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool) ([]*service.FileNode, error) {
-	var ret map[string][]*service.FileNode
+	var ret map[string][]interface{}
 
 	q := `query FileNodeByFileNode($Filter: string, $TypeFilter: int){
 			getFileNodeByFileNode(func: has(fileNodeType)) {{.Query}} {{.Recurse}}{
 			  uid
-			  hash
-			  name
+			  fileNodeType
 			  path
+			  name
+			  hash
+			  fileData
 			  type
 			  timestamp
 			  derivedFrom
@@ -166,11 +168,6 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 		//convert it to string to query it
 		vars["$TypeFilter"] = strconv.Itoa(nt)
 	}
-	if filenode.Hash != "" {
-		qp.Filter = filenode.Hash
-		qp.Query = "@filter(eq(hash, $Filter))"
-		vars["$Filter"] = qp.Filter
-	}
 	if filenode.Name != "" {
 		qp.Filter = filenode.Name
 		qp.Query = "@filter(eq(name, $Filter))"
@@ -193,15 +190,104 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 		return nil, err
 	}
 
-	fileNodes := ret["getFileNodeByFileNode"]
-	if len(fileNodes) < 1 {
+	fileNodesInterface := ret["getFileNodeByFileNode"]
+	if len(fileNodesInterface) < 1 {
 		return nil, fmt.Errorf("No file node %v found in the database", filenode)
 	}
-	return ret["getFileNodeByFileNode"], nil
+	var fileNodes []*service.FileNode
+	for _, node := range fileNodesInterface {
+		fileNode, err := decodeToFileNodeStruct(node)
+		if err != nil {
+			return nil, err
+		}
+		fileNodes = append(fileNodes, fileNode)
+	}
+	return fileNodes, nil
+}
+
+// TODO: Use dgraph v1.1.0 when it's released
+// and remove the decodeToFileNodeStruct convenience function
+func decodeToFileNodeStruct(fileNode interface{}) (*service.FileNode, error) {
+	fileNodeMap := fileNode.(map[string]interface{})
+	result := &service.FileNode{}
+	if err := fillStruct(result, fileNodeMap); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func fillStruct(s interface{}, nodeMap map[string]interface{}) error {
+	structValue := reflect.ValueOf(s).Elem()
+	for name, value := range nodeMap {
+		field := reflect.ValueOf(value)
+		switch field.Kind() {
+		case reflect.Slice, reflect.Array:
+			if name == "fileData" {
+				fileData := &service.FileNode_FileDataNode{}
+				for _, dataNode := range value.([]interface{}) {
+					fillStruct(fileData, dataNode.(map[string]interface{}))
+				}
+				s.(*service.FileNode).FileData = fileData
+			} else if name == "derivedFrom" {
+				deps := getDependenciesStruct(value.([]interface{}))
+				s.(*service.FileNode).DerivedFrom = deps
+			} else if name == "dependencies" {
+				deps := getDependenciesStruct(value.([]interface{}))
+				s.(*service.FileNode).Dependencies = deps
+			} else if name == "additionalInfo" {
+				var infos []*service.InfoNode
+				for _, infoNode := range value.([]interface{}) {
+					info := &service.InfoNode{}
+					fillStruct(info, infoNode.(map[string]interface{}))
+					infos = append(infos, info)
+				}
+				s.(*service.FileNode_FileDataNode).AdditionalInfo = infos
+			} else if name == "diagnosticInfo" {
+				var infos []*service.DiagnosticNode
+				for _, infoNode := range value.([]interface{}) {
+					info := &service.DiagnosticNode{}
+					fillStruct(info, infoNode.(map[string]interface{}))
+					infos = append(infos, info)
+				}
+				s.(*service.FileNode_FileDataNode).DiagnosticInfo = infos
+			} else if name == "dataNodes" {
+				var dataNodes []*service.InfoNode_DataNode
+				for _, dataNode := range value.([]interface{}) {
+					data := &service.InfoNode_DataNode{}
+					fillStruct(data, dataNode.(map[string]interface{}))
+					dataNodes = append(dataNodes, data)
+				}
+				s.(*service.InfoNode).DataNodes = dataNodes
+			}
+		default:
+			structFieldValue := structValue.FieldByName(strings.Title(name))
+			if !structFieldValue.IsValid() {
+				return fmt.Errorf("No such field: %s in filenode", name)
+			}
+			if !structFieldValue.CanSet() {
+				return fmt.Errorf("Cannot set %s field value", name)
+			}
+			val := reflect.ValueOf(value)
+			if structFieldValue.Type() != val.Type() {
+				return fmt.Errorf("Provided value type: %v didn't match filenode field type: %v", val.Type(), structFieldValue.Type())
+			}
+			structFieldValue.Set(val)
+		}
+	}
+	return nil
+}
+
+func getDependenciesStruct(node []interface{}) []*service.FileNode {
+	var deps []*service.FileNode
+	for _, depNode := range node {
+		dep := &service.FileNode{}
+		fillStruct(dep, depNode.(map[string]interface{}))
+		deps = append(deps, dep)
+	}
+	return deps
 }
 
 func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {
-
 	var ret map[string][]*service.FileNode
 
 	q := `query Node($Path: string){
