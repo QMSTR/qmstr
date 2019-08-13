@@ -61,7 +61,7 @@ func (phase *serverPhaseBuild) Build(stream service.BuildService_BuildServer) er
 		if err := common.SanitizeFileNode(fileNode, buildPath, pathSub, phase.db, ""); err != nil {
 			return fmt.Errorf("failed sanitising file node %v: %v", fileNode, err)
 		}
-		log.Printf("Adding file node %s with hash:%s", fileNode.Path, fileNode.Hash)
+		log.Printf("Adding file node %s with hash:%s", fileNode.Path, fileNode.FileData.Hash)
 		phase.db.AddFileNode(fileNode)
 	}
 }

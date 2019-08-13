@@ -70,7 +70,7 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 	} else if _, ok := receiverNode["fileNodeType"]; ok {
 		fileNode := service.FileNode{}
 		fileNode.Uid = nodeID
-		fileNode.AdditionalInfo = additionalInfo
+		fileNode.FileData.AdditionalInfo = additionalInfo
 		_, err = dbInsert(db.client, &fileNode)
 		if err != nil {
 			return err
