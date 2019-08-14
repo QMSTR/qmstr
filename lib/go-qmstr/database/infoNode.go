@@ -18,12 +18,12 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 
 	const q = `
 	query Node($id: string){
-		node(func: uid($id)) @filter(has(projectNodeType) or has(packageNodeType) or has(fileNodeType)) @recurse(loop: false) {
+		node(func: uid($id)) @filter(has(projectNodeType) or has(packageNodeType) or has(fileDataNodeType)) @recurse(loop: false) {
 			uid
 			additionalInfo
 			projectNodeType
 			packageNodeType
-			fileNodeType
+			fileDataNodeType
 		}
 	}
 	`
@@ -67,11 +67,11 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 		if err != nil {
 			return err
 		}
-	} else if _, ok := receiverNode["fileNodeType"]; ok {
-		fileNode := service.FileNode{}
-		fileNode.Uid = nodeID
-		fileNode.FileData.AdditionalInfo = additionalInfo
-		_, err = dbInsert(db.client, &fileNode)
+	} else if _, ok := receiverNode["fileDataNodeType"]; ok {
+		fileDataNode := service.FileNode_FileDataNode{}
+		fileDataNode.Uid = nodeID
+		fileDataNode.AdditionalInfo = additionalInfo
+		_, err = dbInsert(db.client, &fileDataNode)
 		if err != nil {
 			return err
 		}

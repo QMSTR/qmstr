@@ -19,11 +19,11 @@ func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnodes ...*servic
 
 	const q = `
 	query Node($id: string){
-		node(func: uid($id)) @filter(has(packageNodeType) or has(fileNodeType)) @recurse(loop: false) {
+		node(func: uid($id)) @filter(has(packageNodeType) or has(fileDataNodeType)) @recurse(loop: false) {
 			uid
 			diagnosticInfo
 			packageNodeType
-			fileNodeType
+			fileDataNodeType
 		}
 	}
 	`
@@ -59,11 +59,11 @@ func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnodes ...*servic
 		if err != nil {
 			return err
 		}
-	} else if _, ok := receiverNode["fileNodeType"]; ok {
-		fileNode := service.FileNode{}
-		fileNode.Uid = nodeID
-		fileNode.FileData.DiagnosticInfo = diagnosticInfo
-		_, err = dbInsert(db.client, &fileNode)
+	} else if _, ok := receiverNode["fileDataNodeType"]; ok {
+		fileDataNode := service.FileNode_FileDataNode{}
+		fileDataNode.Uid = nodeID
+		fileDataNode.DiagnosticInfo = diagnosticInfo
+		_, err = dbInsert(db.client, &fileDataNode)
 		if err != nil {
 			return err
 		}

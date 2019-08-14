@@ -35,6 +35,7 @@ projectNodeType:string @index(hash) .
 trustLevel:string @index(hash) .
 packageNodeType:string @index(hash) .
 fileNodeType:string @index(hash) .
+fileDataNodeType:string @index(hash) .
 infoNodeType:string @index(hash) .
 diagnosticNodeType:string @index(hash) .
 severity:string @index(hash) .
@@ -317,6 +318,9 @@ func fixNodeFields(field *reflect.Value) error {
 			}
 			fixNodeFields(&fieldVal)
 		}
+	case reflect.Ptr:
+		fieldVal := field.Elem()
+		fixNodeFields(&fieldVal)
 	case reflect.Slice, reflect.Array:
 		for i := 0; i < field.Len(); i++ {
 			fieldVal := field.Index(i).Elem()
@@ -335,7 +339,6 @@ func fillNodeFields(data interface{}) error {
 	for val.Kind() == reflect.Ptr || val.Kind() == reflect.Interface {
 		val = val.Elem()
 	}
-
 	return fixNodeFields(&val)
 }
 
