@@ -33,8 +33,5 @@ public class AndroidPreTaskAction extends AndroidTaskAction {
     @Override
     public void execute(Task task) {
         task.getLogger().warn("Task {} about to run", task.getName());
-        if (task.getName().startsWith(dexTaskPrefix)) {
-            // classes are compiled and need to be picked up
-        }
     }
 }
