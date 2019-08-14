@@ -108,7 +108,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
 
             info_nodes = []
             info_nodes.append(InfoNodeMessage(
-                uid=node.uid,
+                uid=node.fileData.uid,
                 token=self.token,
                 infonode=info_node))
 

@@ -16,9 +16,10 @@ message FileNode {
     string name = 5;
     message FileDataNode {
         string uid = 1;
-        string hash = 2;
-        repeated InfoNode additionalInfo = 3;
-        repeated DiagnosticNode diagnosticInfo = 4;
+        string fileDataNodeType = 2;
+        string hash = 3;
+        repeated InfoNode additionalInfo = 4;
+        repeated DiagnosticNode diagnosticInfo = 5;
     }
     FileDataNode fileData = 6;
     string timestamp = 7;
