@@ -88,6 +88,10 @@ public class FilenodeUtils {
     public static Set<Datamodel.FileNode> processSourceFile(Transform transform, File sourcefile,
             Collection<File> sourceDirs, Collection<File> outDirs)
             throws TransformationException, FileNotFoundException {
+        
+        if (sourcefile.isDirectory()) {
+            return Collections.emptySet();
+        }
 
         Datamodel.FileNode sourceNode = FilenodeUtils.getFileNode(sourcefile.toPath(),
                 FilenodeUtils.getTypeByFile(sourcefile.getName()));
