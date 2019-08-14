@@ -89,12 +89,12 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServic
 		licenseInfo, err := scanalyzer.detectLicenses(fileNode.GetPath())
 		if err == nil {
 			for _, inode := range licenseInfo {
-				infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: inode, Uid: fileNode.Uid})
+				infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: inode, Uid: fileNode.FileData.Uid})
 			}
 		}
 		copyrights, err := scanalyzer.detectCopyrights(fileNode.GetPath())
 		if err == nil {
-			infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: copyrights, Uid: fileNode.Uid})
+			infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: copyrights, Uid: fileNode.FileData.Uid})
 		}
 	}
 

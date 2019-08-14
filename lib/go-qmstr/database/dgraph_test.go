@@ -54,6 +54,7 @@ buildConfig:string .
 projectNodeType:string @index(hash) .
 dataNodeType:string @index(hash) .
 fileNodeType:string @index(hash) .
+fileDataNodeType:string @index(hash) .
 infoNodeType:string @index(hash) .
 diagnosticNodeType:string @index(hash) .
 severity:string @index(hash) .

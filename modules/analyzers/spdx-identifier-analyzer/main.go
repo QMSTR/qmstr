@@ -66,7 +66,7 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 			log.Printf("%v", err)
 			// Adding warning node
 			diagnosticWarningNode := service.DiagnosticNode{Severity: service.DiagnosticNode_WARNING, Message: fmt.Sprintf("%v", err)}
-			diagnosticNodeMsg = service.DiagnosticNodeMessage{Token: token, Diagnosticnode: &diagnosticWarningNode, Uid: fileNode.Uid}
+			diagnosticNodeMsg = service.DiagnosticNodeMessage{Token: token, Diagnosticnode: &diagnosticWarningNode, Uid: fileNode.FileData.Uid}
 		} else if _, ok := spdxLicenses[spdxIdent]; !ok {
 			log.Printf("Found invalid spdx license identifier %v.", spdxIdent)
 			// Adding error node
@@ -75,18 +75,18 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 				return err
 			}
 			diagnosticErrorNode := service.DiagnosticNode{Severity: service.DiagnosticNode_ERROR, Message: fmt.Sprintf("%v:%v:%v Invalid SPDX license expression %v", file, lineNo, columnNo, spdxIdent)}
-			diagnosticNodeMsg = service.DiagnosticNodeMessage{Token: token, Diagnosticnode: &diagnosticErrorNode, Uid: fileNode.Uid}
+			diagnosticNodeMsg = service.DiagnosticNodeMessage{Token: token, Diagnosticnode: &diagnosticErrorNode, Uid: fileNode.FileData.Uid}
 		} else {
 			// Create both diagnostic and info node
 			diagnosticInfoNode := service.DiagnosticNode{Severity: service.DiagnosticNode_INFO, Message: fmt.Sprintf("SPDX license expression detected: %s", spdxIdent)}
-			diagnosticNodeMsg = service.DiagnosticNodeMessage{Token: token, Diagnosticnode: &diagnosticInfoNode, Uid: fileNode.Uid}
+			diagnosticNodeMsg = service.DiagnosticNodeMessage{Token: token, Diagnosticnode: &diagnosticInfoNode, Uid: fileNode.FileData.Uid}
 
 			dataNodes := []*service.InfoNode_DataNode{
 				&service.InfoNode_DataNode{Type: "name", Data: spdxIdent},
 				&service.InfoNode_DataNode{Type: "spdxIdentifier", Data: spdxIdent},
 			}
 			infoNode := &service.InfoNode{Type: "license", DataNodes: dataNodes}
-			infoNodeMsg := &service.InfoNodeMessage{Token: token, Infonode: infoNode, Uid: fileNode.Uid}
+			infoNodeMsg := &service.InfoNodeMessage{Token: token, Infonode: infoNode, Uid: fileNode.FileData.Uid}
 
 			sendStream, err := analysisService.SendInfoNodes(context.Background())
 			if err != nil {

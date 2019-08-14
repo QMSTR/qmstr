@@ -132,6 +132,7 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 			  path
 			  name
 			  hash
+			  fileDataNodeType
 			  fileData
 			  type
 			  timestamp
