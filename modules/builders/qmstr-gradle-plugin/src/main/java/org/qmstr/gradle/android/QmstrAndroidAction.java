@@ -21,36 +21,19 @@ import com.android.build.gradle.AppPlugin;
 public class QmstrAndroidAction implements Action<AppliedPlugin> {
 
     Project project;
-    boolean lib;
 
-    public QmstrAndroidAction(Project project, boolean lib) {
+    public QmstrAndroidAction(Project project) {
         this.project = project;
-        this.lib = lib;
-    }
-
-    private NamedDomainObjectContainer<AndroidSourceSet> getAppSourceSets() {
-        AppExtension e = project.getExtensions().findByType(AppExtension.class);
-        project.getLogger().warn("Found app source sets: {}", e.getSourceSets().stream().map(s -> s.getName()).collect(Collectors.joining("\n", "{", "}")));
-        return e.getSourceSets();
-    }
-
-    private NamedDomainObjectContainer<AndroidSourceSet> getLibSourceSets() {
-        LibraryExtension le = project.getExtensions().findByType(LibraryExtension.class);
-        project.getLogger().warn("Found lib source sets: {}", le.getSourceSets().stream().map(s -> s.getName()).collect(Collectors.joining("\n", "{", "}")));
-        return le.getSourceSets();
-    }
-
-    private Set<File> getSourceDirs() {
-        NamedDomainObjectContainer<AndroidSourceSet> sourceSets = lib ? getLibSourceSets() : getAppSourceSets();
-        return sourceSets.stream().flatMap(s -> s.getJava().getSrcDirs().stream()).collect(Collectors.toSet());
     }
 
     @Override
     public void execute(AppliedPlugin plugin) {
-
-
+        project.getLogger().warn("Applied plugin {} on project {}", plugin.getId(), project.getName());
         // install actions/listeners to the task graph
-        project.getGradle().getTaskGraph().afterTask(new AndroidPostTaskAction(project, getSourceDirs()));
+        //project.getGradle().getTaskGraph().whenReady(new TaskExecutionGraphReadyAction(project));
+        project.getGradle().getTaskGraph().afterTask(new AndroidPostTaskAction(project, plugin));
+        project.getGradle().getTaskGraph().beforeTask(new AndroidPreTaskAction(project, plugin));
+
 
     }
 }
