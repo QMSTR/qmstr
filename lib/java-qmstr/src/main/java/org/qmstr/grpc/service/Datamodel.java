@@ -507,6 +507,11 @@ public final class Datamodel {
      */
     org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder getDependenciesOrBuilder(
         int index);
+
+    /**
+     * <code>int64 timestamp = 12;</code>
+     */
+    long getTimestamp();
   }
   /**
    * Protobuf type {@code service.FileNode}
@@ -532,6 +537,7 @@ public final class Datamodel {
       additionalInfo_ = java.util.Collections.emptyList();
       diagnosticInfo_ = java.util.Collections.emptyList();
       dependencies_ = java.util.Collections.emptyList();
+      timestamp_ = 0L;
     }
 
     @java.lang.Override
@@ -640,6 +646,11 @@ public final class Datamodel {
               }
               dependencies_.add(
                   input.readMessage(org.qmstr.grpc.service.Datamodel.FileNode.parser(), extensionRegistry));
+              break;
+            }
+            case 96: {
+
+              timestamp_ = input.readInt64();
               break;
             }
           }
@@ -1130,6 +1141,15 @@ public final class Datamodel {
       return dependencies_.get(index);
     }
 
+    public static final int TIMESTAMP_FIELD_NUMBER = 12;
+    private long timestamp_;
+    /**
+     * <code>int64 timestamp = 12;</code>
+     */
+    public long getTimestamp() {
+      return timestamp_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -1174,6 +1194,9 @@ public final class Datamodel {
       }
       for (int i = 0; i < dependencies_.size(); i++) {
         output.writeMessage(11, dependencies_.get(i));
+      }
+      if (timestamp_ != 0L) {
+        output.writeInt64(12, timestamp_);
       }
       unknownFields.writeTo(output);
     }
@@ -1222,6 +1245,10 @@ public final class Datamodel {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(11, dependencies_.get(i));
       }
+      if (timestamp_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(12, timestamp_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -1259,6 +1286,8 @@ public final class Datamodel {
           .equals(other.getDiagnosticInfoList());
       result = result && getDependenciesList()
           .equals(other.getDependenciesList());
+      result = result && (getTimestamp()
+          == other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -1301,6 +1330,9 @@ public final class Datamodel {
         hash = (37 * hash) + DEPENDENCIES_FIELD_NUMBER;
         hash = (53 * hash) + getDependenciesList().hashCode();
       }
+      hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTimestamp());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1472,6 +1504,8 @@ public final class Datamodel {
         } else {
           dependenciesBuilder_.clear();
         }
+        timestamp_ = 0L;
+
         return this;
       }
 
@@ -1539,6 +1573,7 @@ public final class Datamodel {
         } else {
           result.dependencies_ = dependenciesBuilder_.build();
         }
+        result.timestamp_ = timestamp_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1710,6 +1745,9 @@ public final class Datamodel {
               dependenciesBuilder_.addAllMessages(other.dependencies_);
             }
           }
+        }
+        if (other.getTimestamp() != 0L) {
+          setTimestamp(other.getTimestamp());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -3113,6 +3151,32 @@ public final class Datamodel {
         }
         return dependenciesBuilder_;
       }
+
+      private long timestamp_ ;
+      /**
+       * <code>int64 timestamp = 12;</code>
+       */
+      public long getTimestamp() {
+        return timestamp_;
+      }
+      /**
+       * <code>int64 timestamp = 12;</code>
+       */
+      public Builder setTimestamp(long value) {
+        
+        timestamp_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 timestamp = 12;</code>
+       */
+      public Builder clearTimestamp() {
+        
+        timestamp_ = 0L;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -3248,6 +3312,11 @@ public final class Datamodel {
      */
     org.qmstr.grpc.service.Datamodel.InfoNode.DataNodeOrBuilder getDataNodesOrBuilder(
         int index);
+
+    /**
+     * <code>int64 timestamp = 7;</code>
+     */
+    long getTimestamp();
   }
   /**
    * Protobuf type {@code service.InfoNode}
@@ -3268,6 +3337,7 @@ public final class Datamodel {
       confidenceScore_ = 0D;
       analyzer_ = java.util.Collections.emptyList();
       dataNodes_ = java.util.Collections.emptyList();
+      timestamp_ = 0L;
     }
 
     @java.lang.Override
@@ -3342,6 +3412,11 @@ public final class Datamodel {
                   input.readMessage(org.qmstr.grpc.service.Datamodel.InfoNode.DataNode.parser(), extensionRegistry));
               break;
             }
+            case 56: {
+
+              timestamp_ = input.readInt64();
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -3405,6 +3480,11 @@ public final class Datamodel {
        */
       com.google.protobuf.ByteString
           getDataBytes();
+
+      /**
+       * <code>int64 timestamp = 4;</code>
+       */
+      long getTimestamp();
     }
     /**
      * Protobuf type {@code service.InfoNode.DataNode}
@@ -3422,6 +3502,7 @@ public final class Datamodel {
         dataNodeType_ = "";
         type_ = "";
         data_ = "";
+        timestamp_ = 0L;
       }
 
       @java.lang.Override
@@ -3471,6 +3552,11 @@ public final class Datamodel {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 data_ = s;
+                break;
+              }
+              case 32: {
+
+                timestamp_ = input.readInt64();
                 break;
               }
             }
@@ -3599,6 +3685,15 @@ public final class Datamodel {
         }
       }
 
+      public static final int TIMESTAMP_FIELD_NUMBER = 4;
+      private long timestamp_;
+      /**
+       * <code>int64 timestamp = 4;</code>
+       */
+      public long getTimestamp() {
+        return timestamp_;
+      }
+
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
@@ -3620,6 +3715,9 @@ public final class Datamodel {
         if (!getDataBytes().isEmpty()) {
           com.google.protobuf.GeneratedMessageV3.writeString(output, 3, data_);
         }
+        if (timestamp_ != 0L) {
+          output.writeInt64(4, timestamp_);
+        }
         unknownFields.writeTo(output);
       }
 
@@ -3636,6 +3734,10 @@ public final class Datamodel {
         }
         if (!getDataBytes().isEmpty()) {
           size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, data_);
+        }
+        if (timestamp_ != 0L) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt64Size(4, timestamp_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -3659,6 +3761,8 @@ public final class Datamodel {
             .equals(other.getType());
         result = result && getData()
             .equals(other.getData());
+        result = result && (getTimestamp()
+            == other.getTimestamp());
         result = result && unknownFields.equals(other.unknownFields);
         return result;
       }
@@ -3676,6 +3780,9 @@ public final class Datamodel {
         hash = (53 * hash) + getType().hashCode();
         hash = (37 * hash) + DATA_FIELD_NUMBER;
         hash = (53 * hash) + getData().hashCode();
+        hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+            getTimestamp());
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -3811,6 +3918,8 @@ public final class Datamodel {
 
           data_ = "";
 
+          timestamp_ = 0L;
+
           return this;
         }
 
@@ -3836,6 +3945,7 @@ public final class Datamodel {
           result.dataNodeType_ = dataNodeType_;
           result.type_ = type_;
           result.data_ = data_;
+          result.timestamp_ = timestamp_;
           onBuilt();
           return result;
         }
@@ -3888,6 +3998,9 @@ public final class Datamodel {
           if (!other.getData().isEmpty()) {
             data_ = other.data_;
             onChanged();
+          }
+          if (other.getTimestamp() != 0L) {
+            setTimestamp(other.getTimestamp());
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -4122,6 +4235,32 @@ public final class Datamodel {
           onChanged();
           return this;
         }
+
+        private long timestamp_ ;
+        /**
+         * <code>int64 timestamp = 4;</code>
+         */
+        public long getTimestamp() {
+          return timestamp_;
+        }
+        /**
+         * <code>int64 timestamp = 4;</code>
+         */
+        public Builder setTimestamp(long value) {
+          
+          timestamp_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>int64 timestamp = 4;</code>
+         */
+        public Builder clearTimestamp() {
+          
+          timestamp_ = 0L;
+          onChanged();
+          return this;
+        }
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
           return super.setUnknownFieldsProto3(unknownFields);
@@ -4353,6 +4492,15 @@ public final class Datamodel {
       return dataNodes_.get(index);
     }
 
+    public static final int TIMESTAMP_FIELD_NUMBER = 7;
+    private long timestamp_;
+    /**
+     * <code>int64 timestamp = 7;</code>
+     */
+    public long getTimestamp() {
+      return timestamp_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -4383,6 +4531,9 @@ public final class Datamodel {
       for (int i = 0; i < dataNodes_.size(); i++) {
         output.writeMessage(6, dataNodes_.get(i));
       }
+      if (timestamp_ != 0L) {
+        output.writeInt64(7, timestamp_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -4411,6 +4562,10 @@ public final class Datamodel {
       for (int i = 0; i < dataNodes_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(6, dataNodes_.get(i));
+      }
+      if (timestamp_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(7, timestamp_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -4442,6 +4597,8 @@ public final class Datamodel {
           .equals(other.getAnalyzerList());
       result = result && getDataNodesList()
           .equals(other.getDataNodesList());
+      result = result && (getTimestamp()
+          == other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -4470,6 +4627,9 @@ public final class Datamodel {
         hash = (37 * hash) + DATANODES_FIELD_NUMBER;
         hash = (53 * hash) + getDataNodesList().hashCode();
       }
+      hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTimestamp());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4621,6 +4781,8 @@ public final class Datamodel {
         } else {
           dataNodesBuilder_.clear();
         }
+        timestamp_ = 0L;
+
         return this;
       }
 
@@ -4667,6 +4829,7 @@ public final class Datamodel {
         } else {
           result.dataNodes_ = dataNodesBuilder_.build();
         }
+        result.timestamp_ = timestamp_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -4775,6 +4938,9 @@ public final class Datamodel {
               dataNodesBuilder_.addAllMessages(other.dataNodes_);
             }
           }
+        }
+        if (other.getTimestamp() != 0L) {
+          setTimestamp(other.getTimestamp());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -5516,6 +5682,32 @@ public final class Datamodel {
         }
         return dataNodesBuilder_;
       }
+
+      private long timestamp_ ;
+      /**
+       * <code>int64 timestamp = 7;</code>
+       */
+      public long getTimestamp() {
+        return timestamp_;
+      }
+      /**
+       * <code>int64 timestamp = 7;</code>
+       */
+      public Builder setTimestamp(long value) {
+        
+        timestamp_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 timestamp = 7;</code>
+       */
+      public Builder clearTimestamp() {
+        
+        timestamp_ = 0L;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -5631,6 +5823,11 @@ public final class Datamodel {
      */
     org.qmstr.grpc.service.Datamodel.AnalyzerOrBuilder getAnalyzerOrBuilder(
         int index);
+
+    /**
+     * <code>int64 timestamp = 6;</code>
+     */
+    long getTimestamp();
   }
   /**
    * Protobuf type {@code service.DiagnosticNode}
@@ -5650,6 +5847,7 @@ public final class Datamodel {
       severity_ = 0;
       message_ = "";
       analyzer_ = java.util.Collections.emptyList();
+      timestamp_ = 0L;
     }
 
     @java.lang.Override
@@ -5714,6 +5912,11 @@ public final class Datamodel {
               }
               analyzer_.add(
                   input.readMessage(org.qmstr.grpc.service.Datamodel.Analyzer.parser(), extensionRegistry));
+              break;
+            }
+            case 48: {
+
+              timestamp_ = input.readInt64();
               break;
             }
           }
@@ -6013,6 +6216,15 @@ public final class Datamodel {
       return analyzer_.get(index);
     }
 
+    public static final int TIMESTAMP_FIELD_NUMBER = 6;
+    private long timestamp_;
+    /**
+     * <code>int64 timestamp = 6;</code>
+     */
+    public long getTimestamp() {
+      return timestamp_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -6040,6 +6252,9 @@ public final class Datamodel {
       for (int i = 0; i < analyzer_.size(); i++) {
         output.writeMessage(5, analyzer_.get(i));
       }
+      if (timestamp_ != 0L) {
+        output.writeInt64(6, timestamp_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -6064,6 +6279,10 @@ public final class Datamodel {
       for (int i = 0; i < analyzer_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, analyzer_.get(i));
+      }
+      if (timestamp_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(6, timestamp_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -6090,6 +6309,8 @@ public final class Datamodel {
           .equals(other.getMessage());
       result = result && getAnalyzerList()
           .equals(other.getAnalyzerList());
+      result = result && (getTimestamp()
+          == other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -6113,6 +6334,9 @@ public final class Datamodel {
         hash = (37 * hash) + ANALYZER_FIELD_NUMBER;
         hash = (53 * hash) + getAnalyzerList().hashCode();
       }
+      hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTimestamp());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -6257,6 +6481,8 @@ public final class Datamodel {
         } else {
           analyzerBuilder_.clear();
         }
+        timestamp_ = 0L;
+
         return this;
       }
 
@@ -6294,6 +6520,7 @@ public final class Datamodel {
         } else {
           result.analyzer_ = analyzerBuilder_.build();
         }
+        result.timestamp_ = timestamp_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -6376,6 +6603,9 @@ public final class Datamodel {
               analyzerBuilder_.addAllMessages(other.analyzer_);
             }
           }
+        }
+        if (other.getTimestamp() != 0L) {
+          setTimestamp(other.getTimestamp());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -6894,6 +7124,32 @@ public final class Datamodel {
           analyzer_ = null;
         }
         return analyzerBuilder_;
+      }
+
+      private long timestamp_ ;
+      /**
+       * <code>int64 timestamp = 6;</code>
+       */
+      public long getTimestamp() {
+        return timestamp_;
+      }
+      /**
+       * <code>int64 timestamp = 6;</code>
+       */
+      public Builder setTimestamp(long value) {
+        
+        timestamp_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 timestamp = 6;</code>
+       */
+      public Builder clearTimestamp() {
+        
+        timestamp_ = 0L;
+        onChanged();
+        return this;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -8966,6 +9222,11 @@ public final class Datamodel {
      */
     org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder getDiagnosticInfoOrBuilder(
         int index);
+
+    /**
+     * <code>int64 timestamp = 9;</code>
+     */
+    long getTimestamp();
   }
   /**
    * Protobuf type {@code service.PackageNode}
@@ -8988,6 +9249,7 @@ public final class Datamodel {
       additionalInfo_ = java.util.Collections.emptyList();
       buildConfig_ = "";
       diagnosticInfo_ = java.util.Collections.emptyList();
+      timestamp_ = 0L;
     }
 
     @java.lang.Override
@@ -9076,6 +9338,11 @@ public final class Datamodel {
               }
               diagnosticInfo_.add(
                   input.readMessage(org.qmstr.grpc.service.Datamodel.DiagnosticNode.parser(), extensionRegistry));
+              break;
+            }
+            case 72: {
+
+              timestamp_ = input.readInt64();
               break;
             }
           }
@@ -9387,6 +9654,15 @@ public final class Datamodel {
       return diagnosticInfo_.get(index);
     }
 
+    public static final int TIMESTAMP_FIELD_NUMBER = 9;
+    private long timestamp_;
+    /**
+     * <code>int64 timestamp = 9;</code>
+     */
+    public long getTimestamp() {
+      return timestamp_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -9423,6 +9699,9 @@ public final class Datamodel {
       for (int i = 0; i < diagnosticInfo_.size(); i++) {
         output.writeMessage(8, diagnosticInfo_.get(i));
       }
+      if (timestamp_ != 0L) {
+        output.writeInt64(9, timestamp_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -9458,6 +9737,10 @@ public final class Datamodel {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(8, diagnosticInfo_.get(i));
       }
+      if (timestamp_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(9, timestamp_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -9490,6 +9773,8 @@ public final class Datamodel {
           .equals(other.getBuildConfig());
       result = result && getDiagnosticInfoList()
           .equals(other.getDiagnosticInfoList());
+      result = result && (getTimestamp()
+          == other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -9523,6 +9808,9 @@ public final class Datamodel {
         hash = (37 * hash) + DIAGNOSTICINFO_FIELD_NUMBER;
         hash = (53 * hash) + getDiagnosticInfoList().hashCode();
       }
+      hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTimestamp());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -9683,6 +9971,8 @@ public final class Datamodel {
         } else {
           diagnosticInfoBuilder_.clear();
         }
+        timestamp_ = 0L;
+
         return this;
       }
 
@@ -9739,6 +10029,7 @@ public final class Datamodel {
         } else {
           result.diagnosticInfo_ = diagnosticInfoBuilder_.build();
         }
+        result.timestamp_ = timestamp_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -9878,6 +10169,9 @@ public final class Datamodel {
               diagnosticInfoBuilder_.addAllMessages(other.diagnosticInfo_);
             }
           }
+        }
+        if (other.getTimestamp() != 0L) {
+          setTimestamp(other.getTimestamp());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -10971,6 +11265,32 @@ public final class Datamodel {
         }
         return diagnosticInfoBuilder_;
       }
+
+      private long timestamp_ ;
+      /**
+       * <code>int64 timestamp = 9;</code>
+       */
+      public long getTimestamp() {
+        return timestamp_;
+      }
+      /**
+       * <code>int64 timestamp = 9;</code>
+       */
+      public Builder setTimestamp(long value) {
+        
+        timestamp_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 timestamp = 9;</code>
+       */
+      public Builder clearTimestamp() {
+        
+        timestamp_ = 0L;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -11101,6 +11421,11 @@ public final class Datamodel {
      */
     org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getAdditionalInfoOrBuilder(
         int index);
+
+    /**
+     * <code>int64 timestamp = 6;</code>
+     */
+    long getTimestamp();
   }
   /**
    * Protobuf type {@code service.ProjectNode}
@@ -11120,6 +11445,7 @@ public final class Datamodel {
       projectNodeType_ = "";
       packages_ = java.util.Collections.emptyList();
       additionalInfo_ = java.util.Collections.emptyList();
+      timestamp_ = 0L;
     }
 
     @java.lang.Override
@@ -11187,6 +11513,11 @@ public final class Datamodel {
               }
               additionalInfo_.add(
                   input.readMessage(org.qmstr.grpc.service.Datamodel.InfoNode.parser(), extensionRegistry));
+              break;
+            }
+            case 48: {
+
+              timestamp_ = input.readInt64();
               break;
             }
           }
@@ -11392,6 +11723,15 @@ public final class Datamodel {
       return additionalInfo_.get(index);
     }
 
+    public static final int TIMESTAMP_FIELD_NUMBER = 6;
+    private long timestamp_;
+    /**
+     * <code>int64 timestamp = 6;</code>
+     */
+    public long getTimestamp() {
+      return timestamp_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -11419,6 +11759,9 @@ public final class Datamodel {
       for (int i = 0; i < additionalInfo_.size(); i++) {
         output.writeMessage(5, additionalInfo_.get(i));
       }
+      if (timestamp_ != 0L) {
+        output.writeInt64(6, timestamp_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -11443,6 +11786,10 @@ public final class Datamodel {
       for (int i = 0; i < additionalInfo_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, additionalInfo_.get(i));
+      }
+      if (timestamp_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(6, timestamp_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -11470,6 +11817,8 @@ public final class Datamodel {
           .equals(other.getPackagesList());
       result = result && getAdditionalInfoList()
           .equals(other.getAdditionalInfoList());
+      result = result && (getTimestamp()
+          == other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -11495,6 +11844,9 @@ public final class Datamodel {
         hash = (37 * hash) + ADDITIONALINFO_FIELD_NUMBER;
         hash = (53 * hash) + getAdditionalInfoList().hashCode();
       }
+      hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTimestamp());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11644,6 +11996,8 @@ public final class Datamodel {
         } else {
           additionalInfoBuilder_.clear();
         }
+        timestamp_ = 0L;
+
         return this;
       }
 
@@ -11689,6 +12043,7 @@ public final class Datamodel {
         } else {
           result.additionalInfo_ = additionalInfoBuilder_.build();
         }
+        result.timestamp_ = timestamp_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -11794,6 +12149,9 @@ public final class Datamodel {
               additionalInfoBuilder_.addAllMessages(other.additionalInfo_);
             }
           }
+        }
+        if (other.getTimestamp() != 0L) {
+          setTimestamp(other.getTimestamp());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -12509,6 +12867,32 @@ public final class Datamodel {
         }
         return additionalInfoBuilder_;
       }
+
+      private long timestamp_ ;
+      /**
+       * <code>int64 timestamp = 6;</code>
+       */
+      public long getTimestamp() {
+        return timestamp_;
+      }
+      /**
+       * <code>int64 timestamp = 6;</code>
+       */
+      public Builder setTimestamp(long value) {
+        
+        timestamp_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 timestamp = 6;</code>
+       */
+      public Builder clearTimestamp() {
+        
+        timestamp_ = 0L;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -13212,6 +13596,11 @@ public final class Datamodel {
      * <code>bool done = 4;</code>
      */
     boolean getDone();
+
+    /**
+     * <code>int64 timestamp = 5;</code>
+     */
+    long getTimestamp();
   }
   /**
    * Protobuf type {@code service.QmstrStateNode}
@@ -13230,6 +13619,7 @@ public final class Datamodel {
       qmstrStateNodeType_ = "";
       phase_ = 0;
       done_ = false;
+      timestamp_ = 0L;
     }
 
     @java.lang.Override
@@ -13284,6 +13674,11 @@ public final class Datamodel {
             case 32: {
 
               done_ = input.readBool();
+              break;
+            }
+            case 40: {
+
+              timestamp_ = input.readInt64();
               break;
             }
           }
@@ -13403,6 +13798,15 @@ public final class Datamodel {
       return done_;
     }
 
+    public static final int TIMESTAMP_FIELD_NUMBER = 5;
+    private long timestamp_;
+    /**
+     * <code>int64 timestamp = 5;</code>
+     */
+    public long getTimestamp() {
+      return timestamp_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -13427,6 +13831,9 @@ public final class Datamodel {
       if (done_ != false) {
         output.writeBool(4, done_);
       }
+      if (timestamp_ != 0L) {
+        output.writeInt64(5, timestamp_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -13448,6 +13855,10 @@ public final class Datamodel {
       if (done_ != false) {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(4, done_);
+      }
+      if (timestamp_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(5, timestamp_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -13472,6 +13883,8 @@ public final class Datamodel {
       result = result && phase_ == other.phase_;
       result = result && (getDone()
           == other.getDone());
+      result = result && (getTimestamp()
+          == other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -13492,6 +13905,9 @@ public final class Datamodel {
       hash = (37 * hash) + DONE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getDone());
+      hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTimestamp());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -13629,6 +14045,8 @@ public final class Datamodel {
 
         done_ = false;
 
+        timestamp_ = 0L;
+
         return this;
       }
 
@@ -13655,6 +14073,7 @@ public final class Datamodel {
         result.qmstrStateNodeType_ = qmstrStateNodeType_;
         result.phase_ = phase_;
         result.done_ = done_;
+        result.timestamp_ = timestamp_;
         onBuilt();
         return result;
       }
@@ -13709,6 +14128,9 @@ public final class Datamodel {
         }
         if (other.getDone() != false) {
           setDone(other.getDone());
+        }
+        if (other.getTimestamp() != 0L) {
+          setTimestamp(other.getTimestamp());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -13944,6 +14366,32 @@ public final class Datamodel {
         onChanged();
         return this;
       }
+
+      private long timestamp_ ;
+      /**
+       * <code>int64 timestamp = 5;</code>
+       */
+      public long getTimestamp() {
+        return timestamp_;
+      }
+      /**
+       * <code>int64 timestamp = 5;</code>
+       */
+      public Builder setTimestamp(long value) {
+        
+        timestamp_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 timestamp = 5;</code>
+       */
+      public Builder clearTimestamp() {
+        
+        timestamp_ = 0L;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -14052,7 +14500,7 @@ public final class Datamodel {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\017datamodel.proto\022\007service\"\373\002\n\010FileNode\022" +
+      "\n\017datamodel.proto\022\007service\"\216\003\n\010FileNode\022" +
       "\013\n\003uid\030\001 \001(\t\022\024\n\014fileNodeType\030\002 \001(\t\022(\n\010fi" +
       "leType\030\003 \001(\0162\026.service.FileNode.Type\022\014\n\004" +
       "path\030\004 \001(\t\022\014\n\004name\030\005 \001(\t\022\014\n\004hash\030\006 \001(\t\022\016" +
@@ -14060,43 +14508,46 @@ public final class Datamodel {
       "rvice.FileNode\022)\n\016additionalInfo\030\t \003(\0132\021" +
       ".service.InfoNode\022/\n\016diagnosticInfo\030\n \003(" +
       "\0132\027.service.DiagnosticNode\022\'\n\014dependenci" +
-      "es\030\013 \003(\0132\021.service.FileNode\";\n\004Type\022\t\n\005U" +
-      "NDEF\020\000\022\n\n\006SOURCE\020\001\022\020\n\014INTERMEDIATE\020\002\022\n\n\006" +
-      "TARGET\020\003\"\346\001\n\010InfoNode\022\013\n\003uid\030\001 \001(\t\022\024\n\014in" +
-      "foNodeType\030\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\027\n\017confid" +
-      "enceScore\030\004 \001(\001\022#\n\010analyzer\030\005 \003(\0132\021.serv" +
-      "ice.Analyzer\022-\n\tdataNodes\030\006 \003(\0132\032.servic" +
-      "e.InfoNode.DataNode\032<\n\010DataNode\022\024\n\014dataN" +
-      "odeType\030\001 \001(\t\022\014\n\004type\030\002 \001(\t\022\014\n\004data\030\003 \001(" +
-      "\t\"\334\001\n\016DiagnosticNode\022\013\n\003uid\030\001 \001(\t\022\032\n\022dia" +
-      "gnosticNodeType\030\002 \001(\t\0222\n\010severity\030\003 \001(\0162" +
-      " .service.DiagnosticNode.Severity\022\017\n\007mes" +
-      "sage\030\004 \001(\t\022#\n\010analyzer\030\005 \003(\0132\021.service.A" +
-      "nalyzer\"7\n\010Severity\022\t\n\005UNDEF\020\000\022\010\n\004INFO\020\001" +
-      "\022\013\n\007WARNING\020\002\022\t\n\005ERROR\020\003\"\177\n\010Analyzer\022\013\n\003" +
-      "uid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\030\n\020analyzerNodeT" +
-      "ype\030\003 \001(\t\022\022\n\ntrustLevel\030\004 \001(\003\022*\n\007pathSub" +
-      "\030\005 \003(\0132\031.service.PathSubstitution\",\n\020Pat" +
-      "hSubstitution\022\013\n\003old\030\001 \001(\t\022\013\n\003new\030\002 \001(\t\"" +
-      "\347\001\n\013PackageNode\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001" +
-      "(\t\022\017\n\007version\030\003 \001(\t\022\027\n\017packageNodeType\030\004" +
-      " \001(\t\022\"\n\007targets\030\005 \003(\0132\021.service.FileNode" +
-      "\022)\n\016additionalInfo\030\006 \003(\0132\021.service.InfoN" +
-      "ode\022\023\n\013buildConfig\030\007 \001(\t\022/\n\016diagnosticIn" +
-      "fo\030\010 \003(\0132\027.service.DiagnosticNode\"\224\001\n\013Pr" +
-      "ojectNode\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\027\n\017" +
-      "projectNodeType\030\003 \001(\t\022&\n\010packages\030\004 \003(\0132" +
-      "\024.service.PackageNode\022)\n\016additionalInfo\030" +
-      "\005 \003(\0132\021.service.InfoNode\"<\n\005Event\022\"\n\005cla" +
-      "ss\030\001 \001(\0162\023.service.EventClass\022\017\n\007message" +
-      "\030\002 \001(\t\"f\n\016QmstrStateNode\022\013\n\003uid\030\001 \001(\t\022\032\n" +
-      "\022qmstrStateNodeType\030\002 \001(\t\022\035\n\005phase\030\003 \001(\016" +
-      "2\016.service.Phase\022\014\n\004done\030\004 \001(\010*,\n\nEventC" +
-      "lass\022\007\n\003ALL\020\000\022\t\n\005PHASE\020\001\022\n\n\006MODULE\020\002*@\n\005" +
-      "Phase\022\010\n\004INIT\020\000\022\t\n\005BUILD\020\001\022\014\n\010ANALYSIS\020\002" +
-      "\022\n\n\006REPORT\020\003\022\010\n\004FAIL\020\004*\'\n\rExceptionType\022" +
-      "\t\n\005ERROR\020\000\022\013\n\007WARNING\020\001B\030\n\026org.qmstr.grp" +
-      "c.serviceb\006proto3"
+      "es\030\013 \003(\0132\021.service.FileNode\022\021\n\ttimestamp" +
+      "\030\014 \001(\003\";\n\004Type\022\t\n\005UNDEF\020\000\022\n\n\006SOURCE\020\001\022\020\n" +
+      "\014INTERMEDIATE\020\002\022\n\n\006TARGET\020\003\"\214\002\n\010InfoNode" +
+      "\022\013\n\003uid\030\001 \001(\t\022\024\n\014infoNodeType\030\002 \001(\t\022\014\n\004t" +
+      "ype\030\003 \001(\t\022\027\n\017confidenceScore\030\004 \001(\001\022#\n\010an" +
+      "alyzer\030\005 \003(\0132\021.service.Analyzer\022-\n\tdataN" +
+      "odes\030\006 \003(\0132\032.service.InfoNode.DataNode\022\021" +
+      "\n\ttimestamp\030\007 \001(\003\032O\n\010DataNode\022\024\n\014dataNod" +
+      "eType\030\001 \001(\t\022\014\n\004type\030\002 \001(\t\022\014\n\004data\030\003 \001(\t\022" +
+      "\021\n\ttimestamp\030\004 \001(\003\"\357\001\n\016DiagnosticNode\022\013\n" +
+      "\003uid\030\001 \001(\t\022\032\n\022diagnosticNodeType\030\002 \001(\t\0222" +
+      "\n\010severity\030\003 \001(\0162 .service.DiagnosticNod" +
+      "e.Severity\022\017\n\007message\030\004 \001(\t\022#\n\010analyzer\030" +
+      "\005 \003(\0132\021.service.Analyzer\022\021\n\ttimestamp\030\006 " +
+      "\001(\003\"7\n\010Severity\022\t\n\005UNDEF\020\000\022\010\n\004INFO\020\001\022\013\n\007" +
+      "WARNING\020\002\022\t\n\005ERROR\020\003\"\177\n\010Analyzer\022\013\n\003uid\030" +
+      "\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\030\n\020analyzerNodeType\030" +
+      "\003 \001(\t\022\022\n\ntrustLevel\030\004 \001(\003\022*\n\007pathSub\030\005 \003" +
+      "(\0132\031.service.PathSubstitution\",\n\020PathSub" +
+      "stitution\022\013\n\003old\030\001 \001(\t\022\013\n\003new\030\002 \001(\t\"\372\001\n\013" +
+      "PackageNode\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\017" +
+      "\n\007version\030\003 \001(\t\022\027\n\017packageNodeType\030\004 \001(\t" +
+      "\022\"\n\007targets\030\005 \003(\0132\021.service.FileNode\022)\n\016" +
+      "additionalInfo\030\006 \003(\0132\021.service.InfoNode\022" +
+      "\023\n\013buildConfig\030\007 \001(\t\022/\n\016diagnosticInfo\030\010" +
+      " \003(\0132\027.service.DiagnosticNode\022\021\n\ttimesta" +
+      "mp\030\t \001(\003\"\247\001\n\013ProjectNode\022\013\n\003uid\030\001 \001(\t\022\014\n" +
+      "\004name\030\002 \001(\t\022\027\n\017projectNodeType\030\003 \001(\t\022&\n\010" +
+      "packages\030\004 \003(\0132\024.service.PackageNode\022)\n\016" +
+      "additionalInfo\030\005 \003(\0132\021.service.InfoNode\022" +
+      "\021\n\ttimestamp\030\006 \001(\003\"<\n\005Event\022\"\n\005class\030\001 \001" +
+      "(\0162\023.service.EventClass\022\017\n\007message\030\002 \001(\t" +
+      "\"y\n\016QmstrStateNode\022\013\n\003uid\030\001 \001(\t\022\032\n\022qmstr" +
+      "StateNodeType\030\002 \001(\t\022\035\n\005phase\030\003 \001(\0162\016.ser" +
+      "vice.Phase\022\014\n\004done\030\004 \001(\010\022\021\n\ttimestamp\030\005 " +
+      "\001(\003*,\n\nEventClass\022\007\n\003ALL\020\000\022\t\n\005PHASE\020\001\022\n\n" +
+      "\006MODULE\020\002*@\n\005Phase\022\010\n\004INIT\020\000\022\t\n\005BUILD\020\001\022" +
+      "\014\n\010ANALYSIS\020\002\022\n\n\006REPORT\020\003\022\010\n\004FAIL\020\004*\'\n\rE" +
+      "xceptionType\022\t\n\005ERROR\020\000\022\013\n\007WARNING\020\001B\030\n\026" +
+      "org.qmstr.grpc.serviceb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -14115,25 +14566,25 @@ public final class Datamodel {
     internal_static_service_FileNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_FileNode_descriptor,
-        new java.lang.String[] { "Uid", "FileNodeType", "FileType", "Path", "Name", "Hash", "Broken", "DerivedFrom", "AdditionalInfo", "DiagnosticInfo", "Dependencies", });
+        new java.lang.String[] { "Uid", "FileNodeType", "FileType", "Path", "Name", "Hash", "Broken", "DerivedFrom", "AdditionalInfo", "DiagnosticInfo", "Dependencies", "Timestamp", });
     internal_static_service_InfoNode_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_service_InfoNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_InfoNode_descriptor,
-        new java.lang.String[] { "Uid", "InfoNodeType", "Type", "ConfidenceScore", "Analyzer", "DataNodes", });
+        new java.lang.String[] { "Uid", "InfoNodeType", "Type", "ConfidenceScore", "Analyzer", "DataNodes", "Timestamp", });
     internal_static_service_InfoNode_DataNode_descriptor =
       internal_static_service_InfoNode_descriptor.getNestedTypes().get(0);
     internal_static_service_InfoNode_DataNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_InfoNode_DataNode_descriptor,
-        new java.lang.String[] { "DataNodeType", "Type", "Data", });
+        new java.lang.String[] { "DataNodeType", "Type", "Data", "Timestamp", });
     internal_static_service_DiagnosticNode_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_service_DiagnosticNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_DiagnosticNode_descriptor,
-        new java.lang.String[] { "Uid", "DiagnosticNodeType", "Severity", "Message", "Analyzer", });
+        new java.lang.String[] { "Uid", "DiagnosticNodeType", "Severity", "Message", "Analyzer", "Timestamp", });
     internal_static_service_Analyzer_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_service_Analyzer_fieldAccessorTable = new
@@ -14151,13 +14602,13 @@ public final class Datamodel {
     internal_static_service_PackageNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_PackageNode_descriptor,
-        new java.lang.String[] { "Uid", "Name", "Version", "PackageNodeType", "Targets", "AdditionalInfo", "BuildConfig", "DiagnosticInfo", });
+        new java.lang.String[] { "Uid", "Name", "Version", "PackageNodeType", "Targets", "AdditionalInfo", "BuildConfig", "DiagnosticInfo", "Timestamp", });
     internal_static_service_ProjectNode_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_service_ProjectNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_ProjectNode_descriptor,
-        new java.lang.String[] { "Uid", "Name", "ProjectNodeType", "Packages", "AdditionalInfo", });
+        new java.lang.String[] { "Uid", "Name", "ProjectNodeType", "Packages", "AdditionalInfo", "Timestamp", });
     internal_static_service_Event_descriptor =
       getDescriptor().getMessageTypes().get(7);
     internal_static_service_Event_fieldAccessorTable = new
@@ -14169,7 +14620,7 @@ public final class Datamodel {
     internal_static_service_QmstrStateNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_QmstrStateNode_descriptor,
-        new java.lang.String[] { "Uid", "QmstrStateNodeType", "Phase", "Done", });
+        new java.lang.String[] { "Uid", "QmstrStateNodeType", "Phase", "Done", "Timestamp", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
