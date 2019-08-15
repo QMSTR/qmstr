@@ -94,6 +94,30 @@ func (db *DataBase) GetFileNodeUid(path string, hash string) (string, error) {
 	return ret["hasNode"][0].Uid, nil
 }
 
+// GetFileNodeUidByHash returns the UID of the fileNode
+func (db *DataBase) GetFileNodeUidByHash(hash string) (string, error) {
+	var ret map[string][]*service.FileNode
+
+	q := `query Node($Hash: string){
+		  hasNode(func: has(fileNodeType)) @cascade{
+			uid
+			fileData @filter(eq(hash, $Hash))
+		  }}`
+
+	vars := map[string]string{"$Hash": hash}
+
+	err := db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return "", err
+	}
+
+	// no node with such hash
+	if len(ret["hasNode"]) == 0 {
+		return "", fmt.Errorf("no file node with such hash in the database")
+	}
+	return ret["hasNode"][0].Uid, nil
+}
+
 // GetFileDataUID returns the UID of the fileData node if exists in the db
 func (db *DataBase) GetFileDataUID(hash string) (string, error) {
 	var ret map[string][]*service.FileNode_FileDataNode
@@ -177,6 +201,15 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 	if filenode.Path != "" {
 		qp.Filter = filenode.Path
 		qp.Query = "@filter(eq(path, $Filter))"
+		vars["$Filter"] = qp.Filter
+	}
+	if filenode.FileData != nil {
+		nodeUID, err := db.GetFileNodeUidByHash(filenode.FileData.Hash)
+		if err != nil {
+			return nil, err
+		}
+		qp.Filter = nodeUID
+		qp.Query = "@filter(uid($Filter))"
 		vars["$Filter"] = qp.Filter
 	}
 
