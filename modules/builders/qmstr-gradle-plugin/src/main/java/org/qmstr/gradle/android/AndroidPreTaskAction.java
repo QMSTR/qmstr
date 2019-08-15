@@ -7,9 +7,11 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.plugins.AppliedPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetOutput;
 import org.qmstr.client.BuildServiceClient;
@@ -21,7 +23,7 @@ import org.qmstr.util.transformations.*;
 
 public class AndroidPreTaskAction extends AndroidTaskAction {
 
-    public AndroidPreTaskAction(Project project) {
+    public AndroidPreTaskAction(Project project, AppliedPlugin plugin) {
         this.project = project;
         QmstrPluginExtension extension = (QmstrPluginExtension) this.project.getExtensions().findByName("qmstr");
 
@@ -32,6 +34,6 @@ public class AndroidPreTaskAction extends AndroidTaskAction {
 
     @Override
     public void execute(Task task) {
-        task.getLogger().warn("Task {} about to run", task.getName());
+        task.getLogger().warn("Task {} of {} about to run", task.getName(), project.getName());
     }
 }
