@@ -35,10 +35,11 @@ message InfoNode {
     repeated Analyzer analyzer = 5;
 
     message DataNode {
-        string dataNodeType = 1;
-        string type = 2;
-        string data = 3;
-        string timestamp = 4;
+        string uid = 1;
+        string dataNodeType = 2;
+        string type = 3;
+        string data = 4;
+        string timestamp = 5;
     }
     repeated DataNode dataNodes = 6;
     string timestamp = 7;
