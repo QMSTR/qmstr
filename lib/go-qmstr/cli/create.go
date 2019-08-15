@@ -63,6 +63,7 @@ func init() {
 		log.Fatalf("%v", err)
 	}
 	createFileCmd.Flags().AddFlagSet(generatedFlags)
+	createFileCmd.Flags().String("hash", "", "Set FileNode's hash")
 	createCmd.AddCommand(createFileCmd)
 
 	generatedFlags = &pflag.FlagSet{}
