@@ -10,6 +10,7 @@ import org.qmstr.util.FilenodeUtils;
 import org.qmstr.util.transformations.*;
 
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.Set;
 
 public class QmstrCompileTask extends QmstrTask {
@@ -34,7 +35,7 @@ public class QmstrCompileTask extends QmstrTask {
             set.getAllJava().forEach(js -> {
                 Set<Datamodel.FileNode> nodes;
                 try {
-                    nodes = FilenodeUtils.processSourceFile(Transform.COMPILEJAVA, js,
+                    nodes = FilenodeUtils.processSourceFiles(Transform.COMPILEJAVA, Collections.singleton(js),
                             sourceDirs.getFiles(), outDirs.getFiles());
                     if (!nodes.isEmpty()) {
                         bsc.SendBuildFileNodes(nodes);

@@ -1,40 +1,37 @@
 package org.qmstr.gradle.android;
 
-import org.antlr.v4.parse.ANTLRParser.id_return;
-import org.gradle.api.NamedDomainObjectContainer;
-import org.gradle.api.Project;
-import org.gradle.api.Task;
-import org.gradle.api.tasks.SourceSet;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.android.build.gradle.api.AndroidSourceSet;
-
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.plugins.AppliedPlugin;
+import org.gradle.internal.impldep.com.fasterxml.jackson.databind.node.BooleanNode;
 import org.qmstr.client.BuildServiceClient;
 import org.qmstr.gradle.QmstrPluginExtension;
-import org.qmstr.gradle.Utils;
+import org.qmstr.gradle.ResultUnavailableException;
 import org.qmstr.grpc.service.Datamodel;
 import org.qmstr.util.FilenodeUtils;
-import org.qmstr.util.transformations.*;
+import org.qmstr.util.transformations.Transform;
+import org.qmstr.util.transformations.TransformationException;
+
+import static org.qmstr.gradle.android.TaskExecutionGraphReadyAction.getLibSourceDirs;
+import static org.qmstr.gradle.android.TaskExecutionGraphReadyAction.getAppSourceDirs;;
 
 public class AndroidPostTaskAction extends AndroidTaskAction {
 
-    public AndroidPostTaskAction(Project project, Set<File> sourceDirs) {
+    private final boolean lib;
+
+    public AndroidPostTaskAction(Project project, AppliedPlugin plugin) {
         this.project = project;
-        this.sourceDirs = sourceDirs;
-    
 
-        QmstrPluginExtension extension = (QmstrPluginExtension) this.project.getExtensions().findByName("qmstr");
+        this.lib = plugin.getId().equals("com.android.library");
 
-        this.setBuildServiceAddress(extension.qmstrAddress);
-
+        qmstrExt = (QmstrPluginExtension) this.project.getExtensions().findByName("qmstr");
+        this.setBuildServiceAddress(qmstrExt.qmstrAddress);
         this.bsc = new BuildServiceClient(buildServiceAddress, buildServicePort);
     }
 
@@ -68,7 +65,7 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
                 // Here it gets even uglier. The processSourceFile method assumes you have a source file and a set of input directories where your sources (inside a package hierarchy) reside.
                 // This however is not the case here because we are not working with sourcesets like in a Java build.
                 // Therefore we need to find the root of the package hierarchy from the filename. This is what the brain-damaged guessSourcePath method does.
-                nodes = FilenodeUtils.processSourceFile(Transform.DEXCLASS, sf,
+                nodes = FilenodeUtils.processSourceFiles(Transform.DEXCLASS, Collections.singleton(sf),
                         Collections.singleton(guessSourcePath(sf)), outdirs);
                 if (!nodes.isEmpty()) {
                     bsc.SendBuildFileNodes(nodes);
@@ -85,15 +82,20 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
     }
 
     private void handleCompileJava(Task task) {
+
+        Set<File> sourceDirs = lib ? getLibSourceDirs(task.getProject()) : getAppSourceDirs(task.getProject());
+
         task.getOutputs().getFiles().forEach(
                 out -> task.getLogger().warn("Java compile task {} output is {}", task.getName(), out.getAbsolutePath()));
+        
         
         Set<File> outDirs = task.getOutputs().getFiles().getFiles();
 
         task.getInputs().getFiles().forEach(sf -> {
+            bsc.SendLogMessage("handle java compilation for " + sf.getAbsolutePath());
             Set<Datamodel.FileNode> nodes;
             try {
-                nodes = FilenodeUtils.processSourceFile(Transform.COMPILEJAVA, sf, sourceDirs, outDirs);
+                nodes = FilenodeUtils.processSourceFiles(Transform.COMPILEJAVA, Collections.singleton(sf), sourceDirs, outDirs);
                 if (!nodes.isEmpty()) {
                     bsc.SendBuildFileNodes(nodes);
                 } else {
@@ -108,6 +110,33 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
         });
     }
 
+    private void handleMergeDex(Task task) throws ResultUnavailableException {
+        task.getOutputs().getFiles().forEach(
+                out -> task.getLogger().warn("Merge dex task {} output is {}", task.getName(), out.getAbsolutePath())
+                );
+        
+        Set<File> classesDexDirs = task.getOutputs().getFiles().getFiles();
+
+        task.getLogger().warn("Input files:");
+        task.getInputs().getFiles().forEach(sf -> task.getLogger().warn(sf.getAbsolutePath()));
+
+        Set<File> inputDirs = task.getInputs().getFiles().getFiles();
+        
+        Set<Datamodel.FileNode> nodes;
+        try {
+            nodes = FilenodeUtils.processSourceFiles(Transform.MERGEDEX, Collections.emptySet(), inputDirs, classesDexDirs);
+            if (!nodes.isEmpty()) {
+                bsc.SendBuildFileNodes(nodes);
+            } else {
+                bsc.SendLogMessage(String.format("No filenodes after processing %s", inputDirs));
+            }
+        } catch (TransformationException e) {
+            task.getLogger().warn("{} failed: {}", this.getClass().getName(), e.getMessage());
+        } catch (FileNotFoundException fnfe) {
+            task.getLogger().warn("{} failed: {}", this.getClass().getName(), fnfe.getMessage());
+        }
+    } 
+
     @Override
     public void execute(Task task) {
         switch (SimpleTask.detectTask(task.getName())) {
@@ -116,6 +145,13 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
                 break;
             case DEX:
                 handleDex(task);
+                break;
+            case MERGEDEX:
+                try {
+                    handleMergeDex(task);
+                } catch (ResultUnavailableException e) {
+                    task.getLogger().error("Failed in merge dex");
+                }
                 break;
             default:
                 break;

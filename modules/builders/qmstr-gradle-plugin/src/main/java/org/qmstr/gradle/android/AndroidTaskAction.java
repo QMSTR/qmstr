@@ -10,6 +10,7 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.qmstr.client.BuildServiceClient;
+import org.qmstr.gradle.QmstrPluginExtension;
 
 public abstract class AndroidTaskAction implements Action<Task> {
 
@@ -17,7 +18,7 @@ public abstract class AndroidTaskAction implements Action<Task> {
     protected BuildServiceClient bsc;
     protected String buildServiceAddress;
     protected int buildServicePort;
-    protected Set<File> sourceDirs;
+    protected QmstrPluginExtension qmstrExt;
 
     public void setBuildServiceAddress(String address) {
         String[] addressSplit = address.split(":");

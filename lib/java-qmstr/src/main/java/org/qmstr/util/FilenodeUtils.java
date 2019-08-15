@@ -18,10 +18,11 @@ public class FilenodeUtils {
 
     private static final String[] SUPPORTEDFILES = new String[] { "java", "class", "jar" };
 
-    private static final Map<Transform, TransformationFunction<String, String>> srcDestMap = new HashMap<Transform, TransformationFunction<String, String>>() {
+    private static final Map<Transform, TransformationFunction> srcDestMap = new HashMap<Transform, TransformationFunction>() {
         {
             put(Transform.COMPILEJAVA, new CompileJavaTransformation());
             put(Transform.DEXCLASS, new DexClassTransformation());
+            put(Transform.MERGEDEX, new MergeDexTransformation());
         }
     };
 
@@ -80,70 +81,20 @@ public class FilenodeUtils {
         return null;
     }
 
-    public static String getDestination(Transform transform, String source) throws TransformationException {
-        TransformationFunction<String, String> transformFct = srcDestMap.getOrDefault(transform, t -> "");
-        return transformFct.apply(source);
-    }
-
-    public static Set<Datamodel.FileNode> processSourceFile(Transform transform, File sourcefile,
+    public static Set<Datamodel.FileNode> processSourceFiles(Transform transform, Collection<File> sourceFiles,
             Collection<File> sourceDirs, Collection<File> outDirs)
             throws TransformationException, FileNotFoundException {
-        
-        if (sourcefile.isDirectory()) {
-            return Collections.emptySet();
-        }
 
-        Datamodel.FileNode sourceNode = FilenodeUtils.getFileNode(sourcefile.toPath(),
-                FilenodeUtils.getTypeByFile(sourcefile.getName()));
-
-        Optional<File> actualSourceDir = sourceDirs.stream().filter(sd -> isActualSourceDir(sd, sourcefile))
-                .findFirst();
-
-        Path relSrcPath = actualSourceDir
-                .orElseThrow(() -> new FileNotFoundException(
-                        String.format("No source dir found for %s", sourcefile.getAbsolutePath())))
-                .toPath().relativize(sourcefile.toPath());
-
-        String targetFileName = getDestination(transform, relSrcPath.getFileName().toString());
-
-        Path packageDirs = relSrcPath.getParent() != null ? relSrcPath.getParent() : Paths.get(".");
-        Path classesRelPath = packageDirs.resolve(targetFileName);
-
-        return outDirs.stream().filter(od -> FilenodeUtils.isActualClassDir(od, classesRelPath)).map(outdir -> {
-            Path classesPath = outdir.toPath().resolve(classesRelPath);
-            Set<Path> nested = FilenodeUtils.getNestedClasses(outdir.toPath().resolve(packageDirs), targetFileName);
-            nested.add(classesPath);
-            return nested.stream()
-                    .map(p -> FilenodeUtils.getFileNode(p, FilenodeUtils.getTypeByFile(p.getFileName().toString())))
-                    .map(node -> node.toBuilder().addDerivedFrom(sourceNode).build()).collect(Collectors.toSet());
-        }).flatMap(sets -> sets.stream()).collect(Collectors.toSet());
+        return srcDestMap.get(transform).apply(sourceFiles, sourceDirs, outDirs);
     }
 
-    private static boolean isActualSourceDir(File sourceDir, File sourceFile) {
+    public static boolean isActualSourceDir(File sourceDir, File sourceFile) {
         return sourceFile.toString().startsWith(sourceDir.toString());
     }
 
-    private static boolean isActualClassDir(File outdir, Path classesPath) {
+    public static boolean isActualClassDir(File outdir, Path classesPath) {
         return outdir.toPath().resolve(classesPath).toFile().exists();
     }
 
-    private static Set<Path> getNestedClasses(Path dir, String outerclassname) {
-        try {
-            return Files.walk(dir).filter(p -> isNestedClass(p, outerclassname)).collect(Collectors.toSet());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new HashSet<>();
-        }
-    }
-
-    public static boolean isNestedClass(Path classesPath, String outerClass) {
-        String outerClassName = outerClass.replaceAll(".class$", "");
-        boolean file = classesPath.toFile().isFile();
-        String filename = classesPath.getFileName().toString();
-        boolean clazz = filename.endsWith(".class");
-        boolean starts = filename.startsWith(outerClassName + "$");
-        return file && clazz && starts;
-    }
 
 }
