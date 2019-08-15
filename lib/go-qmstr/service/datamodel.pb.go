@@ -3,9 +3,11 @@
 
 package service
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -16,7 +18,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type EventClass int32
 
@@ -31,6 +33,7 @@ var EventClass_name = map[int32]string{
 	1: "PHASE",
 	2: "MODULE",
 }
+
 var EventClass_value = map[string]int32{
 	"ALL":    0,
 	"PHASE":  1,
@@ -40,8 +43,9 @@ var EventClass_value = map[string]int32{
 func (x EventClass) String() string {
 	return proto.EnumName(EventClass_name, int32(x))
 }
+
 func (EventClass) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{0}
+	return fileDescriptor_f0073e28e4cd411f, []int{0}
 }
 
 type Phase int32
@@ -61,6 +65,7 @@ var Phase_name = map[int32]string{
 	3: "REPORT",
 	4: "FAIL",
 }
+
 var Phase_value = map[string]int32{
 	"INIT":     0,
 	"BUILD":    1,
@@ -72,8 +77,9 @@ var Phase_value = map[string]int32{
 func (x Phase) String() string {
 	return proto.EnumName(Phase_name, int32(x))
 }
+
 func (Phase) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{1}
+	return fileDescriptor_f0073e28e4cd411f, []int{1}
 }
 
 type ExceptionType int32
@@ -87,6 +93,7 @@ var ExceptionType_name = map[int32]string{
 	0: "ERROR",
 	1: "WARNING",
 }
+
 var ExceptionType_value = map[string]int32{
 	"ERROR":   0,
 	"WARNING": 1,
@@ -95,8 +102,9 @@ var ExceptionType_value = map[string]int32{
 func (x ExceptionType) String() string {
 	return proto.EnumName(ExceptionType_name, int32(x))
 }
+
 func (ExceptionType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{2}
+	return fileDescriptor_f0073e28e4cd411f, []int{2}
 }
 
 type FileNode_Type int32
@@ -114,6 +122,7 @@ var FileNode_Type_name = map[int32]string{
 	2: "INTERMEDIATE",
 	3: "TARGET",
 }
+
 var FileNode_Type_value = map[string]int32{
 	"UNDEF":        0,
 	"SOURCE":       1,
@@ -124,8 +133,9 @@ var FileNode_Type_value = map[string]int32{
 func (x FileNode_Type) String() string {
 	return proto.EnumName(FileNode_Type_name, int32(x))
 }
+
 func (FileNode_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{0, 0}
+	return fileDescriptor_f0073e28e4cd411f, []int{0, 0}
 }
 
 type DiagnosticNode_Severity int32
@@ -143,6 +153,7 @@ var DiagnosticNode_Severity_name = map[int32]string{
 	2: "WARNING",
 	3: "ERROR",
 }
+
 var DiagnosticNode_Severity_value = map[string]int32{
 	"UNDEF":   0,
 	"INFO":    1,
@@ -153,8 +164,9 @@ var DiagnosticNode_Severity_value = map[string]int32{
 func (x DiagnosticNode_Severity) String() string {
 	return proto.EnumName(DiagnosticNode_Severity_name, int32(x))
 }
+
 func (DiagnosticNode_Severity) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{2, 0}
+	return fileDescriptor_f0073e28e4cd411f, []int{2, 0}
 }
 
 type FileNode struct {
@@ -179,16 +191,17 @@ func (m *FileNode) Reset()         { *m = FileNode{} }
 func (m *FileNode) String() string { return proto.CompactTextString(m) }
 func (*FileNode) ProtoMessage()    {}
 func (*FileNode) Descriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{0}
+	return fileDescriptor_f0073e28e4cd411f, []int{0}
 }
+
 func (m *FileNode) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_FileNode.Unmarshal(m, b)
 }
 func (m *FileNode) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_FileNode.Marshal(b, m, deterministic)
 }
-func (dst *FileNode) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_FileNode.Merge(dst, src)
+func (m *FileNode) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FileNode.Merge(m, src)
 }
 func (m *FileNode) XXX_Size() int {
 	return xxx_messageInfo_FileNode.Size(m)
@@ -300,16 +313,17 @@ func (m *InfoNode) Reset()         { *m = InfoNode{} }
 func (m *InfoNode) String() string { return proto.CompactTextString(m) }
 func (*InfoNode) ProtoMessage()    {}
 func (*InfoNode) Descriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{1}
+	return fileDescriptor_f0073e28e4cd411f, []int{1}
 }
+
 func (m *InfoNode) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_InfoNode.Unmarshal(m, b)
 }
 func (m *InfoNode) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_InfoNode.Marshal(b, m, deterministic)
 }
-func (dst *InfoNode) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_InfoNode.Merge(dst, src)
+func (m *InfoNode) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_InfoNode.Merge(m, src)
 }
 func (m *InfoNode) XXX_Size() int {
 	return xxx_messageInfo_InfoNode.Size(m)
@@ -383,16 +397,17 @@ func (m *InfoNode_DataNode) Reset()         { *m = InfoNode_DataNode{} }
 func (m *InfoNode_DataNode) String() string { return proto.CompactTextString(m) }
 func (*InfoNode_DataNode) ProtoMessage()    {}
 func (*InfoNode_DataNode) Descriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{1, 0}
+	return fileDescriptor_f0073e28e4cd411f, []int{1, 0}
 }
+
 func (m *InfoNode_DataNode) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_InfoNode_DataNode.Unmarshal(m, b)
 }
 func (m *InfoNode_DataNode) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_InfoNode_DataNode.Marshal(b, m, deterministic)
 }
-func (dst *InfoNode_DataNode) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_InfoNode_DataNode.Merge(dst, src)
+func (m *InfoNode_DataNode) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_InfoNode_DataNode.Merge(m, src)
 }
 func (m *InfoNode_DataNode) XXX_Size() int {
 	return xxx_messageInfo_InfoNode_DataNode.Size(m)
@@ -447,16 +462,17 @@ func (m *DiagnosticNode) Reset()         { *m = DiagnosticNode{} }
 func (m *DiagnosticNode) String() string { return proto.CompactTextString(m) }
 func (*DiagnosticNode) ProtoMessage()    {}
 func (*DiagnosticNode) Descriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{2}
+	return fileDescriptor_f0073e28e4cd411f, []int{2}
 }
+
 func (m *DiagnosticNode) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DiagnosticNode.Unmarshal(m, b)
 }
 func (m *DiagnosticNode) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DiagnosticNode.Marshal(b, m, deterministic)
 }
-func (dst *DiagnosticNode) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DiagnosticNode.Merge(dst, src)
+func (m *DiagnosticNode) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DiagnosticNode.Merge(m, src)
 }
 func (m *DiagnosticNode) XXX_Size() int {
 	return xxx_messageInfo_DiagnosticNode.Size(m)
@@ -524,16 +540,17 @@ func (m *Analyzer) Reset()         { *m = Analyzer{} }
 func (m *Analyzer) String() string { return proto.CompactTextString(m) }
 func (*Analyzer) ProtoMessage()    {}
 func (*Analyzer) Descriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{3}
+	return fileDescriptor_f0073e28e4cd411f, []int{3}
 }
+
 func (m *Analyzer) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Analyzer.Unmarshal(m, b)
 }
 func (m *Analyzer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Analyzer.Marshal(b, m, deterministic)
 }
-func (dst *Analyzer) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Analyzer.Merge(dst, src)
+func (m *Analyzer) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Analyzer.Merge(m, src)
 }
 func (m *Analyzer) XXX_Size() int {
 	return xxx_messageInfo_Analyzer.Size(m)
@@ -591,16 +608,17 @@ func (m *PathSubstitution) Reset()         { *m = PathSubstitution{} }
 func (m *PathSubstitution) String() string { return proto.CompactTextString(m) }
 func (*PathSubstitution) ProtoMessage()    {}
 func (*PathSubstitution) Descriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{4}
+	return fileDescriptor_f0073e28e4cd411f, []int{4}
 }
+
 func (m *PathSubstitution) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PathSubstitution.Unmarshal(m, b)
 }
 func (m *PathSubstitution) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PathSubstitution.Marshal(b, m, deterministic)
 }
-func (dst *PathSubstitution) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PathSubstitution.Merge(dst, src)
+func (m *PathSubstitution) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PathSubstitution.Merge(m, src)
 }
 func (m *PathSubstitution) XXX_Size() int {
 	return xxx_messageInfo_PathSubstitution.Size(m)
@@ -644,16 +662,17 @@ func (m *PackageNode) Reset()         { *m = PackageNode{} }
 func (m *PackageNode) String() string { return proto.CompactTextString(m) }
 func (*PackageNode) ProtoMessage()    {}
 func (*PackageNode) Descriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{5}
+	return fileDescriptor_f0073e28e4cd411f, []int{5}
 }
+
 func (m *PackageNode) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PackageNode.Unmarshal(m, b)
 }
 func (m *PackageNode) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PackageNode.Marshal(b, m, deterministic)
 }
-func (dst *PackageNode) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PackageNode.Merge(dst, src)
+func (m *PackageNode) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PackageNode.Merge(m, src)
 }
 func (m *PackageNode) XXX_Size() int {
 	return xxx_messageInfo_PackageNode.Size(m)
@@ -743,16 +762,17 @@ func (m *ProjectNode) Reset()         { *m = ProjectNode{} }
 func (m *ProjectNode) String() string { return proto.CompactTextString(m) }
 func (*ProjectNode) ProtoMessage()    {}
 func (*ProjectNode) Descriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{6}
+	return fileDescriptor_f0073e28e4cd411f, []int{6}
 }
+
 func (m *ProjectNode) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ProjectNode.Unmarshal(m, b)
 }
 func (m *ProjectNode) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ProjectNode.Marshal(b, m, deterministic)
 }
-func (dst *ProjectNode) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ProjectNode.Merge(dst, src)
+func (m *ProjectNode) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ProjectNode.Merge(m, src)
 }
 func (m *ProjectNode) XXX_Size() int {
 	return xxx_messageInfo_ProjectNode.Size(m)
@@ -817,16 +837,17 @@ func (m *Event) Reset()         { *m = Event{} }
 func (m *Event) String() string { return proto.CompactTextString(m) }
 func (*Event) ProtoMessage()    {}
 func (*Event) Descriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{7}
+	return fileDescriptor_f0073e28e4cd411f, []int{7}
 }
+
 func (m *Event) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Event.Unmarshal(m, b)
 }
 func (m *Event) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Event.Marshal(b, m, deterministic)
 }
-func (dst *Event) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Event.Merge(dst, src)
+func (m *Event) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Event.Merge(m, src)
 }
 func (m *Event) XXX_Size() int {
 	return xxx_messageInfo_Event.Size(m)
@@ -866,16 +887,17 @@ func (m *QmstrStateNode) Reset()         { *m = QmstrStateNode{} }
 func (m *QmstrStateNode) String() string { return proto.CompactTextString(m) }
 func (*QmstrStateNode) ProtoMessage()    {}
 func (*QmstrStateNode) Descriptor() ([]byte, []int) {
-	return fileDescriptor_datamodel_1518fe33b7b2a65b, []int{8}
+	return fileDescriptor_f0073e28e4cd411f, []int{8}
 }
+
 func (m *QmstrStateNode) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_QmstrStateNode.Unmarshal(m, b)
 }
 func (m *QmstrStateNode) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_QmstrStateNode.Marshal(b, m, deterministic)
 }
-func (dst *QmstrStateNode) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QmstrStateNode.Merge(dst, src)
+func (m *QmstrStateNode) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QmstrStateNode.Merge(m, src)
 }
 func (m *QmstrStateNode) XXX_Size() int {
 	return xxx_messageInfo_QmstrStateNode.Size(m)
@@ -922,6 +944,11 @@ func (m *QmstrStateNode) GetTimestamp() int64 {
 }
 
 func init() {
+	proto.RegisterEnum("service.EventClass", EventClass_name, EventClass_value)
+	proto.RegisterEnum("service.Phase", Phase_name, Phase_value)
+	proto.RegisterEnum("service.ExceptionType", ExceptionType_name, ExceptionType_value)
+	proto.RegisterEnum("service.FileNode_Type", FileNode_Type_name, FileNode_Type_value)
+	proto.RegisterEnum("service.DiagnosticNode_Severity", DiagnosticNode_Severity_name, DiagnosticNode_Severity_value)
 	proto.RegisterType((*FileNode)(nil), "service.FileNode")
 	proto.RegisterType((*InfoNode)(nil), "service.InfoNode")
 	proto.RegisterType((*InfoNode_DataNode)(nil), "service.InfoNode.DataNode")
@@ -932,16 +959,11 @@ func init() {
 	proto.RegisterType((*ProjectNode)(nil), "service.ProjectNode")
 	proto.RegisterType((*Event)(nil), "service.Event")
 	proto.RegisterType((*QmstrStateNode)(nil), "service.QmstrStateNode")
-	proto.RegisterEnum("service.EventClass", EventClass_name, EventClass_value)
-	proto.RegisterEnum("service.Phase", Phase_name, Phase_value)
-	proto.RegisterEnum("service.ExceptionType", ExceptionType_name, ExceptionType_value)
-	proto.RegisterEnum("service.FileNode_Type", FileNode_Type_name, FileNode_Type_value)
-	proto.RegisterEnum("service.DiagnosticNode_Severity", DiagnosticNode_Severity_name, DiagnosticNode_Severity_value)
 }
 
-func init() { proto.RegisterFile("datamodel.proto", fileDescriptor_datamodel_1518fe33b7b2a65b) }
+func init() { proto.RegisterFile("datamodel.proto", fileDescriptor_f0073e28e4cd411f) }
 
-var fileDescriptor_datamodel_1518fe33b7b2a65b = []byte{
+var fileDescriptor_f0073e28e4cd411f = []byte{
 	// 981 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0xdd, 0x6e, 0xe3, 0x44,
 	0x14, 0xae, 0x9d, 0x3f, 0xe7, 0xa4, 0x64, 0xcd, 0x80, 0x8a, 0x59, 0x21, 0x14, 0x45, 0x48, 0x84,
