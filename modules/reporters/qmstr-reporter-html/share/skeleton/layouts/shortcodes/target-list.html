@@ -2,8 +2,8 @@
 <h3>Targets:</h3>
 {{ range $data.Targets }}
     <p> Filename: <b>{{ .Target.path }}</b></p>
-    SHA-1: {{ .Target.hash }} <br/>
-    Licenses: 
+    SHA-1: {{ .Target.fileData.hash }} <br/>
+    Licenses:
     {{ with .Licenses -}}
         {{- delimit . ", " -}}
     {{- end -}}<br/>

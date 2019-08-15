@@ -17,8 +17,9 @@ import (
 func (r *HTMLReporter) CreatePackageLevelReports(proj *service.ProjectNode, pkg *service.PackageNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
 	projectData := reporting.GetProjectData(proj, r.siteData)
 	packageData := reporting.GetPackageData(pkg, proj.Name)
-
+	log.Printf("Package: %v\n", pkg)
 	for _, target := range packageData.Targets {
+		log.Printf("Target: %v\n", target.Target)
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 		resp, err := rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: target.Target.Uid, Infotype: "license", Datatype: "name"})

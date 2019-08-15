@@ -26,7 +26,7 @@ through a configuration yaml file.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		setUpBuildService()
 		if err := addMissingPieces(args); err != nil {
-			Log.Fatalf("Describe failed: %v", err)
+			Log.Fatalf("add-graph failed: %v", err)
 		}
 		tearDownServer()
 	},
