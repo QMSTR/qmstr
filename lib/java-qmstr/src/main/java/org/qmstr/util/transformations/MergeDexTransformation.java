@@ -46,7 +46,7 @@ public class MergeDexTransformation implements TransformationFunction {
 
     }
 
-    private static Stream<Path> wrapFind(Path start, BiPredicate<Path, BasicFileAttributes> matcher) {
+    public static Stream<Path> wrapFind(Path start, BiPredicate<Path, BasicFileAttributes> matcher) {
         try {
             return Files.find(start, Integer.MAX_VALUE, matcher);
         } catch (IOException e) {

@@ -2,24 +2,32 @@ package org.qmstr.gradle.android;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.plugins.AppliedPlugin;
-import org.gradle.internal.impldep.com.fasterxml.jackson.databind.node.BooleanNode;
 import org.qmstr.client.BuildServiceClient;
 import org.qmstr.gradle.QmstrPluginExtension;
 import org.qmstr.gradle.ResultUnavailableException;
 import org.qmstr.grpc.service.Datamodel;
+import org.qmstr.grpc.service.Datamodel.PackageNode;
 import org.qmstr.util.FilenodeUtils;
+import org.qmstr.util.PackagenodeUtils;
 import org.qmstr.util.transformations.Transform;
 import org.qmstr.util.transformations.TransformationException;
 
 import static org.qmstr.gradle.android.TaskExecutionGraphReadyAction.getLibSourceDirs;
-import static org.qmstr.gradle.android.TaskExecutionGraphReadyAction.getAppSourceDirs;;
+import static org.qmstr.gradle.android.TaskExecutionGraphReadyAction.getAppSourceDirs;
+
+import static org.qmstr.util.transformations.MergeDexTransformation.wrapFind;
 
 public class AndroidPostTaskAction extends AndroidTaskAction {
 
@@ -49,10 +57,6 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
     }
     
     private void handleDex(Task task) {
-        // classes are dexed and can be collected
-        task.getOutputs().getFiles().forEach(
-                out -> task.getLogger().warn("Dex task {} output is {}", task.getName(), out.getAbsolutePath()));
-
         task.getInputs().getFiles().forEach(sf -> {
             Set<Datamodel.FileNode> nodes;
             try {
@@ -82,17 +86,10 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
     }
 
     private void handleCompileJava(Task task) {
-
         Set<File> sourceDirs = lib ? getLibSourceDirs(task.getProject()) : getAppSourceDirs(task.getProject());
-
-        task.getOutputs().getFiles().forEach(
-                out -> task.getLogger().warn("Java compile task {} output is {}", task.getName(), out.getAbsolutePath()));
-        
-        
         Set<File> outDirs = task.getOutputs().getFiles().getFiles();
 
         task.getInputs().getFiles().forEach(sf -> {
-            bsc.SendLogMessage("handle java compilation for " + sf.getAbsolutePath());
             Set<Datamodel.FileNode> nodes;
             try {
                 nodes = FilenodeUtils.processSourceFiles(Transform.COMPILEJAVA, Collections.singleton(sf), sourceDirs, outDirs);
@@ -111,15 +108,7 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
     }
 
     private void handleMergeDex(Task task) throws ResultUnavailableException {
-        task.getOutputs().getFiles().forEach(
-                out -> task.getLogger().warn("Merge dex task {} output is {}", task.getName(), out.getAbsolutePath())
-                );
-        
         Set<File> classesDexDirs = task.getOutputs().getFiles().getFiles();
-
-        task.getLogger().warn("Input files:");
-        task.getInputs().getFiles().forEach(sf -> task.getLogger().warn(sf.getAbsolutePath()));
-
         Set<File> inputDirs = task.getInputs().getFiles().getFiles();
         
         Set<Datamodel.FileNode> nodes;
@@ -153,8 +142,84 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
                     task.getLogger().error("Failed in merge dex");
                 }
                 break;
+            case PACKAGEAPK:
+                try {
+                    handleApk(task);
+                } catch (ResultUnavailableException e) {
+                    task.getLogger().error("Failed in packaging apk");
+                }
+                break;
             default:
+                handleElse(task);
                 break;
         }
+    }
+
+    private void handleApk(Task task) throws ResultUnavailableException {
+        Set<File> outDirs = task.getOutputs().getFiles().getFiles();
+        Set<File> inputDirs = task.getInputs().getFiles().getFiles();
+
+        File apk = outDirs.stream()
+            .filter(dir -> dir.exists())
+            .flatMap(dir -> wrapFind(
+                dir.toPath(), 
+                (path,attrs) -> attrs.isRegularFile() && path.toString().endsWith(".apk")
+                )
+            )
+            .map(p -> p.toFile())
+            .findFirst()
+            .orElseThrow(() -> new ResultUnavailableException());
+        
+        task.getLogger().warn("Found {}, content follows:", apk.getAbsolutePath());
+            
+        
+        try (JarFile jar = new JarFile(apk)){ 
+            Set<File> packedFiles = jar.stream()
+                .map(je -> je.getName())
+                .map(filename -> {
+                    task.getLogger().warn("\t{}", filename);
+
+                    // skip first path element e.g. assets as this is not present on filesystem
+                    Path filePath = Paths.get(filename);
+                    boolean skipFirstPathElem = filePath.getNameCount() > 1;
+
+                    return inputDirs.stream()
+                        .filter(dir -> dir.exists())
+                        .flatMap(dir -> wrapFind(
+                            dir.toPath(), 
+                            (path,attrs) -> attrs.isRegularFile() && path.endsWith(skipFirstPathElem ? filePath.subpath(1, filePath.getNameCount()).toString() : filename)))
+                        .map(p -> p.toFile())
+                        .findFirst();
+                })
+                .filter(o -> o.isPresent())
+                .map(o -> o.get())
+                .collect(Collectors.toSet());
+            
+            Optional<PackageNode> pkgNode = PackagenodeUtils.processArtifacts(packedFiles, task.getProject().getName(), task.getProject().getVersion().toString());
+           
+            if (pkgNode.isPresent()) {
+                bsc.SendPackageNode(pkgNode.get());
+            } else {
+                bsc.SendLogMessage(String.format("No packagenode after processing %s", apk.getAbsolutePath()));
+            }
+            
+
+        } catch (IOException ioe) {
+            // Default to returning empty optional
+        }
+    }
+
+
+    public static void handleElse(Task task) {
+        task.getLogger().warn("====================>");
+        task.getLogger().warn("project {} handle {} task\nInput:", task.getProject().getName(), task.getName());
+        task.getInputs().getFiles().forEach(
+            in -> task.getLogger().warn(in.getAbsolutePath())
+        );
+
+        task.getLogger().warn("Output:");
+        task.getOutputs().getFiles().forEach(
+                out -> task.getLogger().warn(out.getAbsolutePath()));
+        task.getLogger().warn("<====================");
     }
 }

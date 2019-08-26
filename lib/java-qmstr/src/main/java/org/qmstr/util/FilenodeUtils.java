@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class FilenodeUtils {
 
-    private static final String[] SUPPORTEDFILES = new String[] { "java", "class", "jar" };
+    private static final String[] SUPPORTEDFILES = new String[] { "java", "class", "jar", "dex" };
 
     private static final Map<Transform, TransformationFunction> srcDestMap = new HashMap<Transform, TransformationFunction>() {
         {
