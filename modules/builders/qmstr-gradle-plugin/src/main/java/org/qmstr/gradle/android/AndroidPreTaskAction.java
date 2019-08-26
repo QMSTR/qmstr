@@ -1,25 +1,14 @@
 package org.qmstr.gradle.android;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
+import static org.qmstr.gradle.android.AndroidPostTaskAction.handleElse;
 
-import org.gradle.api.Plugin;
+import java.io.File;
+
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.AppliedPlugin;
-import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.SourceSetOutput;
 import org.qmstr.client.BuildServiceClient;
 import org.qmstr.gradle.QmstrPluginExtension;
-import org.qmstr.gradle.Utils;
-import org.qmstr.grpc.service.Datamodel;
-import org.qmstr.util.FilenodeUtils;
-import org.qmstr.util.transformations.*;
 
 public class AndroidPreTaskAction extends AndroidTaskAction {
 
@@ -34,6 +23,12 @@ public class AndroidPreTaskAction extends AndroidTaskAction {
 
     @Override
     public void execute(Task task) {
+        String apkPath = "/home/endomarkus/devel/QMSTR/qmstr-demo/demos/android-blockly/blockly-android/blocklydemo/build/outputs/apk/debug/blocklydemo-debug.apk";
+
+        File apk = new File(apkPath);
+
+        task.getLogger().warn("{} {}", apk.getAbsolutePath(), apk.exists() ? "exists" : "does not exist");
         task.getLogger().warn("Task {} of {} about to run", task.getName(), project.getName());
+        handleElse(task);
     }
 }

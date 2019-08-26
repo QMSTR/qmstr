@@ -12,6 +12,21 @@ import java.util.jar.JarFile;
 import org.qmstr.grpc.service.Datamodel;
 
 public class PackagenodeUtils {
+
+    public static Optional<Datamodel.PackageNode> processArtifacts(Set<File> packageFiles, String packageName, String version) {
+        Set<Datamodel.FileNode> classes = new HashSet<>();
+        packageFiles.stream().parallel()
+                .forEach(je -> {
+                    classes.add(FilenodeUtils.getFileNode(je.toPath(), FilenodeUtils.getTypeByFile(je.getName())));
+                });
+        Datamodel.PackageNode rootNode = getPackageNode(packageName, version);
+        Datamodel.PackageNode.Builder rootNodeBuilder = rootNode.toBuilder();
+        classes.forEach(c -> rootNodeBuilder.addTargets(c));
+
+        rootNode = rootNodeBuilder.build();
+        return Optional.ofNullable(rootNode);
+    }
+
     public static Optional<Datamodel.PackageNode> processArtifact(File artifact, String packageName, String version) {
         PathMatcher jarMatcher = FileSystems.getDefault().getPathMatcher("glob:**.jar");
         if (jarMatcher.matches(artifact.toPath())) {
