@@ -140,6 +140,9 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 		}
 		f.FileData = &service.FileNode_FileDataNode{Hash: hash}
 	}
+	if f.Name == "" {
+		f.Name = filepath.Base(f.Path)
+	}
 	fileParts := strings.Split(f.Path, "/")
 	// catch tmp files
 	if fileParts[0] == ".." && f.FileType == service.FileNode_SOURCE {
