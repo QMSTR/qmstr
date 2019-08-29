@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"strings"
@@ -20,7 +19,6 @@ const (
 )
 
 var (
-	testnode        *service.FileNode
 	pkgNode         *service.PackageNode
 	tests           []string
 	testfunction    func(*testing.T)
@@ -48,8 +46,6 @@ func (testanalyzer *TestAnalyzer) Configure(configMap map[string]string) error {
 }
 
 func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64) error {
-	queryNode := &service.FileNode{}
-
 	pkgNodeStream, err := controlService.GetPackageNode(context.Background(), &service.PackageNode{})
 	if err != nil {
 		return err
@@ -59,37 +55,13 @@ func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceC
 	if err != nil {
 		return err
 	}
-	stream, err := controlService.GetFileNode(context.Background(), &service.GetFileNodeMessage{FileNode: queryNode})
-	if err != nil {
-		log.Printf("Could not get file node %v", err)
-		return err
-	}
-
-	// Run tests for file nodes
-	for {
-		fileNode, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-
-		fmt.Println("Testalyzer running tests")
-		testnode = fileNode
-		testSuite := []testing.InternalTest{
-			{
-				Name: "TestGraphIntegrity",
-				F:    TestGraphIntegrity,
-			},
-		}
-		t := &tester.DummyTestDeps{}
-		testing.MainStart(t, testSuite, nil, nil).Run()
-	}
 
 	// Run tests for package node
 	for _, test := range tests {
 		if test == "TestPackageNode" {
 			testfunction = TestPackageNode
 		} else if test == "TestCalcBuildGraph" {
-			expectedTargets = []string{"Calculator/calc", "Calculator/libcalc.so"}
+			expectedTargets = []string{"Calculator/calc", "Calculator/libcalc.so", "Calculator/libcalc.a", "Calculator/calcs"}
 			testfunction = TestBuildGraph
 		} else if test == "TestCurlBuildGraph" {
 			expectedTargets = []string{"curl/build/src/curl", "curl/build/lib/libcurl.so"}
@@ -115,10 +87,6 @@ func (testanalyzer *TestAnalyzer) PostAnalyze() error {
 	return nil
 }
 
-func TestGraphIntegrity(t *testing.T) {
-	// TODO: test graph integrity
-}
-
 func TestPackageNode(t *testing.T) {
 	if len(pkgNode.Targets) < 1 {
 		t.Logf("Package node '%v' is not connected to any linked targets", pkgNode.Name)
@@ -131,10 +99,16 @@ func TestBuildGraph(t *testing.T) {
 		t.Logf("Package node '%v' is not connected to all the configured linked targets", pkgNode.Name)
 		t.Fail()
 	} else {
-		for _, target := range pkgNode.Targets {
-			if target.Path != expectedTargets[0] && target.Path != expectedTargets[1] {
-				t.Logf("Package node %v is not connected to the configured linked target", pkgNode.Name)
-				t.Logf("Package node %v is connected to %v", pkgNode.Name, target.Path)
+		for _, expectedTarget := range expectedTargets {
+			var found bool
+			for _, target := range pkgNode.Targets {
+				if expectedTarget == target.Path {
+					found = true
+					t.Logf("Package node %v is connected to %v", pkgNode.Name, target.Path)
+				}
+			}
+			if !found {
+				t.Logf("Package node %v is not connected to the configured linked target: %s", pkgNode.Name, expectedTarget)
 				t.Fail()
 			}
 		}
