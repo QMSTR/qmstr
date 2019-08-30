@@ -1,5 +1,7 @@
 package org.qmstr.gradle.android;
 
+import static org.qmstr.util.transformations.MergeDexTransformation.wrapFind;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,8 +16,6 @@ import java.util.stream.Collectors;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.plugins.AppliedPlugin;
-import org.qmstr.client.BuildServiceClient;
-import org.qmstr.gradle.QmstrPluginExtension;
 import org.qmstr.gradle.ResultUnavailableException;
 import org.qmstr.grpc.service.Datamodel;
 import org.qmstr.grpc.service.Datamodel.PackageNode;
@@ -24,23 +24,14 @@ import org.qmstr.util.PackagenodeUtils;
 import org.qmstr.util.transformations.Transform;
 import org.qmstr.util.transformations.TransformationException;
 
-import static org.qmstr.gradle.android.TaskExecutionGraphReadyAction.getLibSourceDirs;
-import static org.qmstr.gradle.android.TaskExecutionGraphReadyAction.getAppSourceDirs;
-
-import static org.qmstr.util.transformations.MergeDexTransformation.wrapFind;
-
 public class AndroidPostTaskAction extends AndroidTaskAction {
 
     private final boolean lib;
 
     public AndroidPostTaskAction(Project project, AppliedPlugin plugin) {
-        this.project = project;
+        super(project, plugin);
 
         this.lib = plugin.getId().equals("com.android.library");
-
-        qmstrExt = (QmstrPluginExtension) this.project.getExtensions().findByName("qmstr");
-        this.setBuildServiceAddress(qmstrExt.qmstrAddress);
-        this.bsc = new BuildServiceClient(buildServiceAddress, buildServicePort);
     }
 
     // This method tries to guess the root of the package hierarchy
@@ -128,6 +119,10 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
 
     @Override
     public void execute(Task task) {
+        if (debug) {
+            logTaskInputOutput(task);
+        }
+
         switch (SimpleTask.detectTask(task.getName())) {
             case COMPILEJAVA:
                 handleCompileJava(task);
@@ -150,7 +145,6 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
                 }
                 break;
             default:
-                handleElse(task);
                 break;
         }
     }
@@ -202,24 +196,11 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
             } else {
                 bsc.SendLogMessage(String.format("No packagenode after processing %s", apk.getAbsolutePath()));
             }
-            
 
         } catch (IOException ioe) {
-            // Default to returning empty optional
+                bsc.SendLogMessage(String.format("Qmstr gradle plugin failed: %s", ioe.getMessage()));
         }
     }
 
 
-    public static void handleElse(Task task) {
-        task.getLogger().warn("====================>");
-        task.getLogger().warn("project {} handle {} task\nInput:", task.getProject().getName(), task.getName());
-        task.getInputs().getFiles().forEach(
-            in -> task.getLogger().warn(in.getAbsolutePath())
-        );
-
-        task.getLogger().warn("Output:");
-        task.getOutputs().getFiles().forEach(
-                out -> task.getLogger().warn(out.getAbsolutePath()));
-        task.getLogger().warn("<====================");
-    }
 }
