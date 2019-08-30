@@ -7,6 +7,7 @@ public class QmstrPluginExtension {
     public String qmstrAddress;
     public Set<File> sourceDirs;
     public Set<File> outDirs;
+    public boolean debug;
 
     public QmstrPluginExtension() {
         this.qmstrAddress = "localhost:50051";
