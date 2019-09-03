@@ -146,11 +146,11 @@ func (db *DataBase) GetFileDataUID(hash string) (string, error) {
 // with this filetype.
 // You can query for just one attribute. For instance, if you set filetype and hash, only the
 // hash will be used in the query.
-func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool) ([]*service.FileNode, error) {
+func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive bool, offset int, first int) ([]*service.FileNode, error) {
 	var ret map[string][]interface{}
 
-	q := `query FileNodeByFileNode($Filter: string, $TypeFilter: int){
-			getFileNodeByFileNode(func: has(fileNodeType)) {{.Query}} {{.Recurse}}{
+	q := `query FileNodeByFileNode($Filter: string, $TypeFilter: int, $Offset: int, $First: int){
+			getFileNodeByFileNode(func: has(fileNodeType), {{.Pagination}}) {{.Query}} {{.Recurse}}{
 			  uid
 			  fileNodeType
 			  path
@@ -169,6 +169,9 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 		Query      string
 		Filter     string
 		TypeFilter int
+		Offset     int
+		First      int
+		Pagination string
 	}
 
 	qp := QueryParams{}
@@ -205,6 +208,11 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 		qp.Query = "@filter(uid($Filter))"
 		vars["$Filter"] = qp.Filter
 	}
+	// Pagination
+	qp.First, qp.Offset = first, offset
+	qp.Pagination = "offset: $Offset, first: $First"
+	vars["$First"] = strconv.Itoa(first)
+	vars["$Offset"] = strconv.Itoa(offset)
 
 	var b bytes.Buffer
 	err = queryTmpl.Execute(&b, qp)
@@ -218,7 +226,7 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 	}
 
 	fileNodesInterface := ret["getFileNodeByFileNode"]
-	if len(fileNodesInterface) < 1 {
+	if len(fileNodesInterface) < 1 && offset == 0 {
 		return nil, fmt.Errorf("No file node %v found in the database", filenode)
 	}
 
