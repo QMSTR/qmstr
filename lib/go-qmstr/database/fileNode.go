@@ -160,13 +160,6 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 			  fileData
 			  type
 			  timestamp
-			  derivedFrom
-			  dependencies
-			  additionalInfo
-			  confidenceScore
-			  analyzer
-			  dataNodes
-			  data
 			}}`
 
 	queryTmpl, err := template.New("filenodesbyfilenode").Parse(q)
@@ -182,7 +175,7 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 	vars := map[string]string{}
 
 	if recursive {
-		qp.Recurse = "@recurse(loop: false)"
+		qp.Recurse = "@recurse(loop: true, depth:2)"
 	}
 	if filenode.FileType != 0 {
 		//get the int value from the enumeration

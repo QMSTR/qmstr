@@ -25,24 +25,17 @@ func (db *DataBase) GetPackageNodeByName(name string) (*service.PackageNode, err
 	var ret map[string][]interface{}
 
 	q := `query GetPackageNodeByName($Name: string){
-		  getPackageNodeByName(func: has(packageNodeType)) @filter(eq(name, $Name)) {
+		  getPackageNodeByName(func: has(packageNodeType)) @filter(eq(name, $Name)) @recurse(loop: true, depth:3){
 			uid
 			buildConfig
-			fileData
-			hash
 			name
 			version
 			type
 			targets
-			derivedFrom
-			dependencies
-			fileType
 			path
+			fileData
+			hash
 			additionalInfo
-			confidenceScore
-			analyzer
-			dataNodes
-			data
 		  }}`
 
 	vars := map[string]string{"$Name": name}
@@ -70,24 +63,18 @@ func (db *DataBase) GetPackageNode() ([]*service.PackageNode, error) {
 	var ret map[string][]interface{}
 
 	q := `{
-		getPackageNode(func: has(packageNodeType)) @recurse(loop: false) {
+		getPackageNode(func: has(packageNodeType)) @recurse(loop: true, depth:3) {
 			uid
 			buildConfig
-			fileData
-			hash
 			name
 			version
-			type
 			targets
-			derivedFrom
-			dependencies
-			fileType
 			path
+			fileData
+			hash
 			additionalInfo
-			confidenceScore
-			analyzer
-			dataNodes
-			data
+			diagnosticInfo
+			timestamp
 		  }
 		}`
 
@@ -112,7 +99,6 @@ func (db *DataBase) GetPackageNode() ([]*service.PackageNode, error) {
 		pkgNodes = append(pkgNodes, result)
 	}
 	return pkgNodes, nil
-
 }
 
 // AddPackageFileNodes stores the given FileNodes in a PackageNode identified by the nodeID
