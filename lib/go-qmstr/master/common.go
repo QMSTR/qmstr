@@ -136,20 +136,27 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 	if err != nil {
 		return err
 	}
-	nodeFiles, err := db.GetFileNodesByFileNode(in.FileNode, true)
-	if err != nil {
-		return fmt.Errorf("Query GetFileNodesByFileNode returned: %v", err)
-	}
-	if in.UniqueNode {
-		if len(nodeFiles) != 1 {
-			return fmt.Errorf("more than one FileNode match %v. Please provide a better identifier", in.FileNode)
+	offset, first := 0, 500
+	for {
+		nodeFiles, err := db.GetFileNodesByFileNode(in.FileNode, true, offset, first)
+		if err != nil {
+			return fmt.Errorf("Query GetFileNodesByFileNode returned: %v", err)
 		}
-	}
-	for _, nodeFile := range nodeFiles {
-		if gsp.server.currentPhase.GetPhaseID() == service.Phase_ANALYSIS {
-			nodeFile.Path = filepath.Join(gsp.masterConfig.Server.BuildPath, nodeFile.Path)
+		if in.UniqueNode {
+			if len(nodeFiles) != 1 {
+				return fmt.Errorf("more than one FileNode match %v. Please provide a better identifier", in.FileNode)
+			}
 		}
-		stream.Send(nodeFile)
+		for _, nodeFile := range nodeFiles {
+			if gsp.server.currentPhase.GetPhaseID() == service.Phase_ANALYSIS {
+				nodeFile.Path = filepath.Join(gsp.masterConfig.Server.BuildPath, nodeFile.Path)
+			}
+			stream.Send(nodeFile)
+		}
+		if len(nodeFiles) < 500 {
+			break
+		}
+		offset = offset + 500
 	}
 	return nil
 }
