@@ -29,9 +29,8 @@ type PkgManifestReporter struct {
 	enableErrors   bool
 	outputdir      string
 	nsURI          string
-	pathRegexp   string
-	pathReplace string
-	
+	pathRegexp     string
+	pathReplace    string
 }
 
 func (r *PkgManifestReporter) Configure(config map[string]string) error {
