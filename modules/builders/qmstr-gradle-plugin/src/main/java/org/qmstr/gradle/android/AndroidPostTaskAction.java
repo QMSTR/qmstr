@@ -4,13 +4,17 @@ import static org.qmstr.util.transformations.MergeDexTransformation.wrapFind;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.gradle.api.Project;
@@ -134,14 +138,14 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
                 try {
                     handleMergeDex(task);
                 } catch (ResultUnavailableException e) {
-                    task.getLogger().error("Failed in merge dex");
+                    task.getLogger().error("Failed in merge dex: {}", e.getMessage());
                 }
                 break;
             case PACKAGEAPK:
                 try {
                     handleApk(task);
                 } catch (ResultUnavailableException e) {
-                    task.getLogger().error("Failed in packaging apk");
+                    task.getLogger().error("Failed in packaging apk: {}", e.getMessage());
                 }
                 break;
             default:
@@ -162,11 +166,33 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
             )
             .map(p -> p.toFile())
             .findFirst()
-            .orElseThrow(() -> new ResultUnavailableException());
+            .orElseThrow(() -> new ResultUnavailableException("no apk found"));
+        
+        Path outputData = apk.toPath().getParent().resolve("output.json");
+
+        Pattern versionPtn = Pattern.compile(".*versionName\":\"(.+?)\"");
+        Pattern fullNamePtn = Pattern.compile(".*fullName\":\"(.+?)\"");
+        
+        String version = "undefinedVersion";
+        String fullName = "undefinedFullName";
+
+        try (Scanner in = new Scanner(new FileReader(outputData.toFile()))) {
+           while(in.hasNext()) {
+               String line = in.nextLine();
+               Matcher verMatcher = versionPtn.matcher(line);
+               if (verMatcher.find()) {
+                   version = verMatcher.group(1);
+               }
+               Matcher nameMatcher = fullNamePtn.matcher(line);
+               if (nameMatcher.find()) {
+                   fullName = nameMatcher.group(1);
+               }
+           }
+        } catch (FileNotFoundException | IllegalStateException | IndexOutOfBoundsException e) {
+            throw new ResultUnavailableException(e);
+        }
         
         task.getLogger().warn("Found {}, content follows:", apk.getAbsolutePath());
-            
-        
         try (JarFile jar = new JarFile(apk)){ 
             Set<File> packedFiles = jar.stream()
                 .map(je -> je.getName())
@@ -188,8 +214,11 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
                 .filter(o -> o.isPresent())
                 .map(o -> o.get())
                 .collect(Collectors.toSet());
-            
-            Optional<PackageNode> pkgNode = PackagenodeUtils.processArtifacts(packedFiles, task.getProject().getName(), task.getProject().getVersion().toString());
+           
+            Optional<PackageNode> pkgNode = PackagenodeUtils.processArtifacts(
+                packedFiles, 
+                String.format("%s-%s", task.getProject().getName(), fullName),
+                version);
            
             if (pkgNode.isPresent()) {
                 bsc.SendPackageNode(pkgNode.get());
