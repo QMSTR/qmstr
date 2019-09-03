@@ -45,8 +45,15 @@ public class BuildServiceClient {
     }
 
     public boolean SendPackageNode(Datamodel.PackageNode pkg) {
-        Buildservice.BuildResponse resp = blockingBuildStub.createPackage(pkg);
-        return resp.getSuccess();
+        try {
+            Buildservice.BuildResponse resp = blockingBuildStub.createPackage(pkg);
+            return resp.getSuccess();
+        } catch (io.grpc.StatusRuntimeException e) {
+            if (!e.getMessage().equals("UNKNOWN: package already created")) {
+                throw e;
+            }
+        }
+        return false;
     }
 
     public void SendBuildFileNodes(Set<Datamodel.FileNode> fileNodes) {
