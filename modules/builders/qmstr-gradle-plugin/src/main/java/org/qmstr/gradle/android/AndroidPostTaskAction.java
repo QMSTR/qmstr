@@ -157,26 +157,23 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
         Set<File> outDirs = task.getOutputs().getFiles().getFiles();
         Set<File> inputDirs = task.getInputs().getFiles().getFiles();
 
-        File apk = outDirs.stream()
+        File outputData = outDirs.stream()
             .filter(dir -> dir.exists())
-            .flatMap(dir -> wrapFind(
-                dir.toPath(), 
-                (path,attrs) -> attrs.isRegularFile() && path.toString().endsWith(".apk")
-                )
-            )
-            .map(p -> p.toFile())
+            .map(dir -> dir.toPath().resolve("output.json").toFile())
+            .filter(f -> f.exists())
             .findFirst()
-            .orElseThrow(() -> new ResultUnavailableException("no apk found"));
+            .orElseThrow(() -> new ResultUnavailableException("no output.json found"));
         
-        Path outputData = apk.toPath().getParent().resolve("output.json");
 
         Pattern versionPtn = Pattern.compile(".*versionName\":\"(.+?)\"");
         Pattern fullNamePtn = Pattern.compile(".*fullName\":\"(.+?)\"");
+        Pattern apkPathPtn = Pattern.compile(".*path\":\"(.+?)\"");
         
         String version = "undefinedVersion";
         String fullName = "undefinedFullName";
+        File apk = null;
 
-        try (Scanner in = new Scanner(new FileReader(outputData.toFile()))) {
+        try (Scanner in = new Scanner(new FileReader(outputData))) {
            while(in.hasNext()) {
                String line = in.nextLine();
                Matcher verMatcher = versionPtn.matcher(line);
@@ -187,11 +184,18 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
                if (nameMatcher.find()) {
                    fullName = nameMatcher.group(1);
                }
+               Matcher apkMatcher = apkPathPtn.matcher(line);
+               if (apkMatcher.find()) {
+                   apk = outputData.toPath().getParent().resolve(apkMatcher.group(1)).toFile();
+               }
            }
         } catch (FileNotFoundException | IllegalStateException | IndexOutOfBoundsException e) {
             throw new ResultUnavailableException(e);
         }
-        
+       
+        if (apk == null || !apk.exists()) {
+            throw new ResultUnavailableException("apk not found");
+        }
         task.getLogger().warn("Found {}, content follows:", apk.getAbsolutePath());
         try (JarFile jar = new JarFile(apk)){ 
             Set<File> packedFiles = jar.stream()
