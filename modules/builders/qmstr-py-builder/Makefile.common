@@ -1,0 +1,7 @@
+PY_BUILDER := qmstr-py-builder
+
+.PHONY: $(PY_BUILDER)
+$(PY_BUILDER): $(OUTDIR)builders/$(PY_BUILDER)
+
+$(OUTDIR)builders/$(PY_BUILDER): venv/bin/pex wheels
+	QMSTR_VERSION=$(QMSTR_VERSION) venv/bin/pex modules/builders/$(PY_BUILDER) pyqmstr -e qmstrpybuilder.__main__:main --python=venv/bin/python3 --disable-cache -f ./wheels -o $@
