@@ -2,6 +2,8 @@ import grpc
 from qmstr.service.analyzerservice_pb2 import AnalyzerConfigRequest
 from qmstr.service.analyzerservice_pb2_grpc import AnalysisServiceStub
 from qmstr.service.controlservice_pb2_grpc import ControlServiceStub
+from qmstr.service.buildservice_pb2_grpc import BuildServiceStub
+from qmstr.service.datamodel_pb2 import FileNode, PackageNode
 import logging
 
 
@@ -13,16 +15,13 @@ def sanitize_address(address):
 
 
 class QMSTR_Module(object):
-    def __init__(self, address, aid):
-        self.id = aid
+    def __init__(self, address):
         self.name = ""
         aserv_address = sanitize_address(address)
         logging.info("Connecting to qmstr-master at %s", aserv_address)
-        channel = grpc.insecure_channel(aserv_address)
-        self.aserv = AnalysisServiceStub(
-            channel)
+        self.channel = grpc.insecure_channel(aserv_address)
         self.cserv = ControlServiceStub(
-            channel
+            self.channel
         )
 
     def get_name(self):
@@ -34,7 +33,10 @@ class QMSTR_Module(object):
 
 class QMSTR_Analyzer(QMSTR_Module):
     def __init__(self, address, aid):
-        super(QMSTR_Analyzer, self).__init__(address, aid)
+        super(QMSTR_Analyzer, self).__init__(address)
+        self.id = aid
+        self.aserv = AnalysisServiceStub(
+            self.channel)
 
     def run_analyzer(self):
         conf_request = AnalyzerConfigRequest(
@@ -51,3 +53,22 @@ class QMSTR_Analyzer(QMSTR_Module):
 
     def post_analyze(self):
         raise NotImplementedError()
+
+class QMSTR_Builder(QMSTR_Module):
+    def __init__(self, address):
+        super(QMSTR_Builder, self).__init__(address)
+        self.buildserv = BuildServiceStub(
+            self.channel)
+
+    def send_files(self, files):
+        for f in files:
+            # hash file
+            checksum="deadbeef"
+
+            fileNode = FileNode(
+                path=f,
+                fileType=FileNode.SOURCE,
+                hash=checksum
+            )
+
+            response = self.buildserv.Build(fileNode)
