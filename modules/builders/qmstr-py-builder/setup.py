@@ -9,7 +9,8 @@ setup(
     license='GPLv3',
 
     packages=['qmstrpybuilder'],
-    install_requires=["pyqmstr=={}".format(os.environ["QMSTR_VERSION"]), 'docopt'],
+    install_requires=["pyqmstr=={}".format(
+        os.environ["QMSTR_VERSION"]), 'docopt'],
     entry_points={
         'console_scripts': [
             'qmstr-py-builder = qmstrpybuilder.__main__:main',
