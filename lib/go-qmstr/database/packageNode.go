@@ -90,7 +90,6 @@ func (db *DataBase) GetPackageNode() ([]*service.PackageNode, error) {
 
 	var pkgNodes []*service.PackageNode
 	for _, pkg := range pkgNodesInterface {
-		log.Printf("Pkg Interface: %v", pkg)
 		pkgMap := pkg.(map[string]interface{})
 		result := &service.PackageNode{}
 		if err := decodeToNodeStruct(result, pkgMap); err != nil {
