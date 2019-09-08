@@ -20,7 +20,6 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 	query Node($id: string){
 		node(func: uid($id)) @filter(has(projectNodeType) or has(packageNodeType) or has(fileDataNodeType)) @recurse(loop: false) {
 			uid
-			additionalInfo
 			projectNodeType
 			packageNodeType
 			fileDataNodeType
@@ -45,16 +44,11 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 	}
 
 	receiverNode := result["node"][0].(map[string]interface{})
-	var additionalInfo []*service.InfoNode
-	if additionalInfoInter, ok := receiverNode["AdditionalInfo"]; ok {
-		additionalInfo = additionalInfoInter.([]*service.InfoNode)
-	}
-	additionalInfo = append(additionalInfo, infonodes...)
 
 	if _, ok := receiverNode["projectNodeType"]; ok {
 		projectNode := service.ProjectNode{}
 		projectNode.Uid = nodeID
-		projectNode.AdditionalInfo = additionalInfo
+		projectNode.AdditionalInfo = infonodes
 		_, err = dbInsert(db.client, &projectNode)
 		if err != nil {
 			return err
@@ -62,7 +56,7 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 	} else if _, ok := receiverNode["packageNodeType"]; ok {
 		packageNode := service.PackageNode{}
 		packageNode.Uid = nodeID
-		packageNode.AdditionalInfo = additionalInfo
+		packageNode.AdditionalInfo = infonodes
 		_, err = dbInsert(db.client, &packageNode)
 		if err != nil {
 			return err
@@ -70,7 +64,7 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 	} else if _, ok := receiverNode["fileDataNodeType"]; ok {
 		fileDataNode := service.FileNode_FileDataNode{}
 		fileDataNode.Uid = nodeID
-		fileDataNode.AdditionalInfo = additionalInfo
+		fileDataNode.AdditionalInfo = infonodes
 		_, err = dbInsert(db.client, &fileDataNode)
 		if err != nil {
 			return err

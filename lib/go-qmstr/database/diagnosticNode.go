@@ -13,7 +13,7 @@ import (
 )
 
 // AddDiagnosticNodes stores the given DiagnosticNodes in a PackageNode or FileNode identified by the nodeID
-func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnodes ...*service.DiagnosticNode) error {
+func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnode *service.DiagnosticNode) error {
 	db.insertMutex.Lock()
 	defer db.insertMutex.Unlock()
 
@@ -21,9 +21,11 @@ func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnodes ...*servic
 	query Node($id: string){
 		node(func: uid($id)) @filter(has(packageNodeType) or has(fileDataNodeType)) @recurse(loop: false) {
 			uid
-			diagnosticInfo
 			packageNodeType
 			fileDataNodeType
+			diagnosticInfo
+			analyzer
+			name
 		}
 	}
 	`
@@ -45,11 +47,28 @@ func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnodes ...*servic
 	}
 
 	receiverNode := result["node"][0].(map[string]interface{})
-	var diagnosticInfo []*service.DiagnosticNode
 	if diagnosticInfoInter, ok := receiverNode["diagnosticInfo"]; ok {
-		diagnosticInfo = diagnosticInfoInter.([]*service.DiagnosticNode)
+		var diagnosticInfo []*service.DiagnosticNode
+		for _, dInfo := range diagnosticInfoInter.([]interface{}) {
+			result := &service.DiagnosticNode{}
+			if err := decodeToNodeStruct(result, dInfo.(map[string]interface{})); err != nil {
+				return err
+			}
+			diagnosticInfo = append(diagnosticInfo, result)
+		}
+
+		// each analyzer should create one diagnostic node for each file node
+		for _, node := range diagnosticInfo {
+			for _, analyzer := range node.Analyzer {
+				if diagnosticnode.Analyzer[0].Name == analyzer.Name {
+					log.Printf("Already created diagnostic node for file %s, skipping insert..", nodeID)
+					return nil
+				}
+			}
+		}
 	}
-	diagnosticInfo = append(diagnosticInfo, diagnosticnodes...)
+	var diagnosticInfo []*service.DiagnosticNode
+	diagnosticInfo = append(diagnosticInfo, diagnosticnode)
 
 	if _, ok := receiverNode["packageNodeType"]; ok {
 		packageNode := service.PackageNode{}
