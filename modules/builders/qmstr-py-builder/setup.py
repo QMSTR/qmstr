@@ -12,9 +12,6 @@ setup(
     install_requires=["pyqmstr=={}".format(
         os.environ["QMSTR_VERSION"]), 'docopt'],
     entry_points={
-        'console_scripts': [
-            'qmstr-py-builder = qmstrpybuilder.__main__:main',
-        ],
-    },
-
+        'distutils.commands': [
+            "qmstr = qmstrpybuilder.qmstrcommand:QMSTRCommand"]}
 )
