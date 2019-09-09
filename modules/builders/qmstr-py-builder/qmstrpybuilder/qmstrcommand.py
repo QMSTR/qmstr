@@ -33,6 +33,6 @@ class QMSTRCommand(Command):
 
         self.reinitialize_command('build_ext', inplace=0)
         self.run_command('build_ext')
-        
-        self.reinitialize_command('bdist_dumb', inplace=0, format="gztar")
+
+        self.reinitialize_command('bdist_dumb', inplace=0, format="gztar", keep_temp=True)
         self.run_command('bdist_dumb')
