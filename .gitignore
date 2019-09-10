@@ -6,6 +6,9 @@ venv/
 wheels/
 requirements.txt
 **/*egg-info
+**/build
+**/dist
+**/__pycache__
 
 # misc
 **/.DS_Store
