@@ -2,9 +2,11 @@ import os
 from tempfile import mkdtemp
 import hashlib
 import json
+import logging
+from qmstr.service.datamodel_pb2 import FileNode, InfoNode, PackageNode
 
 
-def _ignore_path(path_list):
+def _filter_out_hidden_files(path_list):
     """
     Returns the path list ignoring all paths and files starting with a dot.
     """
@@ -20,7 +22,7 @@ def get_files_list(path):
     all_files = []
 
     for dirpath, dirnames, filenames in os.walk(path, topdown=True):
-        dirnames[:] = _ignore_path(dirnames)
+        dirnames[:] = _filter_out_hidden_files(dirnames)
         for name in filenames:
             filename = (os.path.join(dirpath, name))
             all_files.append(filename)
@@ -47,15 +49,31 @@ def hash_file(file_path):
         return file_hash
     except FileNotFoundError as e:
         # FIXME: should we just ignore files not found?
-        print("ERROR: ", e)
+        logging.error("ERROR: ", e)
         return None
 
-
-def create_temp_folder(prefix="qmstr-"):
+def generate_iterator(collection):
     """
-    Generates a tmp folder with a given prefix.
-    Default prefix: "qmstr-"
     """
-    tmpdir = mkdtemp(prefix=prefix)
+    # FIXME: find a better place to put it???
+    for i in collection:
+        yield i
 
-    return tmpdir
+def new_file_node(path, hash=False):
+    """
+    Returns a filenode dict with filename, checksum and broken flag
+    """
+
+    if hash:
+        chksum = hash_file(path)
+    else:
+        chksum = None
+
+    file_node = FileNode(
+        path=path,
+        fileType=FileNode.UNDEF,
+        hash=chksum,
+        name=os.path.basename(path)
+    )
+
+    return file_node
