@@ -4,6 +4,7 @@ from qmstr.service.analyzerservice_pb2_grpc import AnalysisServiceStub
 from qmstr.service.controlservice_pb2_grpc import ControlServiceStub
 from qmstr.service.buildservice_pb2_grpc import BuildServiceStub
 from qmstr.service.datamodel_pb2 import FileNode, PackageNode
+from qmstr.module.utils import generate_iterator
 import logging
 
 
@@ -54,21 +55,17 @@ class QMSTR_Analyzer(QMSTR_Module):
     def post_analyze(self):
         raise NotImplementedError()
 
+
 class QMSTR_Builder(QMSTR_Module):
     def __init__(self, address):
         super(QMSTR_Builder, self).__init__(address)
         self.buildserv = BuildServiceStub(
             self.channel)
 
-    def send_files(self, files):
-        for f in files:
-            # hash file
-            checksum="deadbeef"
-
-            fileNode = FileNode(
-                path=f,
-                fileType=FileNode.SOURCE,
-                hash=checksum
-            )
-
-            response = self.buildserv.Build(fileNode)
+    def send_files(self, file_nodes):
+        """
+        Get file nodes and send it to the server
+        """
+        logging.warn("sending file nodes %s", file_nodes)
+        fn_iterator = generate_iterator(file_nodes)
+        response = self.buildserv.Build(fn_iterator)
