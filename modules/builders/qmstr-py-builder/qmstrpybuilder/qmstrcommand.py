@@ -1,6 +1,7 @@
 from setuptools import Command
-
+from qmstr.lib.pyqmstr import utils
 import pkg_resources
+
 
 class QMSTRCommand(Command):
 
@@ -21,5 +22,16 @@ class QMSTRCommand(Command):
     def run(self):
         """runner"""
 
-        self.reinitialize_command('bdist_dumb', inplace=0, format="gztar", keep_temp=True, bdist_dir="/tmp/qmstrsomething")
+        # FIXME: function to generate tmp folder
+        tmp_path = utils.create_temp_folder()
+
+        self.reinitialize_command(
+            'bdist_dumb',
+            inplace=0,
+            format="gztar",
+            keep_temp=True,
+            bdist_dir=tmp_path
+        )
         self.run_command('bdist_dumb')
+
+        # TODO: trigger path walk/hash/etc
