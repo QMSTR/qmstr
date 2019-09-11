@@ -2,6 +2,7 @@ package org.qmstr.gradle.android;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,13 @@ public abstract class AndroidTaskAction implements Action<Task> {
         String[] addressSplit = address.split(":");
         this.buildServiceAddress = addressSplit[0];
         this.buildServicePort = Integer.parseInt(addressSplit[1]);
+    }
+
+    public static Set<File> getSourceDirs(Project project) {
+        Set<File> sources = new HashSet<>();
+        sources.addAll(getAppSourceDirs(project));
+        sources.addAll(getLibSourceDirs(project));
+        return sources;
     }
 
     public static Set<File> getAppSourceDirs(Project project) {
