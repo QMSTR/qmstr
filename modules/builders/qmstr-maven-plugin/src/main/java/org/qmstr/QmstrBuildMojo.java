@@ -64,17 +64,15 @@ public class QmstrBuildMojo extends AbstractMojo {
 
         Set<File> sources = getSourceFiles(project.getCompileSourceRoots());
 
-        sources.stream().forEach(s -> {
-            try {
-                Set<Datamodel.FileNode> fileNodes = FilenodeUtils.processSourceFile(Transform.COMPILEJAVA, s,
-                        sourceDirs, Collections.singleton(outputDirectory));
-                bsc.SendBuildFileNodes(fileNodes);
-            } catch (TransformationException e) {
-                // ("qmstr plugin could not transform source to target " + e.getMessage());
-            } catch (FileNotFoundException fnfe) {
-                //throw new MojoExecutionException("qmstr plugin could not find the source file " + fnfe.getMessage());
-            }
-        });
+        try {
+            Set<Datamodel.FileNode> fileNodes = FilenodeUtils.processSourceFiles(Transform.COMPILEJAVA, sources,
+                    sourceDirs, Collections.singleton(outputDirectory));
+            bsc.SendBuildFileNodes(fileNodes);
+        } catch (TransformationException e) {
+            // ("qmstr plugin could not transform source to target " + e.getMessage());
+        } catch (FileNotFoundException fnfe) {
+            //throw new MojoExecutionException("qmstr plugin could not find the source file " + fnfe.getMessage());
+        }
 
         try {
             bsc.close();

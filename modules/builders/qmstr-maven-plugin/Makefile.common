@@ -6,4 +6,4 @@ $(QMSTR_MAVEN_PLUGIN): modules/builders/$(QMSTR_MAVEN_PLUGIN)/target/$(QMSTR_MAV
 
 modules/builders/$(QMSTR_MAVEN_PLUGIN)/target/$(QMSTR_MAVEN_PLUGIN)-$(QMSTR_VERSION).jar: $(QMSTR_MAVEN_SRC)
 	@echo $(call CHECKCMDS,mvn)
-	cd modules/builders/$(QMSTR_MAVEN_PLUGIN) && mvn install
+	cd modules/builders/$(QMSTR_MAVEN_PLUGIN) && mvn clean install
