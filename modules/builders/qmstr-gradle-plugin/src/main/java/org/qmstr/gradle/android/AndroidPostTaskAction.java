@@ -81,7 +81,7 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
     }
 
     private void handleCompileJava(Task task) {
-        Set<File> sourceDirs = lib ? getLibSourceDirs(task.getProject()) : getAppSourceDirs(task.getProject());
+        Set<File> sourceDirs = getSourceDirs(task.getProject());
         Set<File> outDirs = task.getOutputs().getFiles().getFiles();
 
         task.getInputs().getFiles().forEach(sf -> {
