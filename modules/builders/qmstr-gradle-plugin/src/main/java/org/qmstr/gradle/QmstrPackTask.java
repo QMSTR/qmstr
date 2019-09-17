@@ -1,16 +1,13 @@
 package org.qmstr.gradle;
 
-import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.artifacts.PublishArtifact;
-import org.gradle.api.tasks.TaskAction;
-import org.qmstr.client.BuildServiceClient;
-import org.qmstr.util.FilenodeUtils;
-import org.qmstr.util.PackagenodeUtils;
-
 import java.io.File;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.tasks.TaskAction;
+import org.qmstr.client.BuildServiceClient;
+import org.qmstr.util.PackagenodeUtils;
 
 public class QmstrPackTask extends QmstrTask {
 
