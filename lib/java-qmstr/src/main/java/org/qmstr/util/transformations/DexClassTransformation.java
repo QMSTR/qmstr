@@ -35,7 +35,7 @@ public class DexClassTransformation implements TransformationFunction {
         String[] filename = relSrcPath.toString().split("\\.");
         String extension = filename[filename.length-1];
         if (!extension.equals("class")) {
-            throw new TransformationException(String.format("invalid input %s; must be dex file", sourceFile.getPath()));
+            throw new TransformationException(String.format("invalid input %s; must be class file", sourceFile.getPath()));
         }
         filename[filename.length-1] = "dex";
         String targetFileNamePath = String.join(".", filename);
