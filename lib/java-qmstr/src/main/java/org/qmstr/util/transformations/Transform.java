@@ -1,5 +1,5 @@
 package org.qmstr.util.transformations;
 
 public enum Transform {
-    COMPILEJAVA, DEXCLASS, MERGEDEX
+    COMPILEJAVA, DEXCLASS, MERGEDEX, PACKAGECLASSESJAR, PACKAGEFULLJAR
 }

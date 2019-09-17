@@ -1,18 +1,29 @@
 package org.qmstr.util;
 
-import org.qmstr.util.transformations.*;
-import org.qmstr.grpc.service.Datamodel;
-import org.qmstr.grpc.service.Datamodel.FileNode.Type;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.stream.Collectors;
+
+import org.qmstr.grpc.service.Datamodel;
+import org.qmstr.grpc.service.Datamodel.FileNode.Type;
+import org.qmstr.util.transformations.CompileJavaTransformation;
+import org.qmstr.util.transformations.DexClassTransformation;
+import org.qmstr.util.transformations.JarTransformation;
+import org.qmstr.util.transformations.MergeDexTransformation;
+import org.qmstr.util.transformations.Transform;
+import org.qmstr.util.transformations.TransformationException;
+import org.qmstr.util.transformations.TransformationFunction;
 
 public class FilenodeUtils {
 
@@ -23,6 +34,8 @@ public class FilenodeUtils {
             put(Transform.COMPILEJAVA, new CompileJavaTransformation());
             put(Transform.DEXCLASS, new DexClassTransformation());
             put(Transform.MERGEDEX, new MergeDexTransformation());
+            put(Transform.PACKAGECLASSESJAR, new JarTransformation("classes.jar"));
+            put(Transform.PACKAGEFULLJAR, new JarTransformation("full.jar"));
         }
     };
 
@@ -95,6 +108,5 @@ public class FilenodeUtils {
     public static boolean isActualClassDir(File outdir, Path classesPath) {
         return outdir.toPath().resolve(classesPath).toFile().exists();
     }
-
 
 }

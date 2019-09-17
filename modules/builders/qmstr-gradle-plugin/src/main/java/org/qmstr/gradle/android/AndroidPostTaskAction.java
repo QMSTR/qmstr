@@ -30,12 +30,8 @@ import org.qmstr.util.transformations.TransformationException;
 
 public class AndroidPostTaskAction extends AndroidTaskAction {
 
-    private final boolean lib;
-
     public AndroidPostTaskAction(Project project, AppliedPlugin plugin) {
         super(project, plugin);
-
-        this.lib = plugin.getId().equals("com.android.library");
     }
 
     // This method tries to guess the root of the package hierarchy
@@ -148,8 +144,34 @@ public class AndroidPostTaskAction extends AndroidTaskAction {
                     task.getLogger().error("Failed in packaging apk: {}", e.getMessage());
                 }
                 break;
+            case PACKAGEFULLJAR:
+                handleJar(task, Transform.PACKAGEFULLJAR);
+            case PACKAGECLASSESJAR:
+                handleJar(task, Transform.PACKAGECLASSESJAR);
+                break;
             default:
                 break;
+        }
+    }
+
+    private void handleJar(Task task, Transform jarTransform) {
+        Set<File> outFiles = task.getOutputs().getFiles().getFiles();
+        Set<File> inputFiles = task.getInputs().getFiles().getFiles();
+        
+        Set<Datamodel.FileNode> nodes;
+        try {
+            nodes = FilenodeUtils.processSourceFiles(jarTransform, Collections.emptySet(), inputFiles, outFiles);
+            if (!nodes.isEmpty()) {
+                bsc.SendBuildFileNodes(nodes);
+            } else {
+                String message = String.format("No filenodes after processing %s", inputFiles);
+                bsc.SendLogMessage(message);
+                task.getLogger().warn(message);
+            }
+        } catch (TransformationException e) {
+            task.getLogger().warn("{} failed: {}", this.getClass().getName(), e.getMessage());
+        } catch (FileNotFoundException fnfe) {
+            task.getLogger().warn("{} failed: {}", this.getClass().getName(), fnfe.getMessage());
         }
     }
 
