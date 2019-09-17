@@ -9,7 +9,7 @@ setup(
     license='GPLv3',
 
     packages=['spdxanalyzer'],
-    install_requires=["pyqmstr=={}".format(os.environ["QMSTR_VERSION"]), 'spdx-tools'],
+    install_requires=["pyqmstr=={}".format(os.environ["QMSTR_VERSION"]), 'spdx-tools==0.5.4'],
     entry_points={
         'console_scripts': [
             'pyqmstr-spdx-analyzer = spdxanalyzer.__main__:main',
