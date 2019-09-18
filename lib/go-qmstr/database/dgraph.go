@@ -167,7 +167,7 @@ func (db *DataBase) queueWorker() {
 }
 
 func (db *DataBase) checkFileData(node *service.FileNode) {
-	fDataUID, err := db.GetFileDataUID(node.FileData.Hash)
+	fDataUID, err := db.GetFileDataUID(node.FileData.GetHash())
 	if err != nil {
 		panic(err)
 	}
@@ -189,7 +189,7 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 			// missing dep
 			ready = false
 			// look up dep in db
-			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.Hash)
+			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.GetHash())
 			if err != nil {
 				panic(err)
 			}
@@ -208,7 +208,7 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 			// missing dep
 			ready = false
 			// look up dep in db
-			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.Hash)
+			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.GetHash())
 			if err != nil {
 				panic(err)
 			}
@@ -227,7 +227,7 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 
 	// we are ready to insert the node
 	db.insertMutex.Lock()
-	uid, err := db.GetFileNodeUid(node.Path, node.FileData.Hash)
+	uid, err := db.GetFileNodeUid(node.Path, node.FileData.GetHash())
 	if err != nil {
 		panic(err)
 	}
@@ -249,7 +249,7 @@ func (db *DataBase) insertPkgNode(node *service.PackageNode) {
 			// missing dep
 			ready = false
 			// look up dep in db
-			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.Hash)
+			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.GetHash())
 			if err != nil {
 				panic(err)
 			}
