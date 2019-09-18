@@ -120,7 +120,7 @@ func SanitizeFileNode(f *service.FileNode, base string, pathSub []*service.PathS
 	if err := SetRelativePath(f, base, pathSub); err != nil {
 		return err
 	}
-	if f.FileData == nil {
+	if f.FileData.GetHash() == "" {
 		log.Printf("No hash for file %s", f.Path)
 		var hash string
 		var err error

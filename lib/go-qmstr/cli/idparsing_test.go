@@ -112,7 +112,7 @@ func TestFileNodeParsing(t *testing.T) {
 	if err != nil {
 		t.FailNow()
 	}
-	if fileNode.(*service.FileNode).FileData.Hash != "deadbeef" {
+	if fileNode.(*service.FileNode).FileData.GetHash() != "deadbeef" {
 		t.Fail()
 	}
 	fileNode, err = ParseNodeID("file")
