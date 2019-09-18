@@ -75,7 +75,7 @@ cleanall: clean
 gotest: .go_qmstr_test .go_module_test
 
 $(PROTOC_GEN_GO):
-	$(GO) get -u github.com/golang/protobuf/protoc-gen-go
+	$(GO) install github.com/golang/protobuf/protoc-gen-go
 
 # Client build target
 clients: $(QMSTR_CLIENT_BINARIES)
