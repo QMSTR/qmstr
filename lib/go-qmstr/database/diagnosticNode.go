@@ -13,7 +13,7 @@ import (
 )
 
 // AddDiagnosticNodes stores the given DiagnosticNodes in a PackageNode or FileNode identified by the nodeID
-func (db *DataBase) AddDiagnosticNodes(nodeID string, diagnosticnode *service.DiagnosticNode) error {
+func (db *DataBase) AddDiagnosticNode(nodeID string, diagnosticnode *service.DiagnosticNode) error {
 	db.insertMutex.Lock()
 	defer db.insertMutex.Unlock()
 
