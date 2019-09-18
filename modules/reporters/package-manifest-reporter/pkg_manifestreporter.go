@@ -108,7 +108,7 @@ func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode, rserv s
 			FileName: trgt.Path,
 			// this should be unique
 			FileSPDXIdentifier: "SPDXRef-file-" + trgt.Name,
-			FileChecksumSHA1:   trgt.FileData.Hash,
+			FileChecksumSHA1:   trgt.FileData.GetHash(),
 			LicenseConcluded:   "NOASSERTION",
 			LicenseInfoInFile:  []string{"NOASSERTION"},
 			FileCopyrightText:  "NOASSERTION",
@@ -123,7 +123,7 @@ func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode, rserv s
 			fl.FileCopyrightText = cprights
 		}
 		files = append(files, fl)
-		hashes = append(hashes, trgt.FileData.Hash)
+		hashes = append(hashes, trgt.FileData.GetHash())
 	}
 
 	dnldLocation := pkgNode.GetMetaData("SourceURL", "NOASSERTION")

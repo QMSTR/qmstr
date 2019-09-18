@@ -200,7 +200,7 @@ func (db *DataBase) GetFileNodesByFileNode(filenode *service.FileNode, recursive
 		vars["$Filter"] = qp.Filter
 	}
 	if filenode.FileData != nil {
-		nodeUID, err := db.GetFileNodeUidByHash(filenode.FileData.Hash)
+		nodeUID, err := db.GetFileNodeUidByHash(filenode.FileData.GetHash())
 		if err != nil {
 			return nil, err
 		}
@@ -359,5 +359,5 @@ func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {
 	if len(ret["hasNode"]) == 0 {
 		return "", errors.New("No node with such path")
 	}
-	return ret["hasNode"][0].FileData.Hash, nil
+	return ret["hasNode"][0].FileData.GetHash(), nil
 }
