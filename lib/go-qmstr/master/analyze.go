@@ -146,7 +146,7 @@ func (phase *serverPhaseAnalysis) SendDiagnosticNode(stream service.AnalysisServ
 		}
 		diagnosticNode := diagnosticNodeReq.Diagnosticnode
 		diagnosticNode.Analyzer = []*service.Analyzer{phase.currentAnalyzer}
-		err = phase.db.AddDiagnosticNodes(diagnosticNodeReq.Uid, diagnosticNode)
+		err = phase.db.AddDiagnosticNode(diagnosticNodeReq.Uid, diagnosticNode)
 		if err != nil {
 			return err
 		}
