@@ -46,4 +46,4 @@ class QMSTRCommand(Command):
             )
             self.run_command('bdist_dumb')
 
-            bdist_builder.package()
+            bdist_builder.package(self.distribution.get_name(), self.distribution.get_version())
