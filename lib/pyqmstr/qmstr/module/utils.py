@@ -53,15 +53,12 @@ def hash_file(file_path):
         return None
 
 def generate_iterator(collection):
-    """
-    """
-    # FIXME: find a better place to put it???
     for i in collection:
         yield i
 
 def new_file_node(path, hash=False):
     """
-    Returns a filenode dict with filename, checksum and broken flag
+    Returns a filenode with calculated checksum if hash parameter is True
     """
 
     if hash:
@@ -77,3 +74,10 @@ def new_file_node(path, hash=False):
     )
 
     return file_node
+
+def new_package_node(name, version, file_nodes):
+    return PackageNode(
+        name=name,
+        version=version,
+        targets=file_nodes
+    )

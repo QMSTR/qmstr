@@ -69,3 +69,7 @@ class QMSTR_Builder(QMSTR_Module):
         logging.warn("sending file nodes %s", file_nodes)
         fn_iterator = generate_iterator(file_nodes)
         response = self.buildserv.Build(fn_iterator)
+
+    def send_package(self, package_node):
+        logging.warn("sending packagenode %s", package_node)
+        response = self.buildserv.CreatePackage(package_node)
