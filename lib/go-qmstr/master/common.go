@@ -138,7 +138,7 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 	}
 	offset, first := 0, 500
 	for {
-		nodeFiles, err := db.GetFileNodesByFileNode(in, true, offset, first)
+		nodeFiles, err := db.GetFileNodesByFileNode(in, offset, first)
 		if err != nil {
 			return fmt.Errorf("Query GetFileNodesByFileNode returned: %v", err)
 		}
