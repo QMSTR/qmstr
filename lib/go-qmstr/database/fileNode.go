@@ -146,12 +146,12 @@ func (db *DataBase) GetFileDataUID(hash string) (string, error) {
 // with this filetype.
 // You can query for just one attribute. For instance, if you set filetype and hash, only the
 // hash will be used in the query.
-func (db *DataBase) GetFileNodesByFileNode(in *service.GetFileNodeMessage, recursive bool, offset int, first int) ([]*service.FileNode, error) {
+func (db *DataBase) GetFileNodesByFileNode(in *service.GetFileNodeMessage, offset int, first int) ([]*service.FileNode, error) {
 	filenode := in.FileNode
 	var ret map[string][]interface{}
 
 	q := `query FileNodeByFileNode($Filter: string, $TypeFilter: int, $Offset: int, $First: int){
-			getFileNodeByFileNode(func: has(fileNodeType), {{.Pagination}}) {{.Query}} {{.Recurse}}{
+			getFileNodeByFileNode(func: has(fileNodeType), {{.Pagination}}) {{.Query}} @recurse(loop: true, depth:2){
 			  uid
 			  fileNodeType
 			  path
@@ -178,9 +178,6 @@ func (db *DataBase) GetFileNodesByFileNode(in *service.GetFileNodeMessage, recur
 	qp := QueryParams{}
 	vars := map[string]string{}
 
-	if recursive {
-		qp.Recurse = "@recurse(loop: true, depth:2)"
-	}
 	if filenode.Uid != "" {
 		qp.Filter = filenode.Uid
 		qp.Query = "@filter(uid($Filter))"
@@ -215,7 +212,7 @@ func (db *DataBase) GetFileNodesByFileNode(in *service.GetFileNodeMessage, recur
 		}
 		var filesWithAllData []*service.FileNode
 		for _, file := range filesWithUID {
-			nodeFiles, err := db.GetFileNodesByFileNode(&service.GetFileNodeMessage{FileNode: file}, true, 0, 500)
+			nodeFiles, err := db.GetFileNodesByFileNode(&service.GetFileNodeMessage{FileNode: file}, 0, 500)
 			if err != nil {
 				return nil, err
 			}
