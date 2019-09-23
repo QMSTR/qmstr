@@ -72,7 +72,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
     def _process_filenodes(self):
 
         query_node = GetFileNodeMessage(
-            fileNode = FileNode(
+            fileNode=FileNode(
                 fileType=FileNode.SOURCE
             )
         )
@@ -194,6 +194,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
             return (None, error)
         else:
             return (document, None)
+
 
 def main():
     logging.basicConfig(level=logging.INFO)
