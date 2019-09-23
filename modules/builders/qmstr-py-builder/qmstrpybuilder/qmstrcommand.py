@@ -2,7 +2,6 @@ import logging
 from setuptools import Command
 from qmstr.module import utils
 from qmstrpybuilder.bdistbuilder import BdistBuilder
-import pkg_resources
 from tempfile import TemporaryDirectory
 import sys
 import os
@@ -11,7 +10,6 @@ import os
 class QMSTRCommand(Command):
 
     """QMSTR setuptools Command"""
-
 
     description = "create build graph for the python module"
 
@@ -34,7 +32,8 @@ class QMSTRCommand(Command):
         """runner"""
 
         with TemporaryDirectory(prefix="qmstr") as temp_dir:
-            bdist_builder = BdistBuilder(self.master_address, os.curdir, temp_dir)
+            bdist_builder = BdistBuilder(
+                self.master_address, os.curdir, temp_dir)
             bdist_builder.index()
 
             self.reinitialize_command(
@@ -46,4 +45,5 @@ class QMSTRCommand(Command):
             )
             self.run_command('bdist_dumb')
 
-            bdist_builder.package(self.distribution.get_name(), self.distribution.get_version())
+            bdist_builder.package(
+                self.distribution.get_name(), self.distribution.get_version())

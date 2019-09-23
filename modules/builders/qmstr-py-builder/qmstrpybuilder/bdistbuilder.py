@@ -28,4 +28,3 @@ class BdistBuilder(QMSTR_Builder):
         file_nodes = [new_file_node(f, hash=True) for f in file_list]
         pkg_node = new_package_node(name, version, file_nodes)
         self.send_package(pkg_node)
-
