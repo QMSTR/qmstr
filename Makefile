@@ -120,7 +120,7 @@ checkpep8: $(PYTHON_FILES) venv
 	venv/bin/autopep8 --diff $(filter-out venv, $^)
 
 .PHONY: autopep8
-autopep8: $(PYTHON_FILES) venv
+autopep8: $(PYTHON_FILES) venv/bin/autopep8
 	venv/bin/autopep8 -i $(filter-out venv, $^)
 
 # include all makefiles
