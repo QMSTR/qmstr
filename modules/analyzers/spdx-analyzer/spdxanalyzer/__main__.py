@@ -4,6 +4,7 @@ from qmstr.service.datamodel_pb2 import FileNode, InfoNode, PackageNode
 from qmstr.service.controlservice_pb2 import GetFileNodeMessage
 from qmstr.service.analyzerservice_pb2 import InfoNodeMessage
 from qmstr.module.module import QMSTR_Analyzer
+from qmstr.module.utils import generate_iterator
 from spdx.document import License
 import logging
 import sys
@@ -112,7 +113,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
                 token=self.token,
                 infonode=info_node))
 
-            info_iterator = _generate_iterator(info_nodes)
+            info_iterator = generate_iterator(info_nodes)
 
             self.aserv.SendInfoNodes(info_iterator)
 
@@ -155,7 +156,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
                 token=self.token,
                 infonode=info_node))
 
-            info_iterator = _generate_iterator(info_nodes)
+            info_iterator = generate_iterator(info_nodes)
 
             self.aserv.SendInfoNodes(info_iterator)
 
@@ -193,12 +194,6 @@ class SpdxAnalyzer(QMSTR_Analyzer):
             return (None, error)
         else:
             return (document, None)
-
-
-def _generate_iterator(collection):
-    for i in collection:
-        yield i
-
 
 def main():
     logging.basicConfig(level=logging.INFO)
