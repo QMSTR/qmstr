@@ -1,5 +1,4 @@
 import os
-from tempfile import mkdtemp
 import hashlib
 import json
 import logging
@@ -10,7 +9,6 @@ def _filter_out_hidden_files(path_list):
     """
     Returns the path list ignoring all paths and files starting with a dot.
     """
-    # FIXME: is it needed?
     return [path for path in path_list if not path.startswith(".")]
 
 
@@ -48,13 +46,14 @@ def hash_file(file_path):
         file_hash = hasher.hexdigest()
         return file_hash
     except FileNotFoundError as e:
-        # FIXME: should we just ignore files not found?
-        logging.error("ERROR: ", e)
+        logging.error("failed to create checksum for %s [%s]", file_path, e)
         return None
+
 
 def generate_iterator(collection):
     for i in collection:
         yield i
+
 
 def new_file_node(path, hash=False):
     """
@@ -75,6 +74,7 @@ def new_file_node(path, hash=False):
     )
 
     return file_node
+
 
 def new_package_node(name, version, file_nodes):
     return PackageNode(
