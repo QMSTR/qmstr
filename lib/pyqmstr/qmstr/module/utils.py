@@ -69,8 +69,9 @@ def new_file_node(path, hash=False):
     file_node = FileNode(
         path=path,
         fileType=FileNode.UNDEF,
-        hash=chksum,
-        name=os.path.basename(path)
+        name=os.path.basename(path),
+        fileData=FileNode.FileDataNode(
+            hash=chksum,)
     )
 
     return file_node
