@@ -36,7 +36,7 @@ function get_qmstr_user() {
 function start_dgraph() {
     dgraph version
     dgraph zero &
-    dgraph server --lru_mb=2048 --zero=localhost:5080 --export=/var/qmstr/export &
+    dgraph alpha --lru_mb=2048 --zero=localhost:5080 --export=/var/qmstr/export &
 }
 
 function start_dgraph_web() {

@@ -10,7 +10,7 @@ require (
 	github.com/Sirupsen/logrus v0.0.0-00010101000000-000000000000 // indirect
 	github.com/blakesmith/ar v0.0.0-20190502131153-809d4375e1fb
 	github.com/cpuguy83/go-md2man v1.0.10 // indirect
-	github.com/dgraph-io/dgo v0.0.0-20190306204622-95299da439fd
+	github.com/dgraph-io/dgo/v2 v2.0.0
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/docker v1.13.1
 	github.com/docker/go-connections v0.4.0
@@ -35,7 +35,7 @@ require (
 	github.com/spf13/afero v1.2.2
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3
-	github.com/stretchr/testify v1.2.2
+	github.com/stretchr/testify v1.4.0
 	github.com/ulikunitz/xz v0.5.6
 	golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7 // indirect
 	golang.org/x/exp v0.0.0-20190918031936-a05e19747a03 // indirect
@@ -50,7 +50,7 @@ require (
 	golang.org/x/tools v0.0.0-20190917215024-905c8ffbfa41 // indirect
 	google.golang.org/appengine v1.6.2 // indirect
 	google.golang.org/genproto v0.0.0-20190916214212-f660b8655731 // indirect
-	google.golang.org/grpc v1.20.0
+	google.golang.org/grpc v1.23.0
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v2 v2.2.2
 	honnef.co/go/tools v0.0.1-2019.2.3 // indirect
