@@ -17,8 +17,8 @@ import (
 	"encoding/json"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
-	client "github.com/dgraph-io/dgo"
-	"github.com/dgraph-io/dgo/protos/api"
+	client "github.com/dgraph-io/dgo/v2"
+	"github.com/dgraph-io/dgo/v2/protos/api"
 
 	"google.golang.org/grpc"
 )
@@ -29,7 +29,7 @@ hash:string @index(exact) .
 fileType:int @index(int) .
 type:string @index(hash) .
 name:string @index(hash) .
-dataNodes:uid @reverse .
+dataNodes:[uid] @reverse .
 data:string @index(hash) .
 projectNodeType:string @index(hash) .
 trustLevel:string @index(hash) .

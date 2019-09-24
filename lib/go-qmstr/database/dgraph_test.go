@@ -49,7 +49,7 @@ type:string @index(hash) .
 trustLevel:string @index(hash) .
 fileType:int @index(int) .
 phase:int .
-dataNodes:uid @reverse .
+dataNodes:[uid] @reverse .
 buildConfig:string .
 projectNodeType:string @index(hash) .
 dataNodeType:string @index(hash) .
