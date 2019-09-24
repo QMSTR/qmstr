@@ -398,19 +398,27 @@ public final class Datamodel {
         getNameBytes();
 
     /**
-     * <code>string hash = 6;</code>
+     * <code>.service.FileNode.FileDataNode fileData = 6;</code>
      */
-    java.lang.String getHash();
+    boolean hasFileData();
     /**
-     * <code>string hash = 6;</code>
+     * <code>.service.FileNode.FileDataNode fileData = 6;</code>
      */
-    com.google.protobuf.ByteString
-        getHashBytes();
+    org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode getFileData();
+    /**
+     * <code>.service.FileNode.FileDataNode fileData = 6;</code>
+     */
+    org.qmstr.grpc.service.Datamodel.FileNode.FileDataNodeOrBuilder getFileDataOrBuilder();
 
     /**
-     * <code>bool broken = 7;</code>
+     * <code>string timestamp = 7;</code>
      */
-    boolean getBroken();
+    java.lang.String getTimestamp();
+    /**
+     * <code>string timestamp = 7;</code>
+     */
+    com.google.protobuf.ByteString
+        getTimestampBytes();
 
     /**
      * <code>repeated .service.FileNode derivedFrom = 8;</code>
@@ -437,81 +445,28 @@ public final class Datamodel {
         int index);
 
     /**
-     * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-     */
-    java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> 
-        getAdditionalInfoList();
-    /**
-     * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-     */
-    org.qmstr.grpc.service.Datamodel.InfoNode getAdditionalInfo(int index);
-    /**
-     * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-     */
-    int getAdditionalInfoCount();
-    /**
-     * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-     */
-    java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
-        getAdditionalInfoOrBuilderList();
-    /**
-     * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-     */
-    org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getAdditionalInfoOrBuilder(
-        int index);
-
-    /**
-     * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-     */
-    java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode> 
-        getDiagnosticInfoList();
-    /**
-     * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-     */
-    org.qmstr.grpc.service.Datamodel.DiagnosticNode getDiagnosticInfo(int index);
-    /**
-     * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-     */
-    int getDiagnosticInfoCount();
-    /**
-     * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-     */
-    java.util.List<? extends org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder> 
-        getDiagnosticInfoOrBuilderList();
-    /**
-     * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-     */
-    org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder getDiagnosticInfoOrBuilder(
-        int index);
-
-    /**
-     * <code>repeated .service.FileNode dependencies = 11;</code>
+     * <code>repeated .service.FileNode dependencies = 9;</code>
      */
     java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> 
         getDependenciesList();
     /**
-     * <code>repeated .service.FileNode dependencies = 11;</code>
+     * <code>repeated .service.FileNode dependencies = 9;</code>
      */
     org.qmstr.grpc.service.Datamodel.FileNode getDependencies(int index);
     /**
-     * <code>repeated .service.FileNode dependencies = 11;</code>
+     * <code>repeated .service.FileNode dependencies = 9;</code>
      */
     int getDependenciesCount();
     /**
-     * <code>repeated .service.FileNode dependencies = 11;</code>
+     * <code>repeated .service.FileNode dependencies = 9;</code>
      */
     java.util.List<? extends org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder> 
         getDependenciesOrBuilderList();
     /**
-     * <code>repeated .service.FileNode dependencies = 11;</code>
+     * <code>repeated .service.FileNode dependencies = 9;</code>
      */
     org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder getDependenciesOrBuilder(
         int index);
-
-    /**
-     * <code>int64 timestamp = 12;</code>
-     */
-    long getTimestamp();
   }
   /**
    * Protobuf type {@code service.FileNode}
@@ -531,13 +486,9 @@ public final class Datamodel {
       fileType_ = 0;
       path_ = "";
       name_ = "";
-      hash_ = "";
-      broken_ = false;
+      timestamp_ = "";
       derivedFrom_ = java.util.Collections.emptyList();
-      additionalInfo_ = java.util.Collections.emptyList();
-      diagnosticInfo_ = java.util.Collections.emptyList();
       dependencies_ = java.util.Collections.emptyList();
-      timestamp_ = 0L;
     }
 
     @java.lang.Override
@@ -602,14 +553,22 @@ public final class Datamodel {
               break;
             }
             case 50: {
-              java.lang.String s = input.readStringRequireUtf8();
+              org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.Builder subBuilder = null;
+              if (fileData_ != null) {
+                subBuilder = fileData_.toBuilder();
+              }
+              fileData_ = input.readMessage(org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(fileData_);
+                fileData_ = subBuilder.buildPartial();
+              }
 
-              hash_ = s;
               break;
             }
-            case 56: {
+            case 58: {
+              java.lang.String s = input.readStringRequireUtf8();
 
-              broken_ = input.readBool();
+              timestamp_ = s;
               break;
             }
             case 66: {
@@ -623,34 +582,11 @@ public final class Datamodel {
             }
             case 74: {
               if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
-                additionalInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.InfoNode>();
-                mutable_bitField0_ |= 0x00000100;
-              }
-              additionalInfo_.add(
-                  input.readMessage(org.qmstr.grpc.service.Datamodel.InfoNode.parser(), extensionRegistry));
-              break;
-            }
-            case 82: {
-              if (!((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
-                diagnosticInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.DiagnosticNode>();
-                mutable_bitField0_ |= 0x00000200;
-              }
-              diagnosticInfo_.add(
-                  input.readMessage(org.qmstr.grpc.service.Datamodel.DiagnosticNode.parser(), extensionRegistry));
-              break;
-            }
-            case 90: {
-              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
                 dependencies_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.FileNode>();
-                mutable_bitField0_ |= 0x00000400;
+                mutable_bitField0_ |= 0x00000100;
               }
               dependencies_.add(
                   input.readMessage(org.qmstr.grpc.service.Datamodel.FileNode.parser(), extensionRegistry));
-              break;
-            }
-            case 96: {
-
-              timestamp_ = input.readInt64();
               break;
             }
           }
@@ -665,12 +601,6 @@ public final class Datamodel {
           derivedFrom_ = java.util.Collections.unmodifiableList(derivedFrom_);
         }
         if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
-          additionalInfo_ = java.util.Collections.unmodifiableList(additionalInfo_);
-        }
-        if (((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
-          diagnosticInfo_ = java.util.Collections.unmodifiableList(diagnosticInfo_);
-        }
-        if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
           dependencies_ = java.util.Collections.unmodifiableList(dependencies_);
         }
         this.unknownFields = unknownFields.build();
@@ -803,6 +733,1544 @@ public final class Datamodel {
       }
 
       // @@protoc_insertion_point(enum_scope:service.FileNode.Type)
+    }
+
+    public interface FileDataNodeOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:service.FileNode.FileDataNode)
+        com.google.protobuf.MessageOrBuilder {
+
+      /**
+       * <code>string uid = 1;</code>
+       */
+      java.lang.String getUid();
+      /**
+       * <code>string uid = 1;</code>
+       */
+      com.google.protobuf.ByteString
+          getUidBytes();
+
+      /**
+       * <code>string fileDataNodeType = 2;</code>
+       */
+      java.lang.String getFileDataNodeType();
+      /**
+       * <code>string fileDataNodeType = 2;</code>
+       */
+      com.google.protobuf.ByteString
+          getFileDataNodeTypeBytes();
+
+      /**
+       * <code>string hash = 3;</code>
+       */
+      java.lang.String getHash();
+      /**
+       * <code>string hash = 3;</code>
+       */
+      com.google.protobuf.ByteString
+          getHashBytes();
+
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+       */
+      java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> 
+          getAdditionalInfoList();
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+       */
+      org.qmstr.grpc.service.Datamodel.InfoNode getAdditionalInfo(int index);
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+       */
+      int getAdditionalInfoCount();
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+       */
+      java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
+          getAdditionalInfoOrBuilderList();
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+       */
+      org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getAdditionalInfoOrBuilder(
+          int index);
+
+      /**
+       * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+       */
+      java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode> 
+          getDiagnosticInfoList();
+      /**
+       * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+       */
+      org.qmstr.grpc.service.Datamodel.DiagnosticNode getDiagnosticInfo(int index);
+      /**
+       * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+       */
+      int getDiagnosticInfoCount();
+      /**
+       * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+       */
+      java.util.List<? extends org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder> 
+          getDiagnosticInfoOrBuilderList();
+      /**
+       * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+       */
+      org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder getDiagnosticInfoOrBuilder(
+          int index);
+    }
+    /**
+     * Protobuf type {@code service.FileNode.FileDataNode}
+     */
+    public  static final class FileDataNode extends
+        com.google.protobuf.GeneratedMessageV3 implements
+        // @@protoc_insertion_point(message_implements:service.FileNode.FileDataNode)
+        FileDataNodeOrBuilder {
+    private static final long serialVersionUID = 0L;
+      // Use FileDataNode.newBuilder() to construct.
+      private FileDataNode(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+        super(builder);
+      }
+      private FileDataNode() {
+        uid_ = "";
+        fileDataNodeType_ = "";
+        hash_ = "";
+        additionalInfo_ = java.util.Collections.emptyList();
+        diagnosticInfo_ = java.util.Collections.emptyList();
+      }
+
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+      getUnknownFields() {
+        return this.unknownFields;
+      }
+      private FileDataNode(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        this();
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownFieldProto3(
+                    input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 10: {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                uid_ = s;
+                break;
+              }
+              case 18: {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                fileDataNodeType_ = s;
+                break;
+              }
+              case 26: {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                hash_ = s;
+                break;
+              }
+              case 34: {
+                if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                  additionalInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.InfoNode>();
+                  mutable_bitField0_ |= 0x00000008;
+                }
+                additionalInfo_.add(
+                    input.readMessage(org.qmstr.grpc.service.Datamodel.InfoNode.parser(), extensionRegistry));
+                break;
+              }
+              case 42: {
+                if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+                  diagnosticInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.DiagnosticNode>();
+                  mutable_bitField0_ |= 0x00000010;
+                }
+                diagnosticInfo_.add(
+                    input.readMessage(org.qmstr.grpc.service.Datamodel.DiagnosticNode.parser(), extensionRegistry));
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e).setUnfinishedMessage(this);
+        } finally {
+          if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+            additionalInfo_ = java.util.Collections.unmodifiableList(additionalInfo_);
+          }
+          if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+            diagnosticInfo_ = java.util.Collections.unmodifiableList(diagnosticInfo_);
+          }
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.qmstr.grpc.service.Datamodel.internal_static_service_FileNode_FileDataNode_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.qmstr.grpc.service.Datamodel.internal_static_service_FileNode_FileDataNode_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.class, org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.Builder.class);
+      }
+
+      private int bitField0_;
+      public static final int UID_FIELD_NUMBER = 1;
+      private volatile java.lang.Object uid_;
+      /**
+       * <code>string uid = 1;</code>
+       */
+      public java.lang.String getUid() {
+        java.lang.Object ref = uid_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          uid_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string uid = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getUidBytes() {
+        java.lang.Object ref = uid_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          uid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      public static final int FILEDATANODETYPE_FIELD_NUMBER = 2;
+      private volatile java.lang.Object fileDataNodeType_;
+      /**
+       * <code>string fileDataNodeType = 2;</code>
+       */
+      public java.lang.String getFileDataNodeType() {
+        java.lang.Object ref = fileDataNodeType_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          fileDataNodeType_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string fileDataNodeType = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getFileDataNodeTypeBytes() {
+        java.lang.Object ref = fileDataNodeType_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          fileDataNodeType_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      public static final int HASH_FIELD_NUMBER = 3;
+      private volatile java.lang.Object hash_;
+      /**
+       * <code>string hash = 3;</code>
+       */
+      public java.lang.String getHash() {
+        java.lang.Object ref = hash_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          hash_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string hash = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getHashBytes() {
+        java.lang.Object ref = hash_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          hash_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      public static final int ADDITIONALINFO_FIELD_NUMBER = 4;
+      private java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> additionalInfo_;
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+       */
+      public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> getAdditionalInfoList() {
+        return additionalInfo_;
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+       */
+      public java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
+          getAdditionalInfoOrBuilderList() {
+        return additionalInfo_;
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+       */
+      public int getAdditionalInfoCount() {
+        return additionalInfo_.size();
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNode getAdditionalInfo(int index) {
+        return additionalInfo_.get(index);
+      }
+      /**
+       * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getAdditionalInfoOrBuilder(
+          int index) {
+        return additionalInfo_.get(index);
+      }
+
+      public static final int DIAGNOSTICINFO_FIELD_NUMBER = 5;
+      private java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode> diagnosticInfo_;
+      /**
+       * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+       */
+      public java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode> getDiagnosticInfoList() {
+        return diagnosticInfo_;
+      }
+      /**
+       * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+       */
+      public java.util.List<? extends org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder> 
+          getDiagnosticInfoOrBuilderList() {
+        return diagnosticInfo_;
+      }
+      /**
+       * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+       */
+      public int getDiagnosticInfoCount() {
+        return diagnosticInfo_.size();
+      }
+      /**
+       * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.DiagnosticNode getDiagnosticInfo(int index) {
+        return diagnosticInfo_.get(index);
+      }
+      /**
+       * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder getDiagnosticInfoOrBuilder(
+          int index) {
+        return diagnosticInfo_.get(index);
+      }
+
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
+
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        if (!getUidBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uid_);
+        }
+        if (!getFileDataNodeTypeBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 2, fileDataNodeType_);
+        }
+        if (!getHashBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 3, hash_);
+        }
+        for (int i = 0; i < additionalInfo_.size(); i++) {
+          output.writeMessage(4, additionalInfo_.get(i));
+        }
+        for (int i = 0; i < diagnosticInfo_.size(); i++) {
+          output.writeMessage(5, diagnosticInfo_.get(i));
+        }
+        unknownFields.writeTo(output);
+      }
+
+      public int getSerializedSize() {
+        int size = memoizedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (!getUidBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uid_);
+        }
+        if (!getFileDataNodeTypeBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, fileDataNodeType_);
+        }
+        if (!getHashBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, hash_);
+        }
+        for (int i = 0; i < additionalInfo_.size(); i++) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(4, additionalInfo_.get(i));
+        }
+        for (int i = 0; i < diagnosticInfo_.size(); i++) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(5, diagnosticInfo_.get(i));
+        }
+        size += unknownFields.getSerializedSize();
+        memoizedSize = size;
+        return size;
+      }
+
+      @java.lang.Override
+      public boolean equals(final java.lang.Object obj) {
+        if (obj == this) {
+         return true;
+        }
+        if (!(obj instanceof org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode)) {
+          return super.equals(obj);
+        }
+        org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode other = (org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode) obj;
+
+        boolean result = true;
+        result = result && getUid()
+            .equals(other.getUid());
+        result = result && getFileDataNodeType()
+            .equals(other.getFileDataNodeType());
+        result = result && getHash()
+            .equals(other.getHash());
+        result = result && getAdditionalInfoList()
+            .equals(other.getAdditionalInfoList());
+        result = result && getDiagnosticInfoList()
+            .equals(other.getDiagnosticInfoList());
+        result = result && unknownFields.equals(other.unknownFields);
+        return result;
+      }
+
+      @java.lang.Override
+      public int hashCode() {
+        if (memoizedHashCode != 0) {
+          return memoizedHashCode;
+        }
+        int hash = 41;
+        hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (37 * hash) + UID_FIELD_NUMBER;
+        hash = (53 * hash) + getUid().hashCode();
+        hash = (37 * hash) + FILEDATANODETYPE_FIELD_NUMBER;
+        hash = (53 * hash) + getFileDataNodeType().hashCode();
+        hash = (37 * hash) + HASH_FIELD_NUMBER;
+        hash = (53 * hash) + getHash().hashCode();
+        if (getAdditionalInfoCount() > 0) {
+          hash = (37 * hash) + ADDITIONALINFO_FIELD_NUMBER;
+          hash = (53 * hash) + getAdditionalInfoList().hashCode();
+        }
+        if (getDiagnosticInfoCount() > 0) {
+          hash = (37 * hash) + DIAGNOSTICINFO_FIELD_NUMBER;
+          hash = (53 * hash) + getDiagnosticInfoList().hashCode();
+        }
+        hash = (29 * hash) + unknownFields.hashCode();
+        memoizedHashCode = hash;
+        return hash;
+      }
+
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseFrom(
+          java.nio.ByteBuffer data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseFrom(
+          java.nio.ByteBuffer data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
+      }
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
+      }
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input);
+      }
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+      }
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
+      }
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
+      }
+
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
+      }
+      public static Builder newBuilder(org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE
+            ? new Builder() : new Builder().mergeFrom(this);
+      }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code service.FileNode.FileDataNode}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+          // @@protoc_insertion_point(builder_implements:service.FileNode.FileDataNode)
+          org.qmstr.grpc.service.Datamodel.FileNode.FileDataNodeOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return org.qmstr.grpc.service.Datamodel.internal_static_service_FileNode_FileDataNode_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return org.qmstr.grpc.service.Datamodel.internal_static_service_FileNode_FileDataNode_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.class, org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.Builder.class);
+        }
+
+        // Construct using org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessageV3
+                  .alwaysUseFieldBuilders) {
+            getAdditionalInfoFieldBuilder();
+            getDiagnosticInfoFieldBuilder();
+          }
+        }
+        public Builder clear() {
+          super.clear();
+          uid_ = "";
+
+          fileDataNodeType_ = "";
+
+          hash_ = "";
+
+          if (additionalInfoBuilder_ == null) {
+            additionalInfo_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            additionalInfoBuilder_.clear();
+          }
+          if (diagnosticInfoBuilder_ == null) {
+            diagnosticInfo_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000010);
+          } else {
+            diagnosticInfoBuilder_.clear();
+          }
+          return this;
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return org.qmstr.grpc.service.Datamodel.internal_static_service_FileNode_FileDataNode_descriptor;
+        }
+
+        public org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode getDefaultInstanceForType() {
+          return org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.getDefaultInstance();
+        }
+
+        public org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode build() {
+          org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode buildPartial() {
+          org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode result = new org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          result.uid_ = uid_;
+          result.fileDataNodeType_ = fileDataNodeType_;
+          result.hash_ = hash_;
+          if (additionalInfoBuilder_ == null) {
+            if (((bitField0_ & 0x00000008) == 0x00000008)) {
+              additionalInfo_ = java.util.Collections.unmodifiableList(additionalInfo_);
+              bitField0_ = (bitField0_ & ~0x00000008);
+            }
+            result.additionalInfo_ = additionalInfo_;
+          } else {
+            result.additionalInfo_ = additionalInfoBuilder_.build();
+          }
+          if (diagnosticInfoBuilder_ == null) {
+            if (((bitField0_ & 0x00000010) == 0x00000010)) {
+              diagnosticInfo_ = java.util.Collections.unmodifiableList(diagnosticInfo_);
+              bitField0_ = (bitField0_ & ~0x00000010);
+            }
+            result.diagnosticInfo_ = diagnosticInfo_;
+          } else {
+            result.diagnosticInfo_ = diagnosticInfoBuilder_.build();
+          }
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder clone() {
+          return (Builder) super.clone();
+        }
+        public Builder setField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            java.lang.Object value) {
+          return (Builder) super.setField(field, value);
+        }
+        public Builder clearField(
+            com.google.protobuf.Descriptors.FieldDescriptor field) {
+          return (Builder) super.clearField(field);
+        }
+        public Builder clearOneof(
+            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+          return (Builder) super.clearOneof(oneof);
+        }
+        public Builder setRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            int index, java.lang.Object value) {
+          return (Builder) super.setRepeatedField(field, index, value);
+        }
+        public Builder addRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            java.lang.Object value) {
+          return (Builder) super.addRepeatedField(field, value);
+        }
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode) {
+            return mergeFrom((org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode other) {
+          if (other == org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.getDefaultInstance()) return this;
+          if (!other.getUid().isEmpty()) {
+            uid_ = other.uid_;
+            onChanged();
+          }
+          if (!other.getFileDataNodeType().isEmpty()) {
+            fileDataNodeType_ = other.fileDataNodeType_;
+            onChanged();
+          }
+          if (!other.getHash().isEmpty()) {
+            hash_ = other.hash_;
+            onChanged();
+          }
+          if (additionalInfoBuilder_ == null) {
+            if (!other.additionalInfo_.isEmpty()) {
+              if (additionalInfo_.isEmpty()) {
+                additionalInfo_ = other.additionalInfo_;
+                bitField0_ = (bitField0_ & ~0x00000008);
+              } else {
+                ensureAdditionalInfoIsMutable();
+                additionalInfo_.addAll(other.additionalInfo_);
+              }
+              onChanged();
+            }
+          } else {
+            if (!other.additionalInfo_.isEmpty()) {
+              if (additionalInfoBuilder_.isEmpty()) {
+                additionalInfoBuilder_.dispose();
+                additionalInfoBuilder_ = null;
+                additionalInfo_ = other.additionalInfo_;
+                bitField0_ = (bitField0_ & ~0x00000008);
+                additionalInfoBuilder_ = 
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                     getAdditionalInfoFieldBuilder() : null;
+              } else {
+                additionalInfoBuilder_.addAllMessages(other.additionalInfo_);
+              }
+            }
+          }
+          if (diagnosticInfoBuilder_ == null) {
+            if (!other.diagnosticInfo_.isEmpty()) {
+              if (diagnosticInfo_.isEmpty()) {
+                diagnosticInfo_ = other.diagnosticInfo_;
+                bitField0_ = (bitField0_ & ~0x00000010);
+              } else {
+                ensureDiagnosticInfoIsMutable();
+                diagnosticInfo_.addAll(other.diagnosticInfo_);
+              }
+              onChanged();
+            }
+          } else {
+            if (!other.diagnosticInfo_.isEmpty()) {
+              if (diagnosticInfoBuilder_.isEmpty()) {
+                diagnosticInfoBuilder_.dispose();
+                diagnosticInfoBuilder_ = null;
+                diagnosticInfo_ = other.diagnosticInfo_;
+                bitField0_ = (bitField0_ & ~0x00000010);
+                diagnosticInfoBuilder_ = 
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                     getDiagnosticInfoFieldBuilder() : null;
+              } else {
+                diagnosticInfoBuilder_.addAllMessages(other.diagnosticInfo_);
+              }
+            }
+          }
+          this.mergeUnknownFields(other.unknownFields);
+          onChanged();
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode) e.getUnfinishedMessage();
+            throw e.unwrapIOException();
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        private java.lang.Object uid_ = "";
+        /**
+         * <code>string uid = 1;</code>
+         */
+        public java.lang.String getUid() {
+          java.lang.Object ref = uid_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            uid_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>string uid = 1;</code>
+         */
+        public com.google.protobuf.ByteString
+            getUidBytes() {
+          java.lang.Object ref = uid_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            uid_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string uid = 1;</code>
+         */
+        public Builder setUid(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          uid_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string uid = 1;</code>
+         */
+        public Builder clearUid() {
+          
+          uid_ = getDefaultInstance().getUid();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string uid = 1;</code>
+         */
+        public Builder setUidBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          uid_ = value;
+          onChanged();
+          return this;
+        }
+
+        private java.lang.Object fileDataNodeType_ = "";
+        /**
+         * <code>string fileDataNodeType = 2;</code>
+         */
+        public java.lang.String getFileDataNodeType() {
+          java.lang.Object ref = fileDataNodeType_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            fileDataNodeType_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>string fileDataNodeType = 2;</code>
+         */
+        public com.google.protobuf.ByteString
+            getFileDataNodeTypeBytes() {
+          java.lang.Object ref = fileDataNodeType_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            fileDataNodeType_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string fileDataNodeType = 2;</code>
+         */
+        public Builder setFileDataNodeType(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          fileDataNodeType_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string fileDataNodeType = 2;</code>
+         */
+        public Builder clearFileDataNodeType() {
+          
+          fileDataNodeType_ = getDefaultInstance().getFileDataNodeType();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string fileDataNodeType = 2;</code>
+         */
+        public Builder setFileDataNodeTypeBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          fileDataNodeType_ = value;
+          onChanged();
+          return this;
+        }
+
+        private java.lang.Object hash_ = "";
+        /**
+         * <code>string hash = 3;</code>
+         */
+        public java.lang.String getHash() {
+          java.lang.Object ref = hash_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            hash_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>string hash = 3;</code>
+         */
+        public com.google.protobuf.ByteString
+            getHashBytes() {
+          java.lang.Object ref = hash_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            hash_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string hash = 3;</code>
+         */
+        public Builder setHash(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          hash_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string hash = 3;</code>
+         */
+        public Builder clearHash() {
+          
+          hash_ = getDefaultInstance().getHash();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string hash = 3;</code>
+         */
+        public Builder setHashBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          hash_ = value;
+          onChanged();
+          return this;
+        }
+
+        private java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> additionalInfo_ =
+          java.util.Collections.emptyList();
+        private void ensureAdditionalInfoIsMutable() {
+          if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+            additionalInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.InfoNode>(additionalInfo_);
+            bitField0_ |= 0x00000008;
+           }
+        }
+
+        private com.google.protobuf.RepeatedFieldBuilderV3<
+            org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> additionalInfoBuilder_;
+
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> getAdditionalInfoList() {
+          if (additionalInfoBuilder_ == null) {
+            return java.util.Collections.unmodifiableList(additionalInfo_);
+          } else {
+            return additionalInfoBuilder_.getMessageList();
+          }
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public int getAdditionalInfoCount() {
+          if (additionalInfoBuilder_ == null) {
+            return additionalInfo_.size();
+          } else {
+            return additionalInfoBuilder_.getCount();
+          }
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public org.qmstr.grpc.service.Datamodel.InfoNode getAdditionalInfo(int index) {
+          if (additionalInfoBuilder_ == null) {
+            return additionalInfo_.get(index);
+          } else {
+            return additionalInfoBuilder_.getMessage(index);
+          }
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public Builder setAdditionalInfo(
+            int index, org.qmstr.grpc.service.Datamodel.InfoNode value) {
+          if (additionalInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureAdditionalInfoIsMutable();
+            additionalInfo_.set(index, value);
+            onChanged();
+          } else {
+            additionalInfoBuilder_.setMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public Builder setAdditionalInfo(
+            int index, org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
+          if (additionalInfoBuilder_ == null) {
+            ensureAdditionalInfoIsMutable();
+            additionalInfo_.set(index, builderForValue.build());
+            onChanged();
+          } else {
+            additionalInfoBuilder_.setMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public Builder addAdditionalInfo(org.qmstr.grpc.service.Datamodel.InfoNode value) {
+          if (additionalInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureAdditionalInfoIsMutable();
+            additionalInfo_.add(value);
+            onChanged();
+          } else {
+            additionalInfoBuilder_.addMessage(value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public Builder addAdditionalInfo(
+            int index, org.qmstr.grpc.service.Datamodel.InfoNode value) {
+          if (additionalInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureAdditionalInfoIsMutable();
+            additionalInfo_.add(index, value);
+            onChanged();
+          } else {
+            additionalInfoBuilder_.addMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public Builder addAdditionalInfo(
+            org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
+          if (additionalInfoBuilder_ == null) {
+            ensureAdditionalInfoIsMutable();
+            additionalInfo_.add(builderForValue.build());
+            onChanged();
+          } else {
+            additionalInfoBuilder_.addMessage(builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public Builder addAdditionalInfo(
+            int index, org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
+          if (additionalInfoBuilder_ == null) {
+            ensureAdditionalInfoIsMutable();
+            additionalInfo_.add(index, builderForValue.build());
+            onChanged();
+          } else {
+            additionalInfoBuilder_.addMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public Builder addAllAdditionalInfo(
+            java.lang.Iterable<? extends org.qmstr.grpc.service.Datamodel.InfoNode> values) {
+          if (additionalInfoBuilder_ == null) {
+            ensureAdditionalInfoIsMutable();
+            com.google.protobuf.AbstractMessageLite.Builder.addAll(
+                values, additionalInfo_);
+            onChanged();
+          } else {
+            additionalInfoBuilder_.addAllMessages(values);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public Builder clearAdditionalInfo() {
+          if (additionalInfoBuilder_ == null) {
+            additionalInfo_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000008);
+            onChanged();
+          } else {
+            additionalInfoBuilder_.clear();
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public Builder removeAdditionalInfo(int index) {
+          if (additionalInfoBuilder_ == null) {
+            ensureAdditionalInfoIsMutable();
+            additionalInfo_.remove(index);
+            onChanged();
+          } else {
+            additionalInfoBuilder_.remove(index);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public org.qmstr.grpc.service.Datamodel.InfoNode.Builder getAdditionalInfoBuilder(
+            int index) {
+          return getAdditionalInfoFieldBuilder().getBuilder(index);
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getAdditionalInfoOrBuilder(
+            int index) {
+          if (additionalInfoBuilder_ == null) {
+            return additionalInfo_.get(index);  } else {
+            return additionalInfoBuilder_.getMessageOrBuilder(index);
+          }
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
+             getAdditionalInfoOrBuilderList() {
+          if (additionalInfoBuilder_ != null) {
+            return additionalInfoBuilder_.getMessageOrBuilderList();
+          } else {
+            return java.util.Collections.unmodifiableList(additionalInfo_);
+          }
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public org.qmstr.grpc.service.Datamodel.InfoNode.Builder addAdditionalInfoBuilder() {
+          return getAdditionalInfoFieldBuilder().addBuilder(
+              org.qmstr.grpc.service.Datamodel.InfoNode.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public org.qmstr.grpc.service.Datamodel.InfoNode.Builder addAdditionalInfoBuilder(
+            int index) {
+          return getAdditionalInfoFieldBuilder().addBuilder(
+              index, org.qmstr.grpc.service.Datamodel.InfoNode.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .service.InfoNode additionalInfo = 4;</code>
+         */
+        public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode.Builder> 
+             getAdditionalInfoBuilderList() {
+          return getAdditionalInfoFieldBuilder().getBuilderList();
+        }
+        private com.google.protobuf.RepeatedFieldBuilderV3<
+            org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
+            getAdditionalInfoFieldBuilder() {
+          if (additionalInfoBuilder_ == null) {
+            additionalInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+                org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder>(
+                    additionalInfo_,
+                    ((bitField0_ & 0x00000008) == 0x00000008),
+                    getParentForChildren(),
+                    isClean());
+            additionalInfo_ = null;
+          }
+          return additionalInfoBuilder_;
+        }
+
+        private java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode> diagnosticInfo_ =
+          java.util.Collections.emptyList();
+        private void ensureDiagnosticInfoIsMutable() {
+          if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+            diagnosticInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.DiagnosticNode>(diagnosticInfo_);
+            bitField0_ |= 0x00000010;
+           }
+        }
+
+        private com.google.protobuf.RepeatedFieldBuilderV3<
+            org.qmstr.grpc.service.Datamodel.DiagnosticNode, org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder, org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder> diagnosticInfoBuilder_;
+
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode> getDiagnosticInfoList() {
+          if (diagnosticInfoBuilder_ == null) {
+            return java.util.Collections.unmodifiableList(diagnosticInfo_);
+          } else {
+            return diagnosticInfoBuilder_.getMessageList();
+          }
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public int getDiagnosticInfoCount() {
+          if (diagnosticInfoBuilder_ == null) {
+            return diagnosticInfo_.size();
+          } else {
+            return diagnosticInfoBuilder_.getCount();
+          }
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public org.qmstr.grpc.service.Datamodel.DiagnosticNode getDiagnosticInfo(int index) {
+          if (diagnosticInfoBuilder_ == null) {
+            return diagnosticInfo_.get(index);
+          } else {
+            return diagnosticInfoBuilder_.getMessage(index);
+          }
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public Builder setDiagnosticInfo(
+            int index, org.qmstr.grpc.service.Datamodel.DiagnosticNode value) {
+          if (diagnosticInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureDiagnosticInfoIsMutable();
+            diagnosticInfo_.set(index, value);
+            onChanged();
+          } else {
+            diagnosticInfoBuilder_.setMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public Builder setDiagnosticInfo(
+            int index, org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder builderForValue) {
+          if (diagnosticInfoBuilder_ == null) {
+            ensureDiagnosticInfoIsMutable();
+            diagnosticInfo_.set(index, builderForValue.build());
+            onChanged();
+          } else {
+            diagnosticInfoBuilder_.setMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public Builder addDiagnosticInfo(org.qmstr.grpc.service.Datamodel.DiagnosticNode value) {
+          if (diagnosticInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureDiagnosticInfoIsMutable();
+            diagnosticInfo_.add(value);
+            onChanged();
+          } else {
+            diagnosticInfoBuilder_.addMessage(value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public Builder addDiagnosticInfo(
+            int index, org.qmstr.grpc.service.Datamodel.DiagnosticNode value) {
+          if (diagnosticInfoBuilder_ == null) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureDiagnosticInfoIsMutable();
+            diagnosticInfo_.add(index, value);
+            onChanged();
+          } else {
+            diagnosticInfoBuilder_.addMessage(index, value);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public Builder addDiagnosticInfo(
+            org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder builderForValue) {
+          if (diagnosticInfoBuilder_ == null) {
+            ensureDiagnosticInfoIsMutable();
+            diagnosticInfo_.add(builderForValue.build());
+            onChanged();
+          } else {
+            diagnosticInfoBuilder_.addMessage(builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public Builder addDiagnosticInfo(
+            int index, org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder builderForValue) {
+          if (diagnosticInfoBuilder_ == null) {
+            ensureDiagnosticInfoIsMutable();
+            diagnosticInfo_.add(index, builderForValue.build());
+            onChanged();
+          } else {
+            diagnosticInfoBuilder_.addMessage(index, builderForValue.build());
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public Builder addAllDiagnosticInfo(
+            java.lang.Iterable<? extends org.qmstr.grpc.service.Datamodel.DiagnosticNode> values) {
+          if (diagnosticInfoBuilder_ == null) {
+            ensureDiagnosticInfoIsMutable();
+            com.google.protobuf.AbstractMessageLite.Builder.addAll(
+                values, diagnosticInfo_);
+            onChanged();
+          } else {
+            diagnosticInfoBuilder_.addAllMessages(values);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public Builder clearDiagnosticInfo() {
+          if (diagnosticInfoBuilder_ == null) {
+            diagnosticInfo_ = java.util.Collections.emptyList();
+            bitField0_ = (bitField0_ & ~0x00000010);
+            onChanged();
+          } else {
+            diagnosticInfoBuilder_.clear();
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public Builder removeDiagnosticInfo(int index) {
+          if (diagnosticInfoBuilder_ == null) {
+            ensureDiagnosticInfoIsMutable();
+            diagnosticInfo_.remove(index);
+            onChanged();
+          } else {
+            diagnosticInfoBuilder_.remove(index);
+          }
+          return this;
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder getDiagnosticInfoBuilder(
+            int index) {
+          return getDiagnosticInfoFieldBuilder().getBuilder(index);
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder getDiagnosticInfoOrBuilder(
+            int index) {
+          if (diagnosticInfoBuilder_ == null) {
+            return diagnosticInfo_.get(index);  } else {
+            return diagnosticInfoBuilder_.getMessageOrBuilder(index);
+          }
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public java.util.List<? extends org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder> 
+             getDiagnosticInfoOrBuilderList() {
+          if (diagnosticInfoBuilder_ != null) {
+            return diagnosticInfoBuilder_.getMessageOrBuilderList();
+          } else {
+            return java.util.Collections.unmodifiableList(diagnosticInfo_);
+          }
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder addDiagnosticInfoBuilder() {
+          return getDiagnosticInfoFieldBuilder().addBuilder(
+              org.qmstr.grpc.service.Datamodel.DiagnosticNode.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder addDiagnosticInfoBuilder(
+            int index) {
+          return getDiagnosticInfoFieldBuilder().addBuilder(
+              index, org.qmstr.grpc.service.Datamodel.DiagnosticNode.getDefaultInstance());
+        }
+        /**
+         * <code>repeated .service.DiagnosticNode diagnosticInfo = 5;</code>
+         */
+        public java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder> 
+             getDiagnosticInfoBuilderList() {
+          return getDiagnosticInfoFieldBuilder().getBuilderList();
+        }
+        private com.google.protobuf.RepeatedFieldBuilderV3<
+            org.qmstr.grpc.service.Datamodel.DiagnosticNode, org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder, org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder> 
+            getDiagnosticInfoFieldBuilder() {
+          if (diagnosticInfoBuilder_ == null) {
+            diagnosticInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+                org.qmstr.grpc.service.Datamodel.DiagnosticNode, org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder, org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder>(
+                    diagnosticInfo_,
+                    ((bitField0_ & 0x00000010) == 0x00000010),
+                    getParentForChildren(),
+                    isClean());
+            diagnosticInfo_ = null;
+          }
+          return diagnosticInfoBuilder_;
+        }
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.setUnknownFieldsProto3(unknownFields);
+        }
+
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+          return super.mergeUnknownFields(unknownFields);
+        }
+
+
+        // @@protoc_insertion_point(builder_scope:service.FileNode.FileDataNode)
+      }
+
+      // @@protoc_insertion_point(class_scope:service.FileNode.FileDataNode)
+      private static final org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode DEFAULT_INSTANCE;
+      static {
+        DEFAULT_INSTANCE = new org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode();
+      }
+
+      public static org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+      }
+
+      private static final com.google.protobuf.Parser<FileDataNode>
+          PARSER = new com.google.protobuf.AbstractParser<FileDataNode>() {
+        public FileDataNode parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new FileDataNode(input, extensionRegistry);
+        }
+      };
+
+      public static com.google.protobuf.Parser<FileDataNode> parser() {
+        return PARSER;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<FileDataNode> getParserForType() {
+        return PARSER;
+      }
+
+      public org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+      }
+
     }
 
     private int bitField0_;
@@ -958,47 +2426,59 @@ public final class Datamodel {
       }
     }
 
-    public static final int HASH_FIELD_NUMBER = 6;
-    private volatile java.lang.Object hash_;
+    public static final int FILEDATA_FIELD_NUMBER = 6;
+    private org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode fileData_;
     /**
-     * <code>string hash = 6;</code>
+     * <code>.service.FileNode.FileDataNode fileData = 6;</code>
      */
-    public java.lang.String getHash() {
-      java.lang.Object ref = hash_;
+    public boolean hasFileData() {
+      return fileData_ != null;
+    }
+    /**
+     * <code>.service.FileNode.FileDataNode fileData = 6;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode getFileData() {
+      return fileData_ == null ? org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.getDefaultInstance() : fileData_;
+    }
+    /**
+     * <code>.service.FileNode.FileDataNode fileData = 6;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.FileNode.FileDataNodeOrBuilder getFileDataOrBuilder() {
+      return getFileData();
+    }
+
+    public static final int TIMESTAMP_FIELD_NUMBER = 7;
+    private volatile java.lang.Object timestamp_;
+    /**
+     * <code>string timestamp = 7;</code>
+     */
+    public java.lang.String getTimestamp() {
+      java.lang.Object ref = timestamp_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        hash_ = s;
+        timestamp_ = s;
         return s;
       }
     }
     /**
-     * <code>string hash = 6;</code>
+     * <code>string timestamp = 7;</code>
      */
     public com.google.protobuf.ByteString
-        getHashBytes() {
-      java.lang.Object ref = hash_;
+        getTimestampBytes() {
+      java.lang.Object ref = timestamp_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        hash_ = b;
+        timestamp_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
-    }
-
-    public static final int BROKEN_FIELD_NUMBER = 7;
-    private boolean broken_;
-    /**
-     * <code>bool broken = 7;</code>
-     */
-    public boolean getBroken() {
-      return broken_;
     }
 
     public static final int DERIVEDFROM_FIELD_NUMBER = 8;
@@ -1036,118 +2516,39 @@ public final class Datamodel {
       return derivedFrom_.get(index);
     }
 
-    public static final int ADDITIONALINFO_FIELD_NUMBER = 9;
-    private java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> additionalInfo_;
-    /**
-     * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-     */
-    public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> getAdditionalInfoList() {
-      return additionalInfo_;
-    }
-    /**
-     * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-     */
-    public java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
-        getAdditionalInfoOrBuilderList() {
-      return additionalInfo_;
-    }
-    /**
-     * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-     */
-    public int getAdditionalInfoCount() {
-      return additionalInfo_.size();
-    }
-    /**
-     * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-     */
-    public org.qmstr.grpc.service.Datamodel.InfoNode getAdditionalInfo(int index) {
-      return additionalInfo_.get(index);
-    }
-    /**
-     * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-     */
-    public org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getAdditionalInfoOrBuilder(
-        int index) {
-      return additionalInfo_.get(index);
-    }
-
-    public static final int DIAGNOSTICINFO_FIELD_NUMBER = 10;
-    private java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode> diagnosticInfo_;
-    /**
-     * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-     */
-    public java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode> getDiagnosticInfoList() {
-      return diagnosticInfo_;
-    }
-    /**
-     * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-     */
-    public java.util.List<? extends org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder> 
-        getDiagnosticInfoOrBuilderList() {
-      return diagnosticInfo_;
-    }
-    /**
-     * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-     */
-    public int getDiagnosticInfoCount() {
-      return diagnosticInfo_.size();
-    }
-    /**
-     * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-     */
-    public org.qmstr.grpc.service.Datamodel.DiagnosticNode getDiagnosticInfo(int index) {
-      return diagnosticInfo_.get(index);
-    }
-    /**
-     * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-     */
-    public org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder getDiagnosticInfoOrBuilder(
-        int index) {
-      return diagnosticInfo_.get(index);
-    }
-
-    public static final int DEPENDENCIES_FIELD_NUMBER = 11;
+    public static final int DEPENDENCIES_FIELD_NUMBER = 9;
     private java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> dependencies_;
     /**
-     * <code>repeated .service.FileNode dependencies = 11;</code>
+     * <code>repeated .service.FileNode dependencies = 9;</code>
      */
     public java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> getDependenciesList() {
       return dependencies_;
     }
     /**
-     * <code>repeated .service.FileNode dependencies = 11;</code>
+     * <code>repeated .service.FileNode dependencies = 9;</code>
      */
     public java.util.List<? extends org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder> 
         getDependenciesOrBuilderList() {
       return dependencies_;
     }
     /**
-     * <code>repeated .service.FileNode dependencies = 11;</code>
+     * <code>repeated .service.FileNode dependencies = 9;</code>
      */
     public int getDependenciesCount() {
       return dependencies_.size();
     }
     /**
-     * <code>repeated .service.FileNode dependencies = 11;</code>
+     * <code>repeated .service.FileNode dependencies = 9;</code>
      */
     public org.qmstr.grpc.service.Datamodel.FileNode getDependencies(int index) {
       return dependencies_.get(index);
     }
     /**
-     * <code>repeated .service.FileNode dependencies = 11;</code>
+     * <code>repeated .service.FileNode dependencies = 9;</code>
      */
     public org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder getDependenciesOrBuilder(
         int index) {
       return dependencies_.get(index);
-    }
-
-    public static final int TIMESTAMP_FIELD_NUMBER = 12;
-    private long timestamp_;
-    /**
-     * <code>int64 timestamp = 12;</code>
-     */
-    public long getTimestamp() {
-      return timestamp_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -1177,26 +2578,17 @@ public final class Datamodel {
       if (!getNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, name_);
       }
-      if (!getHashBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, hash_);
+      if (fileData_ != null) {
+        output.writeMessage(6, getFileData());
       }
-      if (broken_ != false) {
-        output.writeBool(7, broken_);
+      if (!getTimestampBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, timestamp_);
       }
       for (int i = 0; i < derivedFrom_.size(); i++) {
         output.writeMessage(8, derivedFrom_.get(i));
       }
-      for (int i = 0; i < additionalInfo_.size(); i++) {
-        output.writeMessage(9, additionalInfo_.get(i));
-      }
-      for (int i = 0; i < diagnosticInfo_.size(); i++) {
-        output.writeMessage(10, diagnosticInfo_.get(i));
-      }
       for (int i = 0; i < dependencies_.size(); i++) {
-        output.writeMessage(11, dependencies_.get(i));
-      }
-      if (timestamp_ != 0L) {
-        output.writeInt64(12, timestamp_);
+        output.writeMessage(9, dependencies_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -1222,32 +2614,20 @@ public final class Datamodel {
       if (!getNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, name_);
       }
-      if (!getHashBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, hash_);
-      }
-      if (broken_ != false) {
+      if (fileData_ != null) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(7, broken_);
+          .computeMessageSize(6, getFileData());
+      }
+      if (!getTimestampBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, timestamp_);
       }
       for (int i = 0; i < derivedFrom_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(8, derivedFrom_.get(i));
       }
-      for (int i = 0; i < additionalInfo_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(9, additionalInfo_.get(i));
-      }
-      for (int i = 0; i < diagnosticInfo_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(10, diagnosticInfo_.get(i));
-      }
       for (int i = 0; i < dependencies_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(11, dependencies_.get(i));
-      }
-      if (timestamp_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(12, timestamp_);
+          .computeMessageSize(9, dependencies_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1274,20 +2654,17 @@ public final class Datamodel {
           .equals(other.getPath());
       result = result && getName()
           .equals(other.getName());
-      result = result && getHash()
-          .equals(other.getHash());
-      result = result && (getBroken()
-          == other.getBroken());
+      result = result && (hasFileData() == other.hasFileData());
+      if (hasFileData()) {
+        result = result && getFileData()
+            .equals(other.getFileData());
+      }
+      result = result && getTimestamp()
+          .equals(other.getTimestamp());
       result = result && getDerivedFromList()
           .equals(other.getDerivedFromList());
-      result = result && getAdditionalInfoList()
-          .equals(other.getAdditionalInfoList());
-      result = result && getDiagnosticInfoList()
-          .equals(other.getDiagnosticInfoList());
       result = result && getDependenciesList()
           .equals(other.getDependenciesList());
-      result = result && (getTimestamp()
-          == other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -1309,30 +2686,20 @@ public final class Datamodel {
       hash = (53 * hash) + getPath().hashCode();
       hash = (37 * hash) + NAME_FIELD_NUMBER;
       hash = (53 * hash) + getName().hashCode();
-      hash = (37 * hash) + HASH_FIELD_NUMBER;
-      hash = (53 * hash) + getHash().hashCode();
-      hash = (37 * hash) + BROKEN_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getBroken());
+      if (hasFileData()) {
+        hash = (37 * hash) + FILEDATA_FIELD_NUMBER;
+        hash = (53 * hash) + getFileData().hashCode();
+      }
+      hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
+      hash = (53 * hash) + getTimestamp().hashCode();
       if (getDerivedFromCount() > 0) {
         hash = (37 * hash) + DERIVEDFROM_FIELD_NUMBER;
         hash = (53 * hash) + getDerivedFromList().hashCode();
-      }
-      if (getAdditionalInfoCount() > 0) {
-        hash = (37 * hash) + ADDITIONALINFO_FIELD_NUMBER;
-        hash = (53 * hash) + getAdditionalInfoList().hashCode();
-      }
-      if (getDiagnosticInfoCount() > 0) {
-        hash = (37 * hash) + DIAGNOSTICINFO_FIELD_NUMBER;
-        hash = (53 * hash) + getDiagnosticInfoList().hashCode();
       }
       if (getDependenciesCount() > 0) {
         hash = (37 * hash) + DEPENDENCIES_FIELD_NUMBER;
         hash = (53 * hash) + getDependenciesList().hashCode();
       }
-      hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getTimestamp());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1459,8 +2826,6 @@ public final class Datamodel {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
           getDerivedFromFieldBuilder();
-          getAdditionalInfoFieldBuilder();
-          getDiagnosticInfoFieldBuilder();
           getDependenciesFieldBuilder();
         }
       }
@@ -1476,9 +2841,13 @@ public final class Datamodel {
 
         name_ = "";
 
-        hash_ = "";
-
-        broken_ = false;
+        if (fileDataBuilder_ == null) {
+          fileData_ = null;
+        } else {
+          fileData_ = null;
+          fileDataBuilder_ = null;
+        }
+        timestamp_ = "";
 
         if (derivedFromBuilder_ == null) {
           derivedFrom_ = java.util.Collections.emptyList();
@@ -1486,26 +2855,12 @@ public final class Datamodel {
         } else {
           derivedFromBuilder_.clear();
         }
-        if (additionalInfoBuilder_ == null) {
-          additionalInfo_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000100);
-        } else {
-          additionalInfoBuilder_.clear();
-        }
-        if (diagnosticInfoBuilder_ == null) {
-          diagnosticInfo_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000200);
-        } else {
-          diagnosticInfoBuilder_.clear();
-        }
         if (dependenciesBuilder_ == null) {
           dependencies_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000400);
+          bitField0_ = (bitField0_ & ~0x00000100);
         } else {
           dependenciesBuilder_.clear();
         }
-        timestamp_ = 0L;
-
         return this;
       }
 
@@ -1535,8 +2890,12 @@ public final class Datamodel {
         result.fileType_ = fileType_;
         result.path_ = path_;
         result.name_ = name_;
-        result.hash_ = hash_;
-        result.broken_ = broken_;
+        if (fileDataBuilder_ == null) {
+          result.fileData_ = fileData_;
+        } else {
+          result.fileData_ = fileDataBuilder_.build();
+        }
+        result.timestamp_ = timestamp_;
         if (derivedFromBuilder_ == null) {
           if (((bitField0_ & 0x00000080) == 0x00000080)) {
             derivedFrom_ = java.util.Collections.unmodifiableList(derivedFrom_);
@@ -1546,34 +2905,15 @@ public final class Datamodel {
         } else {
           result.derivedFrom_ = derivedFromBuilder_.build();
         }
-        if (additionalInfoBuilder_ == null) {
-          if (((bitField0_ & 0x00000100) == 0x00000100)) {
-            additionalInfo_ = java.util.Collections.unmodifiableList(additionalInfo_);
-            bitField0_ = (bitField0_ & ~0x00000100);
-          }
-          result.additionalInfo_ = additionalInfo_;
-        } else {
-          result.additionalInfo_ = additionalInfoBuilder_.build();
-        }
-        if (diagnosticInfoBuilder_ == null) {
-          if (((bitField0_ & 0x00000200) == 0x00000200)) {
-            diagnosticInfo_ = java.util.Collections.unmodifiableList(diagnosticInfo_);
-            bitField0_ = (bitField0_ & ~0x00000200);
-          }
-          result.diagnosticInfo_ = diagnosticInfo_;
-        } else {
-          result.diagnosticInfo_ = diagnosticInfoBuilder_.build();
-        }
         if (dependenciesBuilder_ == null) {
-          if (((bitField0_ & 0x00000400) == 0x00000400)) {
+          if (((bitField0_ & 0x00000100) == 0x00000100)) {
             dependencies_ = java.util.Collections.unmodifiableList(dependencies_);
-            bitField0_ = (bitField0_ & ~0x00000400);
+            bitField0_ = (bitField0_ & ~0x00000100);
           }
           result.dependencies_ = dependencies_;
         } else {
           result.dependencies_ = dependenciesBuilder_.build();
         }
-        result.timestamp_ = timestamp_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1635,12 +2975,12 @@ public final class Datamodel {
           name_ = other.name_;
           onChanged();
         }
-        if (!other.getHash().isEmpty()) {
-          hash_ = other.hash_;
-          onChanged();
+        if (other.hasFileData()) {
+          mergeFileData(other.getFileData());
         }
-        if (other.getBroken() != false) {
-          setBroken(other.getBroken());
+        if (!other.getTimestamp().isEmpty()) {
+          timestamp_ = other.timestamp_;
+          onChanged();
         }
         if (derivedFromBuilder_ == null) {
           if (!other.derivedFrom_.isEmpty()) {
@@ -1668,63 +3008,11 @@ public final class Datamodel {
             }
           }
         }
-        if (additionalInfoBuilder_ == null) {
-          if (!other.additionalInfo_.isEmpty()) {
-            if (additionalInfo_.isEmpty()) {
-              additionalInfo_ = other.additionalInfo_;
-              bitField0_ = (bitField0_ & ~0x00000100);
-            } else {
-              ensureAdditionalInfoIsMutable();
-              additionalInfo_.addAll(other.additionalInfo_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.additionalInfo_.isEmpty()) {
-            if (additionalInfoBuilder_.isEmpty()) {
-              additionalInfoBuilder_.dispose();
-              additionalInfoBuilder_ = null;
-              additionalInfo_ = other.additionalInfo_;
-              bitField0_ = (bitField0_ & ~0x00000100);
-              additionalInfoBuilder_ = 
-                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                   getAdditionalInfoFieldBuilder() : null;
-            } else {
-              additionalInfoBuilder_.addAllMessages(other.additionalInfo_);
-            }
-          }
-        }
-        if (diagnosticInfoBuilder_ == null) {
-          if (!other.diagnosticInfo_.isEmpty()) {
-            if (diagnosticInfo_.isEmpty()) {
-              diagnosticInfo_ = other.diagnosticInfo_;
-              bitField0_ = (bitField0_ & ~0x00000200);
-            } else {
-              ensureDiagnosticInfoIsMutable();
-              diagnosticInfo_.addAll(other.diagnosticInfo_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.diagnosticInfo_.isEmpty()) {
-            if (diagnosticInfoBuilder_.isEmpty()) {
-              diagnosticInfoBuilder_.dispose();
-              diagnosticInfoBuilder_ = null;
-              diagnosticInfo_ = other.diagnosticInfo_;
-              bitField0_ = (bitField0_ & ~0x00000200);
-              diagnosticInfoBuilder_ = 
-                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                   getDiagnosticInfoFieldBuilder() : null;
-            } else {
-              diagnosticInfoBuilder_.addAllMessages(other.diagnosticInfo_);
-            }
-          }
-        }
         if (dependenciesBuilder_ == null) {
           if (!other.dependencies_.isEmpty()) {
             if (dependencies_.isEmpty()) {
               dependencies_ = other.dependencies_;
-              bitField0_ = (bitField0_ & ~0x00000400);
+              bitField0_ = (bitField0_ & ~0x00000100);
             } else {
               ensureDependenciesIsMutable();
               dependencies_.addAll(other.dependencies_);
@@ -1737,7 +3025,7 @@ public final class Datamodel {
               dependenciesBuilder_.dispose();
               dependenciesBuilder_ = null;
               dependencies_ = other.dependencies_;
-              bitField0_ = (bitField0_ & ~0x00000400);
+              bitField0_ = (bitField0_ & ~0x00000100);
               dependenciesBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getDependenciesFieldBuilder() : null;
@@ -1745,9 +3033,6 @@ public final class Datamodel {
               dependenciesBuilder_.addAllMessages(other.dependencies_);
             }
           }
-        }
-        if (other.getTimestamp() != 0L) {
-          setTimestamp(other.getTimestamp());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -2097,97 +3382,188 @@ public final class Datamodel {
         return this;
       }
 
-      private java.lang.Object hash_ = "";
+      private org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode fileData_ = null;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode, org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.Builder, org.qmstr.grpc.service.Datamodel.FileNode.FileDataNodeOrBuilder> fileDataBuilder_;
       /**
-       * <code>string hash = 6;</code>
+       * <code>.service.FileNode.FileDataNode fileData = 6;</code>
        */
-      public java.lang.String getHash() {
-        java.lang.Object ref = hash_;
+      public boolean hasFileData() {
+        return fileDataBuilder_ != null || fileData_ != null;
+      }
+      /**
+       * <code>.service.FileNode.FileDataNode fileData = 6;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode getFileData() {
+        if (fileDataBuilder_ == null) {
+          return fileData_ == null ? org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.getDefaultInstance() : fileData_;
+        } else {
+          return fileDataBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.service.FileNode.FileDataNode fileData = 6;</code>
+       */
+      public Builder setFileData(org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode value) {
+        if (fileDataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          fileData_ = value;
+          onChanged();
+        } else {
+          fileDataBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.service.FileNode.FileDataNode fileData = 6;</code>
+       */
+      public Builder setFileData(
+          org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.Builder builderForValue) {
+        if (fileDataBuilder_ == null) {
+          fileData_ = builderForValue.build();
+          onChanged();
+        } else {
+          fileDataBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.service.FileNode.FileDataNode fileData = 6;</code>
+       */
+      public Builder mergeFileData(org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode value) {
+        if (fileDataBuilder_ == null) {
+          if (fileData_ != null) {
+            fileData_ =
+              org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.newBuilder(fileData_).mergeFrom(value).buildPartial();
+          } else {
+            fileData_ = value;
+          }
+          onChanged();
+        } else {
+          fileDataBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.service.FileNode.FileDataNode fileData = 6;</code>
+       */
+      public Builder clearFileData() {
+        if (fileDataBuilder_ == null) {
+          fileData_ = null;
+          onChanged();
+        } else {
+          fileData_ = null;
+          fileDataBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.service.FileNode.FileDataNode fileData = 6;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.Builder getFileDataBuilder() {
+        
+        onChanged();
+        return getFileDataFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.service.FileNode.FileDataNode fileData = 6;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.FileNode.FileDataNodeOrBuilder getFileDataOrBuilder() {
+        if (fileDataBuilder_ != null) {
+          return fileDataBuilder_.getMessageOrBuilder();
+        } else {
+          return fileData_ == null ?
+              org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.getDefaultInstance() : fileData_;
+        }
+      }
+      /**
+       * <code>.service.FileNode.FileDataNode fileData = 6;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode, org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.Builder, org.qmstr.grpc.service.Datamodel.FileNode.FileDataNodeOrBuilder> 
+          getFileDataFieldBuilder() {
+        if (fileDataBuilder_ == null) {
+          fileDataBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode, org.qmstr.grpc.service.Datamodel.FileNode.FileDataNode.Builder, org.qmstr.grpc.service.Datamodel.FileNode.FileDataNodeOrBuilder>(
+                  getFileData(),
+                  getParentForChildren(),
+                  isClean());
+          fileData_ = null;
+        }
+        return fileDataBuilder_;
+      }
+
+      private java.lang.Object timestamp_ = "";
+      /**
+       * <code>string timestamp = 7;</code>
+       */
+      public java.lang.String getTimestamp() {
+        java.lang.Object ref = timestamp_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          hash_ = s;
+          timestamp_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string hash = 6;</code>
+       * <code>string timestamp = 7;</code>
        */
       public com.google.protobuf.ByteString
-          getHashBytes() {
-        java.lang.Object ref = hash_;
+          getTimestampBytes() {
+        java.lang.Object ref = timestamp_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
-          hash_ = b;
+          timestamp_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string hash = 6;</code>
+       * <code>string timestamp = 7;</code>
        */
-      public Builder setHash(
+      public Builder setTimestamp(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        hash_ = value;
+        timestamp_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string hash = 6;</code>
+       * <code>string timestamp = 7;</code>
        */
-      public Builder clearHash() {
+      public Builder clearTimestamp() {
         
-        hash_ = getDefaultInstance().getHash();
+        timestamp_ = getDefaultInstance().getTimestamp();
         onChanged();
         return this;
       }
       /**
-       * <code>string hash = 6;</code>
+       * <code>string timestamp = 7;</code>
        */
-      public Builder setHashBytes(
+      public Builder setTimestampBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
         
-        hash_ = value;
-        onChanged();
-        return this;
-      }
-
-      private boolean broken_ ;
-      /**
-       * <code>bool broken = 7;</code>
-       */
-      public boolean getBroken() {
-        return broken_;
-      }
-      /**
-       * <code>bool broken = 7;</code>
-       */
-      public Builder setBroken(boolean value) {
-        
-        broken_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>bool broken = 7;</code>
-       */
-      public Builder clearBroken() {
-        
-        broken_ = false;
+        timestamp_ = value;
         onChanged();
         return this;
       }
@@ -2432,492 +3808,12 @@ public final class Datamodel {
         return derivedFromBuilder_;
       }
 
-      private java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> additionalInfo_ =
-        java.util.Collections.emptyList();
-      private void ensureAdditionalInfoIsMutable() {
-        if (!((bitField0_ & 0x00000100) == 0x00000100)) {
-          additionalInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.InfoNode>(additionalInfo_);
-          bitField0_ |= 0x00000100;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> additionalInfoBuilder_;
-
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> getAdditionalInfoList() {
-        if (additionalInfoBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(additionalInfo_);
-        } else {
-          return additionalInfoBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public int getAdditionalInfoCount() {
-        if (additionalInfoBuilder_ == null) {
-          return additionalInfo_.size();
-        } else {
-          return additionalInfoBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.InfoNode getAdditionalInfo(int index) {
-        if (additionalInfoBuilder_ == null) {
-          return additionalInfo_.get(index);
-        } else {
-          return additionalInfoBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public Builder setAdditionalInfo(
-          int index, org.qmstr.grpc.service.Datamodel.InfoNode value) {
-        if (additionalInfoBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureAdditionalInfoIsMutable();
-          additionalInfo_.set(index, value);
-          onChanged();
-        } else {
-          additionalInfoBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public Builder setAdditionalInfo(
-          int index, org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
-        if (additionalInfoBuilder_ == null) {
-          ensureAdditionalInfoIsMutable();
-          additionalInfo_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          additionalInfoBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public Builder addAdditionalInfo(org.qmstr.grpc.service.Datamodel.InfoNode value) {
-        if (additionalInfoBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureAdditionalInfoIsMutable();
-          additionalInfo_.add(value);
-          onChanged();
-        } else {
-          additionalInfoBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public Builder addAdditionalInfo(
-          int index, org.qmstr.grpc.service.Datamodel.InfoNode value) {
-        if (additionalInfoBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureAdditionalInfoIsMutable();
-          additionalInfo_.add(index, value);
-          onChanged();
-        } else {
-          additionalInfoBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public Builder addAdditionalInfo(
-          org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
-        if (additionalInfoBuilder_ == null) {
-          ensureAdditionalInfoIsMutable();
-          additionalInfo_.add(builderForValue.build());
-          onChanged();
-        } else {
-          additionalInfoBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public Builder addAdditionalInfo(
-          int index, org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
-        if (additionalInfoBuilder_ == null) {
-          ensureAdditionalInfoIsMutable();
-          additionalInfo_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          additionalInfoBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public Builder addAllAdditionalInfo(
-          java.lang.Iterable<? extends org.qmstr.grpc.service.Datamodel.InfoNode> values) {
-        if (additionalInfoBuilder_ == null) {
-          ensureAdditionalInfoIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, additionalInfo_);
-          onChanged();
-        } else {
-          additionalInfoBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public Builder clearAdditionalInfo() {
-        if (additionalInfoBuilder_ == null) {
-          additionalInfo_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000100);
-          onChanged();
-        } else {
-          additionalInfoBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public Builder removeAdditionalInfo(int index) {
-        if (additionalInfoBuilder_ == null) {
-          ensureAdditionalInfoIsMutable();
-          additionalInfo_.remove(index);
-          onChanged();
-        } else {
-          additionalInfoBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.InfoNode.Builder getAdditionalInfoBuilder(
-          int index) {
-        return getAdditionalInfoFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getAdditionalInfoOrBuilder(
-          int index) {
-        if (additionalInfoBuilder_ == null) {
-          return additionalInfo_.get(index);  } else {
-          return additionalInfoBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
-           getAdditionalInfoOrBuilderList() {
-        if (additionalInfoBuilder_ != null) {
-          return additionalInfoBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(additionalInfo_);
-        }
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.InfoNode.Builder addAdditionalInfoBuilder() {
-        return getAdditionalInfoFieldBuilder().addBuilder(
-            org.qmstr.grpc.service.Datamodel.InfoNode.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.InfoNode.Builder addAdditionalInfoBuilder(
-          int index) {
-        return getAdditionalInfoFieldBuilder().addBuilder(
-            index, org.qmstr.grpc.service.Datamodel.InfoNode.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .service.InfoNode additionalInfo = 9;</code>
-       */
-      public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode.Builder> 
-           getAdditionalInfoBuilderList() {
-        return getAdditionalInfoFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
-          getAdditionalInfoFieldBuilder() {
-        if (additionalInfoBuilder_ == null) {
-          additionalInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder>(
-                  additionalInfo_,
-                  ((bitField0_ & 0x00000100) == 0x00000100),
-                  getParentForChildren(),
-                  isClean());
-          additionalInfo_ = null;
-        }
-        return additionalInfoBuilder_;
-      }
-
-      private java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode> diagnosticInfo_ =
-        java.util.Collections.emptyList();
-      private void ensureDiagnosticInfoIsMutable() {
-        if (!((bitField0_ & 0x00000200) == 0x00000200)) {
-          diagnosticInfo_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.DiagnosticNode>(diagnosticInfo_);
-          bitField0_ |= 0x00000200;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.qmstr.grpc.service.Datamodel.DiagnosticNode, org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder, org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder> diagnosticInfoBuilder_;
-
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode> getDiagnosticInfoList() {
-        if (diagnosticInfoBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(diagnosticInfo_);
-        } else {
-          return diagnosticInfoBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public int getDiagnosticInfoCount() {
-        if (diagnosticInfoBuilder_ == null) {
-          return diagnosticInfo_.size();
-        } else {
-          return diagnosticInfoBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.DiagnosticNode getDiagnosticInfo(int index) {
-        if (diagnosticInfoBuilder_ == null) {
-          return diagnosticInfo_.get(index);
-        } else {
-          return diagnosticInfoBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public Builder setDiagnosticInfo(
-          int index, org.qmstr.grpc.service.Datamodel.DiagnosticNode value) {
-        if (diagnosticInfoBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureDiagnosticInfoIsMutable();
-          diagnosticInfo_.set(index, value);
-          onChanged();
-        } else {
-          diagnosticInfoBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public Builder setDiagnosticInfo(
-          int index, org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder builderForValue) {
-        if (diagnosticInfoBuilder_ == null) {
-          ensureDiagnosticInfoIsMutable();
-          diagnosticInfo_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          diagnosticInfoBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public Builder addDiagnosticInfo(org.qmstr.grpc.service.Datamodel.DiagnosticNode value) {
-        if (diagnosticInfoBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureDiagnosticInfoIsMutable();
-          diagnosticInfo_.add(value);
-          onChanged();
-        } else {
-          diagnosticInfoBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public Builder addDiagnosticInfo(
-          int index, org.qmstr.grpc.service.Datamodel.DiagnosticNode value) {
-        if (diagnosticInfoBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureDiagnosticInfoIsMutable();
-          diagnosticInfo_.add(index, value);
-          onChanged();
-        } else {
-          diagnosticInfoBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public Builder addDiagnosticInfo(
-          org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder builderForValue) {
-        if (diagnosticInfoBuilder_ == null) {
-          ensureDiagnosticInfoIsMutable();
-          diagnosticInfo_.add(builderForValue.build());
-          onChanged();
-        } else {
-          diagnosticInfoBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public Builder addDiagnosticInfo(
-          int index, org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder builderForValue) {
-        if (diagnosticInfoBuilder_ == null) {
-          ensureDiagnosticInfoIsMutable();
-          diagnosticInfo_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          diagnosticInfoBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public Builder addAllDiagnosticInfo(
-          java.lang.Iterable<? extends org.qmstr.grpc.service.Datamodel.DiagnosticNode> values) {
-        if (diagnosticInfoBuilder_ == null) {
-          ensureDiagnosticInfoIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, diagnosticInfo_);
-          onChanged();
-        } else {
-          diagnosticInfoBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public Builder clearDiagnosticInfo() {
-        if (diagnosticInfoBuilder_ == null) {
-          diagnosticInfo_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000200);
-          onChanged();
-        } else {
-          diagnosticInfoBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public Builder removeDiagnosticInfo(int index) {
-        if (diagnosticInfoBuilder_ == null) {
-          ensureDiagnosticInfoIsMutable();
-          diagnosticInfo_.remove(index);
-          onChanged();
-        } else {
-          diagnosticInfoBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder getDiagnosticInfoBuilder(
-          int index) {
-        return getDiagnosticInfoFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder getDiagnosticInfoOrBuilder(
-          int index) {
-        if (diagnosticInfoBuilder_ == null) {
-          return diagnosticInfo_.get(index);  } else {
-          return diagnosticInfoBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public java.util.List<? extends org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder> 
-           getDiagnosticInfoOrBuilderList() {
-        if (diagnosticInfoBuilder_ != null) {
-          return diagnosticInfoBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(diagnosticInfo_);
-        }
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder addDiagnosticInfoBuilder() {
-        return getDiagnosticInfoFieldBuilder().addBuilder(
-            org.qmstr.grpc.service.Datamodel.DiagnosticNode.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder addDiagnosticInfoBuilder(
-          int index) {
-        return getDiagnosticInfoFieldBuilder().addBuilder(
-            index, org.qmstr.grpc.service.Datamodel.DiagnosticNode.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .service.DiagnosticNode diagnosticInfo = 10;</code>
-       */
-      public java.util.List<org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder> 
-           getDiagnosticInfoBuilderList() {
-        return getDiagnosticInfoFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.qmstr.grpc.service.Datamodel.DiagnosticNode, org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder, org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder> 
-          getDiagnosticInfoFieldBuilder() {
-        if (diagnosticInfoBuilder_ == null) {
-          diagnosticInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.qmstr.grpc.service.Datamodel.DiagnosticNode, org.qmstr.grpc.service.Datamodel.DiagnosticNode.Builder, org.qmstr.grpc.service.Datamodel.DiagnosticNodeOrBuilder>(
-                  diagnosticInfo_,
-                  ((bitField0_ & 0x00000200) == 0x00000200),
-                  getParentForChildren(),
-                  isClean());
-          diagnosticInfo_ = null;
-        }
-        return diagnosticInfoBuilder_;
-      }
-
       private java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> dependencies_ =
         java.util.Collections.emptyList();
       private void ensureDependenciesIsMutable() {
-        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
+        if (!((bitField0_ & 0x00000100) == 0x00000100)) {
           dependencies_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.FileNode>(dependencies_);
-          bitField0_ |= 0x00000400;
+          bitField0_ |= 0x00000100;
          }
       }
 
@@ -2925,7 +3821,7 @@ public final class Datamodel {
           org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode.Builder, org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder> dependenciesBuilder_;
 
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> getDependenciesList() {
         if (dependenciesBuilder_ == null) {
@@ -2935,7 +3831,7 @@ public final class Datamodel {
         }
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public int getDependenciesCount() {
         if (dependenciesBuilder_ == null) {
@@ -2945,7 +3841,7 @@ public final class Datamodel {
         }
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public org.qmstr.grpc.service.Datamodel.FileNode getDependencies(int index) {
         if (dependenciesBuilder_ == null) {
@@ -2955,7 +3851,7 @@ public final class Datamodel {
         }
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public Builder setDependencies(
           int index, org.qmstr.grpc.service.Datamodel.FileNode value) {
@@ -2972,7 +3868,7 @@ public final class Datamodel {
         return this;
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public Builder setDependencies(
           int index, org.qmstr.grpc.service.Datamodel.FileNode.Builder builderForValue) {
@@ -2986,7 +3882,7 @@ public final class Datamodel {
         return this;
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public Builder addDependencies(org.qmstr.grpc.service.Datamodel.FileNode value) {
         if (dependenciesBuilder_ == null) {
@@ -3002,7 +3898,7 @@ public final class Datamodel {
         return this;
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public Builder addDependencies(
           int index, org.qmstr.grpc.service.Datamodel.FileNode value) {
@@ -3019,7 +3915,7 @@ public final class Datamodel {
         return this;
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public Builder addDependencies(
           org.qmstr.grpc.service.Datamodel.FileNode.Builder builderForValue) {
@@ -3033,7 +3929,7 @@ public final class Datamodel {
         return this;
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public Builder addDependencies(
           int index, org.qmstr.grpc.service.Datamodel.FileNode.Builder builderForValue) {
@@ -3047,7 +3943,7 @@ public final class Datamodel {
         return this;
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public Builder addAllDependencies(
           java.lang.Iterable<? extends org.qmstr.grpc.service.Datamodel.FileNode> values) {
@@ -3062,12 +3958,12 @@ public final class Datamodel {
         return this;
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public Builder clearDependencies() {
         if (dependenciesBuilder_ == null) {
           dependencies_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000400);
+          bitField0_ = (bitField0_ & ~0x00000100);
           onChanged();
         } else {
           dependenciesBuilder_.clear();
@@ -3075,7 +3971,7 @@ public final class Datamodel {
         return this;
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public Builder removeDependencies(int index) {
         if (dependenciesBuilder_ == null) {
@@ -3088,14 +3984,14 @@ public final class Datamodel {
         return this;
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public org.qmstr.grpc.service.Datamodel.FileNode.Builder getDependenciesBuilder(
           int index) {
         return getDependenciesFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder getDependenciesOrBuilder(
           int index) {
@@ -3105,7 +4001,7 @@ public final class Datamodel {
         }
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public java.util.List<? extends org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder> 
            getDependenciesOrBuilderList() {
@@ -3116,14 +4012,14 @@ public final class Datamodel {
         }
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public org.qmstr.grpc.service.Datamodel.FileNode.Builder addDependenciesBuilder() {
         return getDependenciesFieldBuilder().addBuilder(
             org.qmstr.grpc.service.Datamodel.FileNode.getDefaultInstance());
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public org.qmstr.grpc.service.Datamodel.FileNode.Builder addDependenciesBuilder(
           int index) {
@@ -3131,7 +4027,7 @@ public final class Datamodel {
             index, org.qmstr.grpc.service.Datamodel.FileNode.getDefaultInstance());
       }
       /**
-       * <code>repeated .service.FileNode dependencies = 11;</code>
+       * <code>repeated .service.FileNode dependencies = 9;</code>
        */
       public java.util.List<org.qmstr.grpc.service.Datamodel.FileNode.Builder> 
            getDependenciesBuilderList() {
@@ -3144,38 +4040,12 @@ public final class Datamodel {
           dependenciesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode.Builder, org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder>(
                   dependencies_,
-                  ((bitField0_ & 0x00000400) == 0x00000400),
+                  ((bitField0_ & 0x00000100) == 0x00000100),
                   getParentForChildren(),
                   isClean());
           dependencies_ = null;
         }
         return dependenciesBuilder_;
-      }
-
-      private long timestamp_ ;
-      /**
-       * <code>int64 timestamp = 12;</code>
-       */
-      public long getTimestamp() {
-        return timestamp_;
-      }
-      /**
-       * <code>int64 timestamp = 12;</code>
-       */
-      public Builder setTimestamp(long value) {
-        
-        timestamp_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int64 timestamp = 12;</code>
-       */
-      public Builder clearTimestamp() {
-        
-        timestamp_ = 0L;
-        onChanged();
-        return this;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -3314,9 +4184,14 @@ public final class Datamodel {
         int index);
 
     /**
-     * <code>int64 timestamp = 7;</code>
+     * <code>string timestamp = 7;</code>
      */
-    long getTimestamp();
+    java.lang.String getTimestamp();
+    /**
+     * <code>string timestamp = 7;</code>
+     */
+    com.google.protobuf.ByteString
+        getTimestampBytes();
   }
   /**
    * Protobuf type {@code service.InfoNode}
@@ -3337,7 +4212,7 @@ public final class Datamodel {
       confidenceScore_ = 0D;
       analyzer_ = java.util.Collections.emptyList();
       dataNodes_ = java.util.Collections.emptyList();
-      timestamp_ = 0L;
+      timestamp_ = "";
     }
 
     @java.lang.Override
@@ -3412,9 +4287,10 @@ public final class Datamodel {
                   input.readMessage(org.qmstr.grpc.service.Datamodel.InfoNode.DataNode.parser(), extensionRegistry));
               break;
             }
-            case 56: {
+            case 58: {
+              java.lang.String s = input.readStringRequireUtf8();
 
-              timestamp_ = input.readInt64();
+              timestamp_ = s;
               break;
             }
           }
@@ -3452,39 +4328,54 @@ public final class Datamodel {
         com.google.protobuf.MessageOrBuilder {
 
       /**
-       * <code>string dataNodeType = 1;</code>
+       * <code>string uid = 1;</code>
+       */
+      java.lang.String getUid();
+      /**
+       * <code>string uid = 1;</code>
+       */
+      com.google.protobuf.ByteString
+          getUidBytes();
+
+      /**
+       * <code>string dataNodeType = 2;</code>
        */
       java.lang.String getDataNodeType();
       /**
-       * <code>string dataNodeType = 1;</code>
+       * <code>string dataNodeType = 2;</code>
        */
       com.google.protobuf.ByteString
           getDataNodeTypeBytes();
 
       /**
-       * <code>string type = 2;</code>
+       * <code>string type = 3;</code>
        */
       java.lang.String getType();
       /**
-       * <code>string type = 2;</code>
+       * <code>string type = 3;</code>
        */
       com.google.protobuf.ByteString
           getTypeBytes();
 
       /**
-       * <code>string data = 3;</code>
+       * <code>string data = 4;</code>
        */
       java.lang.String getData();
       /**
-       * <code>string data = 3;</code>
+       * <code>string data = 4;</code>
        */
       com.google.protobuf.ByteString
           getDataBytes();
 
       /**
-       * <code>int64 timestamp = 4;</code>
+       * <code>string timestamp = 5;</code>
        */
-      long getTimestamp();
+      java.lang.String getTimestamp();
+      /**
+       * <code>string timestamp = 5;</code>
+       */
+      com.google.protobuf.ByteString
+          getTimestampBytes();
     }
     /**
      * Protobuf type {@code service.InfoNode.DataNode}
@@ -3499,10 +4390,11 @@ public final class Datamodel {
         super(builder);
       }
       private DataNode() {
+        uid_ = "";
         dataNodeType_ = "";
         type_ = "";
         data_ = "";
-        timestamp_ = 0L;
+        timestamp_ = "";
       }
 
       @java.lang.Override
@@ -3539,24 +4431,31 @@ public final class Datamodel {
               case 10: {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                dataNodeType_ = s;
+                uid_ = s;
                 break;
               }
               case 18: {
                 java.lang.String s = input.readStringRequireUtf8();
 
-                type_ = s;
+                dataNodeType_ = s;
                 break;
               }
               case 26: {
                 java.lang.String s = input.readStringRequireUtf8();
 
+                type_ = s;
+                break;
+              }
+              case 34: {
+                java.lang.String s = input.readStringRequireUtf8();
+
                 data_ = s;
                 break;
               }
-              case 32: {
+              case 42: {
+                java.lang.String s = input.readStringRequireUtf8();
 
-                timestamp_ = input.readInt64();
+                timestamp_ = s;
                 break;
               }
             }
@@ -3583,10 +4482,44 @@ public final class Datamodel {
                 org.qmstr.grpc.service.Datamodel.InfoNode.DataNode.class, org.qmstr.grpc.service.Datamodel.InfoNode.DataNode.Builder.class);
       }
 
-      public static final int DATANODETYPE_FIELD_NUMBER = 1;
+      public static final int UID_FIELD_NUMBER = 1;
+      private volatile java.lang.Object uid_;
+      /**
+       * <code>string uid = 1;</code>
+       */
+      public java.lang.String getUid() {
+        java.lang.Object ref = uid_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          uid_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string uid = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getUidBytes() {
+        java.lang.Object ref = uid_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          uid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      public static final int DATANODETYPE_FIELD_NUMBER = 2;
       private volatile java.lang.Object dataNodeType_;
       /**
-       * <code>string dataNodeType = 1;</code>
+       * <code>string dataNodeType = 2;</code>
        */
       public java.lang.String getDataNodeType() {
         java.lang.Object ref = dataNodeType_;
@@ -3601,7 +4534,7 @@ public final class Datamodel {
         }
       }
       /**
-       * <code>string dataNodeType = 1;</code>
+       * <code>string dataNodeType = 2;</code>
        */
       public com.google.protobuf.ByteString
           getDataNodeTypeBytes() {
@@ -3617,10 +4550,10 @@ public final class Datamodel {
         }
       }
 
-      public static final int TYPE_FIELD_NUMBER = 2;
+      public static final int TYPE_FIELD_NUMBER = 3;
       private volatile java.lang.Object type_;
       /**
-       * <code>string type = 2;</code>
+       * <code>string type = 3;</code>
        */
       public java.lang.String getType() {
         java.lang.Object ref = type_;
@@ -3635,7 +4568,7 @@ public final class Datamodel {
         }
       }
       /**
-       * <code>string type = 2;</code>
+       * <code>string type = 3;</code>
        */
       public com.google.protobuf.ByteString
           getTypeBytes() {
@@ -3651,10 +4584,10 @@ public final class Datamodel {
         }
       }
 
-      public static final int DATA_FIELD_NUMBER = 3;
+      public static final int DATA_FIELD_NUMBER = 4;
       private volatile java.lang.Object data_;
       /**
-       * <code>string data = 3;</code>
+       * <code>string data = 4;</code>
        */
       public java.lang.String getData() {
         java.lang.Object ref = data_;
@@ -3669,7 +4602,7 @@ public final class Datamodel {
         }
       }
       /**
-       * <code>string data = 3;</code>
+       * <code>string data = 4;</code>
        */
       public com.google.protobuf.ByteString
           getDataBytes() {
@@ -3685,13 +4618,38 @@ public final class Datamodel {
         }
       }
 
-      public static final int TIMESTAMP_FIELD_NUMBER = 4;
-      private long timestamp_;
+      public static final int TIMESTAMP_FIELD_NUMBER = 5;
+      private volatile java.lang.Object timestamp_;
       /**
-       * <code>int64 timestamp = 4;</code>
+       * <code>string timestamp = 5;</code>
        */
-      public long getTimestamp() {
-        return timestamp_;
+      public java.lang.String getTimestamp() {
+        java.lang.Object ref = timestamp_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          timestamp_ = s;
+          return s;
+        }
+      }
+      /**
+       * <code>string timestamp = 5;</code>
+       */
+      public com.google.protobuf.ByteString
+          getTimestampBytes() {
+        java.lang.Object ref = timestamp_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          timestamp_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
       }
 
       private byte memoizedIsInitialized = -1;
@@ -3706,17 +4664,20 @@ public final class Datamodel {
 
       public void writeTo(com.google.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
+        if (!getUidBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uid_);
+        }
         if (!getDataNodeTypeBytes().isEmpty()) {
-          com.google.protobuf.GeneratedMessageV3.writeString(output, 1, dataNodeType_);
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 2, dataNodeType_);
         }
         if (!getTypeBytes().isEmpty()) {
-          com.google.protobuf.GeneratedMessageV3.writeString(output, 2, type_);
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 3, type_);
         }
         if (!getDataBytes().isEmpty()) {
-          com.google.protobuf.GeneratedMessageV3.writeString(output, 3, data_);
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 4, data_);
         }
-        if (timestamp_ != 0L) {
-          output.writeInt64(4, timestamp_);
+        if (!getTimestampBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 5, timestamp_);
         }
         unknownFields.writeTo(output);
       }
@@ -3726,18 +4687,20 @@ public final class Datamodel {
         if (size != -1) return size;
 
         size = 0;
+        if (!getUidBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uid_);
+        }
         if (!getDataNodeTypeBytes().isEmpty()) {
-          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, dataNodeType_);
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, dataNodeType_);
         }
         if (!getTypeBytes().isEmpty()) {
-          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, type_);
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, type_);
         }
         if (!getDataBytes().isEmpty()) {
-          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, data_);
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, data_);
         }
-        if (timestamp_ != 0L) {
-          size += com.google.protobuf.CodedOutputStream
-            .computeInt64Size(4, timestamp_);
+        if (!getTimestampBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, timestamp_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -3755,14 +4718,16 @@ public final class Datamodel {
         org.qmstr.grpc.service.Datamodel.InfoNode.DataNode other = (org.qmstr.grpc.service.Datamodel.InfoNode.DataNode) obj;
 
         boolean result = true;
+        result = result && getUid()
+            .equals(other.getUid());
         result = result && getDataNodeType()
             .equals(other.getDataNodeType());
         result = result && getType()
             .equals(other.getType());
         result = result && getData()
             .equals(other.getData());
-        result = result && (getTimestamp()
-            == other.getTimestamp());
+        result = result && getTimestamp()
+            .equals(other.getTimestamp());
         result = result && unknownFields.equals(other.unknownFields);
         return result;
       }
@@ -3774,6 +4739,8 @@ public final class Datamodel {
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (37 * hash) + UID_FIELD_NUMBER;
+        hash = (53 * hash) + getUid().hashCode();
         hash = (37 * hash) + DATANODETYPE_FIELD_NUMBER;
         hash = (53 * hash) + getDataNodeType().hashCode();
         hash = (37 * hash) + TYPE_FIELD_NUMBER;
@@ -3781,8 +4748,7 @@ public final class Datamodel {
         hash = (37 * hash) + DATA_FIELD_NUMBER;
         hash = (53 * hash) + getData().hashCode();
         hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getTimestamp());
+        hash = (53 * hash) + getTimestamp().hashCode();
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -3912,13 +4878,15 @@ public final class Datamodel {
         }
         public Builder clear() {
           super.clear();
+          uid_ = "";
+
           dataNodeType_ = "";
 
           type_ = "";
 
           data_ = "";
 
-          timestamp_ = 0L;
+          timestamp_ = "";
 
           return this;
         }
@@ -3942,6 +4910,7 @@ public final class Datamodel {
 
         public org.qmstr.grpc.service.Datamodel.InfoNode.DataNode buildPartial() {
           org.qmstr.grpc.service.Datamodel.InfoNode.DataNode result = new org.qmstr.grpc.service.Datamodel.InfoNode.DataNode(this);
+          result.uid_ = uid_;
           result.dataNodeType_ = dataNodeType_;
           result.type_ = type_;
           result.data_ = data_;
@@ -3987,6 +4956,10 @@ public final class Datamodel {
 
         public Builder mergeFrom(org.qmstr.grpc.service.Datamodel.InfoNode.DataNode other) {
           if (other == org.qmstr.grpc.service.Datamodel.InfoNode.DataNode.getDefaultInstance()) return this;
+          if (!other.getUid().isEmpty()) {
+            uid_ = other.uid_;
+            onChanged();
+          }
           if (!other.getDataNodeType().isEmpty()) {
             dataNodeType_ = other.dataNodeType_;
             onChanged();
@@ -3999,8 +4972,9 @@ public final class Datamodel {
             data_ = other.data_;
             onChanged();
           }
-          if (other.getTimestamp() != 0L) {
-            setTimestamp(other.getTimestamp());
+          if (!other.getTimestamp().isEmpty()) {
+            timestamp_ = other.timestamp_;
+            onChanged();
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -4029,9 +5003,78 @@ public final class Datamodel {
           return this;
         }
 
+        private java.lang.Object uid_ = "";
+        /**
+         * <code>string uid = 1;</code>
+         */
+        public java.lang.String getUid() {
+          java.lang.Object ref = uid_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            uid_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>string uid = 1;</code>
+         */
+        public com.google.protobuf.ByteString
+            getUidBytes() {
+          java.lang.Object ref = uid_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            uid_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string uid = 1;</code>
+         */
+        public Builder setUid(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          uid_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string uid = 1;</code>
+         */
+        public Builder clearUid() {
+          
+          uid_ = getDefaultInstance().getUid();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string uid = 1;</code>
+         */
+        public Builder setUidBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          uid_ = value;
+          onChanged();
+          return this;
+        }
+
         private java.lang.Object dataNodeType_ = "";
         /**
-         * <code>string dataNodeType = 1;</code>
+         * <code>string dataNodeType = 2;</code>
          */
         public java.lang.String getDataNodeType() {
           java.lang.Object ref = dataNodeType_;
@@ -4046,7 +5089,7 @@ public final class Datamodel {
           }
         }
         /**
-         * <code>string dataNodeType = 1;</code>
+         * <code>string dataNodeType = 2;</code>
          */
         public com.google.protobuf.ByteString
             getDataNodeTypeBytes() {
@@ -4062,7 +5105,7 @@ public final class Datamodel {
           }
         }
         /**
-         * <code>string dataNodeType = 1;</code>
+         * <code>string dataNodeType = 2;</code>
          */
         public Builder setDataNodeType(
             java.lang.String value) {
@@ -4075,7 +5118,7 @@ public final class Datamodel {
           return this;
         }
         /**
-         * <code>string dataNodeType = 1;</code>
+         * <code>string dataNodeType = 2;</code>
          */
         public Builder clearDataNodeType() {
           
@@ -4084,7 +5127,7 @@ public final class Datamodel {
           return this;
         }
         /**
-         * <code>string dataNodeType = 1;</code>
+         * <code>string dataNodeType = 2;</code>
          */
         public Builder setDataNodeTypeBytes(
             com.google.protobuf.ByteString value) {
@@ -4100,7 +5143,7 @@ public final class Datamodel {
 
         private java.lang.Object type_ = "";
         /**
-         * <code>string type = 2;</code>
+         * <code>string type = 3;</code>
          */
         public java.lang.String getType() {
           java.lang.Object ref = type_;
@@ -4115,7 +5158,7 @@ public final class Datamodel {
           }
         }
         /**
-         * <code>string type = 2;</code>
+         * <code>string type = 3;</code>
          */
         public com.google.protobuf.ByteString
             getTypeBytes() {
@@ -4131,7 +5174,7 @@ public final class Datamodel {
           }
         }
         /**
-         * <code>string type = 2;</code>
+         * <code>string type = 3;</code>
          */
         public Builder setType(
             java.lang.String value) {
@@ -4144,7 +5187,7 @@ public final class Datamodel {
           return this;
         }
         /**
-         * <code>string type = 2;</code>
+         * <code>string type = 3;</code>
          */
         public Builder clearType() {
           
@@ -4153,7 +5196,7 @@ public final class Datamodel {
           return this;
         }
         /**
-         * <code>string type = 2;</code>
+         * <code>string type = 3;</code>
          */
         public Builder setTypeBytes(
             com.google.protobuf.ByteString value) {
@@ -4169,7 +5212,7 @@ public final class Datamodel {
 
         private java.lang.Object data_ = "";
         /**
-         * <code>string data = 3;</code>
+         * <code>string data = 4;</code>
          */
         public java.lang.String getData() {
           java.lang.Object ref = data_;
@@ -4184,7 +5227,7 @@ public final class Datamodel {
           }
         }
         /**
-         * <code>string data = 3;</code>
+         * <code>string data = 4;</code>
          */
         public com.google.protobuf.ByteString
             getDataBytes() {
@@ -4200,7 +5243,7 @@ public final class Datamodel {
           }
         }
         /**
-         * <code>string data = 3;</code>
+         * <code>string data = 4;</code>
          */
         public Builder setData(
             java.lang.String value) {
@@ -4213,7 +5256,7 @@ public final class Datamodel {
           return this;
         }
         /**
-         * <code>string data = 3;</code>
+         * <code>string data = 4;</code>
          */
         public Builder clearData() {
           
@@ -4222,7 +5265,7 @@ public final class Datamodel {
           return this;
         }
         /**
-         * <code>string data = 3;</code>
+         * <code>string data = 4;</code>
          */
         public Builder setDataBytes(
             com.google.protobuf.ByteString value) {
@@ -4236,28 +5279,71 @@ public final class Datamodel {
           return this;
         }
 
-        private long timestamp_ ;
+        private java.lang.Object timestamp_ = "";
         /**
-         * <code>int64 timestamp = 4;</code>
+         * <code>string timestamp = 5;</code>
          */
-        public long getTimestamp() {
-          return timestamp_;
+        public java.lang.String getTimestamp() {
+          java.lang.Object ref = timestamp_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            timestamp_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
         }
         /**
-         * <code>int64 timestamp = 4;</code>
+         * <code>string timestamp = 5;</code>
          */
-        public Builder setTimestamp(long value) {
-          
+        public com.google.protobuf.ByteString
+            getTimestampBytes() {
+          java.lang.Object ref = timestamp_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            timestamp_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>string timestamp = 5;</code>
+         */
+        public Builder setTimestamp(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
           timestamp_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>int64 timestamp = 4;</code>
+         * <code>string timestamp = 5;</code>
          */
         public Builder clearTimestamp() {
           
-          timestamp_ = 0L;
+          timestamp_ = getDefaultInstance().getTimestamp();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>string timestamp = 5;</code>
+         */
+        public Builder setTimestampBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          timestamp_ = value;
           onChanged();
           return this;
         }
@@ -4493,12 +5579,37 @@ public final class Datamodel {
     }
 
     public static final int TIMESTAMP_FIELD_NUMBER = 7;
-    private long timestamp_;
+    private volatile java.lang.Object timestamp_;
     /**
-     * <code>int64 timestamp = 7;</code>
+     * <code>string timestamp = 7;</code>
      */
-    public long getTimestamp() {
-      return timestamp_;
+    public java.lang.String getTimestamp() {
+      java.lang.Object ref = timestamp_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        timestamp_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string timestamp = 7;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTimestampBytes() {
+      java.lang.Object ref = timestamp_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        timestamp_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -4531,8 +5642,8 @@ public final class Datamodel {
       for (int i = 0; i < dataNodes_.size(); i++) {
         output.writeMessage(6, dataNodes_.get(i));
       }
-      if (timestamp_ != 0L) {
-        output.writeInt64(7, timestamp_);
+      if (!getTimestampBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, timestamp_);
       }
       unknownFields.writeTo(output);
     }
@@ -4563,9 +5674,8 @@ public final class Datamodel {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(6, dataNodes_.get(i));
       }
-      if (timestamp_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(7, timestamp_);
+      if (!getTimestampBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, timestamp_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -4597,8 +5707,8 @@ public final class Datamodel {
           .equals(other.getAnalyzerList());
       result = result && getDataNodesList()
           .equals(other.getDataNodesList());
-      result = result && (getTimestamp()
-          == other.getTimestamp());
+      result = result && getTimestamp()
+          .equals(other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -4628,8 +5738,7 @@ public final class Datamodel {
         hash = (53 * hash) + getDataNodesList().hashCode();
       }
       hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getTimestamp());
+      hash = (53 * hash) + getTimestamp().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4781,7 +5890,7 @@ public final class Datamodel {
         } else {
           dataNodesBuilder_.clear();
         }
-        timestamp_ = 0L;
+        timestamp_ = "";
 
         return this;
       }
@@ -4939,8 +6048,9 @@ public final class Datamodel {
             }
           }
         }
-        if (other.getTimestamp() != 0L) {
-          setTimestamp(other.getTimestamp());
+        if (!other.getTimestamp().isEmpty()) {
+          timestamp_ = other.timestamp_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -5683,28 +6793,71 @@ public final class Datamodel {
         return dataNodesBuilder_;
       }
 
-      private long timestamp_ ;
+      private java.lang.Object timestamp_ = "";
       /**
-       * <code>int64 timestamp = 7;</code>
+       * <code>string timestamp = 7;</code>
        */
-      public long getTimestamp() {
-        return timestamp_;
+      public java.lang.String getTimestamp() {
+        java.lang.Object ref = timestamp_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          timestamp_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>int64 timestamp = 7;</code>
+       * <code>string timestamp = 7;</code>
        */
-      public Builder setTimestamp(long value) {
-        
+      public com.google.protobuf.ByteString
+          getTimestampBytes() {
+        java.lang.Object ref = timestamp_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          timestamp_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string timestamp = 7;</code>
+       */
+      public Builder setTimestamp(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         timestamp_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 timestamp = 7;</code>
+       * <code>string timestamp = 7;</code>
        */
       public Builder clearTimestamp() {
         
-        timestamp_ = 0L;
+        timestamp_ = getDefaultInstance().getTimestamp();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string timestamp = 7;</code>
+       */
+      public Builder setTimestampBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        timestamp_ = value;
         onChanged();
         return this;
       }
@@ -5825,9 +6978,14 @@ public final class Datamodel {
         int index);
 
     /**
-     * <code>int64 timestamp = 6;</code>
+     * <code>string timestamp = 6;</code>
      */
-    long getTimestamp();
+    java.lang.String getTimestamp();
+    /**
+     * <code>string timestamp = 6;</code>
+     */
+    com.google.protobuf.ByteString
+        getTimestampBytes();
   }
   /**
    * Protobuf type {@code service.DiagnosticNode}
@@ -5847,7 +7005,7 @@ public final class Datamodel {
       severity_ = 0;
       message_ = "";
       analyzer_ = java.util.Collections.emptyList();
-      timestamp_ = 0L;
+      timestamp_ = "";
     }
 
     @java.lang.Override
@@ -5914,9 +7072,10 @@ public final class Datamodel {
                   input.readMessage(org.qmstr.grpc.service.Datamodel.Analyzer.parser(), extensionRegistry));
               break;
             }
-            case 48: {
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
 
-              timestamp_ = input.readInt64();
+              timestamp_ = s;
               break;
             }
           }
@@ -6217,12 +7376,37 @@ public final class Datamodel {
     }
 
     public static final int TIMESTAMP_FIELD_NUMBER = 6;
-    private long timestamp_;
+    private volatile java.lang.Object timestamp_;
     /**
-     * <code>int64 timestamp = 6;</code>
+     * <code>string timestamp = 6;</code>
      */
-    public long getTimestamp() {
-      return timestamp_;
+    public java.lang.String getTimestamp() {
+      java.lang.Object ref = timestamp_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        timestamp_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string timestamp = 6;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTimestampBytes() {
+      java.lang.Object ref = timestamp_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        timestamp_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -6252,8 +7436,8 @@ public final class Datamodel {
       for (int i = 0; i < analyzer_.size(); i++) {
         output.writeMessage(5, analyzer_.get(i));
       }
-      if (timestamp_ != 0L) {
-        output.writeInt64(6, timestamp_);
+      if (!getTimestampBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, timestamp_);
       }
       unknownFields.writeTo(output);
     }
@@ -6280,9 +7464,8 @@ public final class Datamodel {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, analyzer_.get(i));
       }
-      if (timestamp_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(6, timestamp_);
+      if (!getTimestampBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, timestamp_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -6309,8 +7492,8 @@ public final class Datamodel {
           .equals(other.getMessage());
       result = result && getAnalyzerList()
           .equals(other.getAnalyzerList());
-      result = result && (getTimestamp()
-          == other.getTimestamp());
+      result = result && getTimestamp()
+          .equals(other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -6335,8 +7518,7 @@ public final class Datamodel {
         hash = (53 * hash) + getAnalyzerList().hashCode();
       }
       hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getTimestamp());
+      hash = (53 * hash) + getTimestamp().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -6481,7 +7663,7 @@ public final class Datamodel {
         } else {
           analyzerBuilder_.clear();
         }
-        timestamp_ = 0L;
+        timestamp_ = "";
 
         return this;
       }
@@ -6604,8 +7786,9 @@ public final class Datamodel {
             }
           }
         }
-        if (other.getTimestamp() != 0L) {
-          setTimestamp(other.getTimestamp());
+        if (!other.getTimestamp().isEmpty()) {
+          timestamp_ = other.timestamp_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -7126,28 +8309,71 @@ public final class Datamodel {
         return analyzerBuilder_;
       }
 
-      private long timestamp_ ;
+      private java.lang.Object timestamp_ = "";
       /**
-       * <code>int64 timestamp = 6;</code>
+       * <code>string timestamp = 6;</code>
        */
-      public long getTimestamp() {
-        return timestamp_;
+      public java.lang.String getTimestamp() {
+        java.lang.Object ref = timestamp_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          timestamp_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>int64 timestamp = 6;</code>
+       * <code>string timestamp = 6;</code>
        */
-      public Builder setTimestamp(long value) {
-        
+      public com.google.protobuf.ByteString
+          getTimestampBytes() {
+        java.lang.Object ref = timestamp_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          timestamp_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string timestamp = 6;</code>
+       */
+      public Builder setTimestamp(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         timestamp_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 timestamp = 6;</code>
+       * <code>string timestamp = 6;</code>
        */
       public Builder clearTimestamp() {
         
-        timestamp_ = 0L;
+        timestamp_ = getDefaultInstance().getTimestamp();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string timestamp = 6;</code>
+       */
+      public Builder setTimestampBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        timestamp_ = value;
         onChanged();
         return this;
       }
@@ -9224,9 +10450,14 @@ public final class Datamodel {
         int index);
 
     /**
-     * <code>int64 timestamp = 9;</code>
+     * <code>string timestamp = 9;</code>
      */
-    long getTimestamp();
+    java.lang.String getTimestamp();
+    /**
+     * <code>string timestamp = 9;</code>
+     */
+    com.google.protobuf.ByteString
+        getTimestampBytes();
   }
   /**
    * Protobuf type {@code service.PackageNode}
@@ -9249,7 +10480,7 @@ public final class Datamodel {
       additionalInfo_ = java.util.Collections.emptyList();
       buildConfig_ = "";
       diagnosticInfo_ = java.util.Collections.emptyList();
-      timestamp_ = 0L;
+      timestamp_ = "";
     }
 
     @java.lang.Override
@@ -9340,9 +10571,10 @@ public final class Datamodel {
                   input.readMessage(org.qmstr.grpc.service.Datamodel.DiagnosticNode.parser(), extensionRegistry));
               break;
             }
-            case 72: {
+            case 74: {
+              java.lang.String s = input.readStringRequireUtf8();
 
-              timestamp_ = input.readInt64();
+              timestamp_ = s;
               break;
             }
           }
@@ -9655,12 +10887,37 @@ public final class Datamodel {
     }
 
     public static final int TIMESTAMP_FIELD_NUMBER = 9;
-    private long timestamp_;
+    private volatile java.lang.Object timestamp_;
     /**
-     * <code>int64 timestamp = 9;</code>
+     * <code>string timestamp = 9;</code>
      */
-    public long getTimestamp() {
-      return timestamp_;
+    public java.lang.String getTimestamp() {
+      java.lang.Object ref = timestamp_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        timestamp_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string timestamp = 9;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTimestampBytes() {
+      java.lang.Object ref = timestamp_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        timestamp_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -9699,8 +10956,8 @@ public final class Datamodel {
       for (int i = 0; i < diagnosticInfo_.size(); i++) {
         output.writeMessage(8, diagnosticInfo_.get(i));
       }
-      if (timestamp_ != 0L) {
-        output.writeInt64(9, timestamp_);
+      if (!getTimestampBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, timestamp_);
       }
       unknownFields.writeTo(output);
     }
@@ -9737,9 +10994,8 @@ public final class Datamodel {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(8, diagnosticInfo_.get(i));
       }
-      if (timestamp_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(9, timestamp_);
+      if (!getTimestampBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, timestamp_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -9773,8 +11029,8 @@ public final class Datamodel {
           .equals(other.getBuildConfig());
       result = result && getDiagnosticInfoList()
           .equals(other.getDiagnosticInfoList());
-      result = result && (getTimestamp()
-          == other.getTimestamp());
+      result = result && getTimestamp()
+          .equals(other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -9809,8 +11065,7 @@ public final class Datamodel {
         hash = (53 * hash) + getDiagnosticInfoList().hashCode();
       }
       hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getTimestamp());
+      hash = (53 * hash) + getTimestamp().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -9971,7 +11226,7 @@ public final class Datamodel {
         } else {
           diagnosticInfoBuilder_.clear();
         }
-        timestamp_ = 0L;
+        timestamp_ = "";
 
         return this;
       }
@@ -10170,8 +11425,9 @@ public final class Datamodel {
             }
           }
         }
-        if (other.getTimestamp() != 0L) {
-          setTimestamp(other.getTimestamp());
+        if (!other.getTimestamp().isEmpty()) {
+          timestamp_ = other.timestamp_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -11266,28 +12522,71 @@ public final class Datamodel {
         return diagnosticInfoBuilder_;
       }
 
-      private long timestamp_ ;
+      private java.lang.Object timestamp_ = "";
       /**
-       * <code>int64 timestamp = 9;</code>
+       * <code>string timestamp = 9;</code>
        */
-      public long getTimestamp() {
-        return timestamp_;
+      public java.lang.String getTimestamp() {
+        java.lang.Object ref = timestamp_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          timestamp_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>int64 timestamp = 9;</code>
+       * <code>string timestamp = 9;</code>
        */
-      public Builder setTimestamp(long value) {
-        
+      public com.google.protobuf.ByteString
+          getTimestampBytes() {
+        java.lang.Object ref = timestamp_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          timestamp_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string timestamp = 9;</code>
+       */
+      public Builder setTimestamp(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         timestamp_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 timestamp = 9;</code>
+       * <code>string timestamp = 9;</code>
        */
       public Builder clearTimestamp() {
         
-        timestamp_ = 0L;
+        timestamp_ = getDefaultInstance().getTimestamp();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string timestamp = 9;</code>
+       */
+      public Builder setTimestampBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        timestamp_ = value;
         onChanged();
         return this;
       }
@@ -11423,9 +12722,14 @@ public final class Datamodel {
         int index);
 
     /**
-     * <code>int64 timestamp = 6;</code>
+     * <code>string timestamp = 6;</code>
      */
-    long getTimestamp();
+    java.lang.String getTimestamp();
+    /**
+     * <code>string timestamp = 6;</code>
+     */
+    com.google.protobuf.ByteString
+        getTimestampBytes();
   }
   /**
    * Protobuf type {@code service.ProjectNode}
@@ -11445,7 +12749,7 @@ public final class Datamodel {
       projectNodeType_ = "";
       packages_ = java.util.Collections.emptyList();
       additionalInfo_ = java.util.Collections.emptyList();
-      timestamp_ = 0L;
+      timestamp_ = "";
     }
 
     @java.lang.Override
@@ -11515,9 +12819,10 @@ public final class Datamodel {
                   input.readMessage(org.qmstr.grpc.service.Datamodel.InfoNode.parser(), extensionRegistry));
               break;
             }
-            case 48: {
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
 
-              timestamp_ = input.readInt64();
+              timestamp_ = s;
               break;
             }
           }
@@ -11724,12 +13029,37 @@ public final class Datamodel {
     }
 
     public static final int TIMESTAMP_FIELD_NUMBER = 6;
-    private long timestamp_;
+    private volatile java.lang.Object timestamp_;
     /**
-     * <code>int64 timestamp = 6;</code>
+     * <code>string timestamp = 6;</code>
      */
-    public long getTimestamp() {
-      return timestamp_;
+    public java.lang.String getTimestamp() {
+      java.lang.Object ref = timestamp_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        timestamp_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string timestamp = 6;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTimestampBytes() {
+      java.lang.Object ref = timestamp_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        timestamp_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -11759,8 +13089,8 @@ public final class Datamodel {
       for (int i = 0; i < additionalInfo_.size(); i++) {
         output.writeMessage(5, additionalInfo_.get(i));
       }
-      if (timestamp_ != 0L) {
-        output.writeInt64(6, timestamp_);
+      if (!getTimestampBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, timestamp_);
       }
       unknownFields.writeTo(output);
     }
@@ -11787,9 +13117,8 @@ public final class Datamodel {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, additionalInfo_.get(i));
       }
-      if (timestamp_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(6, timestamp_);
+      if (!getTimestampBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, timestamp_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -11817,8 +13146,8 @@ public final class Datamodel {
           .equals(other.getPackagesList());
       result = result && getAdditionalInfoList()
           .equals(other.getAdditionalInfoList());
-      result = result && (getTimestamp()
-          == other.getTimestamp());
+      result = result && getTimestamp()
+          .equals(other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -11845,8 +13174,7 @@ public final class Datamodel {
         hash = (53 * hash) + getAdditionalInfoList().hashCode();
       }
       hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getTimestamp());
+      hash = (53 * hash) + getTimestamp().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11996,7 +13324,7 @@ public final class Datamodel {
         } else {
           additionalInfoBuilder_.clear();
         }
-        timestamp_ = 0L;
+        timestamp_ = "";
 
         return this;
       }
@@ -12150,8 +13478,9 @@ public final class Datamodel {
             }
           }
         }
-        if (other.getTimestamp() != 0L) {
-          setTimestamp(other.getTimestamp());
+        if (!other.getTimestamp().isEmpty()) {
+          timestamp_ = other.timestamp_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -12868,28 +14197,71 @@ public final class Datamodel {
         return additionalInfoBuilder_;
       }
 
-      private long timestamp_ ;
+      private java.lang.Object timestamp_ = "";
       /**
-       * <code>int64 timestamp = 6;</code>
+       * <code>string timestamp = 6;</code>
        */
-      public long getTimestamp() {
-        return timestamp_;
+      public java.lang.String getTimestamp() {
+        java.lang.Object ref = timestamp_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          timestamp_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>int64 timestamp = 6;</code>
+       * <code>string timestamp = 6;</code>
        */
-      public Builder setTimestamp(long value) {
-        
+      public com.google.protobuf.ByteString
+          getTimestampBytes() {
+        java.lang.Object ref = timestamp_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          timestamp_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string timestamp = 6;</code>
+       */
+      public Builder setTimestamp(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         timestamp_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 timestamp = 6;</code>
+       * <code>string timestamp = 6;</code>
        */
       public Builder clearTimestamp() {
         
-        timestamp_ = 0L;
+        timestamp_ = getDefaultInstance().getTimestamp();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string timestamp = 6;</code>
+       */
+      public Builder setTimestampBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        timestamp_ = value;
         onChanged();
         return this;
       }
@@ -13598,9 +14970,14 @@ public final class Datamodel {
     boolean getDone();
 
     /**
-     * <code>int64 timestamp = 5;</code>
+     * <code>string timestamp = 5;</code>
      */
-    long getTimestamp();
+    java.lang.String getTimestamp();
+    /**
+     * <code>string timestamp = 5;</code>
+     */
+    com.google.protobuf.ByteString
+        getTimestampBytes();
   }
   /**
    * Protobuf type {@code service.QmstrStateNode}
@@ -13619,7 +14996,7 @@ public final class Datamodel {
       qmstrStateNodeType_ = "";
       phase_ = 0;
       done_ = false;
-      timestamp_ = 0L;
+      timestamp_ = "";
     }
 
     @java.lang.Override
@@ -13676,9 +15053,10 @@ public final class Datamodel {
               done_ = input.readBool();
               break;
             }
-            case 40: {
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
 
-              timestamp_ = input.readInt64();
+              timestamp_ = s;
               break;
             }
           }
@@ -13799,12 +15177,37 @@ public final class Datamodel {
     }
 
     public static final int TIMESTAMP_FIELD_NUMBER = 5;
-    private long timestamp_;
+    private volatile java.lang.Object timestamp_;
     /**
-     * <code>int64 timestamp = 5;</code>
+     * <code>string timestamp = 5;</code>
      */
-    public long getTimestamp() {
-      return timestamp_;
+    public java.lang.String getTimestamp() {
+      java.lang.Object ref = timestamp_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        timestamp_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string timestamp = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTimestampBytes() {
+      java.lang.Object ref = timestamp_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        timestamp_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -13831,8 +15234,8 @@ public final class Datamodel {
       if (done_ != false) {
         output.writeBool(4, done_);
       }
-      if (timestamp_ != 0L) {
-        output.writeInt64(5, timestamp_);
+      if (!getTimestampBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, timestamp_);
       }
       unknownFields.writeTo(output);
     }
@@ -13856,9 +15259,8 @@ public final class Datamodel {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(4, done_);
       }
-      if (timestamp_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(5, timestamp_);
+      if (!getTimestampBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, timestamp_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -13883,8 +15285,8 @@ public final class Datamodel {
       result = result && phase_ == other.phase_;
       result = result && (getDone()
           == other.getDone());
-      result = result && (getTimestamp()
-          == other.getTimestamp());
+      result = result && getTimestamp()
+          .equals(other.getTimestamp());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -13906,8 +15308,7 @@ public final class Datamodel {
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getDone());
       hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getTimestamp());
+      hash = (53 * hash) + getTimestamp().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -14045,7 +15446,7 @@ public final class Datamodel {
 
         done_ = false;
 
-        timestamp_ = 0L;
+        timestamp_ = "";
 
         return this;
       }
@@ -14129,8 +15530,9 @@ public final class Datamodel {
         if (other.getDone() != false) {
           setDone(other.getDone());
         }
-        if (other.getTimestamp() != 0L) {
-          setTimestamp(other.getTimestamp());
+        if (!other.getTimestamp().isEmpty()) {
+          timestamp_ = other.timestamp_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -14367,28 +15769,71 @@ public final class Datamodel {
         return this;
       }
 
-      private long timestamp_ ;
+      private java.lang.Object timestamp_ = "";
       /**
-       * <code>int64 timestamp = 5;</code>
+       * <code>string timestamp = 5;</code>
        */
-      public long getTimestamp() {
-        return timestamp_;
+      public java.lang.String getTimestamp() {
+        java.lang.Object ref = timestamp_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          timestamp_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>int64 timestamp = 5;</code>
+       * <code>string timestamp = 5;</code>
        */
-      public Builder setTimestamp(long value) {
-        
+      public com.google.protobuf.ByteString
+          getTimestampBytes() {
+        java.lang.Object ref = timestamp_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          timestamp_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string timestamp = 5;</code>
+       */
+      public Builder setTimestamp(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
         timestamp_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int64 timestamp = 5;</code>
+       * <code>string timestamp = 5;</code>
        */
       public Builder clearTimestamp() {
         
-        timestamp_ = 0L;
+        timestamp_ = getDefaultInstance().getTimestamp();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string timestamp = 5;</code>
+       */
+      public Builder setTimestampBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        timestamp_ = value;
         onChanged();
         return this;
       }
@@ -14447,6 +15892,11 @@ public final class Datamodel {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_service_FileNode_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_service_FileNode_FileDataNode_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_service_FileNode_FileDataNode_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_service_InfoNode_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -14500,54 +15950,57 @@ public final class Datamodel {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\017datamodel.proto\022\007service\"\216\003\n\010FileNode\022" +
+      "\n\017datamodel.proto\022\007service\"\350\003\n\010FileNode\022" +
       "\013\n\003uid\030\001 \001(\t\022\024\n\014fileNodeType\030\002 \001(\t\022(\n\010fi" +
       "leType\030\003 \001(\0162\026.service.FileNode.Type\022\014\n\004" +
-      "path\030\004 \001(\t\022\014\n\004name\030\005 \001(\t\022\014\n\004hash\030\006 \001(\t\022\016" +
-      "\n\006broken\030\007 \001(\010\022&\n\013derivedFrom\030\010 \003(\0132\021.se" +
-      "rvice.FileNode\022)\n\016additionalInfo\030\t \003(\0132\021" +
-      ".service.InfoNode\022/\n\016diagnosticInfo\030\n \003(" +
-      "\0132\027.service.DiagnosticNode\022\'\n\014dependenci" +
-      "es\030\013 \003(\0132\021.service.FileNode\022\021\n\ttimestamp" +
-      "\030\014 \001(\003\";\n\004Type\022\t\n\005UNDEF\020\000\022\n\n\006SOURCE\020\001\022\020\n" +
-      "\014INTERMEDIATE\020\002\022\n\n\006TARGET\020\003\"\214\002\n\010InfoNode" +
-      "\022\013\n\003uid\030\001 \001(\t\022\024\n\014infoNodeType\030\002 \001(\t\022\014\n\004t" +
-      "ype\030\003 \001(\t\022\027\n\017confidenceScore\030\004 \001(\001\022#\n\010an" +
-      "alyzer\030\005 \003(\0132\021.service.Analyzer\022-\n\tdataN" +
-      "odes\030\006 \003(\0132\032.service.InfoNode.DataNode\022\021" +
-      "\n\ttimestamp\030\007 \001(\003\032O\n\010DataNode\022\024\n\014dataNod" +
-      "eType\030\001 \001(\t\022\014\n\004type\030\002 \001(\t\022\014\n\004data\030\003 \001(\t\022" +
-      "\021\n\ttimestamp\030\004 \001(\003\"\357\001\n\016DiagnosticNode\022\013\n" +
-      "\003uid\030\001 \001(\t\022\032\n\022diagnosticNodeType\030\002 \001(\t\0222" +
-      "\n\010severity\030\003 \001(\0162 .service.DiagnosticNod" +
-      "e.Severity\022\017\n\007message\030\004 \001(\t\022#\n\010analyzer\030" +
-      "\005 \003(\0132\021.service.Analyzer\022\021\n\ttimestamp\030\006 " +
-      "\001(\003\"7\n\010Severity\022\t\n\005UNDEF\020\000\022\010\n\004INFO\020\001\022\013\n\007" +
-      "WARNING\020\002\022\t\n\005ERROR\020\003\"\177\n\010Analyzer\022\013\n\003uid\030" +
-      "\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\030\n\020analyzerNodeType\030" +
-      "\003 \001(\t\022\022\n\ntrustLevel\030\004 \001(\003\022*\n\007pathSub\030\005 \003" +
-      "(\0132\031.service.PathSubstitution\",\n\020PathSub" +
-      "stitution\022\013\n\003old\030\001 \001(\t\022\013\n\003new\030\002 \001(\t\"\372\001\n\013" +
-      "PackageNode\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\017" +
-      "\n\007version\030\003 \001(\t\022\027\n\017packageNodeType\030\004 \001(\t" +
-      "\022\"\n\007targets\030\005 \003(\0132\021.service.FileNode\022)\n\016" +
-      "additionalInfo\030\006 \003(\0132\021.service.InfoNode\022" +
-      "\023\n\013buildConfig\030\007 \001(\t\022/\n\016diagnosticInfo\030\010" +
-      " \003(\0132\027.service.DiagnosticNode\022\021\n\ttimesta" +
-      "mp\030\t \001(\003\"\247\001\n\013ProjectNode\022\013\n\003uid\030\001 \001(\t\022\014\n" +
-      "\004name\030\002 \001(\t\022\027\n\017projectNodeType\030\003 \001(\t\022&\n\010" +
-      "packages\030\004 \003(\0132\024.service.PackageNode\022)\n\016" +
-      "additionalInfo\030\005 \003(\0132\021.service.InfoNode\022" +
-      "\021\n\ttimestamp\030\006 \001(\003\"<\n\005Event\022\"\n\005class\030\001 \001" +
-      "(\0162\023.service.EventClass\022\017\n\007message\030\002 \001(\t" +
-      "\"y\n\016QmstrStateNode\022\013\n\003uid\030\001 \001(\t\022\032\n\022qmstr" +
-      "StateNodeType\030\002 \001(\t\022\035\n\005phase\030\003 \001(\0162\016.ser" +
-      "vice.Phase\022\014\n\004done\030\004 \001(\010\022\021\n\ttimestamp\030\005 " +
-      "\001(\003*,\n\nEventClass\022\007\n\003ALL\020\000\022\t\n\005PHASE\020\001\022\n\n" +
-      "\006MODULE\020\002*@\n\005Phase\022\010\n\004INIT\020\000\022\t\n\005BUILD\020\001\022" +
-      "\014\n\010ANALYSIS\020\002\022\n\n\006REPORT\020\003\022\010\n\004FAIL\020\004*\'\n\rE" +
-      "xceptionType\022\t\n\005ERROR\020\000\022\013\n\007WARNING\020\001B\030\n\026" +
-      "org.qmstr.grpc.serviceb\006proto3"
+      "path\030\004 \001(\t\022\014\n\004name\030\005 \001(\t\0220\n\010fileData\030\006 \001" +
+      "(\0132\036.service.FileNode.FileDataNode\022\021\n\tti" +
+      "mestamp\030\007 \001(\t\022&\n\013derivedFrom\030\010 \003(\0132\021.ser" +
+      "vice.FileNode\022\'\n\014dependencies\030\t \003(\0132\021.se" +
+      "rvice.FileNode\032\237\001\n\014FileDataNode\022\013\n\003uid\030\001" +
+      " \001(\t\022\030\n\020fileDataNodeType\030\002 \001(\t\022\014\n\004hash\030\003" +
+      " \001(\t\022)\n\016additionalInfo\030\004 \003(\0132\021.service.I" +
+      "nfoNode\022/\n\016diagnosticInfo\030\005 \003(\0132\027.servic" +
+      "e.DiagnosticNode\";\n\004Type\022\t\n\005UNDEF\020\000\022\n\n\006S" +
+      "OURCE\020\001\022\020\n\014INTERMEDIATE\020\002\022\n\n\006TARGET\020\003\"\231\002" +
+      "\n\010InfoNode\022\013\n\003uid\030\001 \001(\t\022\024\n\014infoNodeType\030" +
+      "\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\027\n\017confidenceScore\030\004" +
+      " \001(\001\022#\n\010analyzer\030\005 \003(\0132\021.service.Analyze" +
+      "r\022-\n\tdataNodes\030\006 \003(\0132\032.service.InfoNode." +
+      "DataNode\022\021\n\ttimestamp\030\007 \001(\t\032\\\n\010DataNode\022" +
+      "\013\n\003uid\030\001 \001(\t\022\024\n\014dataNodeType\030\002 \001(\t\022\014\n\004ty" +
+      "pe\030\003 \001(\t\022\014\n\004data\030\004 \001(\t\022\021\n\ttimestamp\030\005 \001(" +
+      "\t\"\357\001\n\016DiagnosticNode\022\013\n\003uid\030\001 \001(\t\022\032\n\022dia" +
+      "gnosticNodeType\030\002 \001(\t\0222\n\010severity\030\003 \001(\0162" +
+      " .service.DiagnosticNode.Severity\022\017\n\007mes" +
+      "sage\030\004 \001(\t\022#\n\010analyzer\030\005 \003(\0132\021.service.A" +
+      "nalyzer\022\021\n\ttimestamp\030\006 \001(\t\"7\n\010Severity\022\t" +
+      "\n\005UNDEF\020\000\022\010\n\004INFO\020\001\022\013\n\007WARNING\020\002\022\t\n\005ERRO" +
+      "R\020\003\"\177\n\010Analyzer\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001" +
+      "(\t\022\030\n\020analyzerNodeType\030\003 \001(\t\022\022\n\ntrustLev" +
+      "el\030\004 \001(\003\022*\n\007pathSub\030\005 \003(\0132\031.service.Path" +
+      "Substitution\",\n\020PathSubstitution\022\013\n\003old\030" +
+      "\001 \001(\t\022\013\n\003new\030\002 \001(\t\"\372\001\n\013PackageNode\022\013\n\003ui" +
+      "d\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\017\n\007version\030\003 \001(\t\022\027" +
+      "\n\017packageNodeType\030\004 \001(\t\022\"\n\007targets\030\005 \003(\013" +
+      "2\021.service.FileNode\022)\n\016additionalInfo\030\006 " +
+      "\003(\0132\021.service.InfoNode\022\023\n\013buildConfig\030\007 " +
+      "\001(\t\022/\n\016diagnosticInfo\030\010 \003(\0132\027.service.Di" +
+      "agnosticNode\022\021\n\ttimestamp\030\t \001(\t\"\247\001\n\013Proj" +
+      "ectNode\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\027\n\017pr" +
+      "ojectNodeType\030\003 \001(\t\022&\n\010packages\030\004 \003(\0132\024." +
+      "service.PackageNode\022)\n\016additionalInfo\030\005 " +
+      "\003(\0132\021.service.InfoNode\022\021\n\ttimestamp\030\006 \001(" +
+      "\t\"<\n\005Event\022\"\n\005class\030\001 \001(\0162\023.service.Even" +
+      "tClass\022\017\n\007message\030\002 \001(\t\"y\n\016QmstrStateNod" +
+      "e\022\013\n\003uid\030\001 \001(\t\022\032\n\022qmstrStateNodeType\030\002 \001" +
+      "(\t\022\035\n\005phase\030\003 \001(\0162\016.service.Phase\022\014\n\004don" +
+      "e\030\004 \001(\010\022\021\n\ttimestamp\030\005 \001(\t*,\n\nEventClass" +
+      "\022\007\n\003ALL\020\000\022\t\n\005PHASE\020\001\022\n\n\006MODULE\020\002*@\n\005Phas" +
+      "e\022\010\n\004INIT\020\000\022\t\n\005BUILD\020\001\022\014\n\010ANALYSIS\020\002\022\n\n\006" +
+      "REPORT\020\003\022\010\n\004FAIL\020\004*\'\n\rExceptionType\022\t\n\005E" +
+      "RROR\020\000\022\013\n\007WARNING\020\001B\030\n\026org.qmstr.grpc.se" +
+      "rviceb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -14566,7 +16019,13 @@ public final class Datamodel {
     internal_static_service_FileNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_FileNode_descriptor,
-        new java.lang.String[] { "Uid", "FileNodeType", "FileType", "Path", "Name", "Hash", "Broken", "DerivedFrom", "AdditionalInfo", "DiagnosticInfo", "Dependencies", "Timestamp", });
+        new java.lang.String[] { "Uid", "FileNodeType", "FileType", "Path", "Name", "FileData", "Timestamp", "DerivedFrom", "Dependencies", });
+    internal_static_service_FileNode_FileDataNode_descriptor =
+      internal_static_service_FileNode_descriptor.getNestedTypes().get(0);
+    internal_static_service_FileNode_FileDataNode_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_service_FileNode_FileDataNode_descriptor,
+        new java.lang.String[] { "Uid", "FileDataNodeType", "Hash", "AdditionalInfo", "DiagnosticInfo", });
     internal_static_service_InfoNode_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_service_InfoNode_fieldAccessorTable = new
@@ -14578,7 +16037,7 @@ public final class Datamodel {
     internal_static_service_InfoNode_DataNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_InfoNode_DataNode_descriptor,
-        new java.lang.String[] { "DataNodeType", "Type", "Data", "Timestamp", });
+        new java.lang.String[] { "Uid", "DataNodeType", "Type", "Data", "Timestamp", });
     internal_static_service_DiagnosticNode_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_service_DiagnosticNode_fieldAccessorTable = new
