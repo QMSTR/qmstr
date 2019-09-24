@@ -41,9 +41,9 @@ public class FilenodeUtils {
 
     public static Datamodel.FileNode getFileNode(String path, String checksum, Datamodel.FileNode.Type type) {
         Path filepath = Paths.get(path);
-
         return Datamodel.FileNode.newBuilder().setName(filepath.getFileName().toString()).setPath(filepath.toString())
-                .setHash(checksum != null ? checksum : "nohash" + filepath.toString()).setBroken(checksum == null)
+                .setFileData(Datamodel.FileNode.FileDataNode.newBuilder()
+                        .setHash(checksum != null ? checksum : "nohash" + filepath.toString()).build())
                 .setFileType(type).build();
 
     }
