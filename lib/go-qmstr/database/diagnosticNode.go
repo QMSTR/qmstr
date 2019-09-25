@@ -120,7 +120,7 @@ func (db *DataBase) GetDiagnosticNodeBySeverity(diagnosticNode *service.Diagnost
 	var b bytes.Buffer
 	err = queryTmpl.Execute(&b, qp)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	err = db.queryNodes(b.String(), vars, &ret)
 	if err != nil {

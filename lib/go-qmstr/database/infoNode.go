@@ -120,7 +120,7 @@ func (db *DataBase) GetInfoDataByTrustLevel(fileID string, infotype string, data
 	var b bytes.Buffer
 	err = queryTmpl.Execute(&b, qp)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	err = db.queryNodes(b.String(), vars, &ret)
 	if err != nil {
@@ -216,7 +216,7 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 					{{$var}} as ~dataNodes
 				}
 				{{end}}
-		
+
 				getInfoByData(func: has(infoNodeType)) @filter(eq(type, $InfoType) {{range $var, $data := .}} AND uid({{$var}}) {{end}}) {
 					uid
 					type
@@ -232,7 +232,7 @@ func (db *DataBase) GetInfoNodeByDataNode(infonodetype string, datanodes ...*ser
 	var b bytes.Buffer
 	err = queryTmpl.Execute(&b, runeDataNodeMap)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	queryString := b.String()
