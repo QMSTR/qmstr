@@ -3,6 +3,7 @@ package cliqmstr
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -53,7 +54,7 @@ func executeRun(cmd *cobra.Command, args []string) {
 func Run(payloadCmd []string) int {
 	if len(payloadCmd) == 0 && !keepTmpDirectories {
 		// This should have been caught by runCmd's Args validator:
-		panic(fmt.Errorf("command validation constraint violated"))
+		log.Fatal("command validation constraint violated")
 	}
 
 	var tmpWorkDir string

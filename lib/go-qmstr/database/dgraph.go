@@ -166,32 +166,42 @@ func (db *DataBase) queueWorker() {
 	}
 }
 
-func (db *DataBase) checkFileData(node *service.FileNode) {
-	fDataUID, err := db.GetFileDataUID(node.FileData.GetHash())
+func (db *DataBase) checkFileData(node *service.FileNode) error {
+	hash := node.FileData.GetHash()
+	if hash == "" {
+		return fmt.Errorf("hash cannot be empty for node: %v", node)
+	}
+	fDataUID, err := db.GetFileDataUID(hash)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if fDataUID != "" {
 		node.FileData.Uid = fDataUID
 	}
+	return nil
 }
 
 func (db *DataBase) insertFileNode(node *service.FileNode) {
 	ready := true
 	// check if fileData already exist in db
-	db.checkFileData(node)
+	err := db.checkFileData(node)
+	if err != nil {
+		log.Fatalf("checkFileData failed: %v", err)
+	}
 
 	for idx, dep := range node.DerivedFrom {
 		// check if fileData already exist in db
-		db.checkFileData(dep)
-
+		err := db.checkFileData(dep)
+		if err != nil {
+			log.Fatalf("checkFileData failed: %v", err)
+		}
 		if dep.Uid == "" {
 			// missing dep
 			ready = false
 			// look up dep in db
 			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.GetHash())
 			if err != nil {
-				panic(err)
+				log.Fatalf("getFileNodeUid failed for node: %v: %v", node, err)
 			}
 			// found uid
 			if uid != "" {
@@ -202,7 +212,10 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 
 	for idx, dep := range node.Dependencies {
 		// check if fileData already exist in db
-		db.checkFileData(dep)
+		err := db.checkFileData(dep)
+		if err != nil {
+			log.Fatalf("checkFileData failed: %v", err)
+		}
 
 		if dep.Uid == "" {
 			// missing dep
@@ -210,7 +223,7 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 			// look up dep in db
 			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.GetHash())
 			if err != nil {
-				panic(err)
+				log.Fatalf("getFileNodeUid failed for node: %v: %v", node, err)
 			}
 			// found uid
 			if uid != "" {
@@ -229,14 +242,14 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 	db.insertMutex.Lock()
 	uid, err := db.GetFileNodeUid(node.Path, node.FileData.GetHash())
 	if err != nil {
-		panic(err)
+		log.Fatalf("getFileNodeUid failed for node: %v: %v", node, err)
 	}
 	if uid != "" {
 		node.Uid = uid
 	}
 	_, err = dbInsert(db.client, node)
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed inserting file node %v: %v", node, err)
 	}
 	atomic.AddUint64(&db.pending, ^uint64(0))
 	db.insertMutex.Unlock()
@@ -251,7 +264,7 @@ func (db *DataBase) insertPkgNode(node *service.PackageNode) {
 			// look up dep in db
 			uid, err := db.GetFileNodeUid(dep.Path, dep.FileData.GetHash())
 			if err != nil {
-				panic(err)
+				log.Fatalf("getFileNodeUid failed for node: %v: %v", node, err)
 			}
 			// found uid
 			if uid != "" {
@@ -276,7 +289,7 @@ func (db *DataBase) insertPkgNode(node *service.PackageNode) {
 
 	_, err = dbInsert(db.client, node)
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed inserting package node failed: %v", err)
 	}
 	atomic.AddUint64(&db.pending, ^uint64(0))
 	db.insertMutex.Unlock()
@@ -287,7 +300,7 @@ func (db *DataBase) insertProjectNode(node *service.ProjectNode) {
 
 	_, err := dbInsert(db.client, node)
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed inserting package node failed: %v", err)
 	}
 	atomic.AddUint64(&db.pending, ^uint64(0))
 	db.insertMutex.Unlock()
@@ -440,7 +453,7 @@ func (db *DataBase) GetNodesByType(valuetype string, recursive bool, namefilter 
 	var b bytes.Buffer
 	err = queryTmpl.Execute(&b, qp)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("GetNodesByType failed: %v", err)
 	}
 
 	vars := map[string]string{"$Type": valuetype, "$Name": namefilter}

@@ -107,7 +107,7 @@ func (w *Wrapper) Wrap() {
 	// connect stdin to pass piped data through and save for analysis
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
-		w.logger.Panic(err)
+		w.logger.Fatal(err)
 	}
 
 	go func() {
