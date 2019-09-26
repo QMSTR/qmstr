@@ -1,6 +1,6 @@
 function create_dirs() {
     if [ -n ${USERID} ]; then
-        for i in /var/cache/qmstr /var/qmstr /var/lib/qmstr; do
+        for i in /var/cache/qmstr /var/qmstr /var/lib/qmstr /var/dgraph; do
             if [ ! -d "${i}" ]; then
                 echo "Creating dir $i to be owned by ${USERID}"
                 mkdir -p ${i}
@@ -36,7 +36,7 @@ function get_qmstr_user() {
 function start_dgraph() {
     dgraph version
     dgraph zero &
-    dgraph alpha --lru_mb=2048 --zero=localhost:5080 --export=/var/qmstr/export &
+    su -c "cd /var/dgraph && dgraph alpha --lru_mb=2048 --zero=localhost:5080 --export=/var/qmstr/export" $(get_qmstr_user) &
 }
 
 function start_dgraph_web() {
