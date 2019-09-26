@@ -183,11 +183,6 @@ func (db *DataBase) checkFileData(node *service.FileNode) error {
 
 func (db *DataBase) insertFileNode(node *service.FileNode) {
 	ready := true
-	// check if fileData already exist in db
-	err := db.checkFileData(node)
-	if err != nil {
-		log.Fatalf("checkFileData failed: %v", err)
-	}
 
 	for idx, dep := range node.DerivedFrom {
 		// check if fileData already exist in db
@@ -240,6 +235,13 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 
 	// we are ready to insert the node
 	db.insertMutex.Lock()
+
+	// check if fileData already exist in db
+	err := db.checkFileData(node)
+	if err != nil {
+		log.Fatalf("checkFileData failed: %v", err)
+	}
+
 	uid, err := db.GetFileNodeUid(node.Path, node.FileData.GetHash())
 	if err != nil {
 		log.Fatalf("getFileNodeUid failed for node: %v: %v", node, err)
