@@ -22,7 +22,7 @@ func (db *DataBase) AddPackageNode(node *service.PackageNode) {
 }
 
 func (db *DataBase) GetPackageNodeByName(name string) (*service.PackageNode, error) {
-	var ret map[string][]interface{}
+	var ret map[string][]*service.PackageNode
 
 	q := `query GetPackageNodeByName($Name: string){
 		  getPackageNodeByName(func: has(packageNodeType)) @filter(eq(name, $Name)) @recurse(loop: true, depth:3){
@@ -45,22 +45,17 @@ func (db *DataBase) GetPackageNodeByName(name string) (*service.PackageNode, err
 		return nil, err
 	}
 
-	pkgNodesInterface := ret["getPackageNodeByName"]
+	pkgNode := ret["getPackageNodeByName"]
 	// no such node
-	if len(pkgNodesInterface) == 0 {
+	if len(pkgNode) == 0 {
 		return nil, ErrNoSuchPackage
 	}
 
-	pkgMap := pkgNodesInterface[0].(map[string]interface{})
-	result := &service.PackageNode{}
-	if err := decodeToNodeStruct(result, pkgMap); err != nil {
-		return nil, err
-	}
-	return result, nil
+	return pkgNode[0], nil
 }
 
 func (db *DataBase) GetPackageNode() ([]*service.PackageNode, error) {
-	var ret map[string][]interface{}
+	var ret map[string][]*service.PackageNode
 
 	q := `{
 		getPackageNode(func: has(packageNodeType)) @recurse(loop: true, depth:3) {
@@ -83,20 +78,11 @@ func (db *DataBase) GetPackageNode() ([]*service.PackageNode, error) {
 		return nil, err
 	}
 
-	pkgNodesInterface := ret["getPackageNode"]
-	if len(pkgNodesInterface) < 1 {
+	pkgNodes := ret["getPackageNode"]
+	if len(pkgNodes) < 1 {
 		return nil, errors.New("No package node found")
 	}
 
-	var pkgNodes []*service.PackageNode
-	for _, pkg := range pkgNodesInterface {
-		pkgMap := pkg.(map[string]interface{})
-		result := &service.PackageNode{}
-		if err := decodeToNodeStruct(result, pkgMap); err != nil {
-			return nil, err
-		}
-		pkgNodes = append(pkgNodes, result)
-	}
 	return pkgNodes, nil
 }
 
