@@ -48,21 +48,21 @@ func (db *DataBase) AddDiagnosticNode(nodeID string, diagnosticnode *service.Dia
 
 	receiverNode := result["node"][0].(map[string]interface{})
 	if diagnosticInfoInter, ok := receiverNode["diagnosticInfo"]; ok {
-		var diagnosticInfo []*service.DiagnosticNode
-		for _, dInfo := range diagnosticInfoInter.([]interface{}) {
-			result := &service.DiagnosticNode{}
-			if err := decodeToNodeStruct(result, dInfo.(map[string]interface{})); err != nil {
-				return err
-			}
-			diagnosticInfo = append(diagnosticInfo, result)
-		}
-
 		// each analyzer should create one diagnostic node for each file node
-		for _, node := range diagnosticInfo {
-			for _, analyzer := range node.Analyzer {
-				if diagnosticnode.Analyzer[0].Name == analyzer.Name {
-					log.Printf("Already created diagnostic node for file %s, skipping insert..", nodeID)
-					return nil
+		// so check if diagnostic node already exists
+		for _, diagnosticInfo := range diagnosticInfoInter.([]interface{}) {
+			for attrName, attrValue := range diagnosticInfo.(map[string]interface{}) {
+				if attrName == "analyzer" {
+					for _, analyzer := range attrValue.([]interface{}) {
+						for name, value := range analyzer.(map[string]interface{}) {
+							if name == "name" {
+								if value.(string) == diagnosticnode.Analyzer[0].Name {
+									log.Printf("Already created diagnostic node for file %s, skipping insert..", nodeID)
+									return nil
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -73,7 +73,7 @@ func (db *DataBase) AddDiagnosticNode(nodeID string, diagnosticnode *service.Dia
 	if _, ok := receiverNode["packageNodeType"]; ok {
 		packageNode := service.PackageNode{}
 		packageNode.Uid = nodeID
-		packageNode.DiagnosticInfo = diagnosticInfo
+		packageNode.DiagnosticInfo = []*service.DiagnosticNode{diagnosticnode}
 		_, err = dbInsert(db.client, &packageNode)
 		if err != nil {
 			return err
@@ -81,7 +81,7 @@ func (db *DataBase) AddDiagnosticNode(nodeID string, diagnosticnode *service.Dia
 	} else if _, ok := receiverNode["fileDataNodeType"]; ok {
 		fileDataNode := service.FileNode_FileDataNode{}
 		fileDataNode.Uid = nodeID
-		fileDataNode.DiagnosticInfo = diagnosticInfo
+		fileDataNode.DiagnosticInfo = []*service.DiagnosticNode{diagnosticnode}
 		_, err = dbInsert(db.client, &fileDataNode)
 		if err != nil {
 			return err

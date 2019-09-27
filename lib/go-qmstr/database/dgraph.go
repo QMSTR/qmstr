@@ -29,6 +29,7 @@ hash:string @index(exact) .
 fileType:int @index(int) .
 type:string @index(hash) .
 name:string @index(hash) .
+fileData:uid .
 dataNodes:[uid] @reverse .
 data:string @index(hash) .
 projectNodeType:string @index(hash) .
