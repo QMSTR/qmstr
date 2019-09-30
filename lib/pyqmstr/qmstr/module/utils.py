@@ -17,6 +17,8 @@ def get_files_list(path):
     Returns a list of all files from a given directory, including its
     subfolders.
     """
+    path = os.path.abspath(path)
+
     all_files = []
 
     for dirpath, dirnames, filenames in os.walk(path, topdown=True):
@@ -59,6 +61,8 @@ def new_file_node(path, hash=False):
     """
     Returns a filenode with calculated checksum if hash parameter is True
     """
+
+    path = os.path.abspath(path)
 
     if hash:
         chksum = hash_file(path)

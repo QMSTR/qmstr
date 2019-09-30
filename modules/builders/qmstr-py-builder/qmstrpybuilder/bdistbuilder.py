@@ -11,7 +11,6 @@ class BdistBuilder(QMSTR_Builder):
         self.temp_dir = temp_dir
 
     def configure(self):
-        # TODO: do we need it?
         pass
 
     def index(self):
