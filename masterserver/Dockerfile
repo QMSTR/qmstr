@@ -75,6 +75,7 @@ ARG GOPROXY
 WORKDIR /qmstr
 RUN make gotest
 RUN make install_qmstr_all
+RUN make qmstr-py-builder
 
 ## runtime ##
 
