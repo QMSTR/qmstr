@@ -1,6 +1,7 @@
 PY_BUILDER := qmstr-py-builder
 
 .PHONY: $(PY_BUILDER)
-$(PY_BUILDER): venv
-	QMSTR_VERSION=$(QMSTR_VERSION) venv/bin/pip install lib/pyqmstr
-	QMSTR_VERSION=$(QMSTR_VERSION) venv/bin/pip install modules/builders/$(PY_BUILDER)
+$(PY_BUILDER): out/wheels/qmstr_py_builder-$(QMSTR_VERSION)-py3-none-any.whl
+
+out/wheels/qmstr_py_builder-$(QMSTR_VERSION)-py3-none-any.whl: venv/bin/pip pyqmstr
+	QMSTR_VERSION=$(QMSTR_VERSION) venv/bin/pip wheel -f out/wheels -w out/wheels modules/builders/$(PY_BUILDER)

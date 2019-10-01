@@ -109,6 +109,8 @@ requirements.txt:
 	@echo grpcio==$(GRPCIO_VERSION) >> requirements.txt
 	@echo grpcio-tools==$(GRPCIO_VERSION) >> requirements.txt
 
+venv/bin/pip: venv
+
 venv/bin/pex: venv
 	@venv/bin/pip install pex
 
