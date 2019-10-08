@@ -90,6 +90,9 @@ install_qmstr_server: $(QMSTR_SERVER_BINARIES)
 install_qmstr_client: $(QMSTR_CLIENT_BINARIES)
 	install -t $(prefix)/bin $^
 
+user_install_qmstr_client: $(QMSTR_CLIENT_BINARIES)
+	cp $^ $(GO_BIN)
+
 install_qmstr_all: install_qmstr_client install_qmstr_server
 
 # Python related targets
