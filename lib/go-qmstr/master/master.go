@@ -173,6 +173,10 @@ func (s *server) GetFileNode(in *service.GetFileNodeMessage, stream service.Cont
 	return s.currentPhase.GetFileNode(in, stream)
 }
 
+func (s *server) GetSourceFileNodes(in *service.DummyRequest, stream service.AnalysisService_GetSourceFileNodesServer) error {
+	return s.currentPhase.GetSourceFileNodes(stream)
+}
+
 func (s *server) GetDiagnosticNode(in *service.DiagnosticNode, stream service.ControlService_GetDiagnosticNodeServer) error {
 	return s.currentPhase.GetDiagnosticNode(in, stream)
 }

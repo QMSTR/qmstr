@@ -42,7 +42,11 @@ type serverPhase interface {
 	PushFile(*service.PushFileMessage) (*service.PushFileResponse, error)
 	CreateProject(*service.ProjectNode) (*service.BuildResponse, error)
 	CreatePackage(*service.PackageNode) (*service.BuildResponse, error)
+	GetSourceFileNodes(service.AnalysisService_GetSourceFileNodesServer) error
 }
+
+// ErrWrongPhase is returned when a rpc function was called in the wrong phase
+var ErrWrongPhase = errors.New("Wrong phase")
 
 type genericServerPhase struct {
 	Name              string
@@ -89,43 +93,43 @@ func (gsp *genericServerPhase) getName() string {
 }
 
 func (gsp *genericServerPhase) Build(stream service.BuildService_BuildServer) error {
-	return errors.New("Wrong phase")
+	return ErrWrongPhase
 }
 
 func (gsp *genericServerPhase) PushFile(in *service.PushFileMessage) (*service.PushFileResponse, error) {
-	return nil, errors.New("Wrong phase")
+	return nil, ErrWrongPhase
 }
 
 func (gsp *genericServerPhase) CreatePackage(in *service.PackageNode) (*service.BuildResponse, error) {
-	return nil, errors.New("Wrong phase")
+	return nil, ErrWrongPhase
 }
 
 func (gsp *genericServerPhase) CreateProject(in *service.ProjectNode) (*service.BuildResponse, error) {
-	return nil, errors.New("Wrong phase")
+	return nil, ErrWrongPhase
 }
 
 func (gsp *genericServerPhase) DeleteNode(stream service.BuildService_DeleteNodeServer) error {
-	return errors.New("Wrong phase")
+	return ErrWrongPhase
 }
 
 func (gsp *genericServerPhase) DeleteEdge(in *service.DeleteMessage) (*service.BuildResponse, error) {
-	return nil, errors.New("Wrong phase")
+	return nil, ErrWrongPhase
 }
 
 func (gsp *genericServerPhase) GetReporterConfig(in *service.ReporterConfigRequest) (*service.ReporterConfigResponse, error) {
-	return nil, errors.New("Wrong phase")
+	return nil, ErrWrongPhase
 }
 
 func (gsp *genericServerPhase) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
-	return nil, errors.New("Wrong phase")
+	return nil, ErrWrongPhase
 }
 
 func (gsp *genericServerPhase) SendInfoNodes(stream service.AnalysisService_SendInfoNodesServer) error {
-	return errors.New("Wrong phase")
+	return ErrWrongPhase
 }
 
 func (gsp *genericServerPhase) SendDiagnosticNode(stream service.AnalysisService_SendDiagnosticNodeServer) error {
-	return errors.New("Wrong phase")
+	return ErrWrongPhase
 }
 
 func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, stream service.ControlService_GetFileNodeServer) error {
@@ -153,12 +157,43 @@ func (gsp *genericServerPhase) GetFileNode(in *service.GetFileNodeMessage, strea
 			}
 			stream.Send(nodeFile)
 		}
-		if len(nodeFiles) < 500 {
+		if len(nodeFiles) < first {
 			break
 		}
-		offset = offset + 500
+		offset = offset + first
 	}
 	return nil
+}
+
+func (gsp *genericServerPhase) GetSourceFileNodes(stream service.AnalysisService_GetSourceFileNodesServer) error {
+	db, err := gsp.getDataBase()
+	if err != nil {
+		return err
+	}
+	offset, first := 0, 500
+
+	for {
+		filenodes, err := db.GetFileNodeLeaves(offset, first)
+		if err != nil {
+			return err
+		}
+		for _, filenode := range filenodes {
+
+			if gsp.server.currentPhase.GetPhaseID() == service.Phase_ANALYSIS {
+				filenode.Path = filepath.Join(gsp.masterConfig.Server.BuildPath, filenode.Path)
+			}
+			if err = stream.Send(filenode); err != nil {
+				return err
+			}
+		}
+
+		if len(filenodes) < first {
+			break
+		}
+		offset = offset + first
+	}
+	return nil
+
 }
 
 func (gsp *genericServerPhase) GetDiagnosticNode(in *service.DiagnosticNode, stream service.ControlService_GetDiagnosticNodeServer) error {
@@ -177,7 +212,7 @@ func (gsp *genericServerPhase) GetDiagnosticNode(in *service.DiagnosticNode, str
 }
 
 func (gsp *genericServerPhase) GetInfoData(in *service.InfoDataRequest) (*service.InfoDataResponse, error) {
-	return nil, errors.New("Wrong phase")
+	return nil, ErrWrongPhase
 }
 
 func (gsp *genericServerPhase) ExportSnapshot(in *service.ExportRequest) (*service.ExportResponse, error) {
