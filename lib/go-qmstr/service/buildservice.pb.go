@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -500,6 +502,41 @@ type BuildServiceServer interface {
 	GetProjectNode(context.Context, *ProjectNode) (*ProjectNode, error)
 	DeleteNode(BuildService_DeleteNodeServer) error
 	DeleteEdge(context.Context, *DeleteMessage) (*BuildResponse, error)
+}
+
+// UnimplementedBuildServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedBuildServiceServer struct {
+}
+
+func (*UnimplementedBuildServiceServer) Build(srv BuildService_BuildServer) error {
+	return status.Errorf(codes.Unimplemented, "method Build not implemented")
+}
+func (*UnimplementedBuildServiceServer) SendBuildError(ctx context.Context, req *InfoNode) (*BuildResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendBuildError not implemented")
+}
+func (*UnimplementedBuildServiceServer) PushFile(ctx context.Context, req *PushFileMessage) (*PushFileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PushFile not implemented")
+}
+func (*UnimplementedBuildServiceServer) UpdatePackageNode(ctx context.Context, req *UpdatePackageNodeMessage) (*BuildResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePackageNode not implemented")
+}
+func (*UnimplementedBuildServiceServer) CreatePackage(ctx context.Context, req *PackageNode) (*BuildResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePackage not implemented")
+}
+func (*UnimplementedBuildServiceServer) CreateProject(ctx context.Context, req *ProjectNode) (*BuildResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateProject not implemented")
+}
+func (*UnimplementedBuildServiceServer) UpdateProjectNode(srv BuildService_UpdateProjectNodeServer) error {
+	return status.Errorf(codes.Unimplemented, "method UpdateProjectNode not implemented")
+}
+func (*UnimplementedBuildServiceServer) GetProjectNode(ctx context.Context, req *ProjectNode) (*ProjectNode, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProjectNode not implemented")
+}
+func (*UnimplementedBuildServiceServer) DeleteNode(srv BuildService_DeleteNodeServer) error {
+	return status.Errorf(codes.Unimplemented, "method DeleteNode not implemented")
+}
+func (*UnimplementedBuildServiceServer) DeleteEdge(ctx context.Context, req *DeleteMessage) (*BuildResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEdge not implemented")
 }
 
 func RegisterBuildServiceServer(s *grpc.Server, srv BuildServiceServer) {

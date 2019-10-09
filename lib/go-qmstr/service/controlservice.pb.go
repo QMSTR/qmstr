@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -821,6 +823,38 @@ type ControlServiceServer interface {
 	Status(context.Context, *StatusMessage) (*StatusResponse, error)
 	SubscribeEvents(*EventMessage, ControlService_SubscribeEventsServer) error
 	ExportSnapshot(context.Context, *ExportRequest) (*ExportResponse, error)
+}
+
+// UnimplementedControlServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedControlServiceServer struct {
+}
+
+func (*UnimplementedControlServiceServer) Log(ctx context.Context, req *LogMessage) (*LogResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Log not implemented")
+}
+func (*UnimplementedControlServiceServer) Quit(ctx context.Context, req *QuitMessage) (*QuitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Quit not implemented")
+}
+func (*UnimplementedControlServiceServer) SwitchPhase(ctx context.Context, req *SwitchPhaseMessage) (*SwitchPhaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwitchPhase not implemented")
+}
+func (*UnimplementedControlServiceServer) GetPackageNode(req *PackageNode, srv ControlService_GetPackageNodeServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetPackageNode not implemented")
+}
+func (*UnimplementedControlServiceServer) GetFileNode(req *GetFileNodeMessage, srv ControlService_GetFileNodeServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetFileNode not implemented")
+}
+func (*UnimplementedControlServiceServer) GetDiagnosticNode(req *DiagnosticNode, srv ControlService_GetDiagnosticNodeServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetDiagnosticNode not implemented")
+}
+func (*UnimplementedControlServiceServer) Status(ctx context.Context, req *StatusMessage) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Status not implemented")
+}
+func (*UnimplementedControlServiceServer) SubscribeEvents(req *EventMessage, srv ControlService_SubscribeEventsServer) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribeEvents not implemented")
+}
+func (*UnimplementedControlServiceServer) ExportSnapshot(ctx context.Context, req *ExportRequest) (*ExportResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExportSnapshot not implemented")
 }
 
 func RegisterControlServiceServer(s *grpc.Server, srv ControlServiceServer) {

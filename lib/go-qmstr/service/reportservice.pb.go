@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -296,6 +298,20 @@ type ReportServiceServer interface {
 	GetReporterConfig(context.Context, *ReporterConfigRequest) (*ReporterConfigResponse, error)
 	GetInfoData(context.Context, *InfoDataRequest) (*InfoDataResponse, error)
 	GetProjectNode(context.Context, *ProjectNode) (*ProjectNode, error)
+}
+
+// UnimplementedReportServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedReportServiceServer struct {
+}
+
+func (*UnimplementedReportServiceServer) GetReporterConfig(ctx context.Context, req *ReporterConfigRequest) (*ReporterConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetReporterConfig not implemented")
+}
+func (*UnimplementedReportServiceServer) GetInfoData(ctx context.Context, req *InfoDataRequest) (*InfoDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetInfoData not implemented")
+}
+func (*UnimplementedReportServiceServer) GetProjectNode(ctx context.Context, req *ProjectNode) (*ProjectNode, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProjectNode not implemented")
 }
 
 func RegisterReportServiceServer(s *grpc.Server, srv ReportServiceServer) {
