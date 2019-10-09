@@ -33,11 +33,11 @@ public class MergeDexTransformation implements TransformationFunction {
 
         return Collections.singleton(outDirs.stream()
                 .map(od -> od.toPath().resolve("classes.dex"))
-                .map(p -> FilenodeUtils.getFileNode(p, FileNode.Type.UNDEF))
+                .map(p -> FilenodeUtils.getFileNode(p))
                 .map(p -> {
                     Builder b = p.toBuilder();
                     inputDexes.stream()
-                        .map(dex -> FilenodeUtils.getFileNode(dex.toPath(), FileNode.Type.UNDEF))
+                        .map(dex -> FilenodeUtils.getFileNode(dex.toPath()))
                         .forEach(dexFileNode -> b.addDerivedFrom(dexFileNode));
                     return b.build();
                 })

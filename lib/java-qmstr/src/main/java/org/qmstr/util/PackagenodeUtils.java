@@ -17,7 +17,7 @@ public class PackagenodeUtils {
         Set<Datamodel.FileNode> classes = new HashSet<>();
         packageFiles.stream().parallel()
                 .forEach(je -> {
-                    classes.add(FilenodeUtils.getFileNode(je.toPath(), FilenodeUtils.getTypeByFile(je.getName())));
+                    classes.add(FilenodeUtils.getFileNode(je.toPath()));
                 });
         Datamodel.PackageNode rootNode = getPackageNode(packageName, version);
         Datamodel.PackageNode.Builder rootNodeBuilder = rootNode.toBuilder();
@@ -36,7 +36,7 @@ public class PackagenodeUtils {
                         .filter(je -> FilenodeUtils.isSupportedFile(je.getName()))
                         .forEach(je -> {
                             String hash = FilenodeUtils.getHash(jar, je);
-                            classes.add(FilenodeUtils.getFileNode(je.getName(), hash, FilenodeUtils.getTypeByFile(je.getName())));
+                            classes.add(FilenodeUtils.getFileNode(je.getName(), hash));
                         });
                 Datamodel.PackageNode rootNode = getPackageNode(packageName, version);
                 Datamodel.PackageNode.Builder rootNodeBuilder = rootNode.toBuilder();

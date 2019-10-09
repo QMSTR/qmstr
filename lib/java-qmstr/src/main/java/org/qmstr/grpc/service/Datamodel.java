@@ -369,15 +369,6 @@ public final class Datamodel {
         getFileNodeTypeBytes();
 
     /**
-     * <code>.service.FileNode.Type fileType = 3;</code>
-     */
-    int getFileTypeValue();
-    /**
-     * <code>.service.FileNode.Type fileType = 3;</code>
-     */
-    org.qmstr.grpc.service.Datamodel.FileNode.Type getFileType();
-
-    /**
      * <code>string path = 4;</code>
      */
     java.lang.String getPath();
@@ -483,7 +474,6 @@ public final class Datamodel {
     private FileNode() {
       uid_ = "";
       fileNodeType_ = "";
-      fileType_ = 0;
       path_ = "";
       name_ = "";
       timestamp_ = "";
@@ -534,12 +524,6 @@ public final class Datamodel {
               fileNodeType_ = s;
               break;
             }
-            case 24: {
-              int rawValue = input.readEnum();
-
-              fileType_ = rawValue;
-              break;
-            }
             case 34: {
               java.lang.String s = input.readStringRequireUtf8();
 
@@ -572,18 +556,18 @@ public final class Datamodel {
               break;
             }
             case 66: {
-              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+              if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
                 derivedFrom_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.FileNode>();
-                mutable_bitField0_ |= 0x00000080;
+                mutable_bitField0_ |= 0x00000040;
               }
               derivedFrom_.add(
                   input.readMessage(org.qmstr.grpc.service.Datamodel.FileNode.parser(), extensionRegistry));
               break;
             }
             case 74: {
-              if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
                 dependencies_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.FileNode>();
-                mutable_bitField0_ |= 0x00000100;
+                mutable_bitField0_ |= 0x00000080;
               }
               dependencies_.add(
                   input.readMessage(org.qmstr.grpc.service.Datamodel.FileNode.parser(), extensionRegistry));
@@ -597,10 +581,10 @@ public final class Datamodel {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+        if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
           derivedFrom_ = java.util.Collections.unmodifiableList(derivedFrom_);
         }
-        if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+        if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
           dependencies_ = java.util.Collections.unmodifiableList(dependencies_);
         }
         this.unknownFields = unknownFields.build();
@@ -617,122 +601,6 @@ public final class Datamodel {
       return org.qmstr.grpc.service.Datamodel.internal_static_service_FileNode_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.qmstr.grpc.service.Datamodel.FileNode.class, org.qmstr.grpc.service.Datamodel.FileNode.Builder.class);
-    }
-
-    /**
-     * Protobuf enum {@code service.FileNode.Type}
-     */
-    public enum Type
-        implements com.google.protobuf.ProtocolMessageEnum {
-      /**
-       * <code>UNDEF = 0;</code>
-       */
-      UNDEF(0),
-      /**
-       * <code>SOURCE = 1;</code>
-       */
-      SOURCE(1),
-      /**
-       * <code>INTERMEDIATE = 2;</code>
-       */
-      INTERMEDIATE(2),
-      /**
-       * <code>TARGET = 3;</code>
-       */
-      TARGET(3),
-      UNRECOGNIZED(-1),
-      ;
-
-      /**
-       * <code>UNDEF = 0;</code>
-       */
-      public static final int UNDEF_VALUE = 0;
-      /**
-       * <code>SOURCE = 1;</code>
-       */
-      public static final int SOURCE_VALUE = 1;
-      /**
-       * <code>INTERMEDIATE = 2;</code>
-       */
-      public static final int INTERMEDIATE_VALUE = 2;
-      /**
-       * <code>TARGET = 3;</code>
-       */
-      public static final int TARGET_VALUE = 3;
-
-
-      public final int getNumber() {
-        if (this == UNRECOGNIZED) {
-          throw new java.lang.IllegalArgumentException(
-              "Can't get the number of an unknown enum value.");
-        }
-        return value;
-      }
-
-      /**
-       * @deprecated Use {@link #forNumber(int)} instead.
-       */
-      @java.lang.Deprecated
-      public static Type valueOf(int value) {
-        return forNumber(value);
-      }
-
-      public static Type forNumber(int value) {
-        switch (value) {
-          case 0: return UNDEF;
-          case 1: return SOURCE;
-          case 2: return INTERMEDIATE;
-          case 3: return TARGET;
-          default: return null;
-        }
-      }
-
-      public static com.google.protobuf.Internal.EnumLiteMap<Type>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-      private static final com.google.protobuf.Internal.EnumLiteMap<
-          Type> internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<Type>() {
-              public Type findValueByNumber(int number) {
-                return Type.forNumber(number);
-              }
-            };
-
-      public final com.google.protobuf.Descriptors.EnumValueDescriptor
-          getValueDescriptor() {
-        return getDescriptor().getValues().get(ordinal());
-      }
-      public final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptorForType() {
-        return getDescriptor();
-      }
-      public static final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptor() {
-        return org.qmstr.grpc.service.Datamodel.FileNode.getDescriptor().getEnumTypes().get(0);
-      }
-
-      private static final Type[] VALUES = values();
-
-      public static Type valueOf(
-          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-        if (desc.getType() != getDescriptor()) {
-          throw new java.lang.IllegalArgumentException(
-            "EnumValueDescriptor is not for this type.");
-        }
-        if (desc.getIndex() == -1) {
-          return UNRECOGNIZED;
-        }
-        return VALUES[desc.getIndex()];
-      }
-
-      private final int value;
-
-      private Type(int value) {
-        this.value = value;
-      }
-
-      // @@protoc_insertion_point(enum_scope:service.FileNode.Type)
     }
 
     public interface FileDataNodeOrBuilder extends
@@ -2342,22 +2210,6 @@ public final class Datamodel {
       }
     }
 
-    public static final int FILETYPE_FIELD_NUMBER = 3;
-    private int fileType_;
-    /**
-     * <code>.service.FileNode.Type fileType = 3;</code>
-     */
-    public int getFileTypeValue() {
-      return fileType_;
-    }
-    /**
-     * <code>.service.FileNode.Type fileType = 3;</code>
-     */
-    public org.qmstr.grpc.service.Datamodel.FileNode.Type getFileType() {
-      org.qmstr.grpc.service.Datamodel.FileNode.Type result = org.qmstr.grpc.service.Datamodel.FileNode.Type.valueOf(fileType_);
-      return result == null ? org.qmstr.grpc.service.Datamodel.FileNode.Type.UNRECOGNIZED : result;
-    }
-
     public static final int PATH_FIELD_NUMBER = 4;
     private volatile java.lang.Object path_;
     /**
@@ -2569,9 +2421,6 @@ public final class Datamodel {
       if (!getFileNodeTypeBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, fileNodeType_);
       }
-      if (fileType_ != org.qmstr.grpc.service.Datamodel.FileNode.Type.UNDEF.getNumber()) {
-        output.writeEnum(3, fileType_);
-      }
       if (!getPathBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, path_);
       }
@@ -2603,10 +2452,6 @@ public final class Datamodel {
       }
       if (!getFileNodeTypeBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, fileNodeType_);
-      }
-      if (fileType_ != org.qmstr.grpc.service.Datamodel.FileNode.Type.UNDEF.getNumber()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(3, fileType_);
       }
       if (!getPathBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, path_);
@@ -2649,7 +2494,6 @@ public final class Datamodel {
           .equals(other.getUid());
       result = result && getFileNodeType()
           .equals(other.getFileNodeType());
-      result = result && fileType_ == other.fileType_;
       result = result && getPath()
           .equals(other.getPath());
       result = result && getName()
@@ -2680,8 +2524,6 @@ public final class Datamodel {
       hash = (53 * hash) + getUid().hashCode();
       hash = (37 * hash) + FILENODETYPE_FIELD_NUMBER;
       hash = (53 * hash) + getFileNodeType().hashCode();
-      hash = (37 * hash) + FILETYPE_FIELD_NUMBER;
-      hash = (53 * hash) + fileType_;
       hash = (37 * hash) + PATH_FIELD_NUMBER;
       hash = (53 * hash) + getPath().hashCode();
       hash = (37 * hash) + NAME_FIELD_NUMBER;
@@ -2835,8 +2677,6 @@ public final class Datamodel {
 
         fileNodeType_ = "";
 
-        fileType_ = 0;
-
         path_ = "";
 
         name_ = "";
@@ -2851,13 +2691,13 @@ public final class Datamodel {
 
         if (derivedFromBuilder_ == null) {
           derivedFrom_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000080);
+          bitField0_ = (bitField0_ & ~0x00000040);
         } else {
           derivedFromBuilder_.clear();
         }
         if (dependenciesBuilder_ == null) {
           dependencies_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000100);
+          bitField0_ = (bitField0_ & ~0x00000080);
         } else {
           dependenciesBuilder_.clear();
         }
@@ -2887,7 +2727,6 @@ public final class Datamodel {
         int to_bitField0_ = 0;
         result.uid_ = uid_;
         result.fileNodeType_ = fileNodeType_;
-        result.fileType_ = fileType_;
         result.path_ = path_;
         result.name_ = name_;
         if (fileDataBuilder_ == null) {
@@ -2897,18 +2736,18 @@ public final class Datamodel {
         }
         result.timestamp_ = timestamp_;
         if (derivedFromBuilder_ == null) {
-          if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          if (((bitField0_ & 0x00000040) == 0x00000040)) {
             derivedFrom_ = java.util.Collections.unmodifiableList(derivedFrom_);
-            bitField0_ = (bitField0_ & ~0x00000080);
+            bitField0_ = (bitField0_ & ~0x00000040);
           }
           result.derivedFrom_ = derivedFrom_;
         } else {
           result.derivedFrom_ = derivedFromBuilder_.build();
         }
         if (dependenciesBuilder_ == null) {
-          if (((bitField0_ & 0x00000100) == 0x00000100)) {
+          if (((bitField0_ & 0x00000080) == 0x00000080)) {
             dependencies_ = java.util.Collections.unmodifiableList(dependencies_);
-            bitField0_ = (bitField0_ & ~0x00000100);
+            bitField0_ = (bitField0_ & ~0x00000080);
           }
           result.dependencies_ = dependencies_;
         } else {
@@ -2964,9 +2803,6 @@ public final class Datamodel {
           fileNodeType_ = other.fileNodeType_;
           onChanged();
         }
-        if (other.fileType_ != 0) {
-          setFileTypeValue(other.getFileTypeValue());
-        }
         if (!other.getPath().isEmpty()) {
           path_ = other.path_;
           onChanged();
@@ -2986,7 +2822,7 @@ public final class Datamodel {
           if (!other.derivedFrom_.isEmpty()) {
             if (derivedFrom_.isEmpty()) {
               derivedFrom_ = other.derivedFrom_;
-              bitField0_ = (bitField0_ & ~0x00000080);
+              bitField0_ = (bitField0_ & ~0x00000040);
             } else {
               ensureDerivedFromIsMutable();
               derivedFrom_.addAll(other.derivedFrom_);
@@ -2999,7 +2835,7 @@ public final class Datamodel {
               derivedFromBuilder_.dispose();
               derivedFromBuilder_ = null;
               derivedFrom_ = other.derivedFrom_;
-              bitField0_ = (bitField0_ & ~0x00000080);
+              bitField0_ = (bitField0_ & ~0x00000040);
               derivedFromBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getDerivedFromFieldBuilder() : null;
@@ -3012,7 +2848,7 @@ public final class Datamodel {
           if (!other.dependencies_.isEmpty()) {
             if (dependencies_.isEmpty()) {
               dependencies_ = other.dependencies_;
-              bitField0_ = (bitField0_ & ~0x00000100);
+              bitField0_ = (bitField0_ & ~0x00000080);
             } else {
               ensureDependenciesIsMutable();
               dependencies_.addAll(other.dependencies_);
@@ -3025,7 +2861,7 @@ public final class Datamodel {
               dependenciesBuilder_.dispose();
               dependenciesBuilder_ = null;
               dependencies_ = other.dependencies_;
-              bitField0_ = (bitField0_ & ~0x00000100);
+              bitField0_ = (bitField0_ & ~0x00000080);
               dependenciesBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getDependenciesFieldBuilder() : null;
@@ -3196,50 +3032,6 @@ public final class Datamodel {
   checkByteStringIsUtf8(value);
         
         fileNodeType_ = value;
-        onChanged();
-        return this;
-      }
-
-      private int fileType_ = 0;
-      /**
-       * <code>.service.FileNode.Type fileType = 3;</code>
-       */
-      public int getFileTypeValue() {
-        return fileType_;
-      }
-      /**
-       * <code>.service.FileNode.Type fileType = 3;</code>
-       */
-      public Builder setFileTypeValue(int value) {
-        fileType_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>.service.FileNode.Type fileType = 3;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.FileNode.Type getFileType() {
-        org.qmstr.grpc.service.Datamodel.FileNode.Type result = org.qmstr.grpc.service.Datamodel.FileNode.Type.valueOf(fileType_);
-        return result == null ? org.qmstr.grpc.service.Datamodel.FileNode.Type.UNRECOGNIZED : result;
-      }
-      /**
-       * <code>.service.FileNode.Type fileType = 3;</code>
-       */
-      public Builder setFileType(org.qmstr.grpc.service.Datamodel.FileNode.Type value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        
-        fileType_ = value.getNumber();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>.service.FileNode.Type fileType = 3;</code>
-       */
-      public Builder clearFileType() {
-        
-        fileType_ = 0;
         onChanged();
         return this;
       }
@@ -3571,9 +3363,9 @@ public final class Datamodel {
       private java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> derivedFrom_ =
         java.util.Collections.emptyList();
       private void ensureDerivedFromIsMutable() {
-        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+        if (!((bitField0_ & 0x00000040) == 0x00000040)) {
           derivedFrom_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.FileNode>(derivedFrom_);
-          bitField0_ |= 0x00000080;
+          bitField0_ |= 0x00000040;
          }
       }
 
@@ -3723,7 +3515,7 @@ public final class Datamodel {
       public Builder clearDerivedFrom() {
         if (derivedFromBuilder_ == null) {
           derivedFrom_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000080);
+          bitField0_ = (bitField0_ & ~0x00000040);
           onChanged();
         } else {
           derivedFromBuilder_.clear();
@@ -3800,7 +3592,7 @@ public final class Datamodel {
           derivedFromBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode.Builder, org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder>(
                   derivedFrom_,
-                  ((bitField0_ & 0x00000080) == 0x00000080),
+                  ((bitField0_ & 0x00000040) == 0x00000040),
                   getParentForChildren(),
                   isClean());
           derivedFrom_ = null;
@@ -3811,9 +3603,9 @@ public final class Datamodel {
       private java.util.List<org.qmstr.grpc.service.Datamodel.FileNode> dependencies_ =
         java.util.Collections.emptyList();
       private void ensureDependenciesIsMutable() {
-        if (!((bitField0_ & 0x00000100) == 0x00000100)) {
+        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
           dependencies_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.FileNode>(dependencies_);
-          bitField0_ |= 0x00000100;
+          bitField0_ |= 0x00000080;
          }
       }
 
@@ -3963,7 +3755,7 @@ public final class Datamodel {
       public Builder clearDependencies() {
         if (dependenciesBuilder_ == null) {
           dependencies_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000100);
+          bitField0_ = (bitField0_ & ~0x00000080);
           onChanged();
         } else {
           dependenciesBuilder_.clear();
@@ -4040,7 +3832,7 @@ public final class Datamodel {
           dependenciesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               org.qmstr.grpc.service.Datamodel.FileNode, org.qmstr.grpc.service.Datamodel.FileNode.Builder, org.qmstr.grpc.service.Datamodel.FileNodeOrBuilder>(
                   dependencies_,
-                  ((bitField0_ & 0x00000100) == 0x00000100),
+                  ((bitField0_ & 0x00000080) == 0x00000080),
                   getParentForChildren(),
                   isClean());
           dependencies_ = null;
@@ -15950,57 +15742,54 @@ public final class Datamodel {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\017datamodel.proto\022\007service\"\350\003\n\010FileNode\022" +
-      "\013\n\003uid\030\001 \001(\t\022\024\n\014fileNodeType\030\002 \001(\t\022(\n\010fi" +
-      "leType\030\003 \001(\0162\026.service.FileNode.Type\022\014\n\004" +
-      "path\030\004 \001(\t\022\014\n\004name\030\005 \001(\t\0220\n\010fileData\030\006 \001" +
-      "(\0132\036.service.FileNode.FileDataNode\022\021\n\tti" +
-      "mestamp\030\007 \001(\t\022&\n\013derivedFrom\030\010 \003(\0132\021.ser" +
-      "vice.FileNode\022\'\n\014dependencies\030\t \003(\0132\021.se" +
-      "rvice.FileNode\032\237\001\n\014FileDataNode\022\013\n\003uid\030\001" +
-      " \001(\t\022\030\n\020fileDataNodeType\030\002 \001(\t\022\014\n\004hash\030\003" +
-      " \001(\t\022)\n\016additionalInfo\030\004 \003(\0132\021.service.I" +
-      "nfoNode\022/\n\016diagnosticInfo\030\005 \003(\0132\027.servic" +
-      "e.DiagnosticNode\";\n\004Type\022\t\n\005UNDEF\020\000\022\n\n\006S" +
-      "OURCE\020\001\022\020\n\014INTERMEDIATE\020\002\022\n\n\006TARGET\020\003\"\231\002" +
-      "\n\010InfoNode\022\013\n\003uid\030\001 \001(\t\022\024\n\014infoNodeType\030" +
-      "\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\027\n\017confidenceScore\030\004" +
-      " \001(\001\022#\n\010analyzer\030\005 \003(\0132\021.service.Analyze" +
-      "r\022-\n\tdataNodes\030\006 \003(\0132\032.service.InfoNode." +
-      "DataNode\022\021\n\ttimestamp\030\007 \001(\t\032\\\n\010DataNode\022" +
-      "\013\n\003uid\030\001 \001(\t\022\024\n\014dataNodeType\030\002 \001(\t\022\014\n\004ty" +
-      "pe\030\003 \001(\t\022\014\n\004data\030\004 \001(\t\022\021\n\ttimestamp\030\005 \001(" +
-      "\t\"\357\001\n\016DiagnosticNode\022\013\n\003uid\030\001 \001(\t\022\032\n\022dia" +
-      "gnosticNodeType\030\002 \001(\t\0222\n\010severity\030\003 \001(\0162" +
-      " .service.DiagnosticNode.Severity\022\017\n\007mes" +
-      "sage\030\004 \001(\t\022#\n\010analyzer\030\005 \003(\0132\021.service.A" +
-      "nalyzer\022\021\n\ttimestamp\030\006 \001(\t\"7\n\010Severity\022\t" +
-      "\n\005UNDEF\020\000\022\010\n\004INFO\020\001\022\013\n\007WARNING\020\002\022\t\n\005ERRO" +
-      "R\020\003\"\177\n\010Analyzer\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001" +
-      "(\t\022\030\n\020analyzerNodeType\030\003 \001(\t\022\022\n\ntrustLev" +
-      "el\030\004 \001(\003\022*\n\007pathSub\030\005 \003(\0132\031.service.Path" +
-      "Substitution\",\n\020PathSubstitution\022\013\n\003old\030" +
-      "\001 \001(\t\022\013\n\003new\030\002 \001(\t\"\372\001\n\013PackageNode\022\013\n\003ui" +
-      "d\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\017\n\007version\030\003 \001(\t\022\027" +
-      "\n\017packageNodeType\030\004 \001(\t\022\"\n\007targets\030\005 \003(\013" +
-      "2\021.service.FileNode\022)\n\016additionalInfo\030\006 " +
-      "\003(\0132\021.service.InfoNode\022\023\n\013buildConfig\030\007 " +
-      "\001(\t\022/\n\016diagnosticInfo\030\010 \003(\0132\027.service.Di" +
-      "agnosticNode\022\021\n\ttimestamp\030\t \001(\t\"\247\001\n\013Proj" +
-      "ectNode\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\027\n\017pr" +
-      "ojectNodeType\030\003 \001(\t\022&\n\010packages\030\004 \003(\0132\024." +
-      "service.PackageNode\022)\n\016additionalInfo\030\005 " +
-      "\003(\0132\021.service.InfoNode\022\021\n\ttimestamp\030\006 \001(" +
-      "\t\"<\n\005Event\022\"\n\005class\030\001 \001(\0162\023.service.Even" +
-      "tClass\022\017\n\007message\030\002 \001(\t\"y\n\016QmstrStateNod" +
-      "e\022\013\n\003uid\030\001 \001(\t\022\032\n\022qmstrStateNodeType\030\002 \001" +
-      "(\t\022\035\n\005phase\030\003 \001(\0162\016.service.Phase\022\014\n\004don" +
-      "e\030\004 \001(\010\022\021\n\ttimestamp\030\005 \001(\t*,\n\nEventClass" +
-      "\022\007\n\003ALL\020\000\022\t\n\005PHASE\020\001\022\n\n\006MODULE\020\002*@\n\005Phas" +
-      "e\022\010\n\004INIT\020\000\022\t\n\005BUILD\020\001\022\014\n\010ANALYSIS\020\002\022\n\n\006" +
-      "REPORT\020\003\022\010\n\004FAIL\020\004*\'\n\rExceptionType\022\t\n\005E" +
-      "RROR\020\000\022\013\n\007WARNING\020\001B\030\n\026org.qmstr.grpc.se" +
-      "rviceb\006proto3"
+      "\n\017datamodel.proto\022\007service\"\201\003\n\010FileNode\022" +
+      "\013\n\003uid\030\001 \001(\t\022\024\n\014fileNodeType\030\002 \001(\t\022\014\n\004pa" +
+      "th\030\004 \001(\t\022\014\n\004name\030\005 \001(\t\0220\n\010fileData\030\006 \001(\013" +
+      "2\036.service.FileNode.FileDataNode\022\021\n\ttime" +
+      "stamp\030\007 \001(\t\022&\n\013derivedFrom\030\010 \003(\0132\021.servi" +
+      "ce.FileNode\022\'\n\014dependencies\030\t \003(\0132\021.serv" +
+      "ice.FileNode\032\237\001\n\014FileDataNode\022\013\n\003uid\030\001 \001" +
+      "(\t\022\030\n\020fileDataNodeType\030\002 \001(\t\022\014\n\004hash\030\003 \001" +
+      "(\t\022)\n\016additionalInfo\030\004 \003(\0132\021.service.Inf" +
+      "oNode\022/\n\016diagnosticInfo\030\005 \003(\0132\027.service." +
+      "DiagnosticNode\"\231\002\n\010InfoNode\022\013\n\003uid\030\001 \001(\t" +
+      "\022\024\n\014infoNodeType\030\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\027\n\017" +
+      "confidenceScore\030\004 \001(\001\022#\n\010analyzer\030\005 \003(\0132" +
+      "\021.service.Analyzer\022-\n\tdataNodes\030\006 \003(\0132\032." +
+      "service.InfoNode.DataNode\022\021\n\ttimestamp\030\007" +
+      " \001(\t\032\\\n\010DataNode\022\013\n\003uid\030\001 \001(\t\022\024\n\014dataNod" +
+      "eType\030\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\014\n\004data\030\004 \001(\t\022" +
+      "\021\n\ttimestamp\030\005 \001(\t\"\357\001\n\016DiagnosticNode\022\013\n" +
+      "\003uid\030\001 \001(\t\022\032\n\022diagnosticNodeType\030\002 \001(\t\0222" +
+      "\n\010severity\030\003 \001(\0162 .service.DiagnosticNod" +
+      "e.Severity\022\017\n\007message\030\004 \001(\t\022#\n\010analyzer\030" +
+      "\005 \003(\0132\021.service.Analyzer\022\021\n\ttimestamp\030\006 " +
+      "\001(\t\"7\n\010Severity\022\t\n\005UNDEF\020\000\022\010\n\004INFO\020\001\022\013\n\007" +
+      "WARNING\020\002\022\t\n\005ERROR\020\003\"\177\n\010Analyzer\022\013\n\003uid\030" +
+      "\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\030\n\020analyzerNodeType\030" +
+      "\003 \001(\t\022\022\n\ntrustLevel\030\004 \001(\003\022*\n\007pathSub\030\005 \003" +
+      "(\0132\031.service.PathSubstitution\",\n\020PathSub" +
+      "stitution\022\013\n\003old\030\001 \001(\t\022\013\n\003new\030\002 \001(\t\"\372\001\n\013" +
+      "PackageNode\022\013\n\003uid\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\017" +
+      "\n\007version\030\003 \001(\t\022\027\n\017packageNodeType\030\004 \001(\t" +
+      "\022\"\n\007targets\030\005 \003(\0132\021.service.FileNode\022)\n\016" +
+      "additionalInfo\030\006 \003(\0132\021.service.InfoNode\022" +
+      "\023\n\013buildConfig\030\007 \001(\t\022/\n\016diagnosticInfo\030\010" +
+      " \003(\0132\027.service.DiagnosticNode\022\021\n\ttimesta" +
+      "mp\030\t \001(\t\"\247\001\n\013ProjectNode\022\013\n\003uid\030\001 \001(\t\022\014\n" +
+      "\004name\030\002 \001(\t\022\027\n\017projectNodeType\030\003 \001(\t\022&\n\010" +
+      "packages\030\004 \003(\0132\024.service.PackageNode\022)\n\016" +
+      "additionalInfo\030\005 \003(\0132\021.service.InfoNode\022" +
+      "\021\n\ttimestamp\030\006 \001(\t\"<\n\005Event\022\"\n\005class\030\001 \001" +
+      "(\0162\023.service.EventClass\022\017\n\007message\030\002 \001(\t" +
+      "\"y\n\016QmstrStateNode\022\013\n\003uid\030\001 \001(\t\022\032\n\022qmstr" +
+      "StateNodeType\030\002 \001(\t\022\035\n\005phase\030\003 \001(\0162\016.ser" +
+      "vice.Phase\022\014\n\004done\030\004 \001(\010\022\021\n\ttimestamp\030\005 " +
+      "\001(\t*,\n\nEventClass\022\007\n\003ALL\020\000\022\t\n\005PHASE\020\001\022\n\n" +
+      "\006MODULE\020\002*@\n\005Phase\022\010\n\004INIT\020\000\022\t\n\005BUILD\020\001\022" +
+      "\014\n\010ANALYSIS\020\002\022\n\n\006REPORT\020\003\022\010\n\004FAIL\020\004*\'\n\rE" +
+      "xceptionType\022\t\n\005ERROR\020\000\022\013\n\007WARNING\020\001B\030\n\026" +
+      "org.qmstr.grpc.serviceb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -16019,7 +15808,7 @@ public final class Datamodel {
     internal_static_service_FileNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_FileNode_descriptor,
-        new java.lang.String[] { "Uid", "FileNodeType", "FileType", "Path", "Name", "FileData", "Timestamp", "DerivedFrom", "Dependencies", });
+        new java.lang.String[] { "Uid", "FileNodeType", "Path", "Name", "FileData", "Timestamp", "DerivedFrom", "Dependencies", });
     internal_static_service_FileNode_FileDataNode_descriptor =
       internal_static_service_FileNode_descriptor.getNestedTypes().get(0);
     internal_static_service_FileNode_FileDataNode_fieldAccessorTable = new
