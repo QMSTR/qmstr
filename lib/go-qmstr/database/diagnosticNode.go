@@ -12,7 +12,7 @@ import (
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
-// AddDiagnosticNodes stores the given DiagnosticNodes in a PackageNode or FileNode identified by the nodeID
+// AddDiagnosticNode stores the given DiagnosticNodes in a PackageNode or FileNode identified by the nodeID
 func (db *DataBase) AddDiagnosticNode(nodeID string, diagnosticnode *service.DiagnosticNode) error {
 	db.insertMutex.Lock()
 	defer db.insertMutex.Unlock()
