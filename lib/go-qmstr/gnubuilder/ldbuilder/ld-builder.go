@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/builder"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/common"
@@ -81,23 +80,15 @@ func (ld *LdBuilder) Analyze(commandline []string) ([]*service.FileNode, error) 
 		ld.Logger.Printf("ld linking")
 	}
 	fileNodes := []*service.FileNode{}
-	linkedTarget := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, ld.Output[0], false), service.FileNode_TARGET, false)
+	linkedTarget := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, ld.Output[0], false), false)
 	libraries := []*service.FileNode{}
 	dependencies := []*service.FileNode{}
 	for _, inFile := range ld.Input {
-		inputFileNode := &service.FileNode{}
 		ext := filepath.Ext(inFile)
-		if ext == ".o" {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_INTERMEDIATE, true)
-			libraries = append(libraries, inputFileNode)
-		} else if ext == ".c" {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_SOURCE, true)
-			libraries = append(libraries, inputFileNode)
-		} else if strings.HasSuffix(inFile, ".so") {
-			depFileNode := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_TARGET, true)
-			dependencies = append(dependencies, depFileNode)
+		inputFileNode := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), true)
+		if _, ok := builder.LibExtension[ext]; ok {
+			dependencies = append(dependencies, inputFileNode)
 		} else {
-			inputFileNode = builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, inFile, false), service.FileNode_TARGET, true)
 			libraries = append(libraries, inputFileNode)
 		}
 	}
@@ -106,12 +97,12 @@ func (ld *LdBuilder) Analyze(commandline []string) ([]*service.FileNode, error) 
 		ld.Logger.Fatalf("Failed to collect libraries: %v", err)
 	}
 	for _, actualLib := range ld.ActualLibs {
-		if strings.HasSuffix(actualLib, ".so") {
-			runtimeDep := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, actualLib, false), service.FileNode_TARGET, true)
-			dependencies = append(dependencies, runtimeDep)
+		ext := filepath.Ext(actualLib)
+		dep := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, actualLib, false), true)
+		if _, ok := builder.LibExtension[ext]; ok {
+			dependencies = append(dependencies, dep)
 		} else {
-			linkLib := builder.NewFileNode(common.BuildCleanPath(ld.WorkDir, actualLib, false), service.FileNode_TARGET, true)
-			libraries = append(libraries, linkLib)
+			libraries = append(libraries, dep)
 		}
 	}
 	linkedTarget.DerivedFrom = libraries

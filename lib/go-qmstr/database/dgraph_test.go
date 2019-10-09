@@ -48,7 +48,6 @@ path:string @index(hash,trigram) .
 fileData:uid .
 type:string @index(hash) .
 trustLevel:string @index(hash) .
-fileType:int @index(int) .
 phase:int .
 dataNodes:[uid] @reverse .
 buildConfig:string .

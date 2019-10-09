@@ -49,9 +49,9 @@ func (o *ObjcopyBuilder) Analyze(commandline []string) ([]*service.FileNode, err
 	}
 
 	dependencies := []*service.FileNode{}
-	outputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, o.Output, false), service.FileNode_TARGET, false)
+	outputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, o.Output, false), false)
 	for _, input := range o.Input {
-		inputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, input, false), service.FileNode_TARGET, true)
+		inputTarget := builder.NewFileNode(common.BuildCleanPath(o.Workdir, input, false), true)
 		dependencies = append(dependencies, inputTarget)
 		o.Logger.Printf("%s copying from %s:%s to %s", o.GetName(), inputTarget.GetPath(), inputTarget.FileData.GetHash(), o.Output)
 	}

@@ -41,8 +41,8 @@ func (s *StripBuilder) Analyze(commandline []string) ([]*service.FileNode, error
 
 	fileNodes := []*service.FileNode{}
 	for _, input := range s.Input {
-		inputTarget := builder.NewFileNode(common.BuildCleanPath(s.Workdir, input, false), service.FileNode_TARGET, true)
-		outputTarget := builder.NewFileNode(common.BuildCleanPath(s.Workdir, input, false), service.FileNode_TARGET, false)
+		inputTarget := builder.NewFileNode(common.BuildCleanPath(s.Workdir, input, false), true)
+		outputTarget := builder.NewFileNode(common.BuildCleanPath(s.Workdir, input, false), false)
 		outputTarget.DerivedFrom = []*service.FileNode{inputTarget}
 		fileNodes = append(fileNodes, outputTarget)
 		s.Logger.Printf("Striping %s:%s", inputTarget.GetPath(), inputTarget.FileData.GetHash())
