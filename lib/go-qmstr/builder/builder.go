@@ -18,6 +18,12 @@ var (
 	ErrNoPushFile                = errors.New("No file to push")
 )
 
+var LibExtension = map[string]struct{}{
+	".so":    struct{}{},
+	".dll":   struct{}{},
+	".dylib": struct{}{},
+}
+
 type Builder interface {
 	Analyze(commandline []string) ([]*service.FileNode, error)
 	ProcessOutput([]*service.FileNode) error
@@ -68,16 +74,16 @@ func (gb *GeneralBuilder) TearDown() error {
 	return nil
 }
 
-func NewFileNode(path string, fileType service.FileNode_Type, hash bool) *service.FileNode {
+func NewFileNode(path string, hash bool) *service.FileNode {
 	filename := filepath.Base(path)
 	if hash {
 		hash, err := common.HashFile(path)
 		if err != nil {
 			hash = "nohash" + path
 		}
-		return &service.FileNode{Name: filename, FileType: fileType, Path: path, FileData: &service.FileNode_FileDataNode{Hash: hash}}
+		return &service.FileNode{Name: filename, Path: path, FileData: &service.FileNode_FileDataNode{Hash: hash}}
 	}
-	return &service.FileNode{Name: filename, FileType: fileType, Path: path}
+	return &service.FileNode{Name: filename, Path: path}
 }
 
 func CleanCmd(commandline []string, cleanIdx []int, debug bool, logger *log.Logger) []string {
