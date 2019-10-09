@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -424,6 +426,20 @@ type AnalysisServiceServer interface {
 	GetAnalyzerConfig(context.Context, *AnalyzerConfigRequest) (*AnalyzerConfigResponse, error)
 	SendInfoNodes(AnalysisService_SendInfoNodesServer) error
 	SendDiagnosticNode(AnalysisService_SendDiagnosticNodeServer) error
+}
+
+// UnimplementedAnalysisServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedAnalysisServiceServer struct {
+}
+
+func (*UnimplementedAnalysisServiceServer) GetAnalyzerConfig(ctx context.Context, req *AnalyzerConfigRequest) (*AnalyzerConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAnalyzerConfig not implemented")
+}
+func (*UnimplementedAnalysisServiceServer) SendInfoNodes(srv AnalysisService_SendInfoNodesServer) error {
+	return status.Errorf(codes.Unimplemented, "method SendInfoNodes not implemented")
+}
+func (*UnimplementedAnalysisServiceServer) SendDiagnosticNode(srv AnalysisService_SendDiagnosticNodeServer) error {
+	return status.Errorf(codes.Unimplemented, "method SendDiagnosticNode not implemented")
 }
 
 func RegisterAnalysisServiceServer(s *grpc.Server, srv AnalysisServiceServer) {
