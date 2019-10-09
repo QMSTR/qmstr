@@ -2,6 +2,7 @@
 import grpc
 
 from . import analyzerservice_pb2 as analyzerservice__pb2
+from . import datamodel_pb2 as datamodel__pb2
 
 
 class AnalysisServiceStub(object):
@@ -28,6 +29,11 @@ class AnalysisServiceStub(object):
         '/service.AnalysisService/SendDiagnosticNode',
         request_serializer=analyzerservice__pb2.DiagnosticNodeMessage.SerializeToString,
         response_deserializer=analyzerservice__pb2.SendResponse.FromString,
+        )
+    self.GetSourceFileNodes = channel.unary_stream(
+        '/service.AnalysisService/GetSourceFileNodes',
+        request_serializer=analyzerservice__pb2.DummyRequest.SerializeToString,
+        response_deserializer=datamodel__pb2.FileNode.FromString,
         )
 
 
@@ -56,6 +62,13 @@ class AnalysisServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetSourceFileNodes(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_AnalysisServiceServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -73,6 +86,11 @@ def add_AnalysisServiceServicer_to_server(servicer, server):
           servicer.SendDiagnosticNode,
           request_deserializer=analyzerservice__pb2.DiagnosticNodeMessage.FromString,
           response_serializer=analyzerservice__pb2.SendResponse.SerializeToString,
+      ),
+      'GetSourceFileNodes': grpc.unary_stream_rpc_method_handler(
+          servicer.GetSourceFileNodes,
+          request_deserializer=analyzerservice__pb2.DummyRequest.FromString,
+          response_serializer=datamodel__pb2.FileNode.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
