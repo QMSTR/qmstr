@@ -32,11 +32,11 @@ public class JarTransformation implements TransformationFunction {
 
         return Collections.singleton(out.stream()
                 .filter(f -> f.toPath().getFileName().toString().endsWith(this.resultFilename))
-                .map(f -> FilenodeUtils.getFileNode(f.toPath(), FileNode.Type.UNDEF))
+                .map(f -> FilenodeUtils.getFileNode(f.toPath()))
                 .map(p -> {
                     Builder b = p.toBuilder();
                     inputClasses.stream()
-                        .map(clazz -> FilenodeUtils.getFileNode(clazz.toPath(), FileNode.Type.UNDEF))
+                        .map(clazz -> FilenodeUtils.getFileNode(clazz.toPath()))
                         .forEach(classFileNode -> b.addDerivedFrom(classFileNode));
                     return b.build();
                 })
