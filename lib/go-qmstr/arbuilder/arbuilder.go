@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -106,19 +105,10 @@ func (a *ArBuilder) getResults() ([]*service.FileNode, error) {
 	if a.Command == Replace || a.Command == QuickAppend {
 		a.Logger.Printf("archiving")
 		fileNodes := []*service.FileNode{}
-		linkedTarget := builder.NewFileNode(common.BuildCleanPath(a.WorkDir, a.Output, false), service.FileNode_TARGET, false)
+		linkedTarget := builder.NewFileNode(common.BuildCleanPath(a.WorkDir, a.Output, false), false)
 		dependencies := []*service.FileNode{}
 		for _, inFile := range a.Input {
-			inputFileNode := &service.FileNode{}
-			ext := filepath.Ext(inFile)
-			switch ext {
-			case ".o":
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), service.FileNode_INTERMEDIATE, true)
-			case ".a":
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), service.FileNode_TARGET, true)
-			default:
-				inputFileNode = builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), service.FileNode_INTERMEDIATE, true)
-			}
+			inputFileNode := builder.NewFileNode(common.BuildCleanPath(a.WorkDir, inFile, false), true)
 			dependencies = append(dependencies, inputFileNode)
 		}
 		linkedTarget.DerivedFrom = dependencies

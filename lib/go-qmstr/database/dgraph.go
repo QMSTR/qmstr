@@ -26,7 +26,6 @@ import (
 const schema = `
 path:string @index(hash,trigram) .
 hash:string @index(exact) .
-fileType:int @index(int) .
 type:string @index(hash) .
 name:string @index(hash) .
 fileData:uid .

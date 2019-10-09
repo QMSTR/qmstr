@@ -47,7 +47,7 @@ func TestIntFlagNodeCreation(t *testing.T) {
 	if err = createNode("file:hash:12345", false); err != nil {
 		t.FailNow()
 	}
-	if currentNode.(*service.FileNode).FileData.GetHash() != "12345" || currentNode.(*service.FileNode).FileType != service.FileNode_INTERMEDIATE {
+	if currentNode.(*service.FileNode).FileData.GetHash() != "12345" {
 		t.Fail()
 	}
 }

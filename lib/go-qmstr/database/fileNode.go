@@ -140,15 +140,15 @@ func (db *DataBase) GetFileDataUID(hash string) (string, error) {
 }
 
 // GetFileNodesByFileNode queries filenodes on a specific attribute of a provided filenode.
-// For instance, you can provide a filenode with a certain filetype and get all the filenodes
-// with this filetype.
-// You can query for just one attribute. For instance, if you set filetype and hash, only the
+// For instance, you can provide a filenode with a certain name and get all the filenodes
+// with this name.
+// You can query for just one attribute. For instance, if you set path and hash, only the
 // hash will be used in the query.
 func (db *DataBase) GetFileNodesByFileNode(in *service.GetFileNodeMessage, offset int, first int) ([]*service.FileNode, error) {
 	filenode := in.FileNode
 	var ret map[string][]*service.FileNode
 
-	q := `query FileNodeByFileNode($Filter: string, $TypeFilter: int, $Offset: int, $First: int){
+	q := `query FileNodeByFileNode($Filter: string, $Offset: int, $First: int){
 			getFileNodeByFileNode(func: has(fileNodeType), {{.Pagination}}) {{.Query}} @recurse(loop: true, depth:2){
 			  uid
 			  fileNodeType
@@ -157,7 +157,6 @@ func (db *DataBase) GetFileNodesByFileNode(in *service.GetFileNodeMessage, offse
 			  hash
 			  fileDataNodeType
 			  fileData
-			  type
 			  timestamp
 			}}`
 
@@ -167,7 +166,6 @@ func (db *DataBase) GetFileNodesByFileNode(in *service.GetFileNodeMessage, offse
 		Recurse    string
 		Query      string
 		Filter     string
-		TypeFilter int
 		Offset     int
 		First      int
 		Pagination string
@@ -180,15 +178,6 @@ func (db *DataBase) GetFileNodesByFileNode(in *service.GetFileNodeMessage, offse
 		qp.Filter = filenode.Uid
 		qp.Query = "@filter(uid($Filter))"
 		vars["$Filter"] = qp.Filter
-	}
-	if filenode.FileType != 0 {
-		//get the int value from the enumeration
-		t := service.FileNode_Type_value[filenode.FileType.String()]
-		nt := int(t)
-		qp.TypeFilter = nt
-		qp.Query = "@filter(eq(fileType, $TypeFilter))"
-		//convert it to string to query it
-		vars["$TypeFilter"] = strconv.Itoa(nt)
 	}
 	if filenode.Name != "" {
 		qp.Filter = filenode.Name
