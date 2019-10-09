@@ -51,9 +51,9 @@ public class DexClassTransformation implements TransformationFunction {
 
         Path classesPath = destinationDir.toPath().resolve(classesRelPath);
 
-        FileNode sourceNode = FilenodeUtils.getFileNode(sourceFile.toPath(), FilenodeUtils.getTypeByFile(sourceFile.getName()));
+        FileNode sourceNode = FilenodeUtils.getFileNode(sourceFile.toPath());
 
-        FileNode dexFileNode = FilenodeUtils.getFileNode(classesPath, FilenodeUtils.getTypeByFile(classesPath.getFileName().toString()));
+        FileNode dexFileNode = FilenodeUtils.getFileNode(classesPath);
 
         return Collections.singleton(dexFileNode.toBuilder().addDerivedFrom(sourceNode).build());
 	}

@@ -56,10 +56,10 @@ public class CompileJavaTransformation implements TransformationFunction {
         Set<File> nested = getNestedClasses(destinationDir.toPath().resolve(packageDirs), targetFileName);
         nested.add(classesPath.toFile());
 
-        FileNode sourceNode = FilenodeUtils.getFileNode(sourceFile.toPath(), FilenodeUtils.getTypeByFile(sourceFile.getName()));
+        FileNode sourceNode = FilenodeUtils.getFileNode(sourceFile.toPath());
 
         return nested.stream()
-            .map(df -> FilenodeUtils.getFileNode(df.toPath(), FilenodeUtils.getTypeByFile(df.toPath().getFileName().toString())))
+            .map(df -> FilenodeUtils.getFileNode(df.toPath()))
             .map(dfnode -> dfnode.toBuilder().addDerivedFrom(sourceNode).build())
             .collect(Collectors.toSet());
     }
