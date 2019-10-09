@@ -151,5 +151,4 @@ func (phase *serverPhaseAnalysis) SendDiagnosticNode(stream service.AnalysisServ
 			return err
 		}
 	}
-
 }
