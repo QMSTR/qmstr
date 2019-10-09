@@ -266,3 +266,34 @@ func (db *DataBase) GetFileNodeHashByPath(path string) (string, error) {
 	}
 	return ret["hasNode"][0].FileData.GetHash(), nil
 }
+
+// GetFileNodeLeaves returns the filenodes that are not derived from other filenodes
+func (db *DataBase) GetFileNodeLeaves(offset int, first int) ([]*service.FileNode, error) {
+	var ret map[string][]*service.FileNode
+
+	q := `query Leaves($Offset: int, $First: int){
+		  filenodeleaves(func: has(fileNodeType), first: $First, offset: $Offset) @filter(NOT has(derivedFrom)) {
+			uid
+			path
+			fileData{
+				uid
+				hash
+			}
+		  }}`
+
+	vars := map[string]string{
+		"$First":  strconv.Itoa(first),
+		"$Offset": strconv.Itoa(offset),
+	}
+
+	err := db.queryNodes(q, vars, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	// no leaf file nodes
+	if len(ret["filenodeleaves"]) == 0 {
+		return nil, fmt.Errorf("no leaf file nodes found")
+	}
+	return ret["filenodeleaves"], nil
+}
