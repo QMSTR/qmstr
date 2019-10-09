@@ -191,6 +191,9 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 		if err != nil {
 			log.Fatalf("checkFileData failed: %v", err)
 		}
+		if dep.FileData.Uid == "" {
+			ready = false
+		}
 		if dep.Uid == "" {
 			// missing dep
 			ready = false
@@ -211,6 +214,9 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 		err := db.checkFileData(dep)
 		if err != nil {
 			log.Fatalf("checkFileData failed: %v", err)
+		}
+		if dep.FileData.Uid == "" {
+			ready = false
 		}
 
 		if dep.Uid == "" {
@@ -261,6 +267,14 @@ func (db *DataBase) insertFileNode(node *service.FileNode) {
 func (db *DataBase) insertPkgNode(node *service.PackageNode) {
 	ready := true
 	for idx, dep := range node.Targets {
+		// check if fileData already exist in db
+		err := db.checkFileData(dep)
+		if err != nil {
+			log.Fatalf("checkFileData failed: %v", err)
+		}
+		if dep.FileData.Uid == "" {
+			ready = false
+		}
 		if dep.Uid == "" {
 			// missing dep
 			ready = false
