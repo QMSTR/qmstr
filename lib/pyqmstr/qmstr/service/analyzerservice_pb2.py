@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='service',
   syntax='proto3',
   serialized_options=_b('\n\026org.qmstr.grpc.service'),
-  serialized_pb=_b('\n\x15\x61nalyzerservice.proto\x12\x07service\x1a\x0f\x64\x61tamodel.proto\"+\n\x15\x41nalyzerConfigRequest\x12\x12\n\nanalyzerID\x18\x01 \x01(\x05\"\xd6\x01\n\x16\x41nalyzerConfigResponse\x12\x41\n\tconfigMap\x18\x02 \x03(\x0b\x32..service.AnalyzerConfigResponse.ConfigMapEntry\x12*\n\x07pathSub\x18\x03 \x03(\x0b\x32\x19.service.PathSubstitution\x12\r\n\x05token\x18\x04 \x01(\x03\x12\x0c\n\x04name\x18\x06 \x01(\t\x1a\x30\n\x0e\x43onfigMapEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"R\n\x0fInfoNodeMessage\x12\r\n\x05token\x18\x01 \x01(\x03\x12\x0b\n\x03uid\x18\x02 \x01(\t\x12#\n\x08infonode\x18\x03 \x01(\x0b\x32\x11.service.InfoNode\"d\n\x15\x44iagnosticNodeMessage\x12\r\n\x05token\x18\x01 \x01(\x03\x12\x0b\n\x03uid\x18\x02 \x01(\t\x12/\n\x0e\x64iagnosticnode\x18\x03 \x01(\x0b\x32\x17.service.DiagnosticNode\"\x1f\n\x0cSendResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\x80\x02\n\x0f\x41nalysisService\x12V\n\x11GetAnalyzerConfig\x12\x1e.service.AnalyzerConfigRequest\x1a\x1f.service.AnalyzerConfigResponse\"\x00\x12\x44\n\rSendInfoNodes\x12\x18.service.InfoNodeMessage\x1a\x15.service.SendResponse\"\x00(\x01\x12O\n\x12SendDiagnosticNode\x12\x1e.service.DiagnosticNodeMessage\x1a\x15.service.SendResponse\"\x00(\x01\x42\x18\n\x16org.qmstr.grpc.serviceX\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x15\x61nalyzerservice.proto\x12\x07service\x1a\x0f\x64\x61tamodel.proto\"+\n\x15\x41nalyzerConfigRequest\x12\x12\n\nanalyzerID\x18\x01 \x01(\x05\"\xd6\x01\n\x16\x41nalyzerConfigResponse\x12\x41\n\tconfigMap\x18\x02 \x03(\x0b\x32..service.AnalyzerConfigResponse.ConfigMapEntry\x12*\n\x07pathSub\x18\x03 \x03(\x0b\x32\x19.service.PathSubstitution\x12\r\n\x05token\x18\x04 \x01(\x03\x12\x0c\n\x04name\x18\x06 \x01(\t\x1a\x30\n\x0e\x43onfigMapEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"R\n\x0fInfoNodeMessage\x12\r\n\x05token\x18\x01 \x01(\x03\x12\x0b\n\x03uid\x18\x02 \x01(\t\x12#\n\x08infonode\x18\x03 \x01(\x0b\x32\x11.service.InfoNode\"d\n\x15\x44iagnosticNodeMessage\x12\r\n\x05token\x18\x01 \x01(\x03\x12\x0b\n\x03uid\x18\x02 \x01(\t\x12/\n\x0e\x64iagnosticnode\x18\x03 \x01(\x0b\x32\x17.service.DiagnosticNode\"\x1f\n\x0cSendResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"\x0e\n\x0c\x44ummyRequest2\xc4\x02\n\x0f\x41nalysisService\x12V\n\x11GetAnalyzerConfig\x12\x1e.service.AnalyzerConfigRequest\x1a\x1f.service.AnalyzerConfigResponse\"\x00\x12\x44\n\rSendInfoNodes\x12\x18.service.InfoNodeMessage\x1a\x15.service.SendResponse\"\x00(\x01\x12O\n\x12SendDiagnosticNode\x12\x1e.service.DiagnosticNodeMessage\x1a\x15.service.SendResponse\"\x00(\x01\x12\x42\n\x12GetSourceFileNodes\x12\x15.service.DummyRequest\x1a\x11.service.FileNode\"\x00\x30\x01\x42\x18\n\x16org.qmstr.grpc.serviceX\x00\x62\x06proto3')
   ,
   dependencies=[datamodel__pb2.DESCRIPTOR,])
 
@@ -268,6 +268,30 @@ _SENDRESPONSE = _descriptor.Descriptor(
   serialized_end=530,
 )
 
+
+_DUMMYREQUEST = _descriptor.Descriptor(
+  name='DummyRequest',
+  full_name='service.DummyRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=532,
+  serialized_end=546,
+)
+
 _ANALYZERCONFIGRESPONSE_CONFIGMAPENTRY.containing_type = _ANALYZERCONFIGRESPONSE
 _ANALYZERCONFIGRESPONSE.fields_by_name['configMap'].message_type = _ANALYZERCONFIGRESPONSE_CONFIGMAPENTRY
 _ANALYZERCONFIGRESPONSE.fields_by_name['pathSub'].message_type = datamodel__pb2._PATHSUBSTITUTION
@@ -278,6 +302,7 @@ DESCRIPTOR.message_types_by_name['AnalyzerConfigResponse'] = _ANALYZERCONFIGRESP
 DESCRIPTOR.message_types_by_name['InfoNodeMessage'] = _INFONODEMESSAGE
 DESCRIPTOR.message_types_by_name['DiagnosticNodeMessage'] = _DIAGNOSTICNODEMESSAGE
 DESCRIPTOR.message_types_by_name['SendResponse'] = _SENDRESPONSE
+DESCRIPTOR.message_types_by_name['DummyRequest'] = _DUMMYREQUEST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 AnalyzerConfigRequest = _reflection.GeneratedProtocolMessageType('AnalyzerConfigRequest', (_message.Message,), dict(
@@ -323,6 +348,13 @@ SendResponse = _reflection.GeneratedProtocolMessageType('SendResponse', (_messag
   ))
 _sym_db.RegisterMessage(SendResponse)
 
+DummyRequest = _reflection.GeneratedProtocolMessageType('DummyRequest', (_message.Message,), dict(
+  DESCRIPTOR = _DUMMYREQUEST,
+  __module__ = 'analyzerservice_pb2'
+  # @@protoc_insertion_point(class_scope:service.DummyRequest)
+  ))
+_sym_db.RegisterMessage(DummyRequest)
+
 
 DESCRIPTOR._options = None
 _ANALYZERCONFIGRESPONSE_CONFIGMAPENTRY._options = None
@@ -333,8 +365,8 @@ _ANALYSISSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=533,
-  serialized_end=789,
+  serialized_start=549,
+  serialized_end=873,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetAnalyzerConfig',
@@ -361,6 +393,15 @@ _ANALYSISSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_DIAGNOSTICNODEMESSAGE,
     output_type=_SENDRESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetSourceFileNodes',
+    full_name='service.AnalysisService.GetSourceFileNodes',
+    index=3,
+    containing_service=None,
+    input_type=_DUMMYREQUEST,
+    output_type=datamodel__pb2._FILENODE,
     serialized_options=None,
   ),
 ])
