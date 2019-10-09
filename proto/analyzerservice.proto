@@ -30,8 +30,12 @@ message SendResponse {
     bool success = 1;
 }
 
+message DummyRequest {
+}
+
 service AnalysisService {
     rpc GetAnalyzerConfig(AnalyzerConfigRequest) returns (AnalyzerConfigResponse) {}
     rpc SendInfoNodes(stream InfoNodeMessage) returns (SendResponse) {}
     rpc SendDiagnosticNode(stream DiagnosticNodeMessage) returns (SendResponse) {}
+    rpc GetSourceFileNodes(DummyRequest) returns (stream FileNode) {}
 }
