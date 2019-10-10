@@ -2,7 +2,7 @@
 import argparse
 from qmstr.service.datamodel_pb2 import FileNode, InfoNode, PackageNode
 from qmstr.service.controlservice_pb2 import GetFileNodeMessage
-from qmstr.service.analyzerservice_pb2 import InfoNodeMessage
+from qmstr.service.analyzerservice_pb2 import InfoNodeMessage, DummyRequest
 from qmstr.module.module import QMSTR_Analyzer
 from qmstr.module.utils import generate_iterator
 from spdx.document import License
@@ -71,12 +71,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
 
     def _process_filenodes(self):
 
-        query_node = GetFileNodeMessage(
-            fileNode=FileNode(
-                fileType=FileNode.SOURCE
-            )
-        )
-        stream_resp = self.cserv.GetFileNode(query_node)
+        stream_resp = self.aserv.GetSourceFileNodes(DummyRequest())
 
         for node in stream_resp:
             logging.info("Analyze node {}".format(node.path))
