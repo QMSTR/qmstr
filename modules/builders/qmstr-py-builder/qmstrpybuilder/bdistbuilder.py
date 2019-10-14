@@ -14,16 +14,16 @@ class BdistBuilder(QMSTR_Builder):
         pass
 
     def index(self):
-        logging.warn("indexing the %s", self.work_dir)
+        logging.debug("indexing the %s", self.work_dir)
         file_list = get_files_list(self.work_dir)
-        logging.warn("collected files %s", file_list)
+        logging.debug("collected files %s", file_list)
         file_nodes = [new_file_node(f) for f in file_list]
         self.send_files(file_nodes)
 
     def package(self, name, version):
-        logging.warn("package %s", self.temp_dir)
+        logging.debug("package %s", self.temp_dir)
         file_list = get_files_list(self.temp_dir)
-        logging.warn("collected files %s", file_list)
+        logging.debug("collected files %s", file_list)
         file_nodes = [new_file_node(f, hash=True) for f in file_list]
         BdistBuilder.connect_bytecode(file_nodes)
         pkg_node = new_package_node(name, version, file_nodes)
