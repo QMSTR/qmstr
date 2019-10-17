@@ -1,5 +1,6 @@
 # Compiled class file
 *.class
+.classpath
 
 # Log file
 *.log
@@ -25,6 +26,8 @@ hs_err_pid*
 .gradle/
 build/
 bin/
+.project
+.settings
 
 # Intellij IDEA
 .idea/
