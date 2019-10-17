@@ -25,3 +25,10 @@ requirements.txt
 # compiled stuff
 out/
 **/*.log
+doc/content/introduction/getting-started/debian-curl_tutorial/curl
+doc/content/introduction/getting-started/json-c_tutorial/json-c
+doc/content/introduction/getting-started/**/qmstr
+doc/content/introduction/getting-started/**/*.json
+
+# Maven
+modules/builders/qmstr-maven-plugin/target
