@@ -372,26 +372,25 @@ func fillNodeFields(data interface{}) error {
 }
 
 // the data should be JSON marshalable
-func dbInsert(c *client.Dgraph, data interface{}) (string, error) {
+func dbInsert(c *client.Dgraph, data interface{}) (map[string]string, error) {
 	txn := c.NewTxn()
 	defer txn.Discard(context.Background())
 
 	if err := fillNodeFields(&data); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	jNode, err := json.Marshal(data)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	ret, err := txn.Mutate(context.Background(), &api.Mutation{CommitNow: true, SetJson: jNode})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	uid := ret.Uids["blank-0"]
-	return uid, nil
+	return ret.Uids, nil
 }
 
 // Delete deletes nodes from the db.
