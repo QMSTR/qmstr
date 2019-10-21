@@ -8,9 +8,7 @@ func (db *DataBase) GetAnalyzerByName(name string) (*service.Analyzer, error) {
 	q := `query AnalyzerByName($AnaName: string){
 		  getAnalyzerByType(func: has(analyzerNodeType)) @filter(eq(name, $AnaName)) {
 			uid
-			hash
-			path
-			derivedFrom
+			name
 		  }}`
 
 	vars := map[string]string{"$AnaName": name}
@@ -22,12 +20,12 @@ func (db *DataBase) GetAnalyzerByName(name string) (*service.Analyzer, error) {
 
 	if len(ret["getAnalyzerByName"]) < 1 {
 		// No such analyzer
-		analyzer := &service.Analyzer{Name: name}
+		analyzer := &service.Analyzer{Uid: "_:analyzer", Name: name}
 		uid, err := dbInsert(db.client, analyzer)
 		if err != nil {
 			return nil, err
 		}
-		analyzer.Uid = uid
+		analyzer.Uid = uid["analyzer"]
 		return analyzer, nil
 	}
 

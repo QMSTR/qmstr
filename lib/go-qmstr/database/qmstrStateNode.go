@@ -6,7 +6,7 @@ import (
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
-func (db *DataBase) AddQmstrStateNode(qNode *service.QmstrStateNode) (string, error) {
+func (db *DataBase) AddQmstrStateNode(qNode *service.QmstrStateNode) (map[string]string, error) {
 	qmstrState, err := db.GetQmstrStateNode()
 	if err == nil {
 		qNode.Uid = qmstrState.Uid
