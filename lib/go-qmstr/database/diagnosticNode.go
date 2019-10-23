@@ -50,21 +50,9 @@ func (db *DataBase) AddDiagnosticNode(nodeID string, diagnosticnode *service.Dia
 	if diagnosticInfoInter, ok := receiverNode["diagnosticInfo"]; ok {
 		// each analyzer should create one diagnostic node for each file node
 		// so check if diagnostic node already exists
-		for _, diagnosticInfo := range diagnosticInfoInter.([]interface{}) {
-			for attrName, attrValue := range diagnosticInfo.(map[string]interface{}) {
-				if attrName == "analyzer" {
-					for _, analyzer := range attrValue.([]interface{}) {
-						for name, value := range analyzer.(map[string]interface{}) {
-							if name == "name" {
-								if value.(string) == diagnosticnode.Analyzer[0].Name {
-									log.Printf("Already created diagnostic node for file %s, skipping insert..", nodeID)
-									return nil
-								}
-							}
-						}
-					}
-				}
-			}
+		if ok := AnalyzerCreatedInfoNodes(diagnosticInfoInter, diagnosticnode); ok {
+			log.Printf("Already created diagnostic node for node %s, skipping insert..", nodeID)
+			return nil
 		}
 	}
 	var diagnosticInfo []*service.DiagnosticNode
