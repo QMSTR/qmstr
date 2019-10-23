@@ -12,7 +12,7 @@ import (
 )
 
 // AddInfoNodes stores the given InfoNodes in a PackageNode or FileNode identified by the nodeID
-func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) error {
+func (db *DataBase) AddInfoNodes(nodeID string, infonodes []*service.InfoNode) error {
 	db.insertMutex.Lock()
 	defer db.insertMutex.Unlock()
 
@@ -23,6 +23,10 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 			projectNodeType
 			packageNodeType
 			fileDataNodeType
+			additionalInfo
+			analyzer
+			name
+			type
 		}
 	}
 	`
@@ -45,6 +49,26 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes ...*service.InfoNode) 
 
 	receiverNode := result["node"][0].(map[string]interface{})
 
+	if additionalInfoInter, ok := receiverNode["additionalInfo"]; ok {
+		// check if these info nodes have already been inserted in the db
+		for _, infoNode := range additionalInfoInter.([]interface{}) {
+			for attrName, attrValue := range infoNode.(map[string]interface{}) {
+				if attrName == "analyzer" {
+					for _, analyzer := range attrValue.([]interface{}) {
+						for name, value := range analyzer.(map[string]interface{}) {
+							if name == "name" {
+								if value.(string) == infonodes[0].Analyzer[0].Name {
+									log.Printf("Analyzer %v already created info nodes for file %s, skipping insert..", infonodes[0].Analyzer[0].Name, nodeID)
+									return nil
+
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	if _, ok := receiverNode["projectNodeType"]; ok {
 		projectNode := service.ProjectNode{}
 		projectNode.Uid = nodeID
