@@ -74,7 +74,7 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServic
 		return err
 	}
 
-	infoNodeMsgs := []*service.InfoNodeMessage{}
+	infoNodeMsgs := []*service.InfoNodesMessage{}
 
 	for {
 		fileNode, err := stream.Recv()
@@ -84,16 +84,18 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServic
 
 		log.Printf("Analyzing file %s", fileNode.Path)
 
+		infoNodes := []*service.InfoNode{}
+
 		licenseInfo, err := scanalyzer.detectLicenses(fileNode.GetPath())
 		if err == nil {
-			for _, inode := range licenseInfo {
-				infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: inode, Uid: fileNode.FileData.Uid})
-			}
+			infoNodes = append(infoNodes, licenseInfo...)
 		}
 		copyrights, err := scanalyzer.detectCopyrights(fileNode.GetPath())
 		if err == nil {
-			infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodeMessage{Token: token, Infonode: copyrights, Uid: fileNode.FileData.Uid})
+			infoNodes = append(infoNodes, copyrights)
 		}
+
+		infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodesMessage{Token: token, Infonodes: infoNodes, Uid: fileNode.FileData.Uid})
 	}
 
 	send_stream, err := analysisService.SendInfoNodes(context.Background())
