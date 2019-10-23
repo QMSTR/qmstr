@@ -1732,8 +1732,8 @@ public final class Analyzerservice {
 
   }
 
-  public interface InfoNodeMessageOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:service.InfoNodeMessage)
+  public interface InfoNodesMessageOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:service.InfoNodesMessage)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -1752,33 +1752,45 @@ public final class Analyzerservice {
         getUidBytes();
 
     /**
-     * <code>.service.InfoNode infonode = 3;</code>
+     * <code>repeated .service.InfoNode infonodes = 3;</code>
      */
-    boolean hasInfonode();
+    java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> 
+        getInfonodesList();
     /**
-     * <code>.service.InfoNode infonode = 3;</code>
+     * <code>repeated .service.InfoNode infonodes = 3;</code>
      */
-    org.qmstr.grpc.service.Datamodel.InfoNode getInfonode();
+    org.qmstr.grpc.service.Datamodel.InfoNode getInfonodes(int index);
     /**
-     * <code>.service.InfoNode infonode = 3;</code>
+     * <code>repeated .service.InfoNode infonodes = 3;</code>
      */
-    org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getInfonodeOrBuilder();
+    int getInfonodesCount();
+    /**
+     * <code>repeated .service.InfoNode infonodes = 3;</code>
+     */
+    java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
+        getInfonodesOrBuilderList();
+    /**
+     * <code>repeated .service.InfoNode infonodes = 3;</code>
+     */
+    org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getInfonodesOrBuilder(
+        int index);
   }
   /**
-   * Protobuf type {@code service.InfoNodeMessage}
+   * Protobuf type {@code service.InfoNodesMessage}
    */
-  public  static final class InfoNodeMessage extends
+  public  static final class InfoNodesMessage extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:service.InfoNodeMessage)
-      InfoNodeMessageOrBuilder {
+      // @@protoc_insertion_point(message_implements:service.InfoNodesMessage)
+      InfoNodesMessageOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use InfoNodeMessage.newBuilder() to construct.
-    private InfoNodeMessage(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use InfoNodesMessage.newBuilder() to construct.
+    private InfoNodesMessage(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private InfoNodeMessage() {
+    private InfoNodesMessage() {
       token_ = 0L;
       uid_ = "";
+      infonodes_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -1786,7 +1798,7 @@ public final class Analyzerservice {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private InfoNodeMessage(
+    private InfoNodesMessage(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1824,16 +1836,12 @@ public final class Analyzerservice {
               break;
             }
             case 26: {
-              org.qmstr.grpc.service.Datamodel.InfoNode.Builder subBuilder = null;
-              if (infonode_ != null) {
-                subBuilder = infonode_.toBuilder();
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                infonodes_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.InfoNode>();
+                mutable_bitField0_ |= 0x00000004;
               }
-              infonode_ = input.readMessage(org.qmstr.grpc.service.Datamodel.InfoNode.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(infonode_);
-                infonode_ = subBuilder.buildPartial();
-              }
-
+              infonodes_.add(
+                  input.readMessage(org.qmstr.grpc.service.Datamodel.InfoNode.parser(), extensionRegistry));
               break;
             }
           }
@@ -1844,22 +1852,26 @@ public final class Analyzerservice {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          infonodes_ = java.util.Collections.unmodifiableList(infonodes_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.qmstr.grpc.service.Analyzerservice.internal_static_service_InfoNodeMessage_descriptor;
+      return org.qmstr.grpc.service.Analyzerservice.internal_static_service_InfoNodesMessage_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.qmstr.grpc.service.Analyzerservice.internal_static_service_InfoNodeMessage_fieldAccessorTable
+      return org.qmstr.grpc.service.Analyzerservice.internal_static_service_InfoNodesMessage_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage.class, org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage.Builder.class);
+              org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage.class, org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage.Builder.class);
     }
 
+    private int bitField0_;
     public static final int TOKEN_FIELD_NUMBER = 1;
     private long token_;
     /**
@@ -1903,25 +1915,39 @@ public final class Analyzerservice {
       }
     }
 
-    public static final int INFONODE_FIELD_NUMBER = 3;
-    private org.qmstr.grpc.service.Datamodel.InfoNode infonode_;
+    public static final int INFONODES_FIELD_NUMBER = 3;
+    private java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> infonodes_;
     /**
-     * <code>.service.InfoNode infonode = 3;</code>
+     * <code>repeated .service.InfoNode infonodes = 3;</code>
      */
-    public boolean hasInfonode() {
-      return infonode_ != null;
+    public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> getInfonodesList() {
+      return infonodes_;
     }
     /**
-     * <code>.service.InfoNode infonode = 3;</code>
+     * <code>repeated .service.InfoNode infonodes = 3;</code>
      */
-    public org.qmstr.grpc.service.Datamodel.InfoNode getInfonode() {
-      return infonode_ == null ? org.qmstr.grpc.service.Datamodel.InfoNode.getDefaultInstance() : infonode_;
+    public java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
+        getInfonodesOrBuilderList() {
+      return infonodes_;
     }
     /**
-     * <code>.service.InfoNode infonode = 3;</code>
+     * <code>repeated .service.InfoNode infonodes = 3;</code>
      */
-    public org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getInfonodeOrBuilder() {
-      return getInfonode();
+    public int getInfonodesCount() {
+      return infonodes_.size();
+    }
+    /**
+     * <code>repeated .service.InfoNode infonodes = 3;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.InfoNode getInfonodes(int index) {
+      return infonodes_.get(index);
+    }
+    /**
+     * <code>repeated .service.InfoNode infonodes = 3;</code>
+     */
+    public org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getInfonodesOrBuilder(
+        int index) {
+      return infonodes_.get(index);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -1942,8 +1968,8 @@ public final class Analyzerservice {
       if (!getUidBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, uid_);
       }
-      if (infonode_ != null) {
-        output.writeMessage(3, getInfonode());
+      for (int i = 0; i < infonodes_.size(); i++) {
+        output.writeMessage(3, infonodes_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -1960,9 +1986,9 @@ public final class Analyzerservice {
       if (!getUidBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, uid_);
       }
-      if (infonode_ != null) {
+      for (int i = 0; i < infonodes_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, getInfonode());
+          .computeMessageSize(3, infonodes_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1974,21 +2000,18 @@ public final class Analyzerservice {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage)) {
+      if (!(obj instanceof org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage)) {
         return super.equals(obj);
       }
-      org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage other = (org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage) obj;
+      org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage other = (org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage) obj;
 
       boolean result = true;
       result = result && (getToken()
           == other.getToken());
       result = result && getUid()
           .equals(other.getUid());
-      result = result && (hasInfonode() == other.hasInfonode());
-      if (hasInfonode()) {
-        result = result && getInfonode()
-            .equals(other.getInfonode());
-      }
+      result = result && getInfonodesList()
+          .equals(other.getInfonodesList());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -2005,78 +2028,78 @@ public final class Analyzerservice {
           getToken());
       hash = (37 * hash) + UID_FIELD_NUMBER;
       hash = (53 * hash) + getUid().hashCode();
-      if (hasInfonode()) {
-        hash = (37 * hash) + INFONODE_FIELD_NUMBER;
-        hash = (53 * hash) + getInfonode().hashCode();
+      if (getInfonodesCount() > 0) {
+        hash = (37 * hash) + INFONODES_FIELD_NUMBER;
+        hash = (53 * hash) + getInfonodesList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
 
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseFrom(
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseFrom(
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseFrom(
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseFrom(
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseFrom(byte[] data)
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseFrom(
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseFrom(java.io.InputStream input)
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseFrom(
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseDelimitedFrom(java.io.InputStream input)
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseDelimitedFrom(
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseFrom(
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parseFrom(
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2088,7 +2111,7 @@ public final class Analyzerservice {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage prototype) {
+    public static Builder newBuilder(org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -2103,25 +2126,25 @@ public final class Analyzerservice {
       return builder;
     }
     /**
-     * Protobuf type {@code service.InfoNodeMessage}
+     * Protobuf type {@code service.InfoNodesMessage}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:service.InfoNodeMessage)
-        org.qmstr.grpc.service.Analyzerservice.InfoNodeMessageOrBuilder {
+        // @@protoc_insertion_point(builder_implements:service.InfoNodesMessage)
+        org.qmstr.grpc.service.Analyzerservice.InfoNodesMessageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.qmstr.grpc.service.Analyzerservice.internal_static_service_InfoNodeMessage_descriptor;
+        return org.qmstr.grpc.service.Analyzerservice.internal_static_service_InfoNodesMessage_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.qmstr.grpc.service.Analyzerservice.internal_static_service_InfoNodeMessage_fieldAccessorTable
+        return org.qmstr.grpc.service.Analyzerservice.internal_static_service_InfoNodesMessage_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage.class, org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage.Builder.class);
+                org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage.class, org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage.Builder.class);
       }
 
-      // Construct using org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage.newBuilder()
+      // Construct using org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2134,6 +2157,7 @@ public final class Analyzerservice {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
+          getInfonodesFieldBuilder();
         }
       }
       public Builder clear() {
@@ -2142,41 +2166,48 @@ public final class Analyzerservice {
 
         uid_ = "";
 
-        if (infonodeBuilder_ == null) {
-          infonode_ = null;
+        if (infonodesBuilder_ == null) {
+          infonodes_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
         } else {
-          infonode_ = null;
-          infonodeBuilder_ = null;
+          infonodesBuilder_.clear();
         }
         return this;
       }
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.qmstr.grpc.service.Analyzerservice.internal_static_service_InfoNodeMessage_descriptor;
+        return org.qmstr.grpc.service.Analyzerservice.internal_static_service_InfoNodesMessage_descriptor;
       }
 
-      public org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage getDefaultInstanceForType() {
-        return org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage.getDefaultInstance();
+      public org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage getDefaultInstanceForType() {
+        return org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage.getDefaultInstance();
       }
 
-      public org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage build() {
-        org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage result = buildPartial();
+      public org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage build() {
+        org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage buildPartial() {
-        org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage result = new org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage(this);
+      public org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage buildPartial() {
+        org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage result = new org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         result.token_ = token_;
         result.uid_ = uid_;
-        if (infonodeBuilder_ == null) {
-          result.infonode_ = infonode_;
+        if (infonodesBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004)) {
+            infonodes_ = java.util.Collections.unmodifiableList(infonodes_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.infonodes_ = infonodes_;
         } else {
-          result.infonode_ = infonodeBuilder_.build();
+          result.infonodes_ = infonodesBuilder_.build();
         }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -2208,16 +2239,16 @@ public final class Analyzerservice {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage) {
-          return mergeFrom((org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage)other);
+        if (other instanceof org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage) {
+          return mergeFrom((org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage other) {
-        if (other == org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage other) {
+        if (other == org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage.getDefaultInstance()) return this;
         if (other.getToken() != 0L) {
           setToken(other.getToken());
         }
@@ -2225,8 +2256,31 @@ public final class Analyzerservice {
           uid_ = other.uid_;
           onChanged();
         }
-        if (other.hasInfonode()) {
-          mergeInfonode(other.getInfonode());
+        if (infonodesBuilder_ == null) {
+          if (!other.infonodes_.isEmpty()) {
+            if (infonodes_.isEmpty()) {
+              infonodes_ = other.infonodes_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureInfonodesIsMutable();
+              infonodes_.addAll(other.infonodes_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.infonodes_.isEmpty()) {
+            if (infonodesBuilder_.isEmpty()) {
+              infonodesBuilder_.dispose();
+              infonodesBuilder_ = null;
+              infonodes_ = other.infonodes_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              infonodesBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getInfonodesFieldBuilder() : null;
+            } else {
+              infonodesBuilder_.addAllMessages(other.infonodes_);
+            }
+          }
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -2241,11 +2295,11 @@ public final class Analyzerservice {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage parsedMessage = null;
+        org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage) e.getUnfinishedMessage();
+          parsedMessage = (org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -2254,6 +2308,7 @@ public final class Analyzerservice {
         }
         return this;
       }
+      private int bitField0_;
 
       private long token_ ;
       /**
@@ -2350,121 +2405,244 @@ public final class Analyzerservice {
         return this;
       }
 
-      private org.qmstr.grpc.service.Datamodel.InfoNode infonode_ = null;
-      private com.google.protobuf.SingleFieldBuilderV3<
-          org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> infonodeBuilder_;
-      /**
-       * <code>.service.InfoNode infonode = 3;</code>
-       */
-      public boolean hasInfonode() {
-        return infonodeBuilder_ != null || infonode_ != null;
+      private java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> infonodes_ =
+        java.util.Collections.emptyList();
+      private void ensureInfonodesIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          infonodes_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.InfoNode>(infonodes_);
+          bitField0_ |= 0x00000004;
+         }
       }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> infonodesBuilder_;
+
       /**
-       * <code>.service.InfoNode infonode = 3;</code>
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
        */
-      public org.qmstr.grpc.service.Datamodel.InfoNode getInfonode() {
-        if (infonodeBuilder_ == null) {
-          return infonode_ == null ? org.qmstr.grpc.service.Datamodel.InfoNode.getDefaultInstance() : infonode_;
+      public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode> getInfonodesList() {
+        if (infonodesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(infonodes_);
         } else {
-          return infonodeBuilder_.getMessage();
+          return infonodesBuilder_.getMessageList();
         }
       }
       /**
-       * <code>.service.InfoNode infonode = 3;</code>
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
        */
-      public Builder setInfonode(org.qmstr.grpc.service.Datamodel.InfoNode value) {
-        if (infonodeBuilder_ == null) {
+      public int getInfonodesCount() {
+        if (infonodesBuilder_ == null) {
+          return infonodes_.size();
+        } else {
+          return infonodesBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNode getInfonodes(int index) {
+        if (infonodesBuilder_ == null) {
+          return infonodes_.get(index);
+        } else {
+          return infonodesBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
+       */
+      public Builder setInfonodes(
+          int index, org.qmstr.grpc.service.Datamodel.InfoNode value) {
+        if (infonodesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          infonode_ = value;
+          ensureInfonodesIsMutable();
+          infonodes_.set(index, value);
           onChanged();
         } else {
-          infonodeBuilder_.setMessage(value);
+          infonodesBuilder_.setMessage(index, value);
         }
-
         return this;
       }
       /**
-       * <code>.service.InfoNode infonode = 3;</code>
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
        */
-      public Builder setInfonode(
-          org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
-        if (infonodeBuilder_ == null) {
-          infonode_ = builderForValue.build();
+      public Builder setInfonodes(
+          int index, org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
+        if (infonodesBuilder_ == null) {
+          ensureInfonodesIsMutable();
+          infonodes_.set(index, builderForValue.build());
           onChanged();
         } else {
-          infonodeBuilder_.setMessage(builderForValue.build());
+          infonodesBuilder_.setMessage(index, builderForValue.build());
         }
-
         return this;
       }
       /**
-       * <code>.service.InfoNode infonode = 3;</code>
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
        */
-      public Builder mergeInfonode(org.qmstr.grpc.service.Datamodel.InfoNode value) {
-        if (infonodeBuilder_ == null) {
-          if (infonode_ != null) {
-            infonode_ =
-              org.qmstr.grpc.service.Datamodel.InfoNode.newBuilder(infonode_).mergeFrom(value).buildPartial();
-          } else {
-            infonode_ = value;
+      public Builder addInfonodes(org.qmstr.grpc.service.Datamodel.InfoNode value) {
+        if (infonodesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
           }
+          ensureInfonodesIsMutable();
+          infonodes_.add(value);
           onChanged();
         } else {
-          infonodeBuilder_.mergeFrom(value);
+          infonodesBuilder_.addMessage(value);
         }
-
         return this;
       }
       /**
-       * <code>.service.InfoNode infonode = 3;</code>
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
        */
-      public Builder clearInfonode() {
-        if (infonodeBuilder_ == null) {
-          infonode_ = null;
+      public Builder addInfonodes(
+          int index, org.qmstr.grpc.service.Datamodel.InfoNode value) {
+        if (infonodesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureInfonodesIsMutable();
+          infonodes_.add(index, value);
           onChanged();
         } else {
-          infonode_ = null;
-          infonodeBuilder_ = null;
+          infonodesBuilder_.addMessage(index, value);
         }
-
         return this;
       }
       /**
-       * <code>.service.InfoNode infonode = 3;</code>
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
        */
-      public org.qmstr.grpc.service.Datamodel.InfoNode.Builder getInfonodeBuilder() {
-        
-        onChanged();
-        return getInfonodeFieldBuilder().getBuilder();
+      public Builder addInfonodes(
+          org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
+        if (infonodesBuilder_ == null) {
+          ensureInfonodesIsMutable();
+          infonodes_.add(builderForValue.build());
+          onChanged();
+        } else {
+          infonodesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
       }
       /**
-       * <code>.service.InfoNode infonode = 3;</code>
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
        */
-      public org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getInfonodeOrBuilder() {
-        if (infonodeBuilder_ != null) {
-          return infonodeBuilder_.getMessageOrBuilder();
+      public Builder addInfonodes(
+          int index, org.qmstr.grpc.service.Datamodel.InfoNode.Builder builderForValue) {
+        if (infonodesBuilder_ == null) {
+          ensureInfonodesIsMutable();
+          infonodes_.add(index, builderForValue.build());
+          onChanged();
         } else {
-          return infonode_ == null ?
-              org.qmstr.grpc.service.Datamodel.InfoNode.getDefaultInstance() : infonode_;
+          infonodesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
+       */
+      public Builder addAllInfonodes(
+          java.lang.Iterable<? extends org.qmstr.grpc.service.Datamodel.InfoNode> values) {
+        if (infonodesBuilder_ == null) {
+          ensureInfonodesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, infonodes_);
+          onChanged();
+        } else {
+          infonodesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
+       */
+      public Builder clearInfonodes() {
+        if (infonodesBuilder_ == null) {
+          infonodes_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          infonodesBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
+       */
+      public Builder removeInfonodes(int index) {
+        if (infonodesBuilder_ == null) {
+          ensureInfonodesIsMutable();
+          infonodes_.remove(index);
+          onChanged();
+        } else {
+          infonodesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNode.Builder getInfonodesBuilder(
+          int index) {
+        return getInfonodesFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder getInfonodesOrBuilder(
+          int index) {
+        if (infonodesBuilder_ == null) {
+          return infonodes_.get(index);  } else {
+          return infonodesBuilder_.getMessageOrBuilder(index);
         }
       }
       /**
-       * <code>.service.InfoNode infonode = 3;</code>
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
        */
-      private com.google.protobuf.SingleFieldBuilderV3<
+      public java.util.List<? extends org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
+           getInfonodesOrBuilderList() {
+        if (infonodesBuilder_ != null) {
+          return infonodesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(infonodes_);
+        }
+      }
+      /**
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNode.Builder addInfonodesBuilder() {
+        return getInfonodesFieldBuilder().addBuilder(
+            org.qmstr.grpc.service.Datamodel.InfoNode.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
+       */
+      public org.qmstr.grpc.service.Datamodel.InfoNode.Builder addInfonodesBuilder(
+          int index) {
+        return getInfonodesFieldBuilder().addBuilder(
+            index, org.qmstr.grpc.service.Datamodel.InfoNode.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .service.InfoNode infonodes = 3;</code>
+       */
+      public java.util.List<org.qmstr.grpc.service.Datamodel.InfoNode.Builder> 
+           getInfonodesBuilderList() {
+        return getInfonodesFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
           org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder> 
-          getInfonodeFieldBuilder() {
-        if (infonodeBuilder_ == null) {
-          infonodeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+          getInfonodesFieldBuilder() {
+        if (infonodesBuilder_ == null) {
+          infonodesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               org.qmstr.grpc.service.Datamodel.InfoNode, org.qmstr.grpc.service.Datamodel.InfoNode.Builder, org.qmstr.grpc.service.Datamodel.InfoNodeOrBuilder>(
-                  getInfonode(),
+                  infonodes_,
+                  ((bitField0_ & 0x00000004) == 0x00000004),
                   getParentForChildren(),
                   isClean());
-          infonode_ = null;
+          infonodes_ = null;
         }
-        return infonodeBuilder_;
+        return infonodesBuilder_;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -2477,39 +2655,39 @@ public final class Analyzerservice {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:service.InfoNodeMessage)
+      // @@protoc_insertion_point(builder_scope:service.InfoNodesMessage)
     }
 
-    // @@protoc_insertion_point(class_scope:service.InfoNodeMessage)
-    private static final org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:service.InfoNodesMessage)
+    private static final org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage();
+      DEFAULT_INSTANCE = new org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage();
     }
 
-    public static org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage getDefaultInstance() {
+    public static org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<InfoNodeMessage>
-        PARSER = new com.google.protobuf.AbstractParser<InfoNodeMessage>() {
-      public InfoNodeMessage parsePartialFrom(
+    private static final com.google.protobuf.Parser<InfoNodesMessage>
+        PARSER = new com.google.protobuf.AbstractParser<InfoNodesMessage>() {
+      public InfoNodesMessage parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new InfoNodeMessage(input, extensionRegistry);
+        return new InfoNodesMessage(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<InfoNodeMessage> parser() {
+    public static com.google.protobuf.Parser<InfoNodesMessage> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<InfoNodeMessage> getParserForType() {
+    public com.google.protobuf.Parser<InfoNodesMessage> getParserForType() {
       return PARSER;
     }
 
-    public org.qmstr.grpc.service.Analyzerservice.InfoNodeMessage getDefaultInstanceForType() {
+    public org.qmstr.grpc.service.Analyzerservice.InfoNodesMessage getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3750,6 +3928,393 @@ public final class Analyzerservice {
 
   }
 
+  public interface DummyRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:service.DummyRequest)
+      com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code service.DummyRequest}
+   */
+  public  static final class DummyRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:service.DummyRequest)
+      DummyRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use DummyRequest.newBuilder() to construct.
+    private DummyRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private DummyRequest() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private DummyRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.qmstr.grpc.service.Analyzerservice.internal_static_service_DummyRequest_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.qmstr.grpc.service.Analyzerservice.internal_static_service_DummyRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.qmstr.grpc.service.Analyzerservice.DummyRequest.class, org.qmstr.grpc.service.Analyzerservice.DummyRequest.Builder.class);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.qmstr.grpc.service.Analyzerservice.DummyRequest)) {
+        return super.equals(obj);
+      }
+      org.qmstr.grpc.service.Analyzerservice.DummyRequest other = (org.qmstr.grpc.service.Analyzerservice.DummyRequest) obj;
+
+      boolean result = true;
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.qmstr.grpc.service.Analyzerservice.DummyRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code service.DummyRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:service.DummyRequest)
+        org.qmstr.grpc.service.Analyzerservice.DummyRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.qmstr.grpc.service.Analyzerservice.internal_static_service_DummyRequest_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.qmstr.grpc.service.Analyzerservice.internal_static_service_DummyRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.qmstr.grpc.service.Analyzerservice.DummyRequest.class, org.qmstr.grpc.service.Analyzerservice.DummyRequest.Builder.class);
+      }
+
+      // Construct using org.qmstr.grpc.service.Analyzerservice.DummyRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.qmstr.grpc.service.Analyzerservice.internal_static_service_DummyRequest_descriptor;
+      }
+
+      public org.qmstr.grpc.service.Analyzerservice.DummyRequest getDefaultInstanceForType() {
+        return org.qmstr.grpc.service.Analyzerservice.DummyRequest.getDefaultInstance();
+      }
+
+      public org.qmstr.grpc.service.Analyzerservice.DummyRequest build() {
+        org.qmstr.grpc.service.Analyzerservice.DummyRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.qmstr.grpc.service.Analyzerservice.DummyRequest buildPartial() {
+        org.qmstr.grpc.service.Analyzerservice.DummyRequest result = new org.qmstr.grpc.service.Analyzerservice.DummyRequest(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.qmstr.grpc.service.Analyzerservice.DummyRequest) {
+          return mergeFrom((org.qmstr.grpc.service.Analyzerservice.DummyRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.qmstr.grpc.service.Analyzerservice.DummyRequest other) {
+        if (other == org.qmstr.grpc.service.Analyzerservice.DummyRequest.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.qmstr.grpc.service.Analyzerservice.DummyRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.qmstr.grpc.service.Analyzerservice.DummyRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:service.DummyRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:service.DummyRequest)
+    private static final org.qmstr.grpc.service.Analyzerservice.DummyRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.qmstr.grpc.service.Analyzerservice.DummyRequest();
+    }
+
+    public static org.qmstr.grpc.service.Analyzerservice.DummyRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<DummyRequest>
+        PARSER = new com.google.protobuf.AbstractParser<DummyRequest>() {
+      public DummyRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new DummyRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<DummyRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<DummyRequest> getParserForType() {
+      return PARSER;
+    }
+
+    public org.qmstr.grpc.service.Analyzerservice.DummyRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_service_AnalyzerConfigRequest_descriptor;
   private static final 
@@ -3766,10 +4331,10 @@ public final class Analyzerservice {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_service_AnalyzerConfigResponse_ConfigMapEntry_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_service_InfoNodeMessage_descriptor;
+    internal_static_service_InfoNodesMessage_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_service_InfoNodeMessage_fieldAccessorTable;
+      internal_static_service_InfoNodesMessage_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_service_DiagnosticNodeMessage_descriptor;
   private static final 
@@ -3780,6 +4345,11 @@ public final class Analyzerservice {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_service_SendResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_service_DummyRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_service_DummyRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -3796,20 +4366,22 @@ public final class Analyzerservice {
       "onfigResponse.ConfigMapEntry\022*\n\007pathSub\030" +
       "\003 \003(\0132\031.service.PathSubstitution\022\r\n\005toke" +
       "n\030\004 \001(\003\022\014\n\004name\030\006 \001(\t\0320\n\016ConfigMapEntry\022" +
-      "\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"R\n\017InfoN" +
-      "odeMessage\022\r\n\005token\030\001 \001(\003\022\013\n\003uid\030\002 \001(\t\022#" +
-      "\n\010infonode\030\003 \001(\0132\021.service.InfoNode\"d\n\025D" +
-      "iagnosticNodeMessage\022\r\n\005token\030\001 \001(\003\022\013\n\003u" +
-      "id\030\002 \001(\t\022/\n\016diagnosticnode\030\003 \001(\0132\027.servi" +
-      "ce.DiagnosticNode\"\037\n\014SendResponse\022\017\n\007suc" +
-      "cess\030\001 \001(\0102\200\002\n\017AnalysisService\022V\n\021GetAna" +
-      "lyzerConfig\022\036.service.AnalyzerConfigRequ" +
-      "est\032\037.service.AnalyzerConfigResponse\"\000\022D" +
-      "\n\rSendInfoNodes\022\030.service.InfoNodeMessag" +
-      "e\032\025.service.SendResponse\"\000(\001\022O\n\022SendDiag" +
-      "nosticNode\022\036.service.DiagnosticNodeMessa" +
-      "ge\032\025.service.SendResponse\"\000(\001B\030\n\026org.qms" +
-      "tr.grpc.serviceX\000b\006proto3"
+      "\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"T\n\020InfoN" +
+      "odesMessage\022\r\n\005token\030\001 \001(\003\022\013\n\003uid\030\002 \001(\t\022" +
+      "$\n\tinfonodes\030\003 \003(\0132\021.service.InfoNode\"d\n" +
+      "\025DiagnosticNodeMessage\022\r\n\005token\030\001 \001(\003\022\013\n" +
+      "\003uid\030\002 \001(\t\022/\n\016diagnosticnode\030\003 \001(\0132\027.ser" +
+      "vice.DiagnosticNode\"\037\n\014SendResponse\022\017\n\007s" +
+      "uccess\030\001 \001(\010\"\016\n\014DummyRequest2\305\002\n\017Analysi" +
+      "sService\022V\n\021GetAnalyzerConfig\022\036.service." +
+      "AnalyzerConfigRequest\032\037.service.Analyzer" +
+      "ConfigResponse\"\000\022E\n\rSendInfoNodes\022\031.serv" +
+      "ice.InfoNodesMessage\032\025.service.SendRespo" +
+      "nse\"\000(\001\022O\n\022SendDiagnosticNode\022\036.service." +
+      "DiagnosticNodeMessage\032\025.service.SendResp" +
+      "onse\"\000(\001\022B\n\022GetSourceFileNodes\022\025.service" +
+      ".DummyRequest\032\021.service.FileNode\"\0000\001B\030\n\026" +
+      "org.qmstr.grpc.serviceX\000b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -3842,12 +4414,12 @@ public final class Analyzerservice {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_AnalyzerConfigResponse_ConfigMapEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
-    internal_static_service_InfoNodeMessage_descriptor =
+    internal_static_service_InfoNodesMessage_descriptor =
       getDescriptor().getMessageTypes().get(2);
-    internal_static_service_InfoNodeMessage_fieldAccessorTable = new
+    internal_static_service_InfoNodesMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_service_InfoNodeMessage_descriptor,
-        new java.lang.String[] { "Token", "Uid", "Infonode", });
+        internal_static_service_InfoNodesMessage_descriptor,
+        new java.lang.String[] { "Token", "Uid", "Infonodes", });
     internal_static_service_DiagnosticNodeMessage_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_service_DiagnosticNodeMessage_fieldAccessorTable = new
@@ -3860,6 +4432,12 @@ public final class Analyzerservice {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_SendResponse_descriptor,
         new java.lang.String[] { "Success", });
+    internal_static_service_DummyRequest_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_service_DummyRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_service_DummyRequest_descriptor,
+        new java.lang.String[] { });
     org.qmstr.grpc.service.Datamodel.getDescriptor();
   }
 
