@@ -50,23 +50,10 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes []*service.InfoNode) e
 	receiverNode := result["node"][0].(map[string]interface{})
 
 	if additionalInfoInter, ok := receiverNode["additionalInfo"]; ok {
-		// check if these info nodes have already been inserted in the db
-		for _, infoNode := range additionalInfoInter.([]interface{}) {
-			for attrName, attrValue := range infoNode.(map[string]interface{}) {
-				if attrName == "analyzer" {
-					for _, analyzer := range attrValue.([]interface{}) {
-						for name, value := range analyzer.(map[string]interface{}) {
-							if name == "name" {
-								if value.(string) == infonodes[0].Analyzer[0].Name {
-									log.Printf("Analyzer %v already created info nodes for file %s, skipping insert..", infonodes[0].Analyzer[0].Name, nodeID)
-									return nil
-
-								}
-							}
-						}
-					}
-				}
-			}
+		// check if analyzer has already created info nodes in the db
+		if ok := AnalyzerCreatedInfoNodes(additionalInfoInter, infonodes); ok {
+			log.Printf("Already created info nodes for node %s, skipping insert..", nodeID)
+			return nil
 		}
 	}
 	if _, ok := receiverNode["projectNodeType"]; ok {
@@ -97,6 +84,33 @@ func (db *DataBase) AddInfoNodes(nodeID string, infonodes []*service.InfoNode) e
 		return fmt.Errorf("wrong type of node. Can't connect info nodes to it")
 	}
 	return nil
+}
+
+// AnalyzerCreatedInfoNodes checks if the analyzer has created info nodes for a file node
+func AnalyzerCreatedInfoNodes(infoInter interface{}, infonode interface{}) bool {
+	for _, infoNode := range infoInter.([]interface{}) {
+		for attrName, attrValue := range infoNode.(map[string]interface{}) {
+			if attrName == "analyzer" {
+				for _, analyzer := range attrValue.([]interface{}) {
+					for name, value := range analyzer.(map[string]interface{}) {
+						if name == "name" {
+							var analyzerName string
+							switch node := infonode.(type) {
+							case []*service.InfoNode:
+								analyzerName = node[0].Analyzer[0].Name
+							case *service.DiagnosticNode:
+								analyzerName = node.Analyzer[0].Name
+							}
+							if value.(string) == analyzerName {
+								return true
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return false
 }
 
 // GetInfoDataByTrustLevel returns infonodes containing the datanodes detected from the most trusted analyzer
