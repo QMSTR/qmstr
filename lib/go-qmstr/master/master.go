@@ -162,7 +162,7 @@ func (s *server) SendBuildError(ctx context.Context, in *service.InfoNode) (*ser
 		return nil, err
 	}
 
-	if err := db.AddInfoNodes(node.Uid, in); err != nil {
+	if err := db.AddInfoNodes(node.Uid, []*service.InfoNode{in}); err != nil {
 		return nil, err
 	}
 
