@@ -2,7 +2,7 @@
 import argparse
 from qmstr.service.datamodel_pb2 import FileNode, InfoNode, PackageNode
 from qmstr.service.controlservice_pb2 import GetFileNodeMessage
-from qmstr.service.analyzerservice_pb2 import InfoNodeMessage, DummyRequest
+from qmstr.service.analyzerservice_pb2 import InfoNodesMessage, DummyRequest
 from qmstr.module.module import QMSTR_Analyzer
 from qmstr.module.utils import generate_iterator
 from spdx.document import License
@@ -97,18 +97,18 @@ class SpdxAnalyzer(QMSTR_Analyzer):
                 data=spdx_doc_file_info.conc_lics.full_name
             ))
 
-            info_node = InfoNode(
-                type="license",
-                dataNodes=data_nodes
-            )
-
             info_nodes = []
-            info_nodes.append(InfoNodeMessage(
+            info_nodes.append(InfoNode(
+                type="license",
+                dataNodes=data_nodes))
+
+            info_nodes_msgs = []
+            info_nodes_msgs.append(InfoNodesMessage(
                 uid=node.fileData.uid,
                 token=self.token,
-                infonode=info_node))
+                infonodes=info_nodes))
 
-            info_iterator = generate_iterator(info_nodes)
+            info_iterator = generate_iterator(info_nodes_msgs)
 
             self.aserv.SendInfoNodes(info_iterator)
 
@@ -133,11 +133,6 @@ class SpdxAnalyzer(QMSTR_Analyzer):
                 data=SpdxAnalyzer.__stringify(value)
             ))
 
-        info_node = InfoNode(
-            type="metadata",
-            dataNodes=data_nodes
-        )
-
         package_request = PackageNode(
             name=package_name
         )
@@ -146,12 +141,17 @@ class SpdxAnalyzer(QMSTR_Analyzer):
 
         for package_node in package_stream:
             info_nodes = []
-            info_nodes.append(InfoNodeMessage(
+            info_nodes.append(InfoNode(
+            type="metadata",
+            dataNodes=data_nodes))
+
+            info_nodes_msgs = []
+            info_nodes_msgs.append(InfoNodesMessage(
                 uid=package_node.uid,
                 token=self.token,
-                infonode=info_node))
+                infonodes=info_nodes))
 
-            info_iterator = generate_iterator(info_nodes)
+            info_iterator = generate_iterator(info_nodes_msgs)
 
             self.aserv.SendInfoNodes(info_iterator)
 

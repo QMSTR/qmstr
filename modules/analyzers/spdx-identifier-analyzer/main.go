@@ -82,8 +82,8 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 				&service.InfoNode_DataNode{Type: "name", Data: spdxIdent},
 				&service.InfoNode_DataNode{Type: "spdxIdentifier", Data: spdxIdent},
 			}
-			infoNode := &service.InfoNode{Type: "license", DataNodes: dataNodes}
-			infoNodeMsg := &service.InfoNodeMessage{Token: token, Infonode: infoNode, Uid: fileNode.FileData.Uid}
+			infoNodes := []*service.InfoNode{&service.InfoNode{Type: "license", DataNodes: dataNodes}}
+			infoNodeMsg := &service.InfoNodesMessage{Token: token, Infonodes: infoNodes, Uid: fileNode.FileData.Uid}
 
 			sendStream, err := analysisService.SendInfoNodes(context.Background())
 			if err != nil {
