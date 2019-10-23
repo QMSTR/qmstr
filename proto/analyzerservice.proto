@@ -15,10 +15,10 @@ message AnalyzerConfigResponse {
     string name = 6;
 }
 
-message InfoNodeMessage {
+message InfoNodesMessage {
     int64 token = 1;
     string uid = 2;
-    InfoNode infonode = 3;
+    repeated InfoNode infonodes = 3;
 }
 
 message DiagnosticNodeMessage {
@@ -35,7 +35,7 @@ message DummyRequest {
 
 service AnalysisService {
     rpc GetAnalyzerConfig(AnalyzerConfigRequest) returns (AnalyzerConfigResponse) {}
-    rpc SendInfoNodes(stream InfoNodeMessage) returns (SendResponse) {}
+    rpc SendInfoNodes(stream InfoNodesMessage) returns (SendResponse) {}
     rpc SendDiagnosticNode(stream DiagnosticNodeMessage) returns (SendResponse) {}
     rpc GetSourceFileNodes(DummyRequest) returns (stream FileNode) {}
 }
