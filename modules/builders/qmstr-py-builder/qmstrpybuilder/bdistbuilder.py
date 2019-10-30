@@ -37,13 +37,14 @@ class BdistBuilder(QMSTR_Builder):
             directory, filename = os.path.split(bcfn.path)
             if directory.endswith("__pycache__"):
                 directory = os.path.dirname(directory)
-            
+
             filenameparts = filename.split('.')
             if len(filenameparts) > 2:
                 boundary = -2
             else:
                 boundary = -1
-            source_filename = os.path.join(directory, *filenameparts[:boundary])
+            source_filename = os.path.join(
+                directory, *filenameparts[:boundary])
             source_filename = source_filename + ".py"
             target_source[source_filename] = bcfn
 
@@ -54,4 +55,3 @@ class BdistBuilder(QMSTR_Builder):
                 target.derivedFrom.append(scfn)
             except KeyError:
                 logging.warn("no bytecode for %s found", scfn.path)
-        
