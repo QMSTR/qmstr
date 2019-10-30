@@ -66,11 +66,11 @@ cleanall: clean
 
 # Tests and code quality checks
 .go_module_test: $(GO_MODULE_SRCS)
-	$(GO) test $(GO_MODULE_PKGS)
+	$(GO) test -race $(GO_MODULE_PKGS)
 	@touch .go_module_test
 
 .go_qmstr_test: $(GO_SRCS)
-	$(GO) test $(GO_PKGS)
+	$(GO) test -race $(GO_PKGS)
 	@touch .go_qmstr_test
 
 .PHONY: gotest
