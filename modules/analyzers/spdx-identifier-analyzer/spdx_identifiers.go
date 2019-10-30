@@ -346,5 +346,5 @@ var spdxLicenses = map[string]struct{}{
 	"psutils":                              struct{}{},
 	"xinetd":                               struct{}{},
 	"xpp":                                  struct{}{},
-	"zlib-acknowledgement": struct{}{},
+	"zlib-acknowledgement":                 struct{}{},
 }

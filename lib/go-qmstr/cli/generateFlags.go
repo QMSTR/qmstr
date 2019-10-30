@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/spf13/pflag"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
+	"github.com/spf13/pflag"
 )
 
 const hash = "hash"
