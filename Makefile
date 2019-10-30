@@ -9,9 +9,6 @@ ALL_PYTHON_FILES := $(shell find . -path ./venv -prune -o -name *.py -print)
 PROTO_PYTHON_FILES := $(patsubst ./proto/%,./lib/pyqmstr/qmstr/service/%,$(PROTO_FILES:.proto=_pb2.py)) $(patsubst ./proto/%,./lib/pyqmstr/qmstr/service/%,$(PROTO_FILES:.proto=_pb2_grpc.py))
 PYTHON_FILES := $(filter-out $(PROTO_PYTHON_FILES), $(ALL_PYTHON_FILES))
 
-GO_MODULE_PKGS := $(shell go list ./... | grep /module | grep -v /vendor)
-GO_PKGS := $(shell go list ./... | grep -v /module | grep -v /vendor)
-
 # The installation prefix defaults to /usr/local. It can be overwritten
 # by specifying the PREFIX variable on the command line:
 #     make PREFIX=/opt/qmstr
@@ -20,15 +17,20 @@ ifdef PREFIX
 prefix=$(PREFIX)
 endif
 
+GO := $(call CHECKCMDS,go)
+
 # those are intended to be a recursively expanded variables
 GO_SRCS = $(shell find . -name '*.go')
 FILTER = $(foreach v,$(2),$(if $(findstring $(1),$(v)),$(v),))
 GO_MODULE_SRCS = $(call FILTER,module,$(GO_SRCS))
 
-GO := $(call CHECKCMDS,go)
+GO_MODULE_PKGS := $(shell $(GO) list ./... | grep /module | grep -v /vendor)
+GO_PKGS := $(shell $(GO) list ./... | grep -v /module | grep -v /vendor)
+
 GO_PATH := $(shell $(GO) env GOPATH)
 GO_BIN := $(GO_PATH)/bin
 PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
+GOLINT := $(GO_BIN)/golint
 
 GO_DEPS := $(PROTOC_GEN_GO) $(GO_SRCS)
 
@@ -64,17 +66,28 @@ cleanall: clean
 
 # Tests and code quality checks
 .go_module_test: $(GO_MODULE_SRCS)
-	$(GO) test ./modules/...
+	$(GO) test $(GO_MODULE_PKGS)
 	@touch .go_module_test
 
 .go_qmstr_test: $(GO_SRCS)
-	$(GO) test ./clients/... ./lib/go-qmstr/...
+	$(GO) test $(GO_PKGS)
 	@touch .go_qmstr_test
 
 .PHONY: gotest
 gotest: .go_qmstr_test .go_module_test
 
-$(PROTOC_GEN_GO):
+.PHONY: govet
+govet: $(GO_SRCS) $(GO)
+	$(GO) vet ./clients/... ./lib/go-qmstr/...
+
+.PHONY: golint
+golint: govet $(GOLINT)
+	$(GOLINT) ./clients/... ./lib/go-qmstr/...
+
+$(GOLINT): $(GO)
+	$(GO) get -u golang.org/x/lint/golint
+
+$(PROTOC_GEN_GO): $(GO)
 	$(GO) install github.com/golang/protobuf/protoc-gen-go
 
 # Client build target
