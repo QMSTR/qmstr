@@ -142,8 +142,8 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         for package_node in package_stream:
             info_nodes = []
             info_nodes.append(InfoNode(
-            type="metadata",
-            dataNodes=data_nodes))
+                type="metadata",
+                dataNodes=data_nodes))
 
             info_nodes_msgs = []
             info_nodes_msgs.append(InfoNodesMessage(
