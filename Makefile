@@ -73,11 +73,15 @@ cleanall: clean
 	$(GO) test -race $(GO_PKGS)
 	@touch .go_qmstr_test
 
+.PHONY: gofmt
+gofmt: $(GO) $(GO_SRCS)
+	$(GO) fmt $(GO_PKGS) $(GO_MODULE_PKGS)
+
 .PHONY: gotest
 gotest: .go_qmstr_test .go_module_test
 
 .PHONY: govet
-govet: $(GO_SRCS) $(GO)
+govet: $(GO_SRCS) $(GO) gofmt
 	$(GO) vet ./clients/... ./lib/go-qmstr/...
 
 .PHONY: golint
