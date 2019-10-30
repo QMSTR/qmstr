@@ -45,13 +45,13 @@ project:
 	if err != nil {
 		t.Logf("Broken config %v", err)
 		t.FailNow()
-  }
-  
-  for _, ana := range masterconf.Analysis {
-    if ana.TrustLevel == 0 {
-      t.Fail()
-    }
-  }
+	}
+
+	for _, ana := range masterconf.Analysis {
+		if ana.TrustLevel == 0 {
+			t.Fail()
+		}
+	}
 
 	projNode := CreateProjectNode(masterconf)
 	value := projNode.GetMetaData("Vendor", "")
