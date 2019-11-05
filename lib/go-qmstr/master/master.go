@@ -140,6 +140,27 @@ func (s *server) GetPackageNode(in *service.PackageNode, stream service.ControlS
 	return nil
 }
 
+func (s *server) GetPackageTargets(in *service.PackageNode, stream service.ControlService_GetPackageTargetsServer) error {
+	db, err := s.currentPhase.getDataBase()
+	if err != nil {
+		return err
+	}
+	var targets []*service.FileNode
+	if in.Uid == "" {
+		return errors.New("no uid provided")
+	}
+
+	targets, err = db.GetPackageTargets(in.Uid)
+	if err != nil {
+		return err
+	}
+
+	for _, fileNode := range targets {
+		stream.Send(fileNode)
+	}
+	return nil
+}
+
 func (s *server) GetProjectNode(ctx context.Context, in *service.ProjectNode) (*service.ProjectNode, error) {
 	db, err := s.currentPhase.getDataBase()
 	if err != nil {
