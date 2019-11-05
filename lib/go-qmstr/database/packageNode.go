@@ -127,3 +127,36 @@ func (db *DataBase) AddPackageFileNodes(nodeID string, filenodes ...*service.Fil
 
 	return nil
 }
+
+func (db *DataBase) GetPackageTargets(pkgNodeID string) ([]*service.FileNode, error) {
+	db.insertMutex.Lock()
+	defer db.insertMutex.Unlock()
+
+	const q = `
+	query Node($id: string){
+		pkgnode(func: uid($id)) @filter(has(packageNodeType)) @recurse(loop: false) {
+			uid
+			targets
+		}
+	}
+	`
+	vars := map[string]string{"$id": pkgNodeID}
+	packageNodes := map[string][]*service.PackageNode{}
+
+	resp, err := db.client.NewTxn().QueryWithVars(context.Background(), q, vars)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(resp.Json, &packageNodes)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(packageNodes["pkgnode"]) < 1 {
+		return nil, errors.New("No such package node in graph")
+	}
+
+	pkgNode := packageNodes["pkgnode"][0]
+	return pkgNode.Targets, nil
+}

@@ -6406,23 +6406,24 @@ public final class Controlservice {
       "ts\030\005 \001(\004\"2\n\014EventMessage\022\"\n\005class\030\001 \001(\0162" +
       "\023.service.EventClass\"\035\n\rExportRequest\022\014\n" +
       "\004wait\030\001 \001(\010\"!\n\016ExportResponse\022\017\n\007success" +
-      "\030\001 \001(\0102\327\004\n\016ControlService\0222\n\003Log\022\023.servi" +
+      "\030\001 \001(\0102\231\005\n\016ControlService\0222\n\003Log\022\023.servi" +
       "ce.LogMessage\032\024.service.LogResponse\"\000\0225\n" +
       "\004Quit\022\024.service.QuitMessage\032\025.service.Qu" +
       "itResponse\"\000\022J\n\013SwitchPhase\022\033.service.Sw" +
       "itchPhaseMessage\032\034.service.SwitchPhaseRe" +
       "sponse\"\000\022@\n\016GetPackageNode\022\024.service.Pac" +
-      "kageNode\032\024.service.PackageNode\"\0000\001\022A\n\013Ge" +
-      "tFileNode\022\033.service.GetFileNodeMessage\032\021" +
-      ".service.FileNode\"\0000\001\022I\n\021GetDiagnosticNo" +
-      "de\022\027.service.DiagnosticNode\032\027.service.Di" +
-      "agnosticNode\"\0000\001\022;\n\006Status\022\026.service.Sta" +
-      "tusMessage\032\027.service.StatusResponse\"\000\022<\n" +
-      "\017SubscribeEvents\022\025.service.EventMessage\032" +
-      "\016.service.Event\"\0000\001\022C\n\016ExportSnapshot\022\026." +
-      "service.ExportRequest\032\027.service.ExportRe" +
-      "sponse\"\000B\030\n\026org.qmstr.grpc.serviceX\000b\006pr" +
-      "oto3"
+      "kageNode\032\024.service.PackageNode\"\0000\001\022@\n\021Ge" +
+      "tPackageTargets\022\024.service.PackageNode\032\021." +
+      "service.FileNode\"\0000\001\022A\n\013GetFileNode\022\033.se" +
+      "rvice.GetFileNodeMessage\032\021.service.FileN" +
+      "ode\"\0000\001\022I\n\021GetDiagnosticNode\022\027.service.D" +
+      "iagnosticNode\032\027.service.DiagnosticNode\"\000" +
+      "0\001\022;\n\006Status\022\026.service.StatusMessage\032\027.s" +
+      "ervice.StatusResponse\"\000\022<\n\017SubscribeEven" +
+      "ts\022\025.service.EventMessage\032\016.service.Even" +
+      "t\"\0000\001\022C\n\016ExportSnapshot\022\026.service.Export" +
+      "Request\032\027.service.ExportResponse\"\000B\030\n\026or" +
+      "g.qmstr.grpc.serviceX\000b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
