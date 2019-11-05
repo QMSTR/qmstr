@@ -35,6 +35,11 @@ class ControlServiceStub(object):
         request_serializer=datamodel__pb2.PackageNode.SerializeToString,
         response_deserializer=datamodel__pb2.PackageNode.FromString,
         )
+    self.GetPackageTargets = channel.unary_stream(
+        '/service.ControlService/GetPackageTargets',
+        request_serializer=datamodel__pb2.PackageNode.SerializeToString,
+        response_deserializer=datamodel__pb2.FileNode.FromString,
+        )
     self.GetFileNode = channel.unary_stream(
         '/service.ControlService/GetFileNode',
         request_serializer=controlservice__pb2.GetFileNodeMessage.SerializeToString,
@@ -88,6 +93,13 @@ class ControlServiceServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def GetPackageNode(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def GetPackageTargets(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -151,6 +163,11 @@ def add_ControlServiceServicer_to_server(servicer, server):
           servicer.GetPackageNode,
           request_deserializer=datamodel__pb2.PackageNode.FromString,
           response_serializer=datamodel__pb2.PackageNode.SerializeToString,
+      ),
+      'GetPackageTargets': grpc.unary_stream_rpc_method_handler(
+          servicer.GetPackageTargets,
+          request_deserializer=datamodel__pb2.PackageNode.FromString,
+          response_serializer=datamodel__pb2.FileNode.SerializeToString,
       ),
       'GetFileNode': grpc.unary_stream_rpc_method_handler(
           servicer.GetFileNode,
