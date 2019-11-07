@@ -10,6 +10,7 @@ import (
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/analysis"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/tester"
 )
@@ -45,8 +46,8 @@ func (testanalyzer *TestAnalyzer) Configure(configMap map[string]string) error {
 	return nil
 }
 
-func (testanalyzer *TestAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64) error {
-	pkgNodeStream, err := controlService.GetPackageNode(context.Background(), &service.PackageNode{})
+func (testanalyzer *TestAnalyzer) Analyze(masterClient *module.MasterClient, token int64) error {
+	pkgNodeStream, err := masterClient.CtrlSvcClient.GetPackageNode(context.Background(), &service.PackageNode{})
 	if err != nil {
 		return err
 	}
