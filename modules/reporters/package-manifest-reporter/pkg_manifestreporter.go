@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha1"
 	"fmt"
-	"io"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -14,6 +13,7 @@ import (
 	"time"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/common"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	"github.com/spdx/tools-golang/v0/spdx"
 	"github.com/spdx/tools-golang/v0/tvsaver"
@@ -58,33 +58,30 @@ func (r *PkgManifestReporter) Configure(config map[string]string) error {
 	return nil
 }
 
-func (r *PkgManifestReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
+func (r *PkgManifestReporter) Report(masterClient *module.MasterClient) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	pkgStream, err := cserv.GetPackageNode(ctx, &service.PackageNode{})
+	pnps, err := masterClient.GetPackageNodes()
 	if err != nil {
 		return fmt.Errorf("Couldn't get package node, %v", err)
 	}
 
-	for {
-		pkg, err := pkgStream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return fmt.Errorf("Error receiving package nodes, %v", err)
-		}
-		if err = r.generateSPDX(pkg, rserv, ctx); err != nil {
+	for _, pnp := range pnps {
+		if err = r.generateSPDX(pnp, masterClient.RptSvcClient, ctx); err != nil {
 			return fmt.Errorf("Error while generating SPDX, %v", err)
 		}
 	}
 	return nil
 }
 
-func (r *PkgManifestReporter) generateSPDX(pkgNode *service.PackageNode, rserv service.ReportServiceClient, ctx context.Context) error {
+func (r *PkgManifestReporter) generateSPDX(pkgNode *module.PackageNodeProxy, rserv service.ReportServiceClient, ctx context.Context) error {
 	files := []*spdx.File2_1{}
 	hashes := []string{}
-	for _, trgt := range pkgNode.Targets {
+	targets, err := pkgNode.GetTargets()
+	if err != nil {
+		return err
+	}
+	for _, trgt := range targets {
 		licenses, err := rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: trgt.Uid, Infotype: "license", Datatype: "name"})
 		if err != nil {
 			return fmt.Errorf("Couldn't get license node, %v", err)
