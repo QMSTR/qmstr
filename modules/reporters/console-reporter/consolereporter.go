@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
@@ -20,8 +21,8 @@ func (r *ConsoleReporter) Configure(config map[string]string) error {
 	return nil
 }
 
-func (r *ConsoleReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
-	stream, err := cserv.GetDiagnosticNode(context.Background(), &service.DiagnosticNode{Severity: service.DiagnosticNode_ERROR})
+func (r *ConsoleReporter) Report(masterClient *module.MasterClient) error {
+	stream, err := masterClient.CtrlSvcClient.GetDiagnosticNode(context.Background(), &service.DiagnosticNode{Severity: service.DiagnosticNode_ERROR})
 	if err != nil {
 		return fmt.Errorf("could not get diagnostic nodes: %v", err)
 	}

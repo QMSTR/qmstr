@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -16,6 +15,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/reporting"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	version "github.com/hashicorp/go-version"
@@ -109,30 +109,19 @@ func (r *HTMLReporter) Configure(config map[string]string) error {
 
 // Report generates the actual reports.
 // It is part of the ReporterModule interface.
-func (r *HTMLReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
+func (r *HTMLReporter) Report(masterClient *module.MasterClient) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	projectNode, err := rserv.GetProjectNode(ctx, &service.ProjectNode{})
+	projectNode, err := masterClient.RptSvcClient.GetProjectNode(ctx, &service.ProjectNode{})
 	if err != nil {
 		return fmt.Errorf("failed to get project node: %v", err)
 	}
 
-	stream, err := cserv.GetPackageNode(context.Background(), &service.PackageNode{})
+	pnps, err := masterClient.GetPackageNodes()
 	if err != nil {
 		return fmt.Errorf("failed to get package node: %v", err)
 	}
-	for {
-		packageNode, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if packageNode == nil {
-			log.Println("Warning:No Package node found")
-			return nil
-		}
-		if err != nil {
-			return err
-		}
+	for pnp := range pnps {
 		if err := r.CreatePackageLevelReports(projectNode, packageNode, cserv, rserv); err != nil {
 			return fmt.Errorf("error generating package level report: %v", err)
 		}
