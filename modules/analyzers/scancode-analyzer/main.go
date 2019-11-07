@@ -17,6 +17,7 @@ import (
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/analysis"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
@@ -67,8 +68,8 @@ func (scanalyzer *ScancodeAnalyzer) Configure(configMap map[string]string) error
 	return fmt.Errorf("Misconfigured scancode analyzer")
 }
 
-func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64) error {
-	stream, err := analysisService.GetSourceFileNodes(context.Background(), &service.DummyRequest{})
+func (scanalyzer *ScancodeAnalyzer) Analyze(masterClient *module.MasterClient, token int64) error {
+	stream, err := masterClient.AnaSvcClient.GetSourceFileNodes(context.Background(), &service.DummyRequest{})
 	if err != nil {
 		log.Printf("failed getting source file nodes %v", err)
 		return err
@@ -100,7 +101,7 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServic
 		}
 	}
 
-	sendStream, err := analysisService.SendInfoNodes(context.Background())
+	sendStream, err := masterClient.AnaSvcClient.SendInfoNodes(context.Background())
 	if err != nil {
 		return err
 	}

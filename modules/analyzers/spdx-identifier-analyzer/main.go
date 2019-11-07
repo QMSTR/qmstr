@@ -12,6 +12,7 @@ import (
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/analysis"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
@@ -39,8 +40,8 @@ func (spdxalizer *SpdxAnalyzer) Configure(configMap map[string]string) error {
 	return nil
 }
 
-func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64) error {
-	stream, err := analysisService.GetSourceFileNodes(context.Background(), &service.DummyRequest{})
+func (spdxalizer *SpdxAnalyzer) Analyze(masterClient *module.MasterClient, token int64) error {
+	stream, err := masterClient.AnaSvcClient.GetSourceFileNodes(context.Background(), &service.DummyRequest{})
 	if err != nil {
 		log.Printf("failed getting source file nodes %v", err)
 		return err
@@ -85,7 +86,7 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 			infoNodes := []*service.InfoNode{&service.InfoNode{Type: "license", DataNodes: dataNodes}}
 			infoNodeMsg := &service.InfoNodesMessage{Token: token, Infonodes: infoNodes, Uid: fileNode.FileData.Uid}
 
-			sendStream, err := analysisService.SendInfoNodes(context.Background())
+			sendStream, err := masterClient.AnaSvcClient.SendInfoNodes(context.Background())
 			if err != nil {
 				return err
 			}
@@ -101,7 +102,7 @@ func (spdxalizer *SpdxAnalyzer) Analyze(controlService service.ControlServiceCli
 				log.Println("Simple SPDX Analyzer sent InfoNodes")
 			}
 		}
-		sendStream, err := analysisService.SendDiagnosticNode(context.Background())
+		sendStream, err := masterClient.AnaSvcClient.SendDiagnosticNode(context.Background())
 		if err != nil {
 			return err
 		}
