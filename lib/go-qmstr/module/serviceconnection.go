@@ -8,12 +8,12 @@ import (
 )
 
 type MasterClient struct {
-	ctrlSvcClient service.ControlServiceClient
-	anaSvcClient  service.AnalysisServiceClient
-	rptSvcClient  service.ReportServiceClient
+	CtrlSvcClient service.ControlServiceClient
+	AnaSvcClient  service.AnalysisServiceClient
+	RptSvcClient  service.ReportServiceClient
 }
 
-func NewMasterClient(serviceAddress string) *MasterClient {
+func NewMasterClient(serviceAddress string) MasterClient {
 	conn, err := grpc.Dial(serviceAddress, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Failed to connect to master: %v", err)
@@ -22,5 +22,5 @@ func NewMasterClient(serviceAddress string) *MasterClient {
 	ctrlSvcClient := service.NewControlServiceClient(conn)
 	anaSvcClient := service.NewAnalysisServiceClient(conn)
 	rptSvcClient := service.NewReportServiceClient(conn)
-	return &MasterClient{ctrlSvcClient: ctrlSvcClient, anaSvcClient: anaSvcClient, rptSvcClient: rptSvcClient}
+	return MasterClient{CtrlSvcClient: ctrlSvcClient, AnaSvcClient: anaSvcClient, RptSvcClient: rptSvcClient}
 }
