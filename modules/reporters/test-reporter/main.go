@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/reporting"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/tester"
@@ -33,9 +34,9 @@ func (testRporter *TestReporter) Configure(config map[string]string) error {
 }
 
 // Report generates the actual reports.
-func (testRporter *TestReporter) Report(cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
+func (testRporter *TestReporter) Report(masterClient *module.MasterClient) error {
 	var err error
-	testprojectNode, err = rserv.GetProjectNode(context.Background(), &service.ProjectNode{})
+	testprojectNode, err = masterClient.RptSvcClient.GetProjectNode(context.Background(), &service.ProjectNode{})
 	if err != nil {
 		return fmt.Errorf("could not get project node: %v", err)
 	}

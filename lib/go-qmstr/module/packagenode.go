@@ -13,13 +13,25 @@ type PackageNodeProxy struct {
 	masterClient *MasterClient
 }
 
-func (pnp *PackageNodeProxy) GetTargets() []*FileNodeProxy {
+func (pnp *PackageNodeProxy) GetTargets() ([]*FileNodeProxy, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	if len(pnp.Targets) == 0 {
-		pnp.masterClient.CtrlSvcClient.GetPackageTargets(ctx, &pnp.PackageNode)
+	targetStream, err := pnp.masterClient.CtrlSvcClient.GetPackageTargets(ctx, &pnp.PackageNode)
+	if err != nil {
+		return nil, err
 	}
-	return nil
+	targets := []*FileNodeProxy{}
+	for {
+		target, err := targetStream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("Error receiving package nodes, %v", err)
+		}
+		targets = append(targets, &FileNodeProxy{*target, pnp.masterClient})
+	}
+	return targets, nil
 }
 
 func (m *MasterClient) GetPackageNodes() ([]*PackageNodeProxy, error) {
