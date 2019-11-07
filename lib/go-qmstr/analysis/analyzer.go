@@ -9,26 +9,25 @@ import (
 
 	goflag "flag"
 
+	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	flag "github.com/spf13/pflag"
-	"google.golang.org/grpc"
 )
 
 type Analyzer struct {
-	analysisService service.AnalysisServiceClient
-	controlService  service.ControlServiceClient
-	module          AnalyzerModule
-	id              int32
-	name            string
+	module.MasterClient
+	module AnalyzerModule
+	id     int32
+	name   string
 }
 
 type AnalyzerModule interface {
 	Configure(configMap map[string]string) error
-	Analyze(controlService service.ControlServiceClient, analysisService service.AnalysisServiceClient, token int64) error
+	Analyze(masterClient *module.MasterClient, token int64) error
 	PostAnalyze() error
 }
 
-func NewAnalyzer(module AnalyzerModule) *Analyzer {
+func NewAnalyzer(anaModule AnalyzerModule) *Analyzer {
 	var serviceAddress string
 	var anaID int32
 	flag.StringVar(&serviceAddress, "aserv", "localhost:50051", "Analyzer service address")
@@ -36,14 +35,9 @@ func NewAnalyzer(module AnalyzerModule) *Analyzer {
 	flag.CommandLine.AddGoFlagSet(goflag.CommandLine)
 	flag.Parse()
 
-	conn, err := grpc.Dial(serviceAddress, grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		log.Fatalf("Failed to connect to master: %v", err)
-	}
-	anaServiceClient := service.NewAnalysisServiceClient(conn)
-	controlServiceClient := service.NewControlServiceClient(conn)
+	mc := module.NewMasterClient(serviceAddress)
 
-	return &Analyzer{id: anaID, module: module, analysisService: anaServiceClient, controlService: controlServiceClient}
+	return &Analyzer{MasterClient: mc, id: anaID, module: anaModule}
 }
 
 func (a *Analyzer) GetModuleName() string {
@@ -51,7 +45,7 @@ func (a *Analyzer) GetModuleName() string {
 }
 
 func (a *Analyzer) RunAnalyzerModule() error {
-	configResp, err := a.analysisService.GetAnalyzerConfig(context.Background(), &service.AnalyzerConfigRequest{AnalyzerID: a.id})
+	configResp, err := a.AnaSvcClient.GetAnalyzerConfig(context.Background(), &service.AnalyzerConfigRequest{AnalyzerID: a.id})
 	if err != nil {
 		log.Printf("Could not get configuration %v\n", err)
 		return fmt.Errorf("could not get analyzer configuration %v", err)
@@ -76,7 +70,7 @@ func (a *Analyzer) RunAnalyzerModule() error {
 		return fmt.Errorf("failed to configure analyzer module %s %v", a.GetModuleName(), err)
 	}
 
-	err = a.module.Analyze(a.controlService, a.analysisService, configResp.Token)
+	err = a.module.Analyze(&a.MasterClient, configResp.Token)
 	if err != nil {
 		return fmt.Errorf("Analysis failed for analyzer module %s %v", a.GetModuleName(), err)
 	}
