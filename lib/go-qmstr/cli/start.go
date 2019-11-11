@@ -41,6 +41,7 @@ var masterImageName = "qmstr/master"
 
 var internalMasterPort string
 
+var customImageName string
 var configFile string
 var wait bool
 var debug bool
@@ -81,11 +82,16 @@ func startMaster(cmd *cobra.Command, args []string) {
 		config.Server.BuildPath = containerBuildDir
 	}
 
-	configuredImageName := config.Server.ImageName
-	if configuredImageName != "" {
-		Debug.Printf("using configured image %s", configuredImageName)
-		masterImageName = configuredImageName
+	// configure docker image
+	if customImageName != "" {
+		masterImageName = customImageName
+	} else {
+		configuredImageName := config.Server.ImageName
+		if configuredImageName != "" {
+			masterImageName = configuredImageName
+		}
 	}
+	Debug.Printf("using image %s", masterImageName)
 
 	debug = config.Server.Debug
 
@@ -324,4 +330,5 @@ func init() {
 	startCmd.Flags().IntVarP(&timeout, "timeout", "t", 60, "timeout after the specified time (seconds). Used after the wait flag")
 	startCmd.Flags().StringVarP(&configFile, "config", "c", "qmstr.yaml", "Path to qmstr configuration file")
 	startCmd.Flags().StringVar(&seed, "seed", "", "Replay dgraph export on init")
+	startCmd.Flags().StringVar(&customImageName, "image", "", "provide a custom docker image to run QMSTR master")
 }
