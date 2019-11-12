@@ -134,9 +134,15 @@ func (db *DataBase) GetPackageTargets(pkgNodeID string) ([]*service.FileNode, er
 
 	const q = `
 	query Node($id: string){
-		pkgnode(func: uid($id)) @filter(has(packageNodeType)) @recurse(loop: false) {
+		pkgnode(func: uid($id)) @filter(has(packageNodeType)) {
 			uid
-			targets
+			name
+			version
+			targets {
+				uid
+				name
+				path
+			}
 		}
 	}
 	`
