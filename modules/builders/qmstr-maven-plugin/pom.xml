@@ -7,7 +7,7 @@
 
   <groupId>org.qmstr</groupId>
   <artifactId>qmstr-maven-plugin</artifactId>
-  <version>0.4</version>
+  <version>0.5</version>
   <packaging>maven-plugin</packaging>
 
   <name>qmstr-maven-plugin Maven Plugin</name>
