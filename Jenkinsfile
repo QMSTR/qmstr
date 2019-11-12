@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clean') {
             steps {
-                cleanWs()
+                sh 'git clean -f -d'
             }
         }
  
