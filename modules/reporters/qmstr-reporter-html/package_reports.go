@@ -9,24 +9,28 @@ import (
 	"os"
 	"path"
 
+	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/reporting"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
 // CreatePackageLevelReports creates the top level report about the package.
-func (r *HTMLReporter) CreatePackageLevelReports(proj *service.ProjectNode, pkg *service.PackageNode, cserv service.ControlServiceClient, rserv service.ReportServiceClient) error {
+func (r *HTMLReporter) CreatePackageLevelReports(proj *service.ProjectNode, pkg *module.PackageNodeProxy) error {
 	projectData := reporting.GetProjectData(proj, r.siteData)
-	packageData := reporting.GetPackageData(pkg, proj.Name)
+	packageData, err := reporting.GetPackageData(pkg, proj.Name)
+	if err != nil {
+		return err
+	}
 	for _, target := range packageData.Targets {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
-		resp, err := rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: target.Target.Uid, Infotype: "license", Datatype: "name"})
+		resp, err := pkg.GetMasterClient().RptSvcClient.GetInfoData(ctx, &service.InfoDataRequest{RootID: target.Target.Uid, Infotype: "license", Datatype: "name"})
 		if err != nil {
 			return err
 		}
 		target.Licenses = append(target.Licenses, resp.Data...)
 
-		resp, err = rserv.GetInfoData(ctx, &service.InfoDataRequest{RootID: target.Target.Uid, Infotype: "copyright", Datatype: "author"})
+		resp, err = pkg.GetMasterClient().RptSvcClient.GetInfoData(ctx, &service.InfoDataRequest{RootID: target.Target.Uid, Infotype: "copyright", Datatype: "author"})
 		if err != nil {
 			return err
 		}
