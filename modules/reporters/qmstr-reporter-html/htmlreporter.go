@@ -121,11 +121,11 @@ func (r *HTMLReporter) Report(masterClient *module.MasterClient) error {
 	if err != nil {
 		return fmt.Errorf("failed to get package node: %v", err)
 	}
-	for pnp := range pnps {
-		if err := r.CreatePackageLevelReports(projectNode, packageNode, cserv, rserv); err != nil {
+	for _, pnp := range pnps {
+		if err := r.CreatePackageLevelReports(projectNode, pnp); err != nil {
 			return fmt.Errorf("error generating package level report: %v", err)
 		}
-		log.Printf("HTML reporter: created report for %v", packageNode.Name)
+		log.Printf("HTML reporter: created report for %v", pnp.GetName())
 	}
 	return nil
 }
