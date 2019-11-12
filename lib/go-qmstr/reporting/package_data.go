@@ -3,6 +3,7 @@ package reporting
 import (
 	"encoding/json"
 
+	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
@@ -21,7 +22,7 @@ type Target struct {
 	Authors  []string
 }
 
-func GetPackageData(pkg *service.PackageNode, projectName string) *PackageData {
+func GetPackageData(pkg *module.PackageNodeProxy, projectName string) (*PackageData, error) {
 	packageData := PackageData{
 		Name:            pkg.GetName(),
 		Version:         pkg.GetVersion(),
@@ -38,15 +39,16 @@ func GetPackageData(pkg *service.PackageNode, projectName string) *PackageData {
 	packageData.Version = service.RemoveSlash(packageData.Version)
 
 	targets := []*Target{}
-	for _, fileNode := range pkg.GetTargets() {
-		// reduce returned data
-		fileNode.DerivedFrom = []*service.FileNode{}
-		fileNode.Dependencies = []*service.FileNode{}
-		targets = append(targets, &Target{Target: fileNode})
+	targetProxies, err := pkg.GetTargets()
+	if err != nil {
+		return nil, err
+	}
+	for _, fileNodeProxy := range targetProxies {
+		targets = append(targets, &Target{Target: &fileNodeProxy.FileNode})
 	}
 	packageData.Targets = targets
 
-	return &packageData
+	return &packageData, nil
 }
 
 func (p *PackageData) GetAuthors() []string {

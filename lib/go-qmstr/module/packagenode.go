@@ -13,6 +13,10 @@ type PackageNodeProxy struct {
 	masterClient *MasterClient
 }
 
+func (pnp *PackageNodeProxy) GetMasterClient() *MasterClient {
+	return pnp.masterClient
+}
+
 func (pnp *PackageNodeProxy) GetTargets() ([]*FileNodeProxy, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
