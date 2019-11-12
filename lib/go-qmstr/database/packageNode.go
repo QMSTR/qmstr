@@ -58,17 +58,11 @@ func (db *DataBase) GetPackageNode() ([]*service.PackageNode, error) {
 	var ret map[string][]*service.PackageNode
 
 	q := `{
-		getPackageNode(func: has(packageNodeType)) @recurse(loop: true, depth:3) {
+		getPackageNode(func: has(packageNodeType)) {
 			uid
 			buildConfig
 			name
 			version
-			targets
-			path
-			fileData
-			hash
-			additionalInfo
-			diagnosticInfo
 			timestamp
 		  }
 		}`
