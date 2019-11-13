@@ -25,7 +25,7 @@ pipeline {
         stage('compile curl'){
             steps{
                 sh 'export PATH=$PATH:$PWD/out/'
-                sh 'git submodule init'
+                sh 'git submodule update --init'
                 sh 'cd demos && make curl'
             }
         }
