@@ -15,14 +15,16 @@ pipeline {
             steps {
                 sh "make clients"
                 sh "make gotest"
+                stash includes: 'out/qmstr*', name: 'executables' 
             }
-            stash includes: 'out/qmstr*', name: 'executables' 
+            
         }
 
         stage('compile curl'){
             agent { label 'docker' }
-            unstash 'executables'
+            
             steps{
+                unstash 'executables'
                 sh 'export PATH=$PATH:$PWD/out/'
                 sh 'git submodule update --init'
                 sh 'cd demos && make curl'
