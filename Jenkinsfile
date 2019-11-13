@@ -1,8 +1,6 @@
 pipeline {
 
-    agent {
-        docker { image 'endocode/qmstr_buildenv:latest' }
-    }
+    agent none
 
     environment {
         MASTER_CONTAINER_NAME="qmstr-demo-master_${BUILD_NUMBER}"
@@ -10,19 +8,20 @@ pipeline {
 
     stages {
 
-        stage('Build') {
+        stage('Build & Test') {
+            agent {
+                docker { image 'endocode/qmstr_buildenv:latest' }
+            }
             steps {
                 sh "make clients"
-            }
-        }
-
-        stage('Test') {
-            steps {
                 sh "make gotest"
             }
+            stash includes: 'out/qmstr*', name: 'executables' 
         }
 
         stage('compile curl'){
+            agent { label 'docker' }
+            unstash 'executables'
             steps{
                 sh 'export PATH=$PATH:$PWD/out/'
                 sh 'git submodule update --init'
