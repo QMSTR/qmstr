@@ -64,18 +64,21 @@ public class QmstrBuildMojo extends AbstractMojo {
 
         Set<File> sources = getSourceFiles(project.getCompileSourceRoots());
 
-        try {
-            Set<Datamodel.FileNode> fileNodes = FilenodeUtils.processSourceFiles(Transform.COMPILEJAVA, sources,
-                    sourceDirs, Collections.singleton(outputDirectory));
-            bsc.SendBuildFileNodes(fileNodes);
-        } catch (TransformationException e) {
-            String errorMsg = String.format("qmstr plugin could not transform source to target %s", e.getMessage());
-            getLog().error(errorMsg);
-            bsc.SendLogMessage(errorMsg);
-        } catch (FileNotFoundException fnfe) {
-            String errorMsg = String.format("qmstr plugin could not find the source file %s", fnfe.getMessage());
-            getLog().error(errorMsg);
-            bsc.SendLogMessage(errorMsg);
+        for (File source : sources) {
+            try {
+                Set<Datamodel.FileNode> fileNodes = FilenodeUtils.processSourceFiles(Transform.COMPILEJAVA, Collections.singleton(source),
+                        sourceDirs, Collections.singleton(outputDirectory));
+                bsc.SendBuildFileNodes(fileNodes);
+            } catch (TransformationException e) {
+                String errorMsg = String.format("qmstr plugin could not transform source to target %s", e.getMessage());
+                getLog().warn(errorMsg);
+                bsc.SendLogMessage(errorMsg);
+            } catch (FileNotFoundException fnfe) {
+                String errorMsg = String.format("qmstr plugin could not find the source file %s", fnfe.getMessage());
+                getLog().error(errorMsg);
+                bsc.SendLogMessage(errorMsg);
+                throw new MojoExecutionException(errorMsg);
+            }
         }
 
         try {
