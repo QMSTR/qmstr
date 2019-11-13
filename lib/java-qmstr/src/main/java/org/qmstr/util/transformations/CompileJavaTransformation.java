@@ -50,7 +50,7 @@ public class CompileJavaTransformation implements TransformationFunction {
         File destinationDir =  outDirs.stream()
             .filter(od -> isActualClassDir(od, classesRelPath))
             .findFirst()
-            .orElseThrow(() -> new TransformationException(String.format("target class %s was not found", classesRelPath.toString())));
+            .orElseThrow(() -> new TransformationException(String.format("target class %s was not found in %s", classesRelPath.toString(), outDirs.stream().map(od -> od.toString()).collect(Collectors.joining(", ")))));
 
         Path classesPath = destinationDir.toPath().resolve(classesRelPath);
         Set<File> nested = getNestedClasses(destinationDir.toPath().resolve(packageDirs), targetFileName);
