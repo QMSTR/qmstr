@@ -22,6 +22,13 @@ pipeline {
             }
         }
 
+        stage('compile curl'){
+            steps{
+                sh 'cp out/qmstr* /usr/local/bin'
+                sh 'cd demos && make curl'
+            }
+        }
+
     }
 
     post {
