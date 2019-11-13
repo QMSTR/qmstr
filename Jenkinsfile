@@ -24,7 +24,8 @@ pipeline {
 
         stage('compile curl'){
             steps{
-                sh 'cp out/qmstr* /usr/local/bin'
+                sh 'export PATH=$PATH:$PWD/out/'
+                sh 'git submodule init'
                 sh 'cd demos && make curl'
             }
         }
