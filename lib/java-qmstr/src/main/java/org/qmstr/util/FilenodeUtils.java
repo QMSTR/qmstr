@@ -39,7 +39,7 @@ public class FilenodeUtils {
     };
 
     public static Datamodel.FileNode getFileNode(String path, String checksum) {
-        Path filepath = Paths.get(path);
+        Path filepath = Paths.get(path).toAbsolutePath();
         return Datamodel.FileNode.newBuilder().setName(filepath.getFileName().toString()).setPath(filepath.toString())
                 .setFileData(Datamodel.FileNode.FileDataNode.newBuilder()
                         .setHash(checksum != null ? checksum : "nohash" + filepath.toString()).build())
@@ -48,6 +48,7 @@ public class FilenodeUtils {
     }
 
     public static Datamodel.FileNode getFileNode(Path filepath) {
+        filepath = filepath.toAbsolutePath();
         String checksum = Hash.getChecksum(filepath.toFile());
         String path = filepath.toString();
 
