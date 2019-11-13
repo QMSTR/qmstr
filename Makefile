@@ -72,7 +72,7 @@ cleanall: clean
 	@touch .go_qmstr_test
 
 .PHONY: gotest
-gotest: .go_qmstr_test .go_module_test
+gotest: $(GO_DEPS) .go_qmstr_test .go_module_test
 
 $(PROTOC_GEN_GO):
 	$(GO) install github.com/golang/protobuf/protoc-gen-go
