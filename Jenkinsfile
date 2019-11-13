@@ -33,7 +33,9 @@ pipeline {
                         unstash 'executables'
                         sh 'export PATH=$PATH:$PWD/out/'
                         sh 'git submodule update --init'
-                        sh 'cd demos && make curl'
+                        dir('demos') {
+                           sh "make curl"
+                        }
                     }
                 }
 
@@ -45,7 +47,9 @@ pipeline {
                         unstash 'executables'
                         sh 'export PATH=$PATH:$PWD/out/'
                         sh 'git submodule update --init'
-                        sh 'cd demos && make openssl'
+                        dir('demos') {
+                           sh "make openssl"
+                        }
                     }
                 }
             }
