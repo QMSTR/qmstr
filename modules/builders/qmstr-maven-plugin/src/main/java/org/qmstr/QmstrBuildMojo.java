@@ -69,9 +69,13 @@ public class QmstrBuildMojo extends AbstractMojo {
                     sourceDirs, Collections.singleton(outputDirectory));
             bsc.SendBuildFileNodes(fileNodes);
         } catch (TransformationException e) {
-            // ("qmstr plugin could not transform source to target " + e.getMessage());
+            String errorMsg = String.format("qmstr plugin could not transform source to target %s", e.getMessage());
+            getLog().error(errorMsg);
+            bsc.SendLogMessage(errorMsg);
         } catch (FileNotFoundException fnfe) {
-            //throw new MojoExecutionException("qmstr plugin could not find the source file " + fnfe.getMessage());
+            String errorMsg = String.format("qmstr plugin could not find the source file %s", fnfe.getMessage());
+            getLog().error(errorMsg);
+            bsc.SendLogMessage(errorMsg);
         }
 
         try {
