@@ -2,10 +2,6 @@ pipeline {
 
     agent none
 
-    environment {
-        MASTER_CONTAINER_NAME="qmstr-demo-master_${BUILD_NUMBER}"
-    }
-
     stages {
 
         stage('Build & Test') {
@@ -30,8 +26,7 @@ pipeline {
                     agent { label 'docker' }
 
                     steps {
-                        unstash 'executables'
-                        sh 'export PATH=$PATH:$PWD/out/'
+                        sh 'make container'
                         sh 'git submodule update --init'
                         dir('demos') {
                            sh "make curl"
@@ -44,8 +39,7 @@ pipeline {
                     agent { label 'docker' }
 
                     steps {
-                        unstash 'executables'
-                        sh 'export PATH=$PATH:$PWD/out/'
+                        sh 'make container'
                         sh 'git submodule update --init'
                         dir('demos') {
                            sh "make openssl"
