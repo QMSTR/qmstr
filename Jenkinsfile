@@ -3,7 +3,7 @@ pipeline {
     agent none
 
     environment {
-        PATH = "/tmp:$PATH"
+        PATH = "/tmp:${env.PATH}"
     }
 
     stages {
