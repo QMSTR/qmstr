@@ -26,6 +26,8 @@ pipeline {
                     agent { label 'docker' }
 
                     steps {
+                        unstash 'executables'
+                        sh 'export PATH=$PATH:$PWD/out/'
                         sh 'make container'
                         sh 'git submodule update --init'
                         dir('demos') {
@@ -39,6 +41,8 @@ pipeline {
                     agent { label 'docker' }
 
                     steps {
+                        unstash 'executables'
+                        sh 'export PATH=$PATH:$PWD/out/'
                         sh 'make container'
                         sh 'git submodule update --init'
                         dir('demos') {
