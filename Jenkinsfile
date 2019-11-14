@@ -2,6 +2,10 @@ pipeline {
 
     agent none
 
+    environment {
+        PATH = "/tmp:$PATH"
+    }
+
     stages {
 
         stage('Build & Test') {
@@ -30,6 +34,7 @@ pipeline {
                         sh 'export PATH=$PATH:$PWD/out/'
                         sh 'make container'
                         sh 'git submodule update --init'
+                        sh 'echo $PATH'
                         sh "cd demos && make curl"
                        
                     }
@@ -44,6 +49,7 @@ pipeline {
                         sh 'export PATH=$PATH:$PWD/out/'
                         sh 'make container'
                         sh 'git submodule update --init'
+                        sh 'echo $PATH'
                         sh "cd demos && make openssl"
                     }
                 }
