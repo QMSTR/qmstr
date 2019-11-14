@@ -30,11 +30,8 @@ pipeline {
                         sh 'export PATH=$PATH:$PWD/out/'
                         sh 'make container'
                         sh 'git submodule update --init'
-                        sh 'echo $PATH'
-                        dir('demos') {
-                           sh 'echo $PATH'
-                           sh "make curl"
-                        }
+                        sh "cd demos && make curl"
+                       
                     }
                 }
 
@@ -47,9 +44,7 @@ pipeline {
                         sh 'export PATH=$PATH:$PWD/out/'
                         sh 'make container'
                         sh 'git submodule update --init'
-                        dir('demos') {
-                           sh "make openssl"
-                        }
+                        sh "cd demos && make openssl"
                     }
                 }
             }
