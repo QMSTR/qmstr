@@ -2,10 +2,6 @@ pipeline {
 
     agent none
 
-    environment {
-        PATH = "/tmp:${env.PATH}"
-    }
-
     stages {
 
         stage('Build & Test') {
@@ -29,6 +25,10 @@ pipeline {
 
                     agent { label 'docker' }
 
+                    environment {
+                        PATH = "/tmp:$PATH"
+                    }
+
                     steps {
                         unstash 'executables'
                         sh 'export PATH=$PATH:$PWD/out/'
@@ -43,6 +43,10 @@ pipeline {
                 stage('compile openssl'){
 
                     agent { label 'docker' }
+
+                    environment {
+                        PATH = "/tmp:$PATH"
+                    }
 
                     steps {
                         unstash 'executables'
