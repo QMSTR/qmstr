@@ -179,7 +179,7 @@ func (gsp *genericServerPhase) GetSourceFileNodes(stream service.AnalysisService
 		}
 		for _, filenode := range filenodes {
 
-			if gsp.server.currentPhase.GetPhaseID() == service.Phase_ANALYSIS {
+			if gsp.server.currentPhase.GetPhaseID() == service.Phase_ANALYSIS && !filepath.IsAbs(filenode.Path) {
 				filenode.Path = filepath.Join(gsp.masterConfig.Server.BuildPath, filenode.Path)
 			}
 			if err = stream.Send(filenode); err != nil {
