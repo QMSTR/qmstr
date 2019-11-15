@@ -78,7 +78,7 @@ gofmt: $(GO) $(GO_SRCS)
 	$(GO) fmt $(GO_PKGS) $(GO_MODULE_PKGS)
 
 .PHONY: gotest
-gotest: .go_qmstr_test .go_module_test
+gotest: $(GO_DEPS) .go_qmstr_test .go_module_test
 
 .PHONY: govet
 govet: $(GO_SRCS) $(GO) gofmt
