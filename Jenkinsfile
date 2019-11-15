@@ -44,7 +44,7 @@ pipeline {
                     agent { label 'docker' }
 
                     environment {
-                        PATH = "/tmp:$PATH"
+                        PATH = "$PATH:$WORKSPACE/out/"
                     }
 
                     steps {
