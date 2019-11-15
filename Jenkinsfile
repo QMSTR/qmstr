@@ -26,12 +26,12 @@ pipeline {
                     agent { label 'docker' }
 
                     environment {
-                        PATH = "/tmp:$PATH"
+                        //PATH = "/tmp:$PATH"
+                        PATH = "$PATH:$PWD/out/"
                     }
 
                     steps {
                         unstash 'executables'
-                        sh 'export PATH=$PATH:$PWD/out/'
                         sh 'make container'
                         sh 'git submodule update --init'
                         sh 'echo $PATH'
@@ -50,7 +50,6 @@ pipeline {
 
                     steps {
                         unstash 'executables'
-                        sh 'export PATH=$PATH:$PWD/out/'
                         sh 'make container'
                         sh 'git submodule update --init'
                         sh 'echo $PATH'
