@@ -23,12 +23,11 @@ pipeline {
 
                 stage('compile curl'){
 
-                    agent { label 'docker' }
-
                     environment {
-                        //PATH = "/tmp:$PATH"
                         PATH = "$PATH:$WORKSPACE/out/"
                     }
+
+                    agent { label 'docker' }
 
                     steps {
                         unstash 'executables'
