@@ -33,7 +33,6 @@ pipeline {
                         unstash 'executables'
                         sh 'make container'
                         sh 'git submodule update --init'
-                        sh 'echo $PATH'
                         sh "cd demos && make curl"
                        
                     }
@@ -51,7 +50,6 @@ pipeline {
                         unstash 'executables'
                         sh 'make container'
                         sh 'git submodule update --init'
-                        sh 'echo $PATH'
                         sh "cd demos && make openssl"
                     }
                 }
