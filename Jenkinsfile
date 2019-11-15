@@ -27,7 +27,7 @@ pipeline {
 
                     environment {
                         //PATH = "/tmp:$PATH"
-                        PATH = "$PATH:$PWD/out/"
+                        PATH = "$PATH:$WORKSPACE/out/"
                     }
 
                     steps {
