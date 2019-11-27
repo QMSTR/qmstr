@@ -85,6 +85,22 @@ pipeline {
                         sh "cd demos && make guava"
                     }
                 }
+
+                stage('compile jabref'){
+
+                    agent { label 'docker' }
+
+                    environment {
+                        PATH = "$PATH:$WORKSPACE/out/"
+                    }
+
+                    steps {
+                        unstash 'executables'
+                        sh 'make democontainer'
+                        sh 'git submodule update --init'
+                        sh "cd demos && make jabref"
+                    }
+                }
             }
         }
 
