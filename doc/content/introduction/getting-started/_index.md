@@ -29,7 +29,7 @@ Verify that the client side tools are available by querying the
 version of the `qmstrctl` tool:
 
     > qmstrctl version
-    This is qmstrctl version 0.4
+    This is qmstrctl version 0.5
 
 To check that the master image exists, run
 
