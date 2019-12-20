@@ -95,18 +95,20 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(controlService service.ControlServic
 			infoNodes = append(infoNodes, copyrights)
 		}
 
-		infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodesMessage{Token: token, Infonodes: infoNodes, Uid: fileNode.FileData.Uid})
+		if len(infoNodes) > 0 {
+			infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodesMessage{Token: token, Infonodes: infoNodes, Uid: fileNode.FileData.Uid})
+		}
 	}
 
-	send_stream, err := analysisService.SendInfoNodes(context.Background())
+	sendStream, err := analysisService.SendInfoNodes(context.Background())
 	if err != nil {
 		return err
 	}
 	for _, inodeMsg := range infoNodeMsgs {
-		send_stream.Send(inodeMsg)
+		sendStream.Send(inodeMsg)
 	}
 
-	reply, err := send_stream.CloseAndRecv()
+	reply, err := sendStream.CloseAndRecv()
 	if err != nil {
 		return err
 	}
