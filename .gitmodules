@@ -3,4 +3,4 @@
 	url = https://github.com/thingsym/hugo-theme-techdoc.git
 [submodule "demos"]
 	path = demos
-	url = https://github.com/endocode/qmstr-demo.git
+	url = https://github.com/QMSTR/qmstr-demo.git
