@@ -12,4 +12,6 @@ weight = 1
 
 {{< authors >}}
 
+{{< copyrights >}}
+
 {{< target-list >}}

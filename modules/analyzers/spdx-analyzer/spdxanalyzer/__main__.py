@@ -76,7 +76,7 @@ class SpdxAnalyzer(QMSTR_Analyzer):
             token=self.token,
             infonodes=info_nodes))
         info_iterator = generate_iterator(info_nodes_msgs)
-        
+
         self.aserv.SendInfoNodes(info_iterator)
 
     def _process_filenodes(self):
