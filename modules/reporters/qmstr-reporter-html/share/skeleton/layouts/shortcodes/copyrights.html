@@ -1,0 +1,9 @@
+{{ $data := index .Site.Data .Page.Params.project .Page.Params.package .Page.Params.version "data" }} 
+{{- with $data.Copyrights -}}
+    <h3>Copyright</h3>
+    <ul>
+    {{ range . }}
+        <li>{{ . }}</li>
+        {{ end }}
+    </ul>
+{{- end -}}

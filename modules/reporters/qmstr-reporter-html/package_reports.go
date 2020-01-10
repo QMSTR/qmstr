@@ -24,6 +24,7 @@ func (r *HTMLReporter) CreatePackageLevelReports(proj *service.ProjectNode, pkg 
 	for _, target := range packageData.Targets {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
+		// TODO: Reduce duplicate code creating a function to get and append the infodata
 		resp, err := pkg.GetMasterClient().RptSvcClient.GetInfoData(ctx, &service.InfoDataRequest{RootID: target.Target.Uid, Infotype: "license", Datatype: "name"})
 		if err != nil {
 			return err
@@ -35,6 +36,12 @@ func (r *HTMLReporter) CreatePackageLevelReports(proj *service.ProjectNode, pkg 
 			return err
 		}
 		target.Authors = append(target.Authors, resp.Data...)
+
+		resp, err = pkg.GetMasterClient().RptSvcClient.GetInfoData(ctx, &service.InfoDataRequest{RootID: target.Target.Uid, Infotype: "copyright", Datatype: "text"})
+		if err != nil {
+			return err
+		}
+		target.Copyrights = append(target.Copyrights, resp.Data...)
 	}
 
 	contentDirectory := path.Join(r.workingDir, "content")
