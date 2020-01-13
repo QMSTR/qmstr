@@ -50,7 +50,7 @@ pipeline {
                         unstash 'executables'
                         sh 'make democontainer'
                         sh 'git submodule update --init'
-                        sh 'cd demos && make guava EXTRA_BUILD_OPTS="--build-arg QMSTR_BRANCH=$GIT_BRANCH --build-arg QMSTR_FORK=$GIT_URL"'
+                        sh 'cd demos && make guava'
                     }
                 }
 

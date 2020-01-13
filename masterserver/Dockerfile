@@ -51,7 +51,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # install dependecies
 RUN apt-get update && apt-get install -y \
-    curl autoconf make git libgit2-dev libio-captureoutput-perl virtualenv tar build-essential pkg-config protobuf-compiler \
+    curl autoconf make git libgit2-dev libio-captureoutput-perl virtualenv tar build-essential pkg-config protobuf-compiler maven \
     && rm -rf /var/lib/apt/lists/*
 
 ARG GO_VERSION
@@ -73,6 +73,11 @@ ADD versions.env /qmstr/versions.env
 ARG GOPROXY
 
 WORKDIR /qmstr
+
+RUN cd lib/java-qmstr && ./gradlew install
+RUN cd modules/builders/qmstr-gradle-plugin && ./gradlew install
+RUN cd modules/builders/qmstr-maven-plugin && mvn install
+
 RUN make gotest
 RUN make install_qmstr_all
 RUN make qmstr-py-builder
