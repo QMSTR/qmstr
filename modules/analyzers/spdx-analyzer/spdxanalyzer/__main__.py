@@ -1,11 +1,11 @@
 #!/usr/bin/env python2
 import argparse
-from qmstr.service.datamodel_pb2 import FileNode, InfoNode, PackageNode
-from qmstr.service.controlservice_pb2 import GetFileNodeMessage
+from qmstr.service.datamodel_pb2 import InfoNode, PackageNode
 from qmstr.service.analyzerservice_pb2 import InfoNodesMessage, DummyRequest
 from qmstr.module.module import QMSTR_Analyzer
 from qmstr.module.utils import generate_iterator
 from spdx.document import License
+from spdx.utils import SPDXNone, NoAssert
 import logging
 import sys
 
@@ -46,14 +46,14 @@ class SpdxAnalyzer(QMSTR_Analyzer):
 
     def configure(self, config_map):
         logging.info("Configuring spdx analyzer module")
-        if not filename_key in config_map:
+        if filename_key not in config_map:
             logging.error(
                 "spdx-analyzer misconfigured. {} missing.".format(filename_key))
             sys.exit(2)
         else:
             self.spdx_file = config_map[filename_key]
 
-        if not fileformat_key in config_map:
+        if fileformat_key not in config_map:
             if self.spdx_file.endswith(".rdf"):
                 self.format = "rdf"
             elif self.spdx_file.endswith(".tag"):
@@ -69,6 +69,16 @@ class SpdxAnalyzer(QMSTR_Analyzer):
         self._process_filenodes()
         self._process_packagenode()
 
+    def _send_infonodes(self, node_uid, info_nodes):
+        info_nodes_msgs = []
+        info_nodes_msgs.append(InfoNodesMessage(
+            uid=node_uid,
+            token=self.token,
+            infonodes=info_nodes))
+        info_iterator = generate_iterator(info_nodes_msgs)
+
+        self.aserv.SendInfoNodes(info_iterator)
+
     def _process_filenodes(self):
 
         stream_resp = self.aserv.GetSourceFileNodes(DummyRequest())
@@ -82,35 +92,53 @@ class SpdxAnalyzer(QMSTR_Analyzer):
                     "File {} not found in SPDX document".format(node.path))
                 continue
             spdx_doc_file_info = filtered_files[0]
-            if not isinstance(spdx_doc_file_info.conc_lics, License):
-                continue
-
-            data_nodes = []
-            logging.info("Concluded license {}".format(
-                spdx_doc_file_info.conc_lics))
-            data_nodes.append(InfoNode.DataNode(
-                type="spdxIdentifier",
-                data=spdx_doc_file_info.conc_lics.identifier
-            ))
-            data_nodes.append(InfoNode.DataNode(
-                type="name",
-                data=spdx_doc_file_info.conc_lics.full_name
-            ))
 
             info_nodes = []
-            info_nodes.append(InfoNode(
-                type="license",
-                dataNodes=data_nodes))
 
-            info_nodes_msgs = []
-            info_nodes_msgs.append(InfoNodesMessage(
-                uid=node.fileData.uid,
-                token=self.token,
-                infonodes=info_nodes))
+            if isinstance(spdx_doc_file_info.conc_lics, License):
+                data_nodes = []
+                logging.info("Concluded license {}".format(
+                    spdx_doc_file_info.conc_lics))
+                data_nodes.append(
+                    InfoNode.DataNode(
+                        type="spdxIdentifier",
+                        data=spdx_doc_file_info.conc_lics.identifier
+                    )
+                )
+                data_nodes.append(
+                    InfoNode.DataNode(
+                        type="name",
+                        data=spdx_doc_file_info.conc_lics.full_name
+                    )
+                )
 
-            info_iterator = generate_iterator(info_nodes_msgs)
+                info_nodes.append(
+                    InfoNode(
+                        type="license",
+                        dataNodes=data_nodes
+                    )
+                )
 
-            self.aserv.SendInfoNodes(info_iterator)
+            if isinstance(spdx_doc_file_info.copyright, (str, SPDXNone, NoAssert)):
+                data_nodes = []
+                logging.info("Copyright text: {}".format(
+                    spdx_doc_file_info.copyright))
+                data_nodes.append(
+                    InfoNode.DataNode(
+                        type="text",
+                        data=spdx_doc_file_info.copyright
+                    )
+                )
+
+                info_nodes.append(
+                    InfoNode(
+                        type="copyright",
+                        dataNodes=data_nodes
+                    )
+                )
+
+            if info_nodes:
+                self._send_infonodes(node.fileData.uid, info_nodes)
 
     def post_analyze(self):
         pass
@@ -145,24 +173,16 @@ class SpdxAnalyzer(QMSTR_Analyzer):
                 type="metadata",
                 dataNodes=data_nodes))
 
-            info_nodes_msgs = []
-            info_nodes_msgs.append(InfoNodesMessage(
-                uid=package_node.uid,
-                token=self.token,
-                infonodes=info_nodes))
-
-            info_iterator = generate_iterator(info_nodes_msgs)
-
-            self.aserv.SendInfoNodes(info_iterator)
+            self._send_infonodes(package_node.uid, info_nodes)
 
     def _parse_spdx(self):
-        if not self.format in self.parse_func_map:
+        if self.format not in self.parse_func_map:
             logging.error("Unsupported format {}".format(self.format))
             sys.exit(4)
         with open(self.spdx_file, "r") as spdxfile:
             spdxdata = spdxfile.read()
             doc, error = self.parse_func_map[self.format](spdxdata)
-            if error != None:
+            if error is not None:
                 logging.error(error)
                 sys.exit(5)
             return doc
