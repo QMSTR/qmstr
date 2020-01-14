@@ -136,6 +136,9 @@ func (db *DataBase) GetPackageTargets(pkgNodeID string) ([]*service.FileNode, er
 				uid
 				name
 				path
+				fileData {
+					hash
+				}
 			}
 		}
 	}
