@@ -20,6 +20,10 @@ func main() {
 		log.Fatalf("Failed to read configuration %v", err)
 	}
 
+	if err = config.ConfigEnvOverride(&masterConfig); err != nil {
+		log.Errorf("Configuration override failed: %v", err)
+	}
+
 	if pathSubstitution != nil {
 		if len(pathSubstitution)%2 != 0 {
 			log.Fatalln("Path substitution provided via commandline is invalid")
