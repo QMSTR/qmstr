@@ -144,3 +144,18 @@ func CreateProjectNode(masterConfig *MasterConfig) *service.ProjectNode {
 
 	return projectNode
 }
+
+// Overrides parts of the master configuration with environment variable
+// values.
+func ConfigEnvOverride(masterConfig *MasterConfig) error {
+	if dbaddress := os.Getenv("SERVER_DBADDRESS"); dbaddress != "" {
+		masterConfig.Server.DBAddress = dbaddress
+	}
+	if rpcaddress := os.Getenv("SERVER_RPCADDRESS"); rpcaddress != "" {
+		masterConfig.Server.RPCAddress = rpcaddress
+	}
+	if buildpath := os.Getenv("SERVER_BUILDPATH"); buildpath != "" {
+		masterConfig.Server.BuildPath = buildpath
+	}
+	return nil
+}
