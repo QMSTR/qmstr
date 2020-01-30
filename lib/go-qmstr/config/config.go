@@ -147,7 +147,7 @@ func CreateProjectNode(masterConfig *MasterConfig) *service.ProjectNode {
 
 // Overrides parts of the master configuration with environment variable
 // values.
-func ConfigEnvOverride(masterConfig *MasterConfig) error {
+func ConfigEnvOverride(masterConfig *MasterConfig) {
 	if dbaddress := os.Getenv("SERVER_DBADDRESS"); dbaddress != "" {
 		masterConfig.Server.DBAddress = dbaddress
 	}
@@ -157,5 +157,4 @@ func ConfigEnvOverride(masterConfig *MasterConfig) error {
 	if buildpath := os.Getenv("SERVER_BUILDPATH"); buildpath != "" {
 		masterConfig.Server.BuildPath = buildpath
 	}
-	return nil
 }
