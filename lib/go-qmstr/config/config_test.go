@@ -351,7 +351,7 @@ project:
 	if masterConfig.Server.DBAddress != os.Getenv("SERVER_DBADDRESS") ||
 		masterConfig.Server.RPCAddress != os.Getenv("SERVER_RPCADDRESS") ||
 		masterConfig.Server.BuildPath != os.Getenv("SERVER_BUILDPATH") {
-		t.Log("Configuration override failed:")
+		t.Log("Configuration override failed.")
 		t.Fail()
 	}
 }
