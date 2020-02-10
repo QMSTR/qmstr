@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 import argparse
 from qmstr.service.datamodel_pb2 import InfoNode, PackageNode
 from qmstr.service.analyzerservice_pb2 import InfoNodesMessage, DummyRequest
