@@ -1,0 +1,46 @@
+{
+{%- for path, data in files.license_copyright.items() %}
+  "{{ path }}": [
+    {% for row in data %}{
+      {%- if row.what == "license" %}
+      "type": "license",
+      "confidenceScore": {{ licenses[row.value].score / 100 }},
+      "dataNodes": [
+        {
+          "type": "key",
+          "data": "{{ licenses[row.value].key }}"
+        },
+        {
+          "type": "score",
+          "data": "{{ licenses[row.value].score }}"
+        },
+        {
+          "type": "name",
+          "data": "{{ licenses[row.value].short_name }}"
+        },
+        {
+          "type": "spdxIdentifier",
+          "data": "{{ licenses[row.value].spdx_license_key }}"
+        }
+      ]
+      {%- else %}
+      "type": "copyright",
+      "dataNodes": [
+      {%- for holder in files.infos[path].holders %}
+        {
+          "type": "copyrightHolder",
+          "data": "{{ holder.value }}"
+        }{% if not loop.last or files.infos[path].authors != [] %},{% endif %}
+      {%- endfor %}
+      {%- for author in files.infos[path].authors %}
+        {
+          "type": "author",
+          "data": "{{ author.value }}"
+        }
+      {%- endfor %}
+      ]
+      {%- endif %}
+    }{% if not loop.last %},{% endif %}{% endfor %}
+  ]{% if not loop.last %},{% endif %}
+{%- endfor %}
+}
