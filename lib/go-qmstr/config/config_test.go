@@ -50,6 +50,7 @@ project:
 
 	for _, ana := range masterconf.Analysis {
 		if ana.TrustLevel == 0 {
+			t.Logf("Analyzer trust level is 0: %s", ana.Name)
 			t.Fail()
 		}
 	}
@@ -98,7 +99,12 @@ project:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfigFromBytes([]byte(config))
+	masterconfig, err := ReadConfigFromBytes([]byte(config))
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+	err = ValidateConfig(masterconfig)
 	if err == nil || err.Error() != "1. reporter misconfigured Name invalid" {
 		t.Log(err)
 		t.Fail()
