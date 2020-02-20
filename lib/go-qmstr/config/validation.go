@@ -9,7 +9,7 @@ import (
 	"github.com/QMSTR/qmstr/lib/go-qmstr/common"
 )
 
-func validateConfig(configuration *MasterConfig) error {
+func ValidateConfig(configuration *MasterConfig) error {
 	if configuration == nil {
 		return fmt.Errorf("empty configuration -- check indentation")
 	}
@@ -79,7 +79,7 @@ func validateFields(structure interface{}, uniqueFields map[string]map[string]st
 
 // GetRPCPort returns the configured port for qmstr's grpc service
 func (mc *MasterConfig) GetRPCPort() (string, error) {
-	err := validateConfig(mc)
+	err := ValidateConfig(mc)
 	if err != nil {
 		return "", err
 	}

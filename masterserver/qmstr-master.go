@@ -22,6 +22,10 @@ func main() {
 
 	config.ConfigEnvOverride(masterConfig)
 
+	if err := config.ValidateConfig(masterConfig); err != nil {
+		log.Fatalf("Config validation failed: %v\n", err)
+	}
+
 	if pathSubstitution != nil {
 		if len(pathSubstitution)%2 != 0 {
 			log.Fatalln("Path substitution provided via commandline is invalid")

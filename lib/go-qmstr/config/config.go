@@ -107,10 +107,6 @@ func readConfig(data []byte, configuration *QmstrConfig) error {
 	if err != nil {
 		return err
 	}
-	err = validateConfig(configuration.Project)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
