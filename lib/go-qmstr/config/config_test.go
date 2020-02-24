@@ -47,7 +47,11 @@ project:
 		t.Logf("Broken config %v", err)
 		t.FailNow()
 	}
-
+	err = ValidateConfig(masterconf)
+	if err != nil {
+		t.Log("Config validation failed: ", err)
+		t.Fail()
+	}
 	for _, ana := range masterconf.Analysis {
 		if ana.TrustLevel == 0 {
 			t.Logf("Analyzer trust level is 0: %s", ana.Name)
