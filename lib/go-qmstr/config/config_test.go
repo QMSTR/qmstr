@@ -243,7 +243,12 @@ project:
     - config:
         tester: "Endocode"
 `
-	_, err := ReadConfigFromBytes([]byte(config))
+	masterconfig, err := ReadConfigFromBytes([]byte(config))
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+	err = ValidateConfig(masterconfig)
 	if err == nil || err.Error() != "1. reporter misconfigured Name invalid" {
 		t.Log(err)
 		t.Fail()
@@ -287,7 +292,12 @@ project:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfigFromBytes([]byte(config))
+	masterconfig, err := ReadConfigFromBytes([]byte(config))
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+	err = ValidateConfig(masterconfig)
 	if err == nil || err.Error() != "2. analyzer misconfigured duplicate value of The_Testalyzer in PosixName" {
 		t.Log(err)
 		t.Fail()
