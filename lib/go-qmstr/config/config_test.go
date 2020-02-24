@@ -196,7 +196,12 @@ project:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfigFromBytes([]byte(config))
+	masterconfig, err := ReadConfigFromBytes([]byte(config))
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+	err = ValidateConfig(masterconfig)
 	if err == nil || err.Error() != "1. analyzer misconfigured Analyzer invalid" {
 		t.Log(err)
 		t.Fail()
