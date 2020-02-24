@@ -49,7 +49,7 @@ project:
 	}
 	err = ValidateConfig(masterconf)
 	if err != nil {
-		t.Log("Config validation failed: ", err)
+		t.Logf("Config validation failed: %v", err)
 		t.Fail()
 	}
 	for _, ana := range masterconf.Analysis {
