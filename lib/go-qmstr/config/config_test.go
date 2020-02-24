@@ -148,7 +148,12 @@ project:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfigFromBytes([]byte(config))
+	masterconfig, err := ReadConfigFromBytes([]byte(config))
+	if err != nil {
+		t.Log(err)
+	}
+
+	err = ValidateConfig(masterconfig)
 	if err == nil || err.Error() != "2. analyzer misconfigured duplicate value of The Testalyzer in Name" {
 		t.Log(err)
 		t.Fail()
