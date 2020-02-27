@@ -59,12 +59,15 @@ func getConfig() (*config.MasterConfig, error) {
 		return nil, err
 	}
 
-	config, err := config.ReadConfigFromFiles(globalHostConfigPath, configFile)
+	masterconfig, err := config.ReadConfigFromFiles(globalHostConfigPath, configFile)
 	if err != nil {
 		return nil, err
 	}
+	if err = config.ValidateConfig(masterconfig); err != nil {
+		Log.Fatalf("Config validation failed: %v", err)
+	}
 
-	return config, nil
+	return masterconfig, nil
 }
 
 func startMaster(cmd *cobra.Command, args []string) {
