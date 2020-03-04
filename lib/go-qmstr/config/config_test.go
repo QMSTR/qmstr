@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"testing"
 )
 
@@ -308,6 +309,48 @@ project:
 	_, err := ReadConfigFromBytes([]byte(config))
 	if err == nil || err.Error() != "Invalid RPC address" {
 		t.Log(err)
+		t.Fail()
+	}
+}
+
+func TestConfigEnvOverride(t *testing.T) {
+
+	var config = `
+project:
+  name: "The Test"
+  metadata:
+    Vendor: "Endocode"
+    OcFossLiaison: "Mirko Boehm"
+    OcComplianceContact: "foss@endocode.com"
+  server:
+    rpcaddress: ":12345"
+    dbaddress: "testhost:54321"
+    dbworkers: 4
+  analysis:
+    - analyzer: test-analyzer
+      name: "The Testalyzer"
+      selector: sourcecode
+      pathsub:
+        - old: "/the/path"
+          new: "/buildroot"
+      config:
+        workdir: "/buildroot"
+  reporting:
+    - reporter: test-reporter
+      name: "The test reporter"
+      config:
+        tester: "Endocode"
+`
+	os.Setenv("SERVER_DBADDRESS", "override:12345")
+	os.Setenv("SERVER_RPCADDRESS", ":54321")
+	os.Setenv("SERVER_BUILDPATH", "/override")
+
+	masterConfig, _ := ReadConfigFromBytes([]byte(config))
+
+	if masterConfig.Server.DBAddress != os.Getenv("SERVER_DBADDRESS") ||
+		masterConfig.Server.RPCAddress != os.Getenv("SERVER_RPCADDRESS") ||
+		masterConfig.Server.BuildPath != os.Getenv("SERVER_BUILDPATH") {
+		t.Log("Configuration override failed.")
 		t.Fail()
 	}
 }
