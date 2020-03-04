@@ -107,6 +107,7 @@ func readConfig(data []byte, configuration *QmstrConfig) error {
 	if err != nil {
 		return err
 	}
+	configEnvOverride(configuration.Project)
 	err = validateConfig(configuration.Project)
 	if err != nil {
 		return err
@@ -143,4 +144,16 @@ func CreateProjectNode(masterConfig *MasterConfig) *service.ProjectNode {
 	}
 
 	return projectNode
+}
+
+func configEnvOverride(masterConfig *MasterConfig) {
+	if dbaddress := os.Getenv("SERVER_DBADDRESS"); dbaddress != "" {
+		masterConfig.Server.DBAddress = dbaddress
+	}
+	if rpcaddress := os.Getenv("SERVER_RPCADDRESS"); rpcaddress != "" {
+		masterConfig.Server.RPCAddress = rpcaddress
+	}
+	if buildpath := os.Getenv("SERVER_BUILDPATH"); buildpath != "" {
+		masterConfig.Server.BuildPath = buildpath
+	}
 }
