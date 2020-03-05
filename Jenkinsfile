@@ -53,23 +53,7 @@ pipeline {
                         sh 'cd demos && make guava'
                     }
                 }
-
-                stage('compile openssl'){
-
-                    agent { label 'docker' }
-
-                    environment {
-                        PATH = "$PATH:$WORKSPACE/out/"
-                    }
-
-                    steps {
-                        unstash 'executables'
-                        sh 'make container'
-                        sh 'git submodule update --init'
-                        sh "cd demos && make openssl"
-                    }
-                }
-                
+                                
                 stage('compile flask'){
 
                     agent { label 'docker' }
