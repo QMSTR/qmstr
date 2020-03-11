@@ -57,7 +57,7 @@ func (testanalyzer *TestAnalyzer) Analyze(masterClient *module.MasterClient, tok
 			if test == "TestPackageNode" {
 				testfunction = TestPackageNode
 			} else if test == "TestCalcBuildGraph" {
-				expectedTargets = []string{"Calculator/calc", "Calculator/libcalc.so", "Calculator/libcalc.a", "Calculator/calcs"}
+				expectedTargets = []string{"calc", "libcalc.so", "libcalc.a", "calcs"}
 				testfunction = TestBuildGraph
 			} else if test == "TestCurlBuildGraph" {
 				expectedTargets = []string{"curl/build/src/curl", "curl/build/lib/libcurl.so"}
