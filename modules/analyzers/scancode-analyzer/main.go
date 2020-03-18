@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,10 +11,7 @@ import (
 	"os/exec"
 	"regexp"
 	"runtime"
-	"strconv"
 	"syscall"
-
-	"golang.org/x/net/context"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/analysis"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
@@ -26,7 +24,18 @@ const (
 )
 
 type ScancodeAnalyzer struct {
-	scanData interface{}
+	Paths map[string][]*InfoStruct
+}
+
+type InfoStruct struct {
+	Type            string        `json:"type"`
+	ConfidenceScore float64       `json:"confidenceScore,omitempty"`
+	DataNodes       []*DataStruct `json:"dataNodes"`
+}
+
+type DataStruct struct {
+	Type string `json:"type"`
+	Data string `json:"data"`
 }
 
 func main() {
@@ -50,15 +59,14 @@ func (scanalyzer *ScancodeAnalyzer) Configure(configMap map[string]string) error
 
 	var err error
 	if cached && resultfile != "" {
-		scanalyzer.scanData, err = readScancodeFile(resultfile)
-		if err != nil {
+		if err = scanalyzer.readScancodeFile(resultfile); err != nil {
 			log.Fatal(err)
 		}
 		return nil
 	}
 
 	if workdir, ok := configMap["workdir"]; ok {
-		scanalyzer.scanData, err = scancode(workdir, runtime.NumCPU(), resultfile)
+		err = scanalyzer.scancode(workdir, runtime.NumCPU(), resultfile)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -85,16 +93,7 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(masterClient *module.MasterClient, t
 
 		log.Printf("Analyzing file %s", fileNode.Path)
 
-		infoNodes := []*service.InfoNode{}
-
-		licenseInfo, err := scanalyzer.detectLicenses(fileNode.GetPath())
-		if err == nil {
-			infoNodes = append(infoNodes, licenseInfo...)
-		}
-		copyrights, err := scanalyzer.detectCopyrights(fileNode.GetPath())
-		if err == nil {
-			infoNodes = append(infoNodes, copyrights)
-		}
+		infoNodes, _ := scanalyzer.detectLicensesCopyrights(fileNode.GetPath())
 
 		if len(infoNodes) > 0 {
 			infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodesMessage{Token: token, Infonodes: infoNodes, Uid: fileNode.FileData.Uid})
@@ -116,7 +115,6 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(masterClient *module.MasterClient, t
 	if reply.Success {
 		log.Println("Scancode Analyzer sent InfoNodes")
 	}
-
 	return nil
 }
 
@@ -147,122 +145,62 @@ func scancodeExitHandler(err error, output []byte) {
 	}
 }
 
-func readScancodeFile(resultfile string) (interface{}, error) {
-	re := regexp.MustCompile("{.+")
+func (scanalyzer *ScancodeAnalyzer) readScancodeFile(resultfile string) error {
 	scanResult, err := ioutil.ReadFile(resultfile)
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("Error while reading the scancode input file: %v", err)
 	}
-	jsonScanResult := re.Find(scanResult)
-	var scanData interface{}
-	err = json.Unmarshal(jsonScanResult, &scanData)
+	err = json.Unmarshal(scanResult, &scanalyzer.Paths)
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("Failed while unmarshalling json file: %v", err)
 	}
-	return scanData, nil
+	return nil
 }
 
-func scancode(workdir string, jobs int, resultfilepath string) (interface{}, error) {
+func (scanalyzer *ScancodeAnalyzer) scancode(workdir string, jobs int, resultfilepath string) error {
 	if resultfilepath == "" {
 		tmpfile, err := ioutil.TempFile("", "qmstr-scancode")
 		resultfilepath = tmpfile.Name()
 		if err != nil {
-			return nil, err
+			return err
 		}
 		defer os.Remove(tmpfile.Name())
 	}
 
-	cmdlineargs := []string{"--full-root", "-l", "-c", "--json", resultfilepath}
+	cmdlineargs := []string{"--full-root", "-l", "-c", "--custom-output", resultfilepath, "--custom-template", "qmstr.j2"}
 	if jobs > 1 {
 		cmdlineargs = append(cmdlineargs, "--processes", fmt.Sprintf("%d", jobs))
 	}
 	cmd := exec.Command("scancode", append(cmdlineargs, workdir)...)
-	log.Printf("Calling %s\n", cmd.Args)
-
 	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("Failed running scancode command line: %v", err)
+	}
 	scancodeExitHandler(err, output)
 
-	return readScancodeFile(resultfilepath)
+	return scanalyzer.readScancodeFile(resultfilepath)
 }
 
-func (scanalyzer *ScancodeAnalyzer) detectLicenses(srcFilePath string) ([]*service.InfoNode, error) {
-	licenseNodes := []*service.InfoNode{}
-	scanDatamap := scanalyzer.scanData.(map[string]interface{})
-	for _, file := range scanDatamap["files"].([]interface{}) {
-		fileData := file.(map[string]interface{})
-		if fileData["path"] == srcFilePath {
-			log.Printf("Found %s", srcFilePath)
-			for _, licenseData := range fileData["licenses"].([]interface{}) {
-				license := licenseData.(map[string]interface{})
-				log.Println("Found license information")
-				tempDataNodes := []*service.InfoNode_DataNode{&service.InfoNode_DataNode{
-					Type: "key",
-					Data: license["key"].(string),
-				},
-					&service.InfoNode_DataNode{
-						Type: "score",
-						Data: strconv.FormatFloat(license["score"].(float64), 'f', 2, 64),
-					},
-				}
+func (scanalyzer *ScancodeAnalyzer) detectLicensesCopyrights(srcFilePath string) ([]*service.InfoNode, error) {
+	if fileData, ok := scanalyzer.Paths[srcFilePath]; ok {
+		infoNodes := []*service.InfoNode{}
+		for _, infoData := range fileData {
+			log.Printf("Found license/copyright information for path: %s\n", srcFilePath)
 
-				name := license["short_name"].(string)
-				if name != "" {
-					tempDataNodes = append(tempDataNodes, &service.InfoNode_DataNode{
-						Type: "name",
-						Data: name,
-					})
-				}
-
-				spdxIdent := license["spdx_license_key"].(string)
-				if spdxIdent != "" {
-					tempDataNodes = append(tempDataNodes, &service.InfoNode_DataNode{
-						Type: "spdxIdentifier",
-						Data: spdxIdent,
-					})
-				}
-				licenseNodes = append(licenseNodes, &service.InfoNode{
-					Type:            "license",
-					ConfidenceScore: license["score"].(float64) / 100,
-					DataNodes:       tempDataNodes,
+			tempDataNodes := []*service.InfoNode_DataNode{}
+			for _, iData := range infoData.DataNodes {
+				tempDataNodes = append(tempDataNodes, &service.InfoNode_DataNode{
+					Type: iData.Type,
+					Data: iData.Data,
 				})
 			}
-			return licenseNodes, nil
+			infoNodes = append(infoNodes, &service.InfoNode{
+				Type:            infoData.Type,
+				ConfidenceScore: infoData.ConfidenceScore / 100,
+				DataNodes:       tempDataNodes,
+			})
 		}
+		return infoNodes, nil
 	}
-	return nil, fmt.Errorf("No license found for %s", srcFilePath)
-}
-
-func (scanalyzer *ScancodeAnalyzer) detectCopyrights(srcFilePath string) (*service.InfoNode, error) {
-	copyrights := []*service.InfoNode_DataNode{}
-	scanDatamap := scanalyzer.scanData.(map[string]interface{})
-	for _, file := range scanDatamap["files"].([]interface{}) {
-		fileData := file.(map[string]interface{})
-		if fileData["path"] == srcFilePath {
-			for _, copyright := range fileData["copyrights"].([]interface{}) {
-				copyrightData := copyright.(map[string]interface{})
-				for _, copyrightHolder := range copyrightData["holders"].([]interface{}) {
-					log.Printf("Found copyright holder %s", copyrightHolder)
-					copyrights = append(copyrights, &service.InfoNode_DataNode{
-						Type: "copyrightHolder",
-						Data: copyrightHolder.(string),
-					})
-				}
-				for _, author := range copyrightData["authors"].([]interface{}) {
-					log.Printf("Found author %s", author)
-					copyrights = append(copyrights, &service.InfoNode_DataNode{
-						Type: "author",
-						Data: author.(string),
-					})
-				}
-			}
-			if len(copyrights) > 0 {
-				copyrightInfoNode := &service.InfoNode{
-					Type:      "copyright",
-					DataNodes: copyrights,
-				}
-				return copyrightInfoNode, nil
-			}
-		}
-	}
-	return nil, fmt.Errorf("No copyright info found for %s", srcFilePath)
+	return nil, fmt.Errorf("No license/copyright information found for %s", srcFilePath)
 }
