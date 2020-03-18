@@ -12,7 +12,7 @@ function create_dirs() {
 
 function fix_permission() {
     if [ -n ${USERID} ]; then
-        for i in /usr/local/lib/python2.7/dist-packages/extractcode; do
+        for i in /usr/local/lib/python3.6/dist-packages/extractcode; do
             echo "Fixing $i to be owned by ${USERID}"
             chown -R ${USERID} ${i}
         done
