@@ -93,7 +93,7 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(masterClient *module.MasterClient, t
 
 		log.Printf("Analyzing file %s", fileNode.Path)
 
-		infoNodes, _ := scanalyzer.detectLicensesCopyrights(fileNode.GetPath())
+		infoNodes := scanalyzer.detectLicensesCopyrights(fileNode.GetPath())
 
 		if len(infoNodes) > 0 {
 			infoNodeMsgs = append(infoNodeMsgs, &service.InfoNodesMessage{Token: token, Infonodes: infoNodes, Uid: fileNode.FileData.Uid})
@@ -181,7 +181,7 @@ func (scanalyzer *ScancodeAnalyzer) scancode(workdir string, jobs int, resultfil
 	return scanalyzer.readScancodeFile(resultfilepath)
 }
 
-func (scanalyzer *ScancodeAnalyzer) detectLicensesCopyrights(srcFilePath string) ([]*service.InfoNode, error) {
+func (scanalyzer *ScancodeAnalyzer) detectLicensesCopyrights(srcFilePath string) []*service.InfoNode {
 	if fileData, ok := scanalyzer.Paths[srcFilePath]; ok {
 		infoNodes := []*service.InfoNode{}
 		for _, infoData := range fileData {
@@ -200,7 +200,9 @@ func (scanalyzer *ScancodeAnalyzer) detectLicensesCopyrights(srcFilePath string)
 				DataNodes:       tempDataNodes,
 			})
 		}
-		return infoNodes, nil
+		return infoNodes
 	}
-	return nil, fmt.Errorf("No license/copyright information found for %s", srcFilePath)
+	// TODO: Create warning info node for no license info ??
+	log.Printf("WARNING: --> ! No license/copyright information found for %s !\n", srcFilePath)
+	return nil
 }
