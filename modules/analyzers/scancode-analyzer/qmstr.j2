@@ -36,7 +36,7 @@
         {
           "type": "author",
           "data": "{{ author.value }}"
-        }
+        }{% if not loop.last %},{% endif %}
       {%- endfor %}
       ]
       {%- endif %}
