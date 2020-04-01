@@ -9,6 +9,7 @@ pipeline {
                 docker { image 'endocode/qmstr_buildenv:latest' }
             }
             steps {
+                sh 'go install github.com/golang/protobuf/protoc-gen-go'
                 sh "make clients"
                 sh "make gotest"
                 stash includes: 'out/qmstr*', name: 'executables' 
