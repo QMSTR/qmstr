@@ -34,17 +34,25 @@ The qmstr master server is supposed to run in a container therefore Docker is ne
 
 Install the depencencies:
 
-  - If you are running an Ubuntu machine:
+  - Install Golang: https://golang.org/dl/    
+  go.1.12 and higher is needed to run qmstr
+
+- #### If you are running an Ubuntu machine:
 
     > sudo apt update
 
-	> sudo apt install golang protobuf-compiler
+  - In order to build qmstr the Google protobuf compiler needs to be installed somewhere in your $PATH. You can get it by downloading the corresponding file for your system from https://github.com/google/protobuf/releases or run the following commands:
 
-    - Install Docker: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+    > curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip
 
-  - If you are running a Fedora machine:
+    > sudo unzip -o protoc-3.11.4-linux-x86_64.zip -d /usr/local bin/protoc
 
-    > sudo dnf install golang protobuf-compiler
+  - Install Docker: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+
+- #### If you are running a Fedora machine:
+
+    > sudo dnf install protobuf-compiler
 
   - Install Docker: https://docs.docker.com/install/linux/docker-ce/fedora/
 
@@ -65,15 +73,11 @@ Add user to the docker group:
   More information in:
   https://linoxide.com/linux-how-to/use-docker-without-sudo-ubuntu/
 
-Install the `protoc` Protobuf compiler:[^gopath_deprecation]
-
-	> protoc --version
-	...
-
 
 ## Checkout sources
 
   > git clone https://github.com/QMSTR/qmstr.git
+  
 
 ## Installing the clients
 
@@ -136,7 +140,3 @@ processes are used that deploy build jobs to a number of build
 clients. In most scenarios, the master images need to be built on the
 machine where the software build is started.
 
-[^gopath_deprecation]: Older versions of the documentation contained references to $GOPATH
-    and recommendations to install programs into $GOPATH/bin. Since QMSTR 0.4,
-    GOPATH is not used anymore. The Makefiles instead expect that program
-    dependencies like _protoc_ to be found in the PATH.
