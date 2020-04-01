@@ -18,19 +18,28 @@ together with the Go protobuf library and generator. The later will be installed
 
 Install the depencencies:
 
-  - If you are running an Ubuntu machine:
+  - Install Golang: https://golang.org/dl/    
+  go.1.12 and higher is needed to run qmstr
+
+- #### If you are running an Ubuntu machine:
 
     > sudo apt update
 
-	> sudo apt install golang protobuf-compiler
+  - In order to build qmstr the Google protobuf compiler needs to be installed somewhere in your $PATH. You can get it by downloading the corresponding file for your system from https://github.com/google/protobuf/releases or run the following commands:
 
-    - Install Docker: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+    > curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip
 
-  - If you are running a Fedora machine:
+    > sudo unzip -o protoc-3.11.4-linux-x86_64.zip -d /usr/local bin/protoc
 
-    > sudo dnf install golang protobuf-compiler
+  - Install Docker: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+  
+
+- #### If you are running a Fedora machine:
+
+    > sudo dnf install protobuf-compiler
 
   - Install Docker: https://docs.docker.com/install/linux/docker-ce/fedora/
+
 
 ## Dependencies
 

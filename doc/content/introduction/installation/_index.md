@@ -85,6 +85,10 @@ The main entry point into the installation tasks for Quartermaster is
 the Makefile in the main repository. The default installation prefix is `/usr/local`.
 The client programs will be installed into the `bin/` subdirectory:
   
+  > cd qmstr/
+
+  > go install github.com/golang/protobuf/protoc-gen-go
+
 	> make install_qmstr_client
 	...
 
