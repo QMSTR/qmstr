@@ -9,8 +9,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # install runtime deps
 RUN apt-get update && apt-get install -y \
-    software-properties-common curl autoconf git apt-utils libgit2-dev libio-captureoutput-perl python python-pip python3-distutils protobuf-compiler icu-devtools libicu-dev && \
+    software-properties-common curl autoconf git apt-utils libgit2-dev libio-captureoutput-perl unzip python python-pip python3-distutils icu-devtools libicu-dev && \
     rm -rf /var/lib/apt/lists/*
+RUN curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip
+RUN unzip -o protoc-3.11.4-linux-x86_64.zip -d /usr/local bin/protoc
 
 ARG HUGO_VERSION
 RUN curl -L --output /tmp/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.deb
@@ -51,8 +53,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # install dependecies
 RUN apt-get update && apt-get install -y \
-    curl autoconf make git libgit2-dev libio-captureoutput-perl virtualenv tar build-essential pkg-config protobuf-compiler maven \
+    curl autoconf make git libgit2-dev libio-captureoutput-perl virtualenv tar unzip build-essential pkg-config maven \
     && rm -rf /var/lib/apt/lists/*
+RUN curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip
+RUN unzip -o protoc-3.11.4-linux-x86_64.zip -d /usr/local bin/protoc
 
 ARG GO_VERSION
 RUN curl -o /opt/go.tar.gz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz
@@ -147,7 +151,9 @@ ENV PATH ${GOPATH}/bin:$PATH
 
 # install golang
 RUN apt-get update && apt-get install -y \
-    curl golang autoconf git libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
+    curl golang autoconf git libio-captureoutput-perl python-dev unzip python-virtualenv
+RUN curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip
+RUN unzip -o protoc-3.11.4-linux-x86_64.zip -d /usr/local bin/protoc
 
 EXPOSE 2345
 
