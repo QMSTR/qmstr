@@ -29,10 +29,9 @@ GO_PKGS := $(shell $(GO) list ./... | grep -v /module | grep -v /vendor)
 
 GO_PATH := $(shell $(GO) env GOPATH)
 GO_BIN := $(GO_PATH)/bin
-PROTOC_GEN_GO := $(GO_BIN)/protoc-gen-go
 GOLINT := $(GO_BIN)/golint
 
-GO_DEPS := $(PROTOC_GEN_GO) $(GO_SRCS)
+GO_DEPS := $(GO_SRCS)
 
 QMSTR_ANALYZERS := $(foreach ana, $(shell ls modules/analyzers), $(OUTDIR)analyzers/$(ana))
 QMSTR_REPORTERS := $(foreach rep, $(shell ls modules/reporters), $(OUTDIR)reporters/$(rep))
@@ -90,9 +89,6 @@ golint: govet $(GOLINT)
 
 $(GOLINT): $(GO)
 	$(GO) get -u golang.org/x/lint/golint
-
-$(PROTOC_GEN_GO): $(GO)
-	$(GO) install github.com/golang/protobuf/protoc-gen-go
 
 # Client build target
 clients: $(QMSTR_CLIENT_BINARIES)
