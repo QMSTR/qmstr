@@ -1,0 +1,107 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Publish Docker
+on:
+  push:
+    branches:
+      - refactor/docker
+
+# Environment variables available to all jobs and steps in this workflow
+env:
+  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: qmstr-dev
+  GKE_ZONE: europe-west3-a
+  
+jobs:
+  release-master:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go:
+          - "1.12"
+          - "1.13"
+          - "1.14"
+    steps:
+      
+    - name: Checkout VCS
+      uses: actions/checkout@master
+
+    - name: Set env
+      run: echo ::set-env name=GITHUB_SHA_SHORT::$(git rev-parse --short $GITHUB_SHA)
+
+    - name: Setup go ${{ matrix.go }}
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go }}
+
+    - name: Test master binaries
+      run: |
+        go test -coverprofile=qmstr-master.cov.out ./masterserver
+        go tool cover -func=qmstr-master.cov.out
+        go test -coverprofile=test-analyzer.cov.out ./modules/analyzers/test-analyzer
+        go tool cover -func=test-analyzer.cov.out
+        go test -coverprofile=test-reporter.cov.out ./modules/reporters/test-reporter
+        go tool cover -func=test-reporter.cov.out
+        
+    - name: Build and Push
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: endocodeci/qmstr-master
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        dockerfile: docker/Dockerfile.master
+        tags: ${{ env.GITHUB_SHA_SHORT }}-${{ matrix.go }}
+        
+        
+    - name: Setup Google SDK
+      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.SA_EMAIL_DEPLOY_QMSTR_DEV }}
+        service_account_key: ${{ secrets.SA_KEY_DEPLOY_QMSTR_DEV }}
+
+    - name: Setup Kustomize
+      uses: imranismail/setup-kustomize@master
+      with:
+        kustomize-version: "3.2.1"
+
+    - name: Make kustomize executable
+      run: chmod +x /opt/hostedtoolcache/kustomize/3.2.1/x64/kustomize
+        
+    - name: Deploy to Dev Cluster
+      run: |
+        gcloud container clusters get-credentials $GKE_CLUSTER \
+        --zone $GKE_ZONE --project $GKE_PROJECT
+        kustomize build deploy/base/ | kubectl apply -f -
+        kubectl set image deployment/qmstr \
+        qmstr-master=endocodeci/qmstr-master:${{ env.GITHUB_SHA_SHORT }}-${{ matrix.go }}
+  release-client:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go:
+          - "1.12"
+          - "1.13"
+          - "1.14"
+
+    steps:
+      
+      - name: Checkout VCS
+        uses: actions/checkout@master
+
+      - name: Set env
+        run: echo ::set-env name=GITHUB_SHA_SHORT::$(git rev-parse --short $GITHUB_SHA)
+
+      - name: Setup go ${{ matrix.go }}
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Build and Push
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: endocodeci/qmstr-client
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          dockerfile: docker/Dockerfile.client
+          tags: ${{ env.GITHUB_SHA_SHORT }}-${{ matrix.go }}
