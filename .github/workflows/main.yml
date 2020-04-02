@@ -51,6 +51,8 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         dockerfile: docker/Dockerfile.master
         tags: ${{ env.GITHUB_SHA_SHORT }}-${{ matrix.go }}
+        if: matrix.go == '1.13'
+        push: false
         
         
     - name: Setup Google SDK
@@ -105,3 +107,5 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: docker/Dockerfile.client
           tags: ${{ env.GITHUB_SHA_SHORT }}-${{ matrix.go }}
+          if: matrix.go == '1.13'
+          push: false
