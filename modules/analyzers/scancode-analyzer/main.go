@@ -167,7 +167,7 @@ func (scanalyzer *ScancodeAnalyzer) scancode(workdir string, jobs int, resultfil
 		defer os.Remove(tmpfile.Name())
 	}
 
-	cmdlineargs := []string{"--full-root", "-l", "-c", "--custom-output", resultfilepath, "--custom-template", "qmstr.j2"}
+	cmdlineargs := []string{"--full-root", "-l", "-c", "--custom-output", resultfilepath, "--custom-template", "qmstr_with_authors.j2"}
 	if jobs > 1 {
 		cmdlineargs = append(cmdlineargs, "--processes", fmt.Sprintf("%d", jobs))
 	}
@@ -183,6 +183,10 @@ func (scanalyzer *ScancodeAnalyzer) scancode(workdir string, jobs int, resultfil
 
 func (scanalyzer *ScancodeAnalyzer) detectLicensesCopyrights(srcFilePath string) []*service.InfoNode {
 	if fileData, ok := scanalyzer.Paths[srcFilePath]; ok {
+		if len(fileData) < 1 {
+			log.Printf("WARNING: --> ! No license/copyright information found for %s !\n", srcFilePath)
+			return nil
+		}
 		infoNodes := []*service.InfoNode{}
 		for _, infoData := range fileData {
 			log.Printf("Found license/copyright information for path: %s\n", srcFilePath)
@@ -202,7 +206,6 @@ func (scanalyzer *ScancodeAnalyzer) detectLicensesCopyrights(srcFilePath string)
 		}
 		return infoNodes
 	}
-	// TODO: Create warning info node for no license info ??
-	log.Printf("WARNING: --> ! No license/copyright information found for %s !\n", srcFilePath)
+	log.Printf("WARNING: --> ! SCANCODE TOOLKIT DID NOT SCAN FILE: %s !\n", srcFilePath)
 	return nil
 }

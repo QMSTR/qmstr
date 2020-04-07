@@ -97,7 +97,7 @@ RUN /tmp/qmstr/modules/reporters/qmstr-reporter-html/setup.sh /usr/share/qmstr /
 RUN rm -fr /tmp/qmstr
 
 ADD ci/common.inc /common.inc
-ADD modules/analyzers/scancode-analyzer/qmstr.j2 /qmstr.j2
+ADD modules/analyzers/scancode-analyzer/qmstr_with_authors.j2 /qmstr_with_authors.j2
 # copy qmstr installation from previous stage
 COPY --from=builder /usr/local/bin/* /usr/local/bin/
 

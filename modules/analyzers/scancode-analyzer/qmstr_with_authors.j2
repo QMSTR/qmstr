@@ -1,17 +1,17 @@
 {
 {%- for filename, file_info in files.infos.items() %}
   "{{ file_info.path }}": [
-    {% for l in file_info.license_expressions %}{ 
+    {% for l in file_info.license_expressions %}{
       "type": "license",
       "confidenceScore": {{ licenses[l].score / 100 }},
       "dataNodes": [
         {
           "type": "key",
-	  "data": "{{ licenses[l].key }}"
+	        "data": "{{ licenses[l].key }}"
         },
         {
           "type": "score",
-	  "data": "{{ licenses[l].score }}"
+	        "data": "{{ licenses[l].score }}"
         },
         {
           "type": "name",
@@ -25,18 +25,18 @@
     }{% if not loop.last %},{% endif %}{% endfor %}{% if file_info.license_expressions != [] %},{% endif %}{% if file_info.holders + file_info.authors != [] %}{
       "type": "copyright",
       "dataNodes": [
-      {%- for holder in file_info.holders %}
-        {
-	  "type": "copyrightHolder",
-	  "data": "{{ holder.value }}"
-        }{% if not loop.last or file_info.authors != [] %},{% endif %}
-      {%- endfor %}
-      {%- for author in file_info.authors %}
-        {
-          "type": "author",
-          "data": "{{ author.value }}"
-        }{% if not loop.last %},{% endif %}
-      {%- endfor %}
+        {%- for holder in file_info.holders %}
+          {
+            "type": "copyrightHolder",
+            "data": "{{ holder.value }}"
+          }{% if not loop.last or file_info.authors != [] %},{% endif %}
+        {%- endfor %}
+        {%- for author in file_info.authors %}
+          {
+            "type": "author",
+            "data": "{{ author.value }}"
+          }{% if not loop.last %},{% endif %}
+        {%- endfor %}
       ]
     }{% endif %}
   ]{% if not loop.last %},{% endif %}
