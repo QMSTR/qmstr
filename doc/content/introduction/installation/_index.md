@@ -144,3 +144,7 @@ processes are used that deploy build jobs to a number of build
 clients. In most scenarios, the master images need to be built on the
 machine where the software build is started.
 
+___
+___
+
+*Older versions of the documentation contained references to $GOPATH and recommendations to install programs into $GOPATH/bin. Since QMSTR 0.4, GOPATH is not used anymore. The Makefiles instead expect that program dependencies like _protoc_ to be found in the PATH.
