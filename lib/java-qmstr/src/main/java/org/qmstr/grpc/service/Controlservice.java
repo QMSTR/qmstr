@@ -2322,6 +2322,16 @@ public final class Controlservice {
      */
     com.google.protobuf.ByteString
         getErrorBytes();
+
+    /**
+     * <code>string masterConfig = 3;</code>
+     */
+    java.lang.String getMasterConfig();
+    /**
+     * <code>string masterConfig = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getMasterConfigBytes();
   }
   /**
    * Protobuf type {@code service.SwitchPhaseResponse}
@@ -2338,6 +2348,7 @@ public final class Controlservice {
     private SwitchPhaseResponse() {
       success_ = false;
       error_ = "";
+      masterConfig_ = "";
     }
 
     @java.lang.Override
@@ -2380,6 +2391,12 @@ public final class Controlservice {
               java.lang.String s = input.readStringRequireUtf8();
 
               error_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              masterConfig_ = s;
               break;
             }
           }
@@ -2449,6 +2466,40 @@ public final class Controlservice {
       }
     }
 
+    public static final int MASTERCONFIG_FIELD_NUMBER = 3;
+    private volatile java.lang.Object masterConfig_;
+    /**
+     * <code>string masterConfig = 3;</code>
+     */
+    public java.lang.String getMasterConfig() {
+      java.lang.Object ref = masterConfig_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        masterConfig_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string masterConfig = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getMasterConfigBytes() {
+      java.lang.Object ref = masterConfig_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        masterConfig_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -2467,6 +2518,9 @@ public final class Controlservice {
       if (!getErrorBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, error_);
       }
+      if (!getMasterConfigBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, masterConfig_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -2481,6 +2535,9 @@ public final class Controlservice {
       }
       if (!getErrorBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, error_);
+      }
+      if (!getMasterConfigBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, masterConfig_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -2502,6 +2559,8 @@ public final class Controlservice {
           == other.getSuccess());
       result = result && getError()
           .equals(other.getError());
+      result = result && getMasterConfig()
+          .equals(other.getMasterConfig());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -2518,6 +2577,8 @@ public final class Controlservice {
           getSuccess());
       hash = (37 * hash) + ERROR_FIELD_NUMBER;
       hash = (53 * hash) + getError().hashCode();
+      hash = (37 * hash) + MASTERCONFIG_FIELD_NUMBER;
+      hash = (53 * hash) + getMasterConfig().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2651,6 +2712,8 @@ public final class Controlservice {
 
         error_ = "";
 
+        masterConfig_ = "";
+
         return this;
       }
 
@@ -2675,6 +2738,7 @@ public final class Controlservice {
         org.qmstr.grpc.service.Controlservice.SwitchPhaseResponse result = new org.qmstr.grpc.service.Controlservice.SwitchPhaseResponse(this);
         result.success_ = success_;
         result.error_ = error_;
+        result.masterConfig_ = masterConfig_;
         onBuilt();
         return result;
       }
@@ -2721,6 +2785,10 @@ public final class Controlservice {
         }
         if (!other.getError().isEmpty()) {
           error_ = other.error_;
+          onChanged();
+        }
+        if (!other.getMasterConfig().isEmpty()) {
+          masterConfig_ = other.masterConfig_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -2841,6 +2909,75 @@ public final class Controlservice {
   checkByteStringIsUtf8(value);
         
         error_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object masterConfig_ = "";
+      /**
+       * <code>string masterConfig = 3;</code>
+       */
+      public java.lang.String getMasterConfig() {
+        java.lang.Object ref = masterConfig_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          masterConfig_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string masterConfig = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getMasterConfigBytes() {
+        java.lang.Object ref = masterConfig_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          masterConfig_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string masterConfig = 3;</code>
+       */
+      public Builder setMasterConfig(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        masterConfig_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string masterConfig = 3;</code>
+       */
+      public Builder clearMasterConfig() {
+        
+        masterConfig_ = getDefaultInstance().getMasterConfig();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string masterConfig = 3;</code>
+       */
+      public Builder setMasterConfigBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        masterConfig_ = value;
         onChanged();
         return this;
       }
@@ -6395,35 +6532,36 @@ public final class Controlservice {
       "ogResponse\022\017\n\007success\030\001 \001(\010\"\033\n\013QuitMessa" +
       "ge\022\014\n\004kill\030\001 \001(\010\"\037\n\014QuitResponse\022\017\n\007succ" +
       "ess\030\001 \001(\010\"3\n\022SwitchPhaseMessage\022\035\n\005phase" +
-      "\030\001 \001(\0162\016.service.Phase\"5\n\023SwitchPhaseRes" +
-      "ponse\022\017\n\007success\030\001 \001(\010\022\r\n\005error\030\002 \001(\t\"M\n" +
-      "\022GetFileNodeMessage\022#\n\010fileNode\030\001 \001(\0132\021." +
-      "service.FileNode\022\022\n\nuniqueNode\030\002 \001(\010\".\n\r" +
-      "StatusMessage\022\r\n\005phase\030\001 \001(\010\022\016\n\006switch\030\002" +
-      " \001(\010\"z\n\016StatusResponse\022\r\n\005phase\030\001 \001(\t\022\037\n" +
-      "\007phaseID\030\002 \001(\0162\016.service.Phase\022\021\n\tswitch" +
-      "ing\030\003 \001(\010\022\r\n\005error\030\004 \001(\t\022\026\n\016pendingInser" +
-      "ts\030\005 \001(\004\"2\n\014EventMessage\022\"\n\005class\030\001 \001(\0162" +
-      "\023.service.EventClass\"\035\n\rExportRequest\022\014\n" +
-      "\004wait\030\001 \001(\010\"!\n\016ExportResponse\022\017\n\007success" +
-      "\030\001 \001(\0102\231\005\n\016ControlService\0222\n\003Log\022\023.servi" +
-      "ce.LogMessage\032\024.service.LogResponse\"\000\0225\n" +
-      "\004Quit\022\024.service.QuitMessage\032\025.service.Qu" +
-      "itResponse\"\000\022J\n\013SwitchPhase\022\033.service.Sw" +
-      "itchPhaseMessage\032\034.service.SwitchPhaseRe" +
-      "sponse\"\000\022@\n\016GetPackageNode\022\024.service.Pac" +
-      "kageNode\032\024.service.PackageNode\"\0000\001\022@\n\021Ge" +
-      "tPackageTargets\022\024.service.PackageNode\032\021." +
-      "service.FileNode\"\0000\001\022A\n\013GetFileNode\022\033.se" +
-      "rvice.GetFileNodeMessage\032\021.service.FileN" +
-      "ode\"\0000\001\022I\n\021GetDiagnosticNode\022\027.service.D" +
-      "iagnosticNode\032\027.service.DiagnosticNode\"\000" +
-      "0\001\022;\n\006Status\022\026.service.StatusMessage\032\027.s" +
-      "ervice.StatusResponse\"\000\022<\n\017SubscribeEven" +
-      "ts\022\025.service.EventMessage\032\016.service.Even" +
-      "t\"\0000\001\022C\n\016ExportSnapshot\022\026.service.Export" +
-      "Request\032\027.service.ExportResponse\"\000B\030\n\026or" +
-      "g.qmstr.grpc.serviceX\000b\006proto3"
+      "\030\001 \001(\0162\016.service.Phase\"K\n\023SwitchPhaseRes" +
+      "ponse\022\017\n\007success\030\001 \001(\010\022\r\n\005error\030\002 \001(\t\022\024\n" +
+      "\014masterConfig\030\003 \001(\t\"M\n\022GetFileNodeMessag" +
+      "e\022#\n\010fileNode\030\001 \001(\0132\021.service.FileNode\022\022" +
+      "\n\nuniqueNode\030\002 \001(\010\".\n\rStatusMessage\022\r\n\005p" +
+      "hase\030\001 \001(\010\022\016\n\006switch\030\002 \001(\010\"z\n\016StatusResp" +
+      "onse\022\r\n\005phase\030\001 \001(\t\022\037\n\007phaseID\030\002 \001(\0162\016.s" +
+      "ervice.Phase\022\021\n\tswitching\030\003 \001(\010\022\r\n\005error" +
+      "\030\004 \001(\t\022\026\n\016pendingInserts\030\005 \001(\004\"2\n\014EventM" +
+      "essage\022\"\n\005class\030\001 \001(\0162\023.service.EventCla" +
+      "ss\"\035\n\rExportRequest\022\014\n\004wait\030\001 \001(\010\"!\n\016Exp" +
+      "ortResponse\022\017\n\007success\030\001 \001(\0102\231\005\n\016Control" +
+      "Service\0222\n\003Log\022\023.service.LogMessage\032\024.se" +
+      "rvice.LogResponse\"\000\0225\n\004Quit\022\024.service.Qu" +
+      "itMessage\032\025.service.QuitResponse\"\000\022J\n\013Sw" +
+      "itchPhase\022\033.service.SwitchPhaseMessage\032\034" +
+      ".service.SwitchPhaseResponse\"\000\022@\n\016GetPac" +
+      "kageNode\022\024.service.PackageNode\032\024.service" +
+      ".PackageNode\"\0000\001\022@\n\021GetPackageTargets\022\024." +
+      "service.PackageNode\032\021.service.FileNode\"\000" +
+      "0\001\022A\n\013GetFileNode\022\033.service.GetFileNodeM" +
+      "essage\032\021.service.FileNode\"\0000\001\022I\n\021GetDiag" +
+      "nosticNode\022\027.service.DiagnosticNode\032\027.se" +
+      "rvice.DiagnosticNode\"\0000\001\022;\n\006Status\022\026.ser" +
+      "vice.StatusMessage\032\027.service.StatusRespo" +
+      "nse\"\000\022<\n\017SubscribeEvents\022\025.service.Event" +
+      "Message\032\016.service.Event\"\0000\001\022C\n\016ExportSna" +
+      "pshot\022\026.service.ExportRequest\032\027.service." +
+      "ExportResponse\"\000B\030\n\026org.qmstr.grpc.servi" +
+      "ceX\000b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -6473,7 +6611,7 @@ public final class Controlservice {
     internal_static_service_SwitchPhaseResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_SwitchPhaseResponse_descriptor,
-        new java.lang.String[] { "Success", "Error", });
+        new java.lang.String[] { "Success", "Error", "MasterConfig", });
     internal_static_service_GetFileNodeMessage_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_service_GetFileNodeMessage_fieldAccessorTable = new

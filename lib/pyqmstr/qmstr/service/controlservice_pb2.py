@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='service',
   syntax='proto3',
   serialized_options=_b('\n\026org.qmstr.grpc.service'),
-  serialized_pb=_b('\n\x14\x63ontrolservice.proto\x12\x07service\x1a\x0f\x64\x61tamodel.proto\"\x19\n\nLogMessage\x12\x0b\n\x03msg\x18\x01 \x01(\x0c\"\x1e\n\x0bLogResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"\x1b\n\x0bQuitMessage\x12\x0c\n\x04kill\x18\x01 \x01(\x08\"\x1f\n\x0cQuitResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"3\n\x12SwitchPhaseMessage\x12\x1d\n\x05phase\x18\x01 \x01(\x0e\x32\x0e.service.Phase\"5\n\x13SwitchPhaseResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\r\n\x05\x65rror\x18\x02 \x01(\t\"M\n\x12GetFileNodeMessage\x12#\n\x08\x66ileNode\x18\x01 \x01(\x0b\x32\x11.service.FileNode\x12\x12\n\nuniqueNode\x18\x02 \x01(\x08\".\n\rStatusMessage\x12\r\n\x05phase\x18\x01 \x01(\x08\x12\x0e\n\x06switch\x18\x02 \x01(\x08\"z\n\x0eStatusResponse\x12\r\n\x05phase\x18\x01 \x01(\t\x12\x1f\n\x07phaseID\x18\x02 \x01(\x0e\x32\x0e.service.Phase\x12\x11\n\tswitching\x18\x03 \x01(\x08\x12\r\n\x05\x65rror\x18\x04 \x01(\t\x12\x16\n\x0ependingInserts\x18\x05 \x01(\x04\"2\n\x0c\x45ventMessage\x12\"\n\x05\x63lass\x18\x01 \x01(\x0e\x32\x13.service.EventClass\"\x1d\n\rExportRequest\x12\x0c\n\x04wait\x18\x01 \x01(\x08\"!\n\x0e\x45xportResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\x99\x05\n\x0e\x43ontrolService\x12\x32\n\x03Log\x12\x13.service.LogMessage\x1a\x14.service.LogResponse\"\x00\x12\x35\n\x04Quit\x12\x14.service.QuitMessage\x1a\x15.service.QuitResponse\"\x00\x12J\n\x0bSwitchPhase\x12\x1b.service.SwitchPhaseMessage\x1a\x1c.service.SwitchPhaseResponse\"\x00\x12@\n\x0eGetPackageNode\x12\x14.service.PackageNode\x1a\x14.service.PackageNode\"\x00\x30\x01\x12@\n\x11GetPackageTargets\x12\x14.service.PackageNode\x1a\x11.service.FileNode\"\x00\x30\x01\x12\x41\n\x0bGetFileNode\x12\x1b.service.GetFileNodeMessage\x1a\x11.service.FileNode\"\x00\x30\x01\x12I\n\x11GetDiagnosticNode\x12\x17.service.DiagnosticNode\x1a\x17.service.DiagnosticNode\"\x00\x30\x01\x12;\n\x06Status\x12\x16.service.StatusMessage\x1a\x17.service.StatusResponse\"\x00\x12<\n\x0fSubscribeEvents\x12\x15.service.EventMessage\x1a\x0e.service.Event\"\x00\x30\x01\x12\x43\n\x0e\x45xportSnapshot\x12\x16.service.ExportRequest\x1a\x17.service.ExportResponse\"\x00\x42\x18\n\x16org.qmstr.grpc.serviceX\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x14\x63ontrolservice.proto\x12\x07service\x1a\x0f\x64\x61tamodel.proto\"\x19\n\nLogMessage\x12\x0b\n\x03msg\x18\x01 \x01(\x0c\"\x1e\n\x0bLogResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"\x1b\n\x0bQuitMessage\x12\x0c\n\x04kill\x18\x01 \x01(\x08\"\x1f\n\x0cQuitResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"3\n\x12SwitchPhaseMessage\x12\x1d\n\x05phase\x18\x01 \x01(\x0e\x32\x0e.service.Phase\"K\n\x13SwitchPhaseResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\r\n\x05\x65rror\x18\x02 \x01(\t\x12\x14\n\x0cmasterConfig\x18\x03 \x01(\t\"M\n\x12GetFileNodeMessage\x12#\n\x08\x66ileNode\x18\x01 \x01(\x0b\x32\x11.service.FileNode\x12\x12\n\nuniqueNode\x18\x02 \x01(\x08\".\n\rStatusMessage\x12\r\n\x05phase\x18\x01 \x01(\x08\x12\x0e\n\x06switch\x18\x02 \x01(\x08\"z\n\x0eStatusResponse\x12\r\n\x05phase\x18\x01 \x01(\t\x12\x1f\n\x07phaseID\x18\x02 \x01(\x0e\x32\x0e.service.Phase\x12\x11\n\tswitching\x18\x03 \x01(\x08\x12\r\n\x05\x65rror\x18\x04 \x01(\t\x12\x16\n\x0ependingInserts\x18\x05 \x01(\x04\"2\n\x0c\x45ventMessage\x12\"\n\x05\x63lass\x18\x01 \x01(\x0e\x32\x13.service.EventClass\"\x1d\n\rExportRequest\x12\x0c\n\x04wait\x18\x01 \x01(\x08\"!\n\x0e\x45xportResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\x99\x05\n\x0e\x43ontrolService\x12\x32\n\x03Log\x12\x13.service.LogMessage\x1a\x14.service.LogResponse\"\x00\x12\x35\n\x04Quit\x12\x14.service.QuitMessage\x1a\x15.service.QuitResponse\"\x00\x12J\n\x0bSwitchPhase\x12\x1b.service.SwitchPhaseMessage\x1a\x1c.service.SwitchPhaseResponse\"\x00\x12@\n\x0eGetPackageNode\x12\x14.service.PackageNode\x1a\x14.service.PackageNode\"\x00\x30\x01\x12@\n\x11GetPackageTargets\x12\x14.service.PackageNode\x1a\x11.service.FileNode\"\x00\x30\x01\x12\x41\n\x0bGetFileNode\x12\x1b.service.GetFileNodeMessage\x1a\x11.service.FileNode\"\x00\x30\x01\x12I\n\x11GetDiagnosticNode\x12\x17.service.DiagnosticNode\x1a\x17.service.DiagnosticNode\"\x00\x30\x01\x12;\n\x06Status\x12\x16.service.StatusMessage\x1a\x17.service.StatusResponse\"\x00\x12<\n\x0fSubscribeEvents\x12\x15.service.EventMessage\x1a\x0e.service.Event\"\x00\x30\x01\x12\x43\n\x0e\x45xportSnapshot\x12\x16.service.ExportRequest\x1a\x17.service.ExportResponse\"\x00\x42\x18\n\x16org.qmstr.grpc.serviceX\x00\x62\x06proto3')
   ,
   dependencies=[datamodel__pb2.DESCRIPTOR,])
 
@@ -204,6 +204,13 @@ _SWITCHPHASERESPONSE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='masterConfig', full_name='service.SwitchPhaseResponse.masterConfig', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -217,7 +224,7 @@ _SWITCHPHASERESPONSE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=224,
-  serialized_end=277,
+  serialized_end=299,
 )
 
 
@@ -254,8 +261,8 @@ _GETFILENODEMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=279,
-  serialized_end=356,
+  serialized_start=301,
+  serialized_end=378,
 )
 
 
@@ -292,8 +299,8 @@ _STATUSMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=358,
-  serialized_end=404,
+  serialized_start=380,
+  serialized_end=426,
 )
 
 
@@ -351,8 +358,8 @@ _STATUSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=406,
-  serialized_end=528,
+  serialized_start=428,
+  serialized_end=550,
 )
 
 
@@ -382,8 +389,8 @@ _EVENTMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=530,
-  serialized_end=580,
+  serialized_start=552,
+  serialized_end=602,
 )
 
 
@@ -413,8 +420,8 @@ _EXPORTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=582,
-  serialized_end=611,
+  serialized_start=604,
+  serialized_end=633,
 )
 
 
@@ -444,8 +451,8 @@ _EXPORTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=613,
-  serialized_end=646,
+  serialized_start=635,
+  serialized_end=668,
 )
 
 _SWITCHPHASEMESSAGE.fields_by_name['phase'].enum_type = datamodel__pb2._PHASE
@@ -559,8 +566,8 @@ _CONTROLSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=649,
-  serialized_end=1314,
+  serialized_start=671,
+  serialized_end=1336,
   methods=[
   _descriptor.MethodDescriptor(
     name='Log',

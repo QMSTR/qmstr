@@ -1,11 +1,14 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
 	"golang.org/x/net/context"
 
+	"github.com/QMSTR/qmstr/lib/go-qmstr/config"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	"github.com/spf13/cobra"
 )
@@ -43,11 +46,19 @@ func startPhase(phase service.Phase) {
 	if verbose {
 		go printEvents()
 	}
+	// switch master server phase
 	resp, err := controlServiceClient.SwitchPhase(context.Background(), &service.SwitchPhaseMessage{Phase: phase})
 	if err != nil {
 		fmt.Printf("Failed to communicate with qmstr-master server. %v\n", err)
 		os.Exit(ReturnCodeServerCommunicationError)
 	}
+	// export master config from the server
+	var config config.MasterConfig
+	err = json.Unmarshal([]byte(resp.MasterConfig), &config)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	if !resp.Success {
 		fmt.Printf("Server reported failure:\n%s\n", resp.Error)
 		os.Exit(ReturnCodeResponseFalseError)
