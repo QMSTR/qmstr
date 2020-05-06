@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # install runtime deps
 RUN apt-get update && apt-get install -y \
-    software-properties-common curl autoconf git apt-utils libgit2-dev libio-captureoutput-perl python3.6 python-pip python3-pip python3-distutils python-dev xz-utils zlib1g libxml2-dev  libxslt1-dev bzip2 protobuf-compiler icu-devtools libicu-dev && \
+    software-properties-common curl autoconf git apt-utils libgit2-dev libio-captureoutput-perl python3.6 python-pip python3-pip python3-distutils protobuf-compiler icu-devtools libicu-dev && \
     rm -rf /var/lib/apt/lists/*
 
 ARG HUGO_VERSION
