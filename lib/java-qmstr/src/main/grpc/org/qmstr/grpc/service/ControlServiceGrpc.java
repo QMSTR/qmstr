@@ -123,6 +123,70 @@ public final class ControlServiceGrpc {
      return getSwitchPhaseMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.InitModuleRequest,
+      org.qmstr.grpc.service.Controlservice.InitModuleResponse> getInitModuleMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "InitModule",
+      requestType = org.qmstr.grpc.service.Controlservice.InitModuleRequest.class,
+      responseType = org.qmstr.grpc.service.Controlservice.InitModuleResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.InitModuleRequest,
+      org.qmstr.grpc.service.Controlservice.InitModuleResponse> getInitModuleMethod() {
+    io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.InitModuleRequest, org.qmstr.grpc.service.Controlservice.InitModuleResponse> getInitModuleMethod;
+    if ((getInitModuleMethod = ControlServiceGrpc.getInitModuleMethod) == null) {
+      synchronized (ControlServiceGrpc.class) {
+        if ((getInitModuleMethod = ControlServiceGrpc.getInitModuleMethod) == null) {
+          ControlServiceGrpc.getInitModuleMethod = getInitModuleMethod = 
+              io.grpc.MethodDescriptor.<org.qmstr.grpc.service.Controlservice.InitModuleRequest, org.qmstr.grpc.service.Controlservice.InitModuleResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "service.ControlService", "InitModule"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.qmstr.grpc.service.Controlservice.InitModuleRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.qmstr.grpc.service.Controlservice.InitModuleResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new ControlServiceMethodDescriptorSupplier("InitModule"))
+                  .build();
+          }
+        }
+     }
+     return getInitModuleMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest,
+      org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse> getShutdownModuleMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ShutdownModule",
+      requestType = org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest.class,
+      responseType = org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest,
+      org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse> getShutdownModuleMethod() {
+    io.grpc.MethodDescriptor<org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest, org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse> getShutdownModuleMethod;
+    if ((getShutdownModuleMethod = ControlServiceGrpc.getShutdownModuleMethod) == null) {
+      synchronized (ControlServiceGrpc.class) {
+        if ((getShutdownModuleMethod = ControlServiceGrpc.getShutdownModuleMethod) == null) {
+          ControlServiceGrpc.getShutdownModuleMethod = getShutdownModuleMethod = 
+              io.grpc.MethodDescriptor.<org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest, org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "service.ControlService", "ShutdownModule"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new ControlServiceMethodDescriptorSupplier("ShutdownModule"))
+                  .build();
+          }
+        }
+     }
+     return getShutdownModuleMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<org.qmstr.grpc.service.Datamodel.PackageNode,
       org.qmstr.grpc.service.Datamodel.PackageNode> getGetPackageNodeMethod;
 
@@ -397,6 +461,20 @@ public final class ControlServiceGrpc {
 
     /**
      */
+    public void initModule(org.qmstr.grpc.service.Controlservice.InitModuleRequest request,
+        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Controlservice.InitModuleResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getInitModuleMethod(), responseObserver);
+    }
+
+    /**
+     */
+    public void shutdownModule(org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest request,
+        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getShutdownModuleMethod(), responseObserver);
+    }
+
+    /**
+     */
     public void getPackageNode(org.qmstr.grpc.service.Datamodel.PackageNode request,
         io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Datamodel.PackageNode> responseObserver) {
       asyncUnimplementedUnaryCall(getGetPackageNodeMethod(), responseObserver);
@@ -467,6 +545,20 @@ public final class ControlServiceGrpc {
                 org.qmstr.grpc.service.Controlservice.SwitchPhaseMessage,
                 org.qmstr.grpc.service.Controlservice.SwitchPhaseResponse>(
                   this, METHODID_SWITCH_PHASE)))
+          .addMethod(
+            getInitModuleMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.qmstr.grpc.service.Controlservice.InitModuleRequest,
+                org.qmstr.grpc.service.Controlservice.InitModuleResponse>(
+                  this, METHODID_INIT_MODULE)))
+          .addMethod(
+            getShutdownModuleMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest,
+                org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse>(
+                  this, METHODID_SHUTDOWN_MODULE)))
           .addMethod(
             getGetPackageNodeMethod(),
             asyncServerStreamingCall(
@@ -564,6 +656,22 @@ public final class ControlServiceGrpc {
 
     /**
      */
+    public void initModule(org.qmstr.grpc.service.Controlservice.InitModuleRequest request,
+        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Controlservice.InitModuleResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getInitModuleMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void shutdownModule(org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest request,
+        io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getShutdownModuleMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
     public void getPackageNode(org.qmstr.grpc.service.Datamodel.PackageNode request,
         io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Datamodel.PackageNode> responseObserver) {
       asyncServerStreamingCall(
@@ -656,6 +764,20 @@ public final class ControlServiceGrpc {
     public org.qmstr.grpc.service.Controlservice.SwitchPhaseResponse switchPhase(org.qmstr.grpc.service.Controlservice.SwitchPhaseMessage request) {
       return blockingUnaryCall(
           getChannel(), getSwitchPhaseMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public org.qmstr.grpc.service.Controlservice.InitModuleResponse initModule(org.qmstr.grpc.service.Controlservice.InitModuleRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getInitModuleMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse shutdownModule(org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getShutdownModuleMethod(), getCallOptions(), request);
     }
 
     /**
@@ -757,6 +879,22 @@ public final class ControlServiceGrpc {
 
     /**
      */
+    public com.google.common.util.concurrent.ListenableFuture<org.qmstr.grpc.service.Controlservice.InitModuleResponse> initModule(
+        org.qmstr.grpc.service.Controlservice.InitModuleRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getInitModuleMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse> shutdownModule(
+        org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getShutdownModuleMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
     public com.google.common.util.concurrent.ListenableFuture<org.qmstr.grpc.service.Controlservice.StatusResponse> status(
         org.qmstr.grpc.service.Controlservice.StatusMessage request) {
       return futureUnaryCall(
@@ -775,13 +913,15 @@ public final class ControlServiceGrpc {
   private static final int METHODID_LOG = 0;
   private static final int METHODID_QUIT = 1;
   private static final int METHODID_SWITCH_PHASE = 2;
-  private static final int METHODID_GET_PACKAGE_NODE = 3;
-  private static final int METHODID_GET_PACKAGE_TARGETS = 4;
-  private static final int METHODID_GET_FILE_NODE = 5;
-  private static final int METHODID_GET_DIAGNOSTIC_NODE = 6;
-  private static final int METHODID_STATUS = 7;
-  private static final int METHODID_SUBSCRIBE_EVENTS = 8;
-  private static final int METHODID_EXPORT_SNAPSHOT = 9;
+  private static final int METHODID_INIT_MODULE = 3;
+  private static final int METHODID_SHUTDOWN_MODULE = 4;
+  private static final int METHODID_GET_PACKAGE_NODE = 5;
+  private static final int METHODID_GET_PACKAGE_TARGETS = 6;
+  private static final int METHODID_GET_FILE_NODE = 7;
+  private static final int METHODID_GET_DIAGNOSTIC_NODE = 8;
+  private static final int METHODID_STATUS = 9;
+  private static final int METHODID_SUBSCRIBE_EVENTS = 10;
+  private static final int METHODID_EXPORT_SNAPSHOT = 11;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -811,6 +951,14 @@ public final class ControlServiceGrpc {
         case METHODID_SWITCH_PHASE:
           serviceImpl.switchPhase((org.qmstr.grpc.service.Controlservice.SwitchPhaseMessage) request,
               (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Controlservice.SwitchPhaseResponse>) responseObserver);
+          break;
+        case METHODID_INIT_MODULE:
+          serviceImpl.initModule((org.qmstr.grpc.service.Controlservice.InitModuleRequest) request,
+              (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Controlservice.InitModuleResponse>) responseObserver);
+          break;
+        case METHODID_SHUTDOWN_MODULE:
+          serviceImpl.shutdownModule((org.qmstr.grpc.service.Controlservice.ShutdownModuleRequest) request,
+              (io.grpc.stub.StreamObserver<org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse>) responseObserver);
           break;
         case METHODID_GET_PACKAGE_NODE:
           serviceImpl.getPackageNode((org.qmstr.grpc.service.Datamodel.PackageNode) request,
@@ -904,6 +1052,8 @@ public final class ControlServiceGrpc {
               .addMethod(getLogMethod())
               .addMethod(getQuitMethod())
               .addMethod(getSwitchPhaseMethod())
+              .addMethod(getInitModuleMethod())
+              .addMethod(getShutdownModuleMethod())
               .addMethod(getGetPackageNodeMethod())
               .addMethod(getGetPackageTargetsMethod())
               .addMethod(getGetFileNodeMethod())
