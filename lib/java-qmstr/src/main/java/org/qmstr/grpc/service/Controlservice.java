@@ -7047,23 +7047,23 @@ public final class Controlservice {
 
   }
 
-  public interface InitModuleResponseOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:service.InitModuleResponse)
+  public interface RequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:service.Request)
       com.google.protobuf.MessageOrBuilder {
   }
   /**
-   * Protobuf type {@code service.InitModuleResponse}
+   * Protobuf type {@code service.Request}
    */
-  public  static final class InitModuleResponse extends
+  public  static final class Request extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:service.InitModuleResponse)
-      InitModuleResponseOrBuilder {
+      // @@protoc_insertion_point(message_implements:service.Request)
+      RequestOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use InitModuleResponse.newBuilder() to construct.
-    private InitModuleResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use Request.newBuilder() to construct.
+    private Request(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private InitModuleResponse() {
+    private Request() {
     }
 
     @java.lang.Override
@@ -7071,7 +7071,7 @@ public final class Controlservice {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private InitModuleResponse(
+    private Request(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -7110,14 +7110,14 @@ public final class Controlservice {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.qmstr.grpc.service.Controlservice.internal_static_service_InitModuleResponse_descriptor;
+      return org.qmstr.grpc.service.Controlservice.internal_static_service_Request_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.qmstr.grpc.service.Controlservice.internal_static_service_InitModuleResponse_fieldAccessorTable
+      return org.qmstr.grpc.service.Controlservice.internal_static_service_Request_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.qmstr.grpc.service.Controlservice.InitModuleResponse.class, org.qmstr.grpc.service.Controlservice.InitModuleResponse.Builder.class);
+              org.qmstr.grpc.service.Controlservice.Request.class, org.qmstr.grpc.service.Controlservice.Request.Builder.class);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -7150,10 +7150,10 @@ public final class Controlservice {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.qmstr.grpc.service.Controlservice.InitModuleResponse)) {
+      if (!(obj instanceof org.qmstr.grpc.service.Controlservice.Request)) {
         return super.equals(obj);
       }
-      org.qmstr.grpc.service.Controlservice.InitModuleResponse other = (org.qmstr.grpc.service.Controlservice.InitModuleResponse) obj;
+      org.qmstr.grpc.service.Controlservice.Request other = (org.qmstr.grpc.service.Controlservice.Request) obj;
 
       boolean result = true;
       result = result && unknownFields.equals(other.unknownFields);
@@ -7172,69 +7172,69 @@ public final class Controlservice {
       return hash;
     }
 
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.Request parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.Request parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.Request parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.Request parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseFrom(byte[] data)
+    public static org.qmstr.grpc.service.Controlservice.Request parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.Request parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseFrom(java.io.InputStream input)
+    public static org.qmstr.grpc.service.Controlservice.Request parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.Request parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseDelimitedFrom(java.io.InputStream input)
+    public static org.qmstr.grpc.service.Controlservice.Request parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseDelimitedFrom(
+    public static org.qmstr.grpc.service.Controlservice.Request parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.Request parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse parseFrom(
+    public static org.qmstr.grpc.service.Controlservice.Request parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -7246,7 +7246,7 @@ public final class Controlservice {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.qmstr.grpc.service.Controlservice.InitModuleResponse prototype) {
+    public static Builder newBuilder(org.qmstr.grpc.service.Controlservice.Request prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -7261,25 +7261,25 @@ public final class Controlservice {
       return builder;
     }
     /**
-     * Protobuf type {@code service.InitModuleResponse}
+     * Protobuf type {@code service.Request}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:service.InitModuleResponse)
-        org.qmstr.grpc.service.Controlservice.InitModuleResponseOrBuilder {
+        // @@protoc_insertion_point(builder_implements:service.Request)
+        org.qmstr.grpc.service.Controlservice.RequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.qmstr.grpc.service.Controlservice.internal_static_service_InitModuleResponse_descriptor;
+        return org.qmstr.grpc.service.Controlservice.internal_static_service_Request_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.qmstr.grpc.service.Controlservice.internal_static_service_InitModuleResponse_fieldAccessorTable
+        return org.qmstr.grpc.service.Controlservice.internal_static_service_Request_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.qmstr.grpc.service.Controlservice.InitModuleResponse.class, org.qmstr.grpc.service.Controlservice.InitModuleResponse.Builder.class);
+                org.qmstr.grpc.service.Controlservice.Request.class, org.qmstr.grpc.service.Controlservice.Request.Builder.class);
       }
 
-      // Construct using org.qmstr.grpc.service.Controlservice.InitModuleResponse.newBuilder()
+      // Construct using org.qmstr.grpc.service.Controlservice.Request.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -7301,23 +7301,23 @@ public final class Controlservice {
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.qmstr.grpc.service.Controlservice.internal_static_service_InitModuleResponse_descriptor;
+        return org.qmstr.grpc.service.Controlservice.internal_static_service_Request_descriptor;
       }
 
-      public org.qmstr.grpc.service.Controlservice.InitModuleResponse getDefaultInstanceForType() {
-        return org.qmstr.grpc.service.Controlservice.InitModuleResponse.getDefaultInstance();
+      public org.qmstr.grpc.service.Controlservice.Request getDefaultInstanceForType() {
+        return org.qmstr.grpc.service.Controlservice.Request.getDefaultInstance();
       }
 
-      public org.qmstr.grpc.service.Controlservice.InitModuleResponse build() {
-        org.qmstr.grpc.service.Controlservice.InitModuleResponse result = buildPartial();
+      public org.qmstr.grpc.service.Controlservice.Request build() {
+        org.qmstr.grpc.service.Controlservice.Request result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.qmstr.grpc.service.Controlservice.InitModuleResponse buildPartial() {
-        org.qmstr.grpc.service.Controlservice.InitModuleResponse result = new org.qmstr.grpc.service.Controlservice.InitModuleResponse(this);
+      public org.qmstr.grpc.service.Controlservice.Request buildPartial() {
+        org.qmstr.grpc.service.Controlservice.Request result = new org.qmstr.grpc.service.Controlservice.Request(this);
         onBuilt();
         return result;
       }
@@ -7349,16 +7349,16 @@ public final class Controlservice {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.qmstr.grpc.service.Controlservice.InitModuleResponse) {
-          return mergeFrom((org.qmstr.grpc.service.Controlservice.InitModuleResponse)other);
+        if (other instanceof org.qmstr.grpc.service.Controlservice.Request) {
+          return mergeFrom((org.qmstr.grpc.service.Controlservice.Request)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.qmstr.grpc.service.Controlservice.InitModuleResponse other) {
-        if (other == org.qmstr.grpc.service.Controlservice.InitModuleResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.qmstr.grpc.service.Controlservice.Request other) {
+        if (other == org.qmstr.grpc.service.Controlservice.Request.getDefaultInstance()) return this;
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -7372,11 +7372,11 @@ public final class Controlservice {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.qmstr.grpc.service.Controlservice.InitModuleResponse parsedMessage = null;
+        org.qmstr.grpc.service.Controlservice.Request parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.qmstr.grpc.service.Controlservice.InitModuleResponse) e.getUnfinishedMessage();
+          parsedMessage = (org.qmstr.grpc.service.Controlservice.Request) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -7396,39 +7396,426 @@ public final class Controlservice {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:service.InitModuleResponse)
+      // @@protoc_insertion_point(builder_scope:service.Request)
     }
 
-    // @@protoc_insertion_point(class_scope:service.InitModuleResponse)
-    private static final org.qmstr.grpc.service.Controlservice.InitModuleResponse DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:service.Request)
+    private static final org.qmstr.grpc.service.Controlservice.Request DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.qmstr.grpc.service.Controlservice.InitModuleResponse();
+      DEFAULT_INSTANCE = new org.qmstr.grpc.service.Controlservice.Request();
     }
 
-    public static org.qmstr.grpc.service.Controlservice.InitModuleResponse getDefaultInstance() {
+    public static org.qmstr.grpc.service.Controlservice.Request getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<InitModuleResponse>
-        PARSER = new com.google.protobuf.AbstractParser<InitModuleResponse>() {
-      public InitModuleResponse parsePartialFrom(
+    private static final com.google.protobuf.Parser<Request>
+        PARSER = new com.google.protobuf.AbstractParser<Request>() {
+      public Request parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new InitModuleResponse(input, extensionRegistry);
+        return new Request(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<InitModuleResponse> parser() {
+    public static com.google.protobuf.Parser<Request> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<InitModuleResponse> getParserForType() {
+    public com.google.protobuf.Parser<Request> getParserForType() {
       return PARSER;
     }
 
-    public org.qmstr.grpc.service.Controlservice.InitModuleResponse getDefaultInstanceForType() {
+    public org.qmstr.grpc.service.Controlservice.Request getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:service.Response)
+      com.google.protobuf.MessageOrBuilder {
+  }
+  /**
+   * Protobuf type {@code service.Response}
+   */
+  public  static final class Response extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:service.Response)
+      ResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use Response.newBuilder() to construct.
+    private Response(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private Response() {
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Response(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.qmstr.grpc.service.Controlservice.internal_static_service_Response_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.qmstr.grpc.service.Controlservice.internal_static_service_Response_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.qmstr.grpc.service.Controlservice.Response.class, org.qmstr.grpc.service.Controlservice.Response.Builder.class);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.qmstr.grpc.service.Controlservice.Response)) {
+        return super.equals(obj);
+      }
+      org.qmstr.grpc.service.Controlservice.Response other = (org.qmstr.grpc.service.Controlservice.Response) obj;
+
+      boolean result = true;
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static org.qmstr.grpc.service.Controlservice.Response parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qmstr.grpc.service.Controlservice.Response parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Controlservice.Response parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qmstr.grpc.service.Controlservice.Response parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Controlservice.Response parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qmstr.grpc.service.Controlservice.Response parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Controlservice.Response parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.qmstr.grpc.service.Controlservice.Response parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Controlservice.Response parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static org.qmstr.grpc.service.Controlservice.Response parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static org.qmstr.grpc.service.Controlservice.Response parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static org.qmstr.grpc.service.Controlservice.Response parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(org.qmstr.grpc.service.Controlservice.Response prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code service.Response}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:service.Response)
+        org.qmstr.grpc.service.Controlservice.ResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.qmstr.grpc.service.Controlservice.internal_static_service_Response_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.qmstr.grpc.service.Controlservice.internal_static_service_Response_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.qmstr.grpc.service.Controlservice.Response.class, org.qmstr.grpc.service.Controlservice.Response.Builder.class);
+      }
+
+      // Construct using org.qmstr.grpc.service.Controlservice.Response.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.qmstr.grpc.service.Controlservice.internal_static_service_Response_descriptor;
+      }
+
+      public org.qmstr.grpc.service.Controlservice.Response getDefaultInstanceForType() {
+        return org.qmstr.grpc.service.Controlservice.Response.getDefaultInstance();
+      }
+
+      public org.qmstr.grpc.service.Controlservice.Response build() {
+        org.qmstr.grpc.service.Controlservice.Response result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.qmstr.grpc.service.Controlservice.Response buildPartial() {
+        org.qmstr.grpc.service.Controlservice.Response result = new org.qmstr.grpc.service.Controlservice.Response(this);
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.qmstr.grpc.service.Controlservice.Response) {
+          return mergeFrom((org.qmstr.grpc.service.Controlservice.Response)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.qmstr.grpc.service.Controlservice.Response other) {
+        if (other == org.qmstr.grpc.service.Controlservice.Response.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.qmstr.grpc.service.Controlservice.Response parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.qmstr.grpc.service.Controlservice.Response) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:service.Response)
+    }
+
+    // @@protoc_insertion_point(class_scope:service.Response)
+    private static final org.qmstr.grpc.service.Controlservice.Response DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new org.qmstr.grpc.service.Controlservice.Response();
+    }
+
+    public static org.qmstr.grpc.service.Controlservice.Response getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Response>
+        PARSER = new com.google.protobuf.AbstractParser<Response>() {
+      public Response parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Response(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Response> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Response> getParserForType() {
+      return PARSER;
+    }
+
+    public org.qmstr.grpc.service.Controlservice.Response getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -8023,393 +8410,6 @@ public final class Controlservice {
 
   }
 
-  public interface ShutdownModuleResponseOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:service.ShutdownModuleResponse)
-      com.google.protobuf.MessageOrBuilder {
-  }
-  /**
-   * Protobuf type {@code service.ShutdownModuleResponse}
-   */
-  public  static final class ShutdownModuleResponse extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:service.ShutdownModuleResponse)
-      ShutdownModuleResponseOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use ShutdownModuleResponse.newBuilder() to construct.
-    private ShutdownModuleResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private ShutdownModuleResponse() {
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private ShutdownModuleResponse(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!parseUnknownFieldProto3(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return org.qmstr.grpc.service.Controlservice.internal_static_service_ShutdownModuleResponse_descriptor;
-    }
-
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return org.qmstr.grpc.service.Controlservice.internal_static_service_ShutdownModuleResponse_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse.class, org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse.Builder.class);
-    }
-
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      unknownFields.writeTo(output);
-    }
-
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse)) {
-        return super.equals(obj);
-      }
-      org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse other = (org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse) obj;
-
-      boolean result = true;
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code service.ShutdownModuleResponse}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:service.ShutdownModuleResponse)
-        org.qmstr.grpc.service.Controlservice.ShutdownModuleResponseOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.qmstr.grpc.service.Controlservice.internal_static_service_ShutdownModuleResponse_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.qmstr.grpc.service.Controlservice.internal_static_service_ShutdownModuleResponse_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse.class, org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse.Builder.class);
-      }
-
-      // Construct using org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
-      }
-      public Builder clear() {
-        super.clear();
-        return this;
-      }
-
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return org.qmstr.grpc.service.Controlservice.internal_static_service_ShutdownModuleResponse_descriptor;
-      }
-
-      public org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse getDefaultInstanceForType() {
-        return org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse.getDefaultInstance();
-      }
-
-      public org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse build() {
-        org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse buildPartial() {
-        org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse result = new org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse(this);
-        onBuilt();
-        return result;
-      }
-
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse) {
-          return mergeFrom((org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse other) {
-        if (other == org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse.getDefaultInstance()) return this;
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFieldsProto3(unknownFields);
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:service.ShutdownModuleResponse)
-    }
-
-    // @@protoc_insertion_point(class_scope:service.ShutdownModuleResponse)
-    private static final org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse();
-    }
-
-    public static org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<ShutdownModuleResponse>
-        PARSER = new com.google.protobuf.AbstractParser<ShutdownModuleResponse>() {
-      public ShutdownModuleResponse parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new ShutdownModuleResponse(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<ShutdownModuleResponse> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<ShutdownModuleResponse> getParserForType() {
-      return PARSER;
-    }
-
-    public org.qmstr.grpc.service.Controlservice.ShutdownModuleResponse getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_service_LogMessage_descriptor;
   private static final 
@@ -8476,20 +8476,20 @@ public final class Controlservice {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_service_InitModuleRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_service_InitModuleResponse_descriptor;
+    internal_static_service_Request_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_service_InitModuleResponse_fieldAccessorTable;
+      internal_static_service_Request_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_service_Response_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_service_Response_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_service_ShutdownModuleRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_service_ShutdownModuleRequest_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_service_ShutdownModuleResponse_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_service_ShutdownModuleResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -8517,31 +8517,31 @@ public final class Controlservice {
       "ss\"\035\n\rExportRequest\022\014\n\004wait\030\001 \001(\010\"!\n\016Exp" +
       "ortResponse\022\017\n\007success\030\001 \001(\010\"<\n\021InitModu" +
       "leRequest\022\022\n\nmoduleName\030\001 \001(\t\022\023\n\013extraCo" +
-      "nfig\030\002 \001(\003\"\024\n\022InitModuleResponse\"4\n\025Shut" +
-      "downModuleRequest\022\017\n\007message\030\001 \001(\t\022\n\n\002dB" +
-      "\030\002 \001(\010\"\030\n\026ShutdownModuleResponse2\267\006\n\016Con" +
-      "trolService\0222\n\003Log\022\023.service.LogMessage\032" +
-      "\024.service.LogResponse\"\000\0225\n\004Quit\022\024.servic" +
-      "e.QuitMessage\032\025.service.QuitResponse\"\000\022J" +
-      "\n\013SwitchPhase\022\033.service.SwitchPhaseMessa" +
-      "ge\032\034.service.SwitchPhaseResponse\"\000\022G\n\nIn" +
-      "itModule\022\032.service.InitModuleRequest\032\033.s" +
-      "ervice.InitModuleResponse\"\000\022S\n\016ShutdownM" +
-      "odule\022\036.service.ShutdownModuleRequest\032\037." +
-      "service.ShutdownModuleResponse\"\000\022@\n\016GetP" +
-      "ackageNode\022\024.service.PackageNode\032\024.servi" +
-      "ce.PackageNode\"\0000\001\022@\n\021GetPackageTargets\022" +
-      "\024.service.PackageNode\032\021.service.FileNode" +
-      "\"\0000\001\022A\n\013GetFileNode\022\033.service.GetFileNod" +
-      "eMessage\032\021.service.FileNode\"\0000\001\022I\n\021GetDi" +
-      "agnosticNode\022\027.service.DiagnosticNode\032\027." +
-      "service.DiagnosticNode\"\0000\001\022;\n\006Status\022\026.s" +
-      "ervice.StatusMessage\032\027.service.StatusRes" +
-      "ponse\"\000\022<\n\017SubscribeEvents\022\025.service.Eve" +
-      "ntMessage\032\016.service.Event\"\0000\001\022C\n\016ExportS" +
-      "napshot\022\026.service.ExportRequest\032\027.servic" +
-      "e.ExportResponse\"\000B\030\n\026org.qmstr.grpc.ser" +
-      "viceX\000b\006proto3"
+      "nfig\030\002 \001(\003\"\t\n\007Request\"\n\n\010Response\"4\n\025Shu" +
+      "tdownModuleRequest\022\017\n\007message\030\001 \001(\t\022\n\n\002d" +
+      "B\030\002 \001(\0102\324\006\n\016ControlService\0222\n\003Log\022\023.serv" +
+      "ice.LogMessage\032\024.service.LogResponse\"\000\0225" +
+      "\n\004Quit\022\024.service.QuitMessage\032\025.service.Q" +
+      "uitResponse\"\000\022J\n\013SwitchPhase\022\033.service.S" +
+      "witchPhaseMessage\032\034.service.SwitchPhaseR" +
+      "esponse\"\000\022=\n\nInitModule\022\032.service.InitMo" +
+      "duleRequest\032\021.service.Response\"\000\022E\n\016Shut" +
+      "downModule\022\036.service.ShutdownModuleReque" +
+      "st\032\021.service.Response\"\000\0223\n\nClosePhase\022\020." +
+      "service.Request\032\021.service.Response\"\000\022@\n\016" +
+      "GetPackageNode\022\024.service.PackageNode\032\024.s" +
+      "ervice.PackageNode\"\0000\001\022@\n\021GetPackageTarg" +
+      "ets\022\024.service.PackageNode\032\021.service.File" +
+      "Node\"\0000\001\022A\n\013GetFileNode\022\033.service.GetFil" +
+      "eNodeMessage\032\021.service.FileNode\"\0000\001\022I\n\021G" +
+      "etDiagnosticNode\022\027.service.DiagnosticNod" +
+      "e\032\027.service.DiagnosticNode\"\0000\001\022;\n\006Status" +
+      "\022\026.service.StatusMessage\032\027.service.Statu" +
+      "sResponse\"\000\022<\n\017SubscribeEvents\022\025.service" +
+      ".EventMessage\032\016.service.Event\"\0000\001\022C\n\016Exp" +
+      "ortSnapshot\022\026.service.ExportRequest\032\027.se" +
+      "rvice.ExportResponse\"\000B\030\n\026org.qmstr.grpc" +
+      ".serviceX\000b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -8634,24 +8634,24 @@ public final class Controlservice {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_InitModuleRequest_descriptor,
         new java.lang.String[] { "ModuleName", "ExtraConfig", });
-    internal_static_service_InitModuleResponse_descriptor =
+    internal_static_service_Request_descriptor =
       getDescriptor().getMessageTypes().get(13);
-    internal_static_service_InitModuleResponse_fieldAccessorTable = new
+    internal_static_service_Request_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_service_InitModuleResponse_descriptor,
+        internal_static_service_Request_descriptor,
+        new java.lang.String[] { });
+    internal_static_service_Response_descriptor =
+      getDescriptor().getMessageTypes().get(14);
+    internal_static_service_Response_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_service_Response_descriptor,
         new java.lang.String[] { });
     internal_static_service_ShutdownModuleRequest_descriptor =
-      getDescriptor().getMessageTypes().get(14);
+      getDescriptor().getMessageTypes().get(15);
     internal_static_service_ShutdownModuleRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_ShutdownModuleRequest_descriptor,
         new java.lang.String[] { "Message", "DB", });
-    internal_static_service_ShutdownModuleResponse_descriptor =
-      getDescriptor().getMessageTypes().get(15);
-    internal_static_service_ShutdownModuleResponse_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_service_ShutdownModuleResponse_descriptor,
-        new java.lang.String[] { });
     org.qmstr.grpc.service.Datamodel.getDescriptor();
   }
 

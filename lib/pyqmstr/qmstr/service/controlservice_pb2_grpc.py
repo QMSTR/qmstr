@@ -33,12 +33,17 @@ class ControlServiceStub(object):
     self.InitModule = channel.unary_unary(
         '/service.ControlService/InitModule',
         request_serializer=controlservice__pb2.InitModuleRequest.SerializeToString,
-        response_deserializer=controlservice__pb2.InitModuleResponse.FromString,
+        response_deserializer=controlservice__pb2.Response.FromString,
         )
     self.ShutdownModule = channel.unary_unary(
         '/service.ControlService/ShutdownModule',
         request_serializer=controlservice__pb2.ShutdownModuleRequest.SerializeToString,
-        response_deserializer=controlservice__pb2.ShutdownModuleResponse.FromString,
+        response_deserializer=controlservice__pb2.Response.FromString,
+        )
+    self.ClosePhase = channel.unary_unary(
+        '/service.ControlService/ClosePhase',
+        request_serializer=controlservice__pb2.Request.SerializeToString,
+        response_deserializer=controlservice__pb2.Response.FromString,
         )
     self.GetPackageNode = channel.unary_stream(
         '/service.ControlService/GetPackageNode',
@@ -116,6 +121,13 @@ class ControlServiceServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def ClosePhase(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
   def GetPackageNode(self, request, context):
     # missing associated documentation comment in .proto file
     pass
@@ -186,12 +198,17 @@ def add_ControlServiceServicer_to_server(servicer, server):
       'InitModule': grpc.unary_unary_rpc_method_handler(
           servicer.InitModule,
           request_deserializer=controlservice__pb2.InitModuleRequest.FromString,
-          response_serializer=controlservice__pb2.InitModuleResponse.SerializeToString,
+          response_serializer=controlservice__pb2.Response.SerializeToString,
       ),
       'ShutdownModule': grpc.unary_unary_rpc_method_handler(
           servicer.ShutdownModule,
           request_deserializer=controlservice__pb2.ShutdownModuleRequest.FromString,
-          response_serializer=controlservice__pb2.ShutdownModuleResponse.SerializeToString,
+          response_serializer=controlservice__pb2.Response.SerializeToString,
+      ),
+      'ClosePhase': grpc.unary_unary_rpc_method_handler(
+          servicer.ClosePhase,
+          request_deserializer=controlservice__pb2.Request.FromString,
+          response_serializer=controlservice__pb2.Response.SerializeToString,
       ),
       'GetPackageNode': grpc.unary_stream_rpc_method_handler(
           servicer.GetPackageNode,
