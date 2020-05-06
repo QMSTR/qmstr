@@ -1,10 +1,8 @@
 package master
 
 import (
-	"errors"
 	"fmt"
 	"log"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -26,23 +24,13 @@ func newReportPhase(masterConfig *config.MasterConfig, db *database.DataBase, se
 func (phase *serverPhaseReport) Activate() error {
 	log.Println("Reporting activated")
 	phase.server.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: "Activating reporting phase"})
-	for idx, reporterConfig := range phase.masterConfig.Reporting {
-		reporterName := reporterConfig.Reporter
-
-		log.Printf("Running reporter %s ...\n", reporterName)
-		phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Running reporter %s", reporterName)})
-		cmd := exec.Command(reporterName, "--rserv", phase.masterConfig.Server.RPCAddress, "--rid", fmt.Sprintf("%d", idx))
-		out, err := cmd.CombinedOutput()
-		if err != nil {
-			logModuleError(reporterName, out)
-			errMsg := fmt.Sprintf("Reporter %s failed: %v", reporterName, err)
-			phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: errMsg})
-			return errors.New(errMsg)
-		}
-		phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Reporter %s successfully finished", reporterName)})
-		log.Printf("Reporter %s finished successfully:\n%s\n", reporterName, out)
-	}
 	return nil
+}
+
+func (phase *serverPhaseReport) InitModule(in *service.InitModuleRequest) (*service.InitModuleResponse, error) {
+	log.Printf("Running reporter %s ...\n", in.ModuleName)
+	phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Running reporter %s", in.ModuleName)})
+	return &service.InitModuleResponse{}, nil
 }
 
 func (phase *serverPhaseReport) Shutdown() error {

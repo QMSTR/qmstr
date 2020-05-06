@@ -1,10 +1,14 @@
 package cli
 
 import (
+	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
+	"strings"
 
 	"golang.org/x/net/context"
 
@@ -20,7 +24,8 @@ var anaCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		setUpControlService()
-		startPhase(service.Phase_ANALYSIS)
+		masterConfig := startPhase(service.Phase_ANALYSIS)
+		startAnalyzerModules(masterConfig)
 		tearDownServer()
 	},
 }
@@ -32,7 +37,8 @@ var reportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		setUpControlService()
-		startPhase(service.Phase_REPORT)
+		masterConfig := startPhase(service.Phase_REPORT)
+		startReporterModules(masterConfig)
 		tearDownServer()
 	},
 }
@@ -42,7 +48,8 @@ func init() {
 	rootCmd.AddCommand(reportCmd)
 }
 
-func startPhase(phase service.Phase) {
+// start analysis/reporting phase and return the master config
+func startPhase(phase service.Phase) config.MasterConfig {
 	if verbose {
 		go printEvents()
 	}
@@ -63,4 +70,72 @@ func startPhase(phase service.Phase) {
 		fmt.Printf("Server reported failure:\n%s\n", resp.Error)
 		os.Exit(ReturnCodeResponseFalseError)
 	}
+	return config
+}
+
+// start the analyzer modules configured in the qmstr.yaml
+func startAnalyzerModules(masterConfig config.MasterConfig) {
+	//loop through the analyzers in master config
+	for idx, anaConfig := range masterConfig.Analysis {
+		analyzerName := anaConfig.Analyzer
+		// Initialize analyzer
+		_, err := controlServiceClient.InitModule(context.Background(), &service.InitModuleRequest{ModuleName: analyzerName, ExtraConfig: anaConfig.TrustLevel})
+		if err != nil {
+			fmt.Printf("Failed initializing module %s: %v\n", analyzerName, err)
+			os.Exit(ReturnCodeServerCommunicationError)
+		}
+
+		// Run analyzer module
+		cmd := exec.Command(analyzerName, "--aserv", masterConfig.Server.RPCAddress, "--aid", fmt.Sprintf("%d", idx))
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			logModuleError(analyzerName, out)
+			errMsg := fmt.Sprintf("Analyzer %s failed: %v", analyzerName, err)
+			controlServiceClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{Message: errMsg, DB: true})
+			os.Exit(ReturnCodeServerCommunicationError)
+		}
+		msg := fmt.Sprintf("Analyzer %s successfully finished", analyzerName)
+		if _, err := controlServiceClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{Message: msg, DB: true}); err != nil {
+			fmt.Printf("Failed shutting down the module %s: %v\n", analyzerName, err)
+			os.Exit(ReturnCodeServerCommunicationError)
+		}
+		log.Printf("Analyzer %s finished successfully:\n%s\n", analyzerName, out)
+	}
+}
+
+// start the reporter modules configured in the qmstr.yaml
+func startReporterModules(masterConfig config.MasterConfig) {
+	//loop through the reporters in master config
+	for idx, reporterConfig := range masterConfig.Reporting {
+		reporterName := reporterConfig.Reporter
+		// Initialize reporter
+		_, err := controlServiceClient.InitModule(context.Background(), &service.InitModuleRequest{ModuleName: reporterName})
+		if err != nil {
+			fmt.Printf("Failed initializing module %s: %v\n", reporterName, err)
+			os.Exit(ReturnCodeServerCommunicationError)
+		}
+
+		// Run reporter module
+		cmd := exec.Command(reporterName, "--rserv", masterConfig.Server.RPCAddress, "--rid", fmt.Sprintf("%d", idx))
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			logModuleError(reporterName, out)
+			errMsg := fmt.Sprintf("Reporter %s failed: %v", reporterName, err)
+			controlServiceClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{Message: errMsg, DB: false})
+			os.Exit(ReturnCodeServerCommunicationError)
+		}
+		msg := fmt.Sprintf("Reporter %s successfully finished", reporterName)
+		controlServiceClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{Message: msg, DB: false})
+		log.Printf("Reporter %s finished successfully:\n%s\n", reporterName, out)
+	}
+}
+
+func logModuleError(moduleName string, output []byte) {
+	var buffer bytes.Buffer
+	buffer.WriteString(fmt.Sprintf("%s failed with:\n", moduleName))
+	s := bufio.NewScanner(strings.NewReader(string(output)))
+	for s.Scan() {
+		buffer.WriteString(fmt.Sprintf("\t--> %s\n", s.Text()))
+	}
+	log.Println(buffer.String())
 }

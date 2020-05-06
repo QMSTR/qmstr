@@ -60,10 +60,29 @@ message ExportResponse {
   bool success = 1;
 }
 
+message InitModuleRequest {
+  string moduleName = 1;
+  int64 extraConfig = 2;
+}
+
+message InitModuleResponse {
+}
+
+message ShutdownModuleRequest {
+  string message = 1;
+  bool dB = 2;
+}
+
+message ShutdownModuleResponse {
+
+}
+
 service ControlService {
   rpc Log(LogMessage) returns (LogResponse) {}
   rpc Quit(QuitMessage) returns (QuitResponse) {}
   rpc SwitchPhase(SwitchPhaseMessage) returns (SwitchPhaseResponse) {}
+  rpc InitModule(InitModuleRequest) returns (InitModuleResponse) {}
+  rpc ShutdownModule(ShutdownModuleRequest) returns (ShutdownModuleResponse) {}
   rpc GetPackageNode(PackageNode) returns (stream PackageNode) {}
   rpc GetPackageTargets(PackageNode) returns (stream FileNode) {}
   rpc GetFileNode(GetFileNodeMessage) returns (stream FileNode) {}

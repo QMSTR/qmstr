@@ -21,6 +21,7 @@ type serverPhase interface {
 	getDone() bool
 	getName() string
 	Activate() error
+	InitModule(*service.InitModuleRequest) (*service.InitModuleResponse, error)
 	Shutdown() error
 	getDataBase() (*database.DataBase, error)
 	getError() string
@@ -121,6 +122,10 @@ func (gsp *genericServerPhase) GetReporterConfig(in *service.ReporterConfigReque
 }
 
 func (gsp *genericServerPhase) GetAnalyzerConfig(in *service.AnalyzerConfigRequest) (*service.AnalyzerConfigResponse, error) {
+	return nil, ErrWrongPhase
+}
+
+func (gsp *genericServerPhase) InitModule(in *service.InitModuleRequest) (*service.InitModuleResponse, error) {
 	return nil, ErrWrongPhase
 }
 

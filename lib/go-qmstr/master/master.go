@@ -1,14 +1,11 @@
 package master
 
 import (
-	"bufio"
-	"bytes"
 	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net"
-	"strings"
 	"sync"
 	"sync/atomic"
 
@@ -285,6 +282,26 @@ func (s *server) switchPhase(requestedPhase service.Phase, done bool) error {
 	return fmt.Errorf("Invalid phase requested %d", requestedPhase)
 }
 
+// Initialize analyzer/reporter module
+func (s *server) InitModule(ctx context.Context, in *service.InitModuleRequest) (*service.InitModuleResponse, error) {
+	return s.currentPhase.InitModule(in)
+}
+
+// Shutdown gracefully the analyzer/reporter module
+func (s *server) ShutdownModule(ctx context.Context, in *service.ShutdownModuleRequest) (*service.ShutdownModuleResponse, error) {
+	s.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: in.Message})
+	if in.DB == true {
+		db, err := s.currentPhase.getDataBase()
+		if err != nil {
+			// switch to failure phase
+			s.enterFailureServerPhase(err)
+			return nil, err
+		}
+		db.CloseInsertQueue()
+	}
+	return nil, nil
+}
+
 func (s *server) Log(ctx context.Context, in *service.LogMessage) (*service.LogResponse, error) {
 	log.Printf("REMOTE: %s", string(in.Msg))
 	return &service.LogResponse{Success: true}, nil
@@ -360,16 +377,6 @@ func InitAndRun(masterConfig *config.MasterConfig) (chan error, error) {
 	}()
 
 	return masterRun, nil
-}
-
-func logModuleError(moduleName string, output []byte) {
-	var buffer bytes.Buffer
-	buffer.WriteString(fmt.Sprintf("%s failed with:\n", moduleName))
-	s := bufio.NewScanner(strings.NewReader(string(output)))
-	for s.Scan() {
-		buffer.WriteString(fmt.Sprintf("\t--> %s\n", s.Text()))
-	}
-	log.Println(buffer.String())
 }
 
 func (s *server) persistPhase() error {

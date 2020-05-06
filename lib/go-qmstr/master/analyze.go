@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"math/rand"
-	"os/exec"
 	"path/filepath"
 	"time"
 
@@ -33,47 +32,30 @@ func newAnalysisPhase(masterConfig *config.MasterConfig, db *database.DataBase, 
 func (phase *serverPhaseAnalysis) Activate() error {
 	log.Println("Analysis activated")
 	phase.server.publishEvent(&service.Event{Class: service.EventClass_PHASE, Message: "Activating analysis phase"})
-	for idx, anaConfig := range phase.masterConfig.Analysis {
-		analyzerName := anaConfig.Analyzer
+	return nil
+}
 
-		analyzer, err := phase.db.GetAnalyzerByName(analyzerName)
-		if err != nil {
-			return err
-		}
-		phase.currentAnalyzer = analyzer
-		src.Seed(phase.currentToken)
-		phase.currentToken = src.Int63()
-		phase.currentAnalyzer.TrustLevel = anaConfig.TrustLevel
-
-		log.Printf("Running analyzer %s ...\n", analyzerName)
-		phase.db.OpenInsertQueue()
-		phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Running analyzer %s", analyzerName)})
-		cmd := exec.Command(analyzerName, "--aserv", phase.masterConfig.Server.RPCAddress, "--aid", fmt.Sprintf("%d", idx))
-		out, err := cmd.CombinedOutput()
-		if err != nil {
-			logModuleError(analyzerName, out)
-			errMsg := fmt.Sprintf("Analyzer %s failed", analyzerName)
-			phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: errMsg})
-			phase.db.CloseInsertQueue()
-			return errors.New(errMsg)
-		}
-		phase.db.CloseInsertQueue()
-		phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Analyzer %s successfully finished", analyzerName)})
-		log.Printf("Analyzer %s finished successfully:\n%s\n", analyzerName, out)
+func (phase *serverPhaseAnalysis) InitModule(in *service.InitModuleRequest) (*service.InitModuleResponse, error) {
+	analyzer, err := phase.db.GetAnalyzerByName(in.ModuleName)
+	if err != nil {
+		return nil, err
 	}
+	phase.currentAnalyzer = analyzer
+	src.Seed(phase.currentToken)
+	phase.currentToken = src.Int63()
+	phase.currentAnalyzer.TrustLevel = in.ExtraConfig
 
+	log.Printf("Running analyzer %s ...\n", in.ModuleName)
+	phase.db.OpenInsertQueue()
+	phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Running analyzer %s", in.ModuleName)})
+	return &service.InitModuleResponse{}, nil
+}
+
+func (phase *serverPhaseAnalysis) Shutdown() error {
 	phase.finished <- nil
 	phase.done = true
 	phase.server.persistPhase()
 	log.Println("Analysis phase finished")
-	return nil
-}
-
-func (phase *serverPhaseAnalysis) Shutdown() error {
-	if !phase.done {
-		log.Println("Waiting for analysis to be finished")
-		<-phase.finished
-	}
 	return nil
 }
 
