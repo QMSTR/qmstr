@@ -101,6 +101,10 @@ func startAnalyzerModules(masterConfig config.MasterConfig) {
 		}
 		log.Printf("Analyzer %s finished successfully:\n%s\n", analyzerName, out)
 	}
+	// Now we need to notify the server that
+	// the analysis phase has finished its tasks
+	// and each ready to move on to the next phase
+	controlServiceClient.ClosePhase(context.Background(), &service.Request{})
 }
 
 // start the reporter modules configured in the qmstr.yaml
@@ -128,6 +132,8 @@ func startReporterModules(masterConfig config.MasterConfig) {
 		controlServiceClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{Message: msg, DB: false})
 		log.Printf("Reporter %s finished successfully:\n%s\n", reporterName, out)
 	}
+	// No need to call ClosePhase() here.
+	// Once the reporters have finished we can quit the master server
 }
 
 func logModuleError(moduleName string, output []byte) {

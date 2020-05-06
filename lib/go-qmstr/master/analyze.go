@@ -35,7 +35,7 @@ func (phase *serverPhaseAnalysis) Activate() error {
 	return nil
 }
 
-func (phase *serverPhaseAnalysis) InitModule(in *service.InitModuleRequest) (*service.InitModuleResponse, error) {
+func (phase *serverPhaseAnalysis) InitModule(in *service.InitModuleRequest) (*service.Response, error) {
 	analyzer, err := phase.db.GetAnalyzerByName(in.ModuleName)
 	if err != nil {
 		return nil, err
@@ -48,14 +48,22 @@ func (phase *serverPhaseAnalysis) InitModule(in *service.InitModuleRequest) (*se
 	log.Printf("Running analyzer %s ...\n", in.ModuleName)
 	phase.db.OpenInsertQueue()
 	phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Running analyzer %s", in.ModuleName)})
-	return &service.InitModuleResponse{}, nil
+	return &service.Response{}, nil
 }
 
-func (phase *serverPhaseAnalysis) Shutdown() error {
+func (phase *serverPhaseAnalysis) ClosePhase(in *service.Request) (*service.Response, error) {
 	phase.finished <- nil
 	phase.done = true
 	phase.server.persistPhase()
 	log.Println("Analysis phase finished")
+	return &service.Response{}, nil
+}
+
+func (phase *serverPhaseAnalysis) Shutdown() error {
+	if !phase.done {
+		log.Println("Waiting for analysis to be finished")
+		<-phase.finished
+	}
 	return nil
 }
 

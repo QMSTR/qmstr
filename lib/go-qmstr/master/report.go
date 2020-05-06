@@ -27,10 +27,10 @@ func (phase *serverPhaseReport) Activate() error {
 	return nil
 }
 
-func (phase *serverPhaseReport) InitModule(in *service.InitModuleRequest) (*service.InitModuleResponse, error) {
+func (phase *serverPhaseReport) InitModule(in *service.InitModuleRequest) (*service.Response, error) {
 	log.Printf("Running reporter %s ...\n", in.ModuleName)
 	phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Running reporter %s", in.ModuleName)})
-	return &service.InitModuleResponse{}, nil
+	return &service.Response{}, nil
 }
 
 func (phase *serverPhaseReport) Shutdown() error {

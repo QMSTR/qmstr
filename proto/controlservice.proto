@@ -65,7 +65,10 @@ message InitModuleRequest {
   int64 extraConfig = 2;
 }
 
-message InitModuleResponse {
+message Request {
+}
+
+message Response {
 }
 
 message ShutdownModuleRequest {
@@ -73,16 +76,13 @@ message ShutdownModuleRequest {
   bool dB = 2;
 }
 
-message ShutdownModuleResponse {
-
-}
-
 service ControlService {
   rpc Log(LogMessage) returns (LogResponse) {}
   rpc Quit(QuitMessage) returns (QuitResponse) {}
   rpc SwitchPhase(SwitchPhaseMessage) returns (SwitchPhaseResponse) {}
-  rpc InitModule(InitModuleRequest) returns (InitModuleResponse) {}
-  rpc ShutdownModule(ShutdownModuleRequest) returns (ShutdownModuleResponse) {}
+  rpc InitModule(InitModuleRequest) returns (Response) {}
+  rpc ShutdownModule(ShutdownModuleRequest) returns (Response) {}
+  rpc ClosePhase(Request) returns (Response) {}
   rpc GetPackageNode(PackageNode) returns (stream PackageNode) {}
   rpc GetPackageTargets(PackageNode) returns (stream FileNode) {}
   rpc GetFileNode(GetFileNodeMessage) returns (stream FileNode) {}

@@ -283,12 +283,16 @@ func (s *server) switchPhase(requestedPhase service.Phase, done bool) error {
 }
 
 // Initialize analyzer/reporter module
-func (s *server) InitModule(ctx context.Context, in *service.InitModuleRequest) (*service.InitModuleResponse, error) {
+func (s *server) InitModule(ctx context.Context, in *service.InitModuleRequest) (*service.Response, error) {
 	return s.currentPhase.InitModule(in)
 }
 
+func (s *server) ClosePhase(ctx context.Context, in *service.Request) (*service.Response, error) {
+	return s.currentPhase.ClosePhase(in)
+}
+
 // Shutdown gracefully the analyzer/reporter module
-func (s *server) ShutdownModule(ctx context.Context, in *service.ShutdownModuleRequest) (*service.ShutdownModuleResponse, error) {
+func (s *server) ShutdownModule(ctx context.Context, in *service.ShutdownModuleRequest) (*service.Response, error) {
 	s.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: in.Message})
 	if in.DB == true {
 		db, err := s.currentPhase.getDataBase()
@@ -299,7 +303,7 @@ func (s *server) ShutdownModule(ctx context.Context, in *service.ShutdownModuleR
 		}
 		db.CloseInsertQueue()
 	}
-	return nil, nil
+	return &service.Response{}, nil
 }
 
 func (s *server) Log(ctx context.Context, in *service.LogMessage) (*service.LogResponse, error) {
