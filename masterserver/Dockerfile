@@ -9,8 +9,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # install runtime deps
 RUN apt-get update && apt-get install -y \
-    software-properties-common curl autoconf git apt-utils libgit2-dev libio-captureoutput-perl python3.6 python-pip python3-pip python3-distutils protobuf-compiler icu-devtools libicu-dev && \
+    software-properties-common curl autoconf git apt-utils libgit2-dev libio-captureoutput-perl python3.6 python-pip python3-pip python3-distutils python3.6-dev bzip2 xz-utils zlib1g libxml2-dev libxslt1-dev protobuf-compiler icu-devtools libicu-dev && \
     rm -rf /var/lib/apt/lists/*
+
+RUN python3 --version
 
 ARG HUGO_VERSION
 RUN curl -L --output /tmp/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.deb
