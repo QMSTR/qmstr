@@ -118,6 +118,10 @@ func (r *HTMLReporter) Report(masterClient *module.MasterClient) error {
 	}
 
 	pnps, err := masterClient.GetPackageNodes()
+	if len(pnps) < 1 {
+		log.Println("WARNING:No Package node found")
+		return nil
+	}
 	if err != nil {
 		return fmt.Errorf("failed to get package node: %v", err)
 	}
