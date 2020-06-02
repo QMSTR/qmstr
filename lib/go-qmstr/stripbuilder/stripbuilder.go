@@ -59,7 +59,7 @@ func (s *StripBuilder) processFlags(args []string) error {
 	cleanIdx := []int{}
 	for idx, arg := range args {
 		switch arg {
-		case "--remove-section":
+		case "--remove-section", "-R", "-N", "-K":
 			cleanIdx = append(cleanIdx, idx, idx+1)
 			continue
 		case "-g", "-S", "-d", "--strip-debug", "-s", "--strip-unneeded", "--enable-deterministic-archives", "-D":
