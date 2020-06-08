@@ -136,7 +136,7 @@ func scancodeExitHandler(err error, output []byte) {
 		}
 	}
 	if err != nil {
-		log.Printf("Scancode failed %s\n", err)
+		log.Printf("Scancode-toolkit failed %s\n", err)
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
 				// preserve non-zero return code
@@ -195,29 +195,29 @@ func (scanalyzer *ScancodeAnalyzer) detectLicenses(srcFilePath string) ([]*servi
 			for _, licenseData := range fileData["licenses"].([]interface{}) {
 				license := licenseData.(map[string]interface{})
 				log.Println("Found license information")
-				tempDataNodes := []*service.InfoNode_DataNode{&service.InfoNode_DataNode{
+				tempDataNodes := []*service.InfoNode_DataNode{{
 					Type: "key",
 					Data: license["key"].(string),
 				},
-					&service.InfoNode_DataNode{
+					{
 						Type: "score",
 						Data: strconv.FormatFloat(license["score"].(float64), 'f', 2, 64),
 					},
 				}
 
-				name := license["short_name"].(string)
-				if name != "" {
+				name := license["short_name"]
+				if name != nil {
 					tempDataNodes = append(tempDataNodes, &service.InfoNode_DataNode{
 						Type: "name",
-						Data: name,
+						Data: name.(string),
 					})
 				}
 
-				spdxIdent := license["spdx_license_key"].(string)
-				if spdxIdent != "" {
+				spdxIdent := license["spdx_license_key"]
+				if spdxIdent != nil {
 					tempDataNodes = append(tempDataNodes, &service.InfoNode_DataNode{
 						Type: "spdxIdentifier",
-						Data: spdxIdent,
+						Data: spdxIdent.(string),
 					})
 				}
 				licenseNodes = append(licenseNodes, &service.InfoNode{
@@ -238,22 +238,21 @@ func (scanalyzer *ScancodeAnalyzer) detectCopyrights(srcFilePath string) (*servi
 	for _, file := range scanDatamap["files"].([]interface{}) {
 		fileData := file.(map[string]interface{})
 		if fileData["path"] == srcFilePath {
-			for _, copyright := range fileData["copyrights"].([]interface{}) {
+			for _, copyright := range fileData["holders"].([]interface{}) {
 				copyrightData := copyright.(map[string]interface{})
-				for _, copyrightHolder := range copyrightData["holders"].([]interface{}) {
-					log.Printf("Found copyright holder %s", copyrightHolder)
-					copyrights = append(copyrights, &service.InfoNode_DataNode{
-						Type: "copyrightHolder",
-						Data: copyrightHolder.(string),
-					})
-				}
-				for _, author := range copyrightData["authors"].([]interface{}) {
-					log.Printf("Found author %s", author)
-					copyrights = append(copyrights, &service.InfoNode_DataNode{
-						Type: "author",
-						Data: author.(string),
-					})
-				}
+				log.Printf("Found copyright holder %v", copyrightData["value"])
+				copyrights = append(copyrights, &service.InfoNode_DataNode{
+					Type: "copyrightHolder",
+					Data: copyrightData["value"].(string),
+				})
+			}
+			for _, author := range fileData["authors"].([]interface{}) {
+				authorData := author.(map[string]interface{})
+				log.Printf("Found author %v", authorData["value"])
+				copyrights = append(copyrights, &service.InfoNode_DataNode{
+					Type: "author",
+					Data: authorData["value"].(string),
+				})
 			}
 			if len(copyrights) > 0 {
 				copyrightInfoNode := &service.InfoNode{
