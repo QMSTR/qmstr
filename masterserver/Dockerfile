@@ -9,7 +9,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # install runtime deps
 RUN apt-get update && apt-get install -y \
-    software-properties-common curl autoconf git apt-utils libgit2-dev libio-captureoutput-perl python python-pip python3-distutils protobuf-compiler icu-devtools libicu-dev && \
+    software-properties-common curl autoconf git apt-utils libgit2-dev libio-captureoutput-perl \
+    xz-utils zlib1g libxml2-dev libxslt1-dev python3.6-dev python-pip python3-pip python3-distutils \
+    protobuf-compiler icu-devtools libicu-dev && \
     rm -rf /var/lib/apt/lists/*
 
 ARG HUGO_VERSION
@@ -27,7 +29,10 @@ RUN mkdir /ninka && \
 
 # install scancode
 ARG SCANCODE_VERSION
-RUN ICU_VERSION=$(icuinfo | sed -n 's:.*<param name="version">\([0-9]*\)\.[0-9]*</param>.*:\1:p') pip install -U scancode-toolkit==${SCANCODE_VERSION}
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
+RUN ICU_VERSION=$(icuinfo | sed -n 's:.*<param name="version">\([0-9]*\)\.[0-9]*</param>.*:\1:p') pip3 install -U scancode-toolkit==${SCANCODE_VERSION}
 
 # install dgraph
 ARG DGRAPH_VERSION
@@ -147,7 +152,7 @@ ENV PATH ${GOPATH}/bin:$PATH
 
 # install golang
 RUN apt-get update && apt-get install -y \
-    curl golang autoconf git libio-captureoutput-perl python-dev python-virtualenv protobuf-compiler
+    curl golang autoconf git libio-captureoutput-perl python3.6-dev python-virtualenv protobuf-compiler
 
 EXPOSE 2345
 
