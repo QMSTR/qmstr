@@ -1,0 +1,5 @@
+./out/
+./doc/
+./ci/
+./venv/
+./Jenkinsfile
