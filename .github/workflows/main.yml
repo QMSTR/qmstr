@@ -2,10 +2,7 @@
 # Demodemo
 name: Publish Docker
 on:
-  push: 
-    branches:
-      - refactor/docker
-      - myrto_action
+  push:
 
 # Environment variables available to all jobs and steps in this workflow
 env:
