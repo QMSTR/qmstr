@@ -1,0 +1,3 @@
+defusedxml==0.6.0
+click==7.1.2
+xml-python==0.3.5
