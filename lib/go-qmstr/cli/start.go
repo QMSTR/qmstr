@@ -47,9 +47,12 @@ var wait bool
 var debug bool
 var seed string
 
+// PingAnalyzer is the channel which pings the analyzers
+// to start their processes
+var PingAnalyzer chan struct{}
+
 func getConfig() (*config.MasterConfig, error) {
 	var err error
-
 	if _, err := os.Stat(configFile); err != nil {
 		return nil, err
 	}
@@ -72,6 +75,7 @@ func startMaster(cmd *cobra.Command, args []string) {
 	if err != nil {
 		Log.Fatalf("unable to determine current working directory")
 	}
+	PingAnalyzer = make(chan struct{}) // initialize analyzers channel
 
 	config, err := getConfig()
 	if err != nil {

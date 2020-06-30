@@ -12,6 +12,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/config"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	"github.com/spf13/cobra"
@@ -75,7 +76,11 @@ func startPhase(phase service.Phase) config.MasterConfig {
 
 // start the analyzer modules configured in the qmstr.yaml
 func startAnalyzerModules(masterConfig config.MasterConfig) {
+	// PING MODULES TO START
+	close(cli.PingAnalyzer)
+
 	//loop through the analyzers in master config
+
 	for idx, anaConfig := range masterConfig.Analysis {
 		analyzerName := anaConfig.Analyzer
 		// Initialize analyzer
