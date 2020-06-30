@@ -16,6 +16,7 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/analysis"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
@@ -31,10 +32,13 @@ type ScancodeAnalyzer struct {
 
 func main() {
 	analyzer := analysis.NewAnalyzer(&ScancodeAnalyzer{})
-	if err := analyzer.RunAnalyzerModule(); err != nil {
-		log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
-		os.Exit(master.ReturnAnalyzerFailed)
-	}
+	go func() {
+		<-cli.PingAnalyzer // wait for the analysis to start
+		if err := analyzer.RunAnalyzerModule(); err != nil {
+			log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
+			os.Exit(master.ReturnAnalyzerFailed)
+		}
+	}()
 }
 
 func (scanalyzer *ScancodeAnalyzer) Configure(configMap map[string]string) error {
