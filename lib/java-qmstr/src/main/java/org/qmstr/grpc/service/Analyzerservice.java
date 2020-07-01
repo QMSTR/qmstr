@@ -470,77 +470,19 @@ public final class Analyzerservice {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>map&lt;string, string&gt; configMap = 2;</code>
+     * <code>string analyzerConfig = 1;</code>
      */
-    int getConfigMapCount();
+    java.lang.String getAnalyzerConfig();
     /**
-     * <code>map&lt;string, string&gt; configMap = 2;</code>
-     */
-    boolean containsConfigMap(
-        java.lang.String key);
-    /**
-     * Use {@link #getConfigMapMap()} instead.
-     */
-    @java.lang.Deprecated
-    java.util.Map<java.lang.String, java.lang.String>
-    getConfigMap();
-    /**
-     * <code>map&lt;string, string&gt; configMap = 2;</code>
-     */
-    java.util.Map<java.lang.String, java.lang.String>
-    getConfigMapMap();
-    /**
-     * <code>map&lt;string, string&gt; configMap = 2;</code>
-     */
-
-    java.lang.String getConfigMapOrDefault(
-        java.lang.String key,
-        java.lang.String defaultValue);
-    /**
-     * <code>map&lt;string, string&gt; configMap = 2;</code>
-     */
-
-    java.lang.String getConfigMapOrThrow(
-        java.lang.String key);
-
-    /**
-     * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-     */
-    java.util.List<org.qmstr.grpc.service.Datamodel.PathSubstitution> 
-        getPathSubList();
-    /**
-     * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-     */
-    org.qmstr.grpc.service.Datamodel.PathSubstitution getPathSub(int index);
-    /**
-     * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-     */
-    int getPathSubCount();
-    /**
-     * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-     */
-    java.util.List<? extends org.qmstr.grpc.service.Datamodel.PathSubstitutionOrBuilder> 
-        getPathSubOrBuilderList();
-    /**
-     * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-     */
-    org.qmstr.grpc.service.Datamodel.PathSubstitutionOrBuilder getPathSubOrBuilder(
-        int index);
-
-    /**
-     * <code>int64 token = 4;</code>
-     */
-    long getToken();
-
-    /**
-     * <code>string name = 6;</code>
-     */
-    java.lang.String getName();
-    /**
-     * <code>string name = 6;</code>
+     * <code>string analyzerConfig = 1;</code>
      */
     com.google.protobuf.ByteString
-        getNameBytes();
+        getAnalyzerConfigBytes();
+
+    /**
+     * <code>int64 token = 2;</code>
+     */
+    long getToken();
   }
   /**
    * Protobuf type {@code service.AnalyzerConfigResponse}
@@ -555,9 +497,8 @@ public final class Analyzerservice {
       super(builder);
     }
     private AnalyzerConfigResponse() {
-      pathSub_ = java.util.Collections.emptyList();
+      analyzerConfig_ = "";
       token_ = 0L;
-      name_ = "";
     }
 
     @java.lang.Override
@@ -591,37 +532,15 @@ public final class Analyzerservice {
               }
               break;
             }
-            case 18: {
-              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                configMap_ = com.google.protobuf.MapField.newMapField(
-                    ConfigMapDefaultEntryHolder.defaultEntry);
-                mutable_bitField0_ |= 0x00000001;
-              }
-              com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
-              configMap__ = input.readMessage(
-                  ConfigMapDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
-              configMap_.getMutableMap().put(
-                  configMap__.getKey(), configMap__.getValue());
-              break;
-            }
-            case 26: {
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-                pathSub_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.PathSubstitution>();
-                mutable_bitField0_ |= 0x00000002;
-              }
-              pathSub_.add(
-                  input.readMessage(org.qmstr.grpc.service.Datamodel.PathSubstitution.parser(), extensionRegistry));
-              break;
-            }
-            case 32: {
-
-              token_ = input.readInt64();
-              break;
-            }
-            case 50: {
+            case 10: {
               java.lang.String s = input.readStringRequireUtf8();
 
-              name_ = s;
+              analyzerConfig_ = s;
+              break;
+            }
+            case 16: {
+
+              token_ = input.readInt64();
               break;
             }
           }
@@ -632,9 +551,6 @@ public final class Analyzerservice {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-          pathSub_ = java.util.Collections.unmodifiableList(pathSub_);
-        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -644,17 +560,6 @@ public final class Analyzerservice {
       return org.qmstr.grpc.service.Analyzerservice.internal_static_service_AnalyzerConfigResponse_descriptor;
     }
 
-    @SuppressWarnings({"rawtypes"})
-    protected com.google.protobuf.MapField internalGetMapField(
-        int number) {
-      switch (number) {
-        case 2:
-          return internalGetConfigMap();
-        default:
-          throw new RuntimeException(
-              "Invalid map field number: " + number);
-      }
-    }
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.qmstr.grpc.service.Analyzerservice.internal_static_service_AnalyzerConfigResponse_fieldAccessorTable
@@ -662,159 +567,47 @@ public final class Analyzerservice {
               org.qmstr.grpc.service.Analyzerservice.AnalyzerConfigResponse.class, org.qmstr.grpc.service.Analyzerservice.AnalyzerConfigResponse.Builder.class);
     }
 
-    private int bitField0_;
-    public static final int CONFIGMAP_FIELD_NUMBER = 2;
-    private static final class ConfigMapDefaultEntryHolder {
-      static final com.google.protobuf.MapEntry<
-          java.lang.String, java.lang.String> defaultEntry =
-              com.google.protobuf.MapEntry
-              .<java.lang.String, java.lang.String>newDefaultInstance(
-                  org.qmstr.grpc.service.Analyzerservice.internal_static_service_AnalyzerConfigResponse_ConfigMapEntry_descriptor, 
-                  com.google.protobuf.WireFormat.FieldType.STRING,
-                  "",
-                  com.google.protobuf.WireFormat.FieldType.STRING,
-                  "");
-    }
-    private com.google.protobuf.MapField<
-        java.lang.String, java.lang.String> configMap_;
-    private com.google.protobuf.MapField<java.lang.String, java.lang.String>
-    internalGetConfigMap() {
-      if (configMap_ == null) {
-        return com.google.protobuf.MapField.emptyMapField(
-            ConfigMapDefaultEntryHolder.defaultEntry);
-      }
-      return configMap_;
-    }
-
-    public int getConfigMapCount() {
-      return internalGetConfigMap().getMap().size();
-    }
+    public static final int ANALYZERCONFIG_FIELD_NUMBER = 1;
+    private volatile java.lang.Object analyzerConfig_;
     /**
-     * <code>map&lt;string, string&gt; configMap = 2;</code>
+     * <code>string analyzerConfig = 1;</code>
      */
-
-    public boolean containsConfigMap(
-        java.lang.String key) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      return internalGetConfigMap().getMap().containsKey(key);
-    }
-    /**
-     * Use {@link #getConfigMapMap()} instead.
-     */
-    @java.lang.Deprecated
-    public java.util.Map<java.lang.String, java.lang.String> getConfigMap() {
-      return getConfigMapMap();
-    }
-    /**
-     * <code>map&lt;string, string&gt; configMap = 2;</code>
-     */
-
-    public java.util.Map<java.lang.String, java.lang.String> getConfigMapMap() {
-      return internalGetConfigMap().getMap();
-    }
-    /**
-     * <code>map&lt;string, string&gt; configMap = 2;</code>
-     */
-
-    public java.lang.String getConfigMapOrDefault(
-        java.lang.String key,
-        java.lang.String defaultValue) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      java.util.Map<java.lang.String, java.lang.String> map =
-          internalGetConfigMap().getMap();
-      return map.containsKey(key) ? map.get(key) : defaultValue;
-    }
-    /**
-     * <code>map&lt;string, string&gt; configMap = 2;</code>
-     */
-
-    public java.lang.String getConfigMapOrThrow(
-        java.lang.String key) {
-      if (key == null) { throw new java.lang.NullPointerException(); }
-      java.util.Map<java.lang.String, java.lang.String> map =
-          internalGetConfigMap().getMap();
-      if (!map.containsKey(key)) {
-        throw new java.lang.IllegalArgumentException();
-      }
-      return map.get(key);
-    }
-
-    public static final int PATHSUB_FIELD_NUMBER = 3;
-    private java.util.List<org.qmstr.grpc.service.Datamodel.PathSubstitution> pathSub_;
-    /**
-     * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-     */
-    public java.util.List<org.qmstr.grpc.service.Datamodel.PathSubstitution> getPathSubList() {
-      return pathSub_;
-    }
-    /**
-     * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-     */
-    public java.util.List<? extends org.qmstr.grpc.service.Datamodel.PathSubstitutionOrBuilder> 
-        getPathSubOrBuilderList() {
-      return pathSub_;
-    }
-    /**
-     * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-     */
-    public int getPathSubCount() {
-      return pathSub_.size();
-    }
-    /**
-     * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-     */
-    public org.qmstr.grpc.service.Datamodel.PathSubstitution getPathSub(int index) {
-      return pathSub_.get(index);
-    }
-    /**
-     * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-     */
-    public org.qmstr.grpc.service.Datamodel.PathSubstitutionOrBuilder getPathSubOrBuilder(
-        int index) {
-      return pathSub_.get(index);
-    }
-
-    public static final int TOKEN_FIELD_NUMBER = 4;
-    private long token_;
-    /**
-     * <code>int64 token = 4;</code>
-     */
-    public long getToken() {
-      return token_;
-    }
-
-    public static final int NAME_FIELD_NUMBER = 6;
-    private volatile java.lang.Object name_;
-    /**
-     * <code>string name = 6;</code>
-     */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
+    public java.lang.String getAnalyzerConfig() {
+      java.lang.Object ref = analyzerConfig_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        name_ = s;
+        analyzerConfig_ = s;
         return s;
       }
     }
     /**
-     * <code>string name = 6;</code>
+     * <code>string analyzerConfig = 1;</code>
      */
     public com.google.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
+        getAnalyzerConfigBytes() {
+      java.lang.Object ref = analyzerConfig_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        name_ = b;
+        analyzerConfig_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
+    }
+
+    public static final int TOKEN_FIELD_NUMBER = 2;
+    private long token_;
+    /**
+     * <code>int64 token = 2;</code>
+     */
+    public long getToken() {
+      return token_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -829,20 +622,11 @@ public final class Analyzerservice {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      com.google.protobuf.GeneratedMessageV3
-        .serializeStringMapTo(
-          output,
-          internalGetConfigMap(),
-          ConfigMapDefaultEntryHolder.defaultEntry,
-          2);
-      for (int i = 0; i < pathSub_.size(); i++) {
-        output.writeMessage(3, pathSub_.get(i));
+      if (!getAnalyzerConfigBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, analyzerConfig_);
       }
       if (token_ != 0L) {
-        output.writeInt64(4, token_);
-      }
-      if (!getNameBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, name_);
+        output.writeInt64(2, token_);
       }
       unknownFields.writeTo(output);
     }
@@ -852,26 +636,12 @@ public final class Analyzerservice {
       if (size != -1) return size;
 
       size = 0;
-      for (java.util.Map.Entry<java.lang.String, java.lang.String> entry
-           : internalGetConfigMap().getMap().entrySet()) {
-        com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
-        configMap__ = ConfigMapDefaultEntryHolder.defaultEntry.newBuilderForType()
-            .setKey(entry.getKey())
-            .setValue(entry.getValue())
-            .build();
-        size += com.google.protobuf.CodedOutputStream
-            .computeMessageSize(2, configMap__);
-      }
-      for (int i = 0; i < pathSub_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, pathSub_.get(i));
+      if (!getAnalyzerConfigBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, analyzerConfig_);
       }
       if (token_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, token_);
-      }
-      if (!getNameBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, name_);
+          .computeInt64Size(2, token_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -889,14 +659,10 @@ public final class Analyzerservice {
       org.qmstr.grpc.service.Analyzerservice.AnalyzerConfigResponse other = (org.qmstr.grpc.service.Analyzerservice.AnalyzerConfigResponse) obj;
 
       boolean result = true;
-      result = result && internalGetConfigMap().equals(
-          other.internalGetConfigMap());
-      result = result && getPathSubList()
-          .equals(other.getPathSubList());
+      result = result && getAnalyzerConfig()
+          .equals(other.getAnalyzerConfig());
       result = result && (getToken()
           == other.getToken());
-      result = result && getName()
-          .equals(other.getName());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -908,19 +674,11 @@ public final class Analyzerservice {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      if (!internalGetConfigMap().getMap().isEmpty()) {
-        hash = (37 * hash) + CONFIGMAP_FIELD_NUMBER;
-        hash = (53 * hash) + internalGetConfigMap().hashCode();
-      }
-      if (getPathSubCount() > 0) {
-        hash = (37 * hash) + PATHSUB_FIELD_NUMBER;
-        hash = (53 * hash) + getPathSubList().hashCode();
-      }
+      hash = (37 * hash) + ANALYZERCONFIG_FIELD_NUMBER;
+      hash = (53 * hash) + getAnalyzerConfig().hashCode();
       hash = (37 * hash) + TOKEN_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getToken());
-      hash = (37 * hash) + NAME_FIELD_NUMBER;
-      hash = (53 * hash) + getName().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1026,28 +784,6 @@ public final class Analyzerservice {
         return org.qmstr.grpc.service.Analyzerservice.internal_static_service_AnalyzerConfigResponse_descriptor;
       }
 
-      @SuppressWarnings({"rawtypes"})
-      protected com.google.protobuf.MapField internalGetMapField(
-          int number) {
-        switch (number) {
-          case 2:
-            return internalGetConfigMap();
-          default:
-            throw new RuntimeException(
-                "Invalid map field number: " + number);
-        }
-      }
-      @SuppressWarnings({"rawtypes"})
-      protected com.google.protobuf.MapField internalGetMutableMapField(
-          int number) {
-        switch (number) {
-          case 2:
-            return internalGetMutableConfigMap();
-          default:
-            throw new RuntimeException(
-                "Invalid map field number: " + number);
-        }
-      }
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.qmstr.grpc.service.Analyzerservice.internal_static_service_AnalyzerConfigResponse_fieldAccessorTable
@@ -1068,21 +804,13 @@ public final class Analyzerservice {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
-          getPathSubFieldBuilder();
         }
       }
       public Builder clear() {
         super.clear();
-        internalGetMutableConfigMap().clear();
-        if (pathSubBuilder_ == null) {
-          pathSub_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
-        } else {
-          pathSubBuilder_.clear();
-        }
-        token_ = 0L;
+        analyzerConfig_ = "";
 
-        name_ = "";
+        token_ = 0L;
 
         return this;
       }
@@ -1106,22 +834,8 @@ public final class Analyzerservice {
 
       public org.qmstr.grpc.service.Analyzerservice.AnalyzerConfigResponse buildPartial() {
         org.qmstr.grpc.service.Analyzerservice.AnalyzerConfigResponse result = new org.qmstr.grpc.service.Analyzerservice.AnalyzerConfigResponse(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        result.configMap_ = internalGetConfigMap();
-        result.configMap_.makeImmutable();
-        if (pathSubBuilder_ == null) {
-          if (((bitField0_ & 0x00000002) == 0x00000002)) {
-            pathSub_ = java.util.Collections.unmodifiableList(pathSub_);
-            bitField0_ = (bitField0_ & ~0x00000002);
-          }
-          result.pathSub_ = pathSub_;
-        } else {
-          result.pathSub_ = pathSubBuilder_.build();
-        }
+        result.analyzerConfig_ = analyzerConfig_;
         result.token_ = token_;
-        result.name_ = name_;
-        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -1163,40 +877,12 @@ public final class Analyzerservice {
 
       public Builder mergeFrom(org.qmstr.grpc.service.Analyzerservice.AnalyzerConfigResponse other) {
         if (other == org.qmstr.grpc.service.Analyzerservice.AnalyzerConfigResponse.getDefaultInstance()) return this;
-        internalGetMutableConfigMap().mergeFrom(
-            other.internalGetConfigMap());
-        if (pathSubBuilder_ == null) {
-          if (!other.pathSub_.isEmpty()) {
-            if (pathSub_.isEmpty()) {
-              pathSub_ = other.pathSub_;
-              bitField0_ = (bitField0_ & ~0x00000002);
-            } else {
-              ensurePathSubIsMutable();
-              pathSub_.addAll(other.pathSub_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.pathSub_.isEmpty()) {
-            if (pathSubBuilder_.isEmpty()) {
-              pathSubBuilder_.dispose();
-              pathSubBuilder_ = null;
-              pathSub_ = other.pathSub_;
-              bitField0_ = (bitField0_ & ~0x00000002);
-              pathSubBuilder_ = 
-                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                   getPathSubFieldBuilder() : null;
-            } else {
-              pathSubBuilder_.addAllMessages(other.pathSub_);
-            }
-          }
+        if (!other.getAnalyzerConfig().isEmpty()) {
+          analyzerConfig_ = other.analyzerConfig_;
+          onChanged();
         }
         if (other.getToken() != 0L) {
           setToken(other.getToken());
-        }
-        if (!other.getName().isEmpty()) {
-          name_ = other.name_;
-          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1224,380 +910,85 @@ public final class Analyzerservice {
         }
         return this;
       }
-      private int bitField0_;
 
-      private com.google.protobuf.MapField<
-          java.lang.String, java.lang.String> configMap_;
-      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
-      internalGetConfigMap() {
-        if (configMap_ == null) {
-          return com.google.protobuf.MapField.emptyMapField(
-              ConfigMapDefaultEntryHolder.defaultEntry);
+      private java.lang.Object analyzerConfig_ = "";
+      /**
+       * <code>string analyzerConfig = 1;</code>
+       */
+      public java.lang.String getAnalyzerConfig() {
+        java.lang.Object ref = analyzerConfig_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          analyzerConfig_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
         }
-        return configMap_;
       }
-      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
-      internalGetMutableConfigMap() {
-        onChanged();;
-        if (configMap_ == null) {
-          configMap_ = com.google.protobuf.MapField.newMapField(
-              ConfigMapDefaultEntryHolder.defaultEntry);
+      /**
+       * <code>string analyzerConfig = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getAnalyzerConfigBytes() {
+        java.lang.Object ref = analyzerConfig_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          analyzerConfig_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
         }
-        if (!configMap_.isMutable()) {
-          configMap_ = configMap_.copy();
-        }
-        return configMap_;
-      }
-
-      public int getConfigMapCount() {
-        return internalGetConfigMap().getMap().size();
       }
       /**
-       * <code>map&lt;string, string&gt; configMap = 2;</code>
+       * <code>string analyzerConfig = 1;</code>
        */
-
-      public boolean containsConfigMap(
-          java.lang.String key) {
-        if (key == null) { throw new java.lang.NullPointerException(); }
-        return internalGetConfigMap().getMap().containsKey(key);
-      }
-      /**
-       * Use {@link #getConfigMapMap()} instead.
-       */
-      @java.lang.Deprecated
-      public java.util.Map<java.lang.String, java.lang.String> getConfigMap() {
-        return getConfigMapMap();
-      }
-      /**
-       * <code>map&lt;string, string&gt; configMap = 2;</code>
-       */
-
-      public java.util.Map<java.lang.String, java.lang.String> getConfigMapMap() {
-        return internalGetConfigMap().getMap();
-      }
-      /**
-       * <code>map&lt;string, string&gt; configMap = 2;</code>
-       */
-
-      public java.lang.String getConfigMapOrDefault(
-          java.lang.String key,
-          java.lang.String defaultValue) {
-        if (key == null) { throw new java.lang.NullPointerException(); }
-        java.util.Map<java.lang.String, java.lang.String> map =
-            internalGetConfigMap().getMap();
-        return map.containsKey(key) ? map.get(key) : defaultValue;
-      }
-      /**
-       * <code>map&lt;string, string&gt; configMap = 2;</code>
-       */
-
-      public java.lang.String getConfigMapOrThrow(
-          java.lang.String key) {
-        if (key == null) { throw new java.lang.NullPointerException(); }
-        java.util.Map<java.lang.String, java.lang.String> map =
-            internalGetConfigMap().getMap();
-        if (!map.containsKey(key)) {
-          throw new java.lang.IllegalArgumentException();
-        }
-        return map.get(key);
-      }
-
-      public Builder clearConfigMap() {
-        internalGetMutableConfigMap().getMutableMap()
-            .clear();
-        return this;
-      }
-      /**
-       * <code>map&lt;string, string&gt; configMap = 2;</code>
-       */
-
-      public Builder removeConfigMap(
-          java.lang.String key) {
-        if (key == null) { throw new java.lang.NullPointerException(); }
-        internalGetMutableConfigMap().getMutableMap()
-            .remove(key);
-        return this;
-      }
-      /**
-       * Use alternate mutation accessors instead.
-       */
-      @java.lang.Deprecated
-      public java.util.Map<java.lang.String, java.lang.String>
-      getMutableConfigMap() {
-        return internalGetMutableConfigMap().getMutableMap();
-      }
-      /**
-       * <code>map&lt;string, string&gt; configMap = 2;</code>
-       */
-      public Builder putConfigMap(
-          java.lang.String key,
+      public Builder setAnalyzerConfig(
           java.lang.String value) {
-        if (key == null) { throw new java.lang.NullPointerException(); }
-        if (value == null) { throw new java.lang.NullPointerException(); }
-        internalGetMutableConfigMap().getMutableMap()
-            .put(key, value);
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        analyzerConfig_ = value;
+        onChanged();
         return this;
       }
       /**
-       * <code>map&lt;string, string&gt; configMap = 2;</code>
+       * <code>string analyzerConfig = 1;</code>
        */
-
-      public Builder putAllConfigMap(
-          java.util.Map<java.lang.String, java.lang.String> values) {
-        internalGetMutableConfigMap().getMutableMap()
-            .putAll(values);
-        return this;
-      }
-
-      private java.util.List<org.qmstr.grpc.service.Datamodel.PathSubstitution> pathSub_ =
-        java.util.Collections.emptyList();
-      private void ensurePathSubIsMutable() {
-        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-          pathSub_ = new java.util.ArrayList<org.qmstr.grpc.service.Datamodel.PathSubstitution>(pathSub_);
-          bitField0_ |= 0x00000002;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.qmstr.grpc.service.Datamodel.PathSubstitution, org.qmstr.grpc.service.Datamodel.PathSubstitution.Builder, org.qmstr.grpc.service.Datamodel.PathSubstitutionOrBuilder> pathSubBuilder_;
-
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public java.util.List<org.qmstr.grpc.service.Datamodel.PathSubstitution> getPathSubList() {
-        if (pathSubBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(pathSub_);
-        } else {
-          return pathSubBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public int getPathSubCount() {
-        if (pathSubBuilder_ == null) {
-          return pathSub_.size();
-        } else {
-          return pathSubBuilder_.getCount();
-        }
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.PathSubstitution getPathSub(int index) {
-        if (pathSubBuilder_ == null) {
-          return pathSub_.get(index);
-        } else {
-          return pathSubBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public Builder setPathSub(
-          int index, org.qmstr.grpc.service.Datamodel.PathSubstitution value) {
-        if (pathSubBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensurePathSubIsMutable();
-          pathSub_.set(index, value);
-          onChanged();
-        } else {
-          pathSubBuilder_.setMessage(index, value);
-        }
+      public Builder clearAnalyzerConfig() {
+        
+        analyzerConfig_ = getDefaultInstance().getAnalyzerConfig();
+        onChanged();
         return this;
       }
       /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
+       * <code>string analyzerConfig = 1;</code>
        */
-      public Builder setPathSub(
-          int index, org.qmstr.grpc.service.Datamodel.PathSubstitution.Builder builderForValue) {
-        if (pathSubBuilder_ == null) {
-          ensurePathSubIsMutable();
-          pathSub_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          pathSubBuilder_.setMessage(index, builderForValue.build());
-        }
+      public Builder setAnalyzerConfigBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        analyzerConfig_ = value;
+        onChanged();
         return this;
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public Builder addPathSub(org.qmstr.grpc.service.Datamodel.PathSubstitution value) {
-        if (pathSubBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensurePathSubIsMutable();
-          pathSub_.add(value);
-          onChanged();
-        } else {
-          pathSubBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public Builder addPathSub(
-          int index, org.qmstr.grpc.service.Datamodel.PathSubstitution value) {
-        if (pathSubBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensurePathSubIsMutable();
-          pathSub_.add(index, value);
-          onChanged();
-        } else {
-          pathSubBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public Builder addPathSub(
-          org.qmstr.grpc.service.Datamodel.PathSubstitution.Builder builderForValue) {
-        if (pathSubBuilder_ == null) {
-          ensurePathSubIsMutable();
-          pathSub_.add(builderForValue.build());
-          onChanged();
-        } else {
-          pathSubBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public Builder addPathSub(
-          int index, org.qmstr.grpc.service.Datamodel.PathSubstitution.Builder builderForValue) {
-        if (pathSubBuilder_ == null) {
-          ensurePathSubIsMutable();
-          pathSub_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          pathSubBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public Builder addAllPathSub(
-          java.lang.Iterable<? extends org.qmstr.grpc.service.Datamodel.PathSubstitution> values) {
-        if (pathSubBuilder_ == null) {
-          ensurePathSubIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, pathSub_);
-          onChanged();
-        } else {
-          pathSubBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public Builder clearPathSub() {
-        if (pathSubBuilder_ == null) {
-          pathSub_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
-          onChanged();
-        } else {
-          pathSubBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public Builder removePathSub(int index) {
-        if (pathSubBuilder_ == null) {
-          ensurePathSubIsMutable();
-          pathSub_.remove(index);
-          onChanged();
-        } else {
-          pathSubBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.PathSubstitution.Builder getPathSubBuilder(
-          int index) {
-        return getPathSubFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.PathSubstitutionOrBuilder getPathSubOrBuilder(
-          int index) {
-        if (pathSubBuilder_ == null) {
-          return pathSub_.get(index);  } else {
-          return pathSubBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public java.util.List<? extends org.qmstr.grpc.service.Datamodel.PathSubstitutionOrBuilder> 
-           getPathSubOrBuilderList() {
-        if (pathSubBuilder_ != null) {
-          return pathSubBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(pathSub_);
-        }
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.PathSubstitution.Builder addPathSubBuilder() {
-        return getPathSubFieldBuilder().addBuilder(
-            org.qmstr.grpc.service.Datamodel.PathSubstitution.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public org.qmstr.grpc.service.Datamodel.PathSubstitution.Builder addPathSubBuilder(
-          int index) {
-        return getPathSubFieldBuilder().addBuilder(
-            index, org.qmstr.grpc.service.Datamodel.PathSubstitution.getDefaultInstance());
-      }
-      /**
-       * <code>repeated .service.PathSubstitution pathSub = 3;</code>
-       */
-      public java.util.List<org.qmstr.grpc.service.Datamodel.PathSubstitution.Builder> 
-           getPathSubBuilderList() {
-        return getPathSubFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.qmstr.grpc.service.Datamodel.PathSubstitution, org.qmstr.grpc.service.Datamodel.PathSubstitution.Builder, org.qmstr.grpc.service.Datamodel.PathSubstitutionOrBuilder> 
-          getPathSubFieldBuilder() {
-        if (pathSubBuilder_ == null) {
-          pathSubBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              org.qmstr.grpc.service.Datamodel.PathSubstitution, org.qmstr.grpc.service.Datamodel.PathSubstitution.Builder, org.qmstr.grpc.service.Datamodel.PathSubstitutionOrBuilder>(
-                  pathSub_,
-                  ((bitField0_ & 0x00000002) == 0x00000002),
-                  getParentForChildren(),
-                  isClean());
-          pathSub_ = null;
-        }
-        return pathSubBuilder_;
       }
 
       private long token_ ;
       /**
-       * <code>int64 token = 4;</code>
+       * <code>int64 token = 2;</code>
        */
       public long getToken() {
         return token_;
       }
       /**
-       * <code>int64 token = 4;</code>
+       * <code>int64 token = 2;</code>
        */
       public Builder setToken(long value) {
         
@@ -1606,80 +997,11 @@ public final class Analyzerservice {
         return this;
       }
       /**
-       * <code>int64 token = 4;</code>
+       * <code>int64 token = 2;</code>
        */
       public Builder clearToken() {
         
         token_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object name_ = "";
-      /**
-       * <code>string name = 6;</code>
-       */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          name_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string name = 6;</code>
-       */
-      public com.google.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          name_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string name = 6;</code>
-       */
-      public Builder setName(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        name_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string name = 6;</code>
-       */
-      public Builder clearName() {
-        
-        name_ = getDefaultInstance().getName();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string name = 6;</code>
-       */
-      public Builder setNameBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        name_ = value;
         onChanged();
         return this;
       }
@@ -4326,11 +3648,6 @@ public final class Analyzerservice {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_service_AnalyzerConfigResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_service_AnalyzerConfigResponse_ConfigMapEntry_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_service_AnalyzerConfigResponse_ConfigMapEntry_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_service_InfoNodesMessage_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -4361,27 +3678,23 @@ public final class Analyzerservice {
     java.lang.String[] descriptorData = {
       "\n\025analyzerservice.proto\022\007service\032\017datamo" +
       "del.proto\"+\n\025AnalyzerConfigRequest\022\022\n\nan" +
-      "alyzerID\030\001 \001(\005\"\326\001\n\026AnalyzerConfigRespons" +
-      "e\022A\n\tconfigMap\030\002 \003(\0132..service.AnalyzerC" +
-      "onfigResponse.ConfigMapEntry\022*\n\007pathSub\030" +
-      "\003 \003(\0132\031.service.PathSubstitution\022\r\n\005toke" +
-      "n\030\004 \001(\003\022\014\n\004name\030\006 \001(\t\0320\n\016ConfigMapEntry\022" +
-      "\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"T\n\020InfoN" +
-      "odesMessage\022\r\n\005token\030\001 \001(\003\022\013\n\003uid\030\002 \001(\t\022" +
-      "$\n\tinfonodes\030\003 \003(\0132\021.service.InfoNode\"d\n" +
-      "\025DiagnosticNodeMessage\022\r\n\005token\030\001 \001(\003\022\013\n" +
-      "\003uid\030\002 \001(\t\022/\n\016diagnosticnode\030\003 \001(\0132\027.ser" +
-      "vice.DiagnosticNode\"\037\n\014SendResponse\022\017\n\007s" +
-      "uccess\030\001 \001(\010\"\016\n\014DummyRequest2\305\002\n\017Analysi" +
-      "sService\022V\n\021GetAnalyzerConfig\022\036.service." +
-      "AnalyzerConfigRequest\032\037.service.Analyzer" +
-      "ConfigResponse\"\000\022E\n\rSendInfoNodes\022\031.serv" +
-      "ice.InfoNodesMessage\032\025.service.SendRespo" +
-      "nse\"\000(\001\022O\n\022SendDiagnosticNode\022\036.service." +
-      "DiagnosticNodeMessage\032\025.service.SendResp" +
-      "onse\"\000(\001\022B\n\022GetSourceFileNodes\022\025.service" +
-      ".DummyRequest\032\021.service.FileNode\"\0000\001B\030\n\026" +
-      "org.qmstr.grpc.serviceX\000b\006proto3"
+      "alyzerID\030\001 \001(\005\"?\n\026AnalyzerConfigResponse" +
+      "\022\026\n\016analyzerConfig\030\001 \001(\t\022\r\n\005token\030\002 \001(\003\"" +
+      "T\n\020InfoNodesMessage\022\r\n\005token\030\001 \001(\003\022\013\n\003ui" +
+      "d\030\002 \001(\t\022$\n\tinfonodes\030\003 \003(\0132\021.service.Inf" +
+      "oNode\"d\n\025DiagnosticNodeMessage\022\r\n\005token\030" +
+      "\001 \001(\003\022\013\n\003uid\030\002 \001(\t\022/\n\016diagnosticnode\030\003 \001" +
+      "(\0132\027.service.DiagnosticNode\"\037\n\014SendRespo" +
+      "nse\022\017\n\007success\030\001 \001(\010\"\016\n\014DummyRequest2\305\002\n" +
+      "\017AnalysisService\022V\n\021GetAnalyzerConfig\022\036." +
+      "service.AnalyzerConfigRequest\032\037.service." +
+      "AnalyzerConfigResponse\"\000\022E\n\rSendInfoNode" +
+      "s\022\031.service.InfoNodesMessage\032\025.service.S" +
+      "endResponse\"\000(\001\022O\n\022SendDiagnosticNode\022\036." +
+      "service.DiagnosticNodeMessage\032\025.service." +
+      "SendResponse\"\000(\001\022B\n\022GetSourceFileNodes\022\025" +
+      ".service.DummyRequest\032\021.service.FileNode" +
+      "\"\0000\001B\030\n\026org.qmstr.grpc.serviceX\000b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4407,13 +3720,7 @@ public final class Analyzerservice {
     internal_static_service_AnalyzerConfigResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_service_AnalyzerConfigResponse_descriptor,
-        new java.lang.String[] { "ConfigMap", "PathSub", "Token", "Name", });
-    internal_static_service_AnalyzerConfigResponse_ConfigMapEntry_descriptor =
-      internal_static_service_AnalyzerConfigResponse_descriptor.getNestedTypes().get(0);
-    internal_static_service_AnalyzerConfigResponse_ConfigMapEntry_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_service_AnalyzerConfigResponse_ConfigMapEntry_descriptor,
-        new java.lang.String[] { "Key", "Value", });
+        new java.lang.String[] { "AnalyzerConfig", "Token", });
     internal_static_service_InfoNodesMessage_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_service_InfoNodesMessage_fieldAccessorTable = new

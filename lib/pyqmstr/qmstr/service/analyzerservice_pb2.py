@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='service',
   syntax='proto3',
   serialized_options=_b('\n\026org.qmstr.grpc.service'),
-  serialized_pb=_b('\n\x15\x61nalyzerservice.proto\x12\x07service\x1a\x0f\x64\x61tamodel.proto\"+\n\x15\x41nalyzerConfigRequest\x12\x12\n\nanalyzerID\x18\x01 \x01(\x05\"\xd6\x01\n\x16\x41nalyzerConfigResponse\x12\x41\n\tconfigMap\x18\x02 \x03(\x0b\x32..service.AnalyzerConfigResponse.ConfigMapEntry\x12*\n\x07pathSub\x18\x03 \x03(\x0b\x32\x19.service.PathSubstitution\x12\r\n\x05token\x18\x04 \x01(\x03\x12\x0c\n\x04name\x18\x06 \x01(\t\x1a\x30\n\x0e\x43onfigMapEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"T\n\x10InfoNodesMessage\x12\r\n\x05token\x18\x01 \x01(\x03\x12\x0b\n\x03uid\x18\x02 \x01(\t\x12$\n\tinfonodes\x18\x03 \x03(\x0b\x32\x11.service.InfoNode\"d\n\x15\x44iagnosticNodeMessage\x12\r\n\x05token\x18\x01 \x01(\x03\x12\x0b\n\x03uid\x18\x02 \x01(\t\x12/\n\x0e\x64iagnosticnode\x18\x03 \x01(\x0b\x32\x17.service.DiagnosticNode\"\x1f\n\x0cSendResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"\x0e\n\x0c\x44ummyRequest2\xc5\x02\n\x0f\x41nalysisService\x12V\n\x11GetAnalyzerConfig\x12\x1e.service.AnalyzerConfigRequest\x1a\x1f.service.AnalyzerConfigResponse\"\x00\x12\x45\n\rSendInfoNodes\x12\x19.service.InfoNodesMessage\x1a\x15.service.SendResponse\"\x00(\x01\x12O\n\x12SendDiagnosticNode\x12\x1e.service.DiagnosticNodeMessage\x1a\x15.service.SendResponse\"\x00(\x01\x12\x42\n\x12GetSourceFileNodes\x12\x15.service.DummyRequest\x1a\x11.service.FileNode\"\x00\x30\x01\x42\x18\n\x16org.qmstr.grpc.serviceX\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x15\x61nalyzerservice.proto\x12\x07service\x1a\x0f\x64\x61tamodel.proto\"+\n\x15\x41nalyzerConfigRequest\x12\x12\n\nanalyzerID\x18\x01 \x01(\x05\"?\n\x16\x41nalyzerConfigResponse\x12\x16\n\x0e\x61nalyzerConfig\x18\x01 \x01(\t\x12\r\n\x05token\x18\x02 \x01(\x03\"T\n\x10InfoNodesMessage\x12\r\n\x05token\x18\x01 \x01(\x03\x12\x0b\n\x03uid\x18\x02 \x01(\t\x12$\n\tinfonodes\x18\x03 \x03(\x0b\x32\x11.service.InfoNode\"d\n\x15\x44iagnosticNodeMessage\x12\r\n\x05token\x18\x01 \x01(\x03\x12\x0b\n\x03uid\x18\x02 \x01(\t\x12/\n\x0e\x64iagnosticnode\x18\x03 \x01(\x0b\x32\x17.service.DiagnosticNode\"\x1f\n\x0cSendResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"\x0e\n\x0c\x44ummyRequest2\xc5\x02\n\x0f\x41nalysisService\x12V\n\x11GetAnalyzerConfig\x12\x1e.service.AnalyzerConfigRequest\x1a\x1f.service.AnalyzerConfigResponse\"\x00\x12\x45\n\rSendInfoNodes\x12\x19.service.InfoNodesMessage\x1a\x15.service.SendResponse\"\x00(\x01\x12O\n\x12SendDiagnosticNode\x12\x1e.service.DiagnosticNodeMessage\x1a\x15.service.SendResponse\"\x00(\x01\x12\x42\n\x12GetSourceFileNodes\x12\x15.service.DummyRequest\x1a\x11.service.FileNode\"\x00\x30\x01\x42\x18\n\x16org.qmstr.grpc.serviceX\x00\x62\x06proto3')
   ,
   dependencies=[datamodel__pb2.DESCRIPTOR,])
 
@@ -59,24 +59,24 @@ _ANALYZERCONFIGREQUEST = _descriptor.Descriptor(
 )
 
 
-_ANALYZERCONFIGRESPONSE_CONFIGMAPENTRY = _descriptor.Descriptor(
-  name='ConfigMapEntry',
-  full_name='service.AnalyzerConfigResponse.ConfigMapEntry',
+_ANALYZERCONFIGRESPONSE = _descriptor.Descriptor(
+  name='AnalyzerConfigResponse',
+  full_name='service.AnalyzerConfigResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='service.AnalyzerConfigResponse.ConfigMapEntry.key', index=0,
+      name='analyzerConfig', full_name='service.AnalyzerConfigResponse.analyzerConfig', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='service.AnalyzerConfigResponse.ConfigMapEntry.value', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      name='token', full_name='service.AnalyzerConfigResponse.token', index=1,
+      number=2, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -86,65 +86,14 @@ _ANALYZERCONFIGRESPONSE_CONFIGMAPENTRY = _descriptor.Descriptor(
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=_b('8\001'),
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=263,
-  serialized_end=311,
-)
-
-_ANALYZERCONFIGRESPONSE = _descriptor.Descriptor(
-  name='AnalyzerConfigResponse',
-  full_name='service.AnalyzerConfigResponse',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='configMap', full_name='service.AnalyzerConfigResponse.configMap', index=0,
-      number=2, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='pathSub', full_name='service.AnalyzerConfigResponse.pathSub', index=1,
-      number=3, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='token', full_name='service.AnalyzerConfigResponse.token', index=2,
-      number=4, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='name', full_name='service.AnalyzerConfigResponse.name', index=3,
-      number=6, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[_ANALYZERCONFIGRESPONSE_CONFIGMAPENTRY, ],
-  enum_types=[
-  ],
   serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=97,
-  serialized_end=311,
+  serialized_start=96,
+  serialized_end=159,
 )
 
 
@@ -188,8 +137,8 @@ _INFONODESMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=313,
-  serialized_end=397,
+  serialized_start=161,
+  serialized_end=245,
 )
 
 
@@ -233,8 +182,8 @@ _DIAGNOSTICNODEMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=399,
-  serialized_end=499,
+  serialized_start=247,
+  serialized_end=347,
 )
 
 
@@ -264,8 +213,8 @@ _SENDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=501,
-  serialized_end=532,
+  serialized_start=349,
+  serialized_end=380,
 )
 
 
@@ -288,13 +237,10 @@ _DUMMYREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=534,
-  serialized_end=548,
+  serialized_start=382,
+  serialized_end=396,
 )
 
-_ANALYZERCONFIGRESPONSE_CONFIGMAPENTRY.containing_type = _ANALYZERCONFIGRESPONSE
-_ANALYZERCONFIGRESPONSE.fields_by_name['configMap'].message_type = _ANALYZERCONFIGRESPONSE_CONFIGMAPENTRY
-_ANALYZERCONFIGRESPONSE.fields_by_name['pathSub'].message_type = datamodel__pb2._PATHSUBSTITUTION
 _INFONODESMESSAGE.fields_by_name['infonodes'].message_type = datamodel__pb2._INFONODE
 _DIAGNOSTICNODEMESSAGE.fields_by_name['diagnosticnode'].message_type = datamodel__pb2._DIAGNOSTICNODE
 DESCRIPTOR.message_types_by_name['AnalyzerConfigRequest'] = _ANALYZERCONFIGREQUEST
@@ -313,19 +259,11 @@ AnalyzerConfigRequest = _reflection.GeneratedProtocolMessageType('AnalyzerConfig
 _sym_db.RegisterMessage(AnalyzerConfigRequest)
 
 AnalyzerConfigResponse = _reflection.GeneratedProtocolMessageType('AnalyzerConfigResponse', (_message.Message,), dict(
-
-  ConfigMapEntry = _reflection.GeneratedProtocolMessageType('ConfigMapEntry', (_message.Message,), dict(
-    DESCRIPTOR = _ANALYZERCONFIGRESPONSE_CONFIGMAPENTRY,
-    __module__ = 'analyzerservice_pb2'
-    # @@protoc_insertion_point(class_scope:service.AnalyzerConfigResponse.ConfigMapEntry)
-    ))
-  ,
   DESCRIPTOR = _ANALYZERCONFIGRESPONSE,
   __module__ = 'analyzerservice_pb2'
   # @@protoc_insertion_point(class_scope:service.AnalyzerConfigResponse)
   ))
 _sym_db.RegisterMessage(AnalyzerConfigResponse)
-_sym_db.RegisterMessage(AnalyzerConfigResponse.ConfigMapEntry)
 
 InfoNodesMessage = _reflection.GeneratedProtocolMessageType('InfoNodesMessage', (_message.Message,), dict(
   DESCRIPTOR = _INFONODESMESSAGE,
@@ -357,7 +295,6 @@ _sym_db.RegisterMessage(DummyRequest)
 
 
 DESCRIPTOR._options = None
-_ANALYZERCONFIGRESPONSE_CONFIGMAPENTRY._options = None
 
 _ANALYSISSERVICE = _descriptor.ServiceDescriptor(
   name='AnalysisService',
@@ -365,8 +302,8 @@ _ANALYSISSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=551,
-  serialized_end=876,
+  serialized_start=399,
+  serialized_end=724,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetAnalyzerConfig',

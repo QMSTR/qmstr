@@ -9,10 +9,8 @@ message AnalyzerConfigRequest {
 }
 
 message AnalyzerConfigResponse {
-    map<string, string> configMap = 2;
-    repeated PathSubstitution pathSub = 3;
-    int64 token = 4;
-    string name = 6;
+    string analyzerConfig = 1;
+    int64 token = 2;
 }
 
 message InfoNodesMessage {
