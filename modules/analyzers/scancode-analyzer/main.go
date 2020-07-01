@@ -34,6 +34,7 @@ func main() {
 	analyzer := analysis.NewAnalyzer(&ScancodeAnalyzer{})
 	go func() {
 		<-cli.PingAnalyzer // wait for the analysis to start
+		log.Printf("Scancode analyzer starts the analysis")
 		if err := analyzer.RunAnalyzerModule(); err != nil {
 			log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
 			os.Exit(master.ReturnAnalyzerFailed)
@@ -78,7 +79,6 @@ func (scanalyzer *ScancodeAnalyzer) Analyze(masterClient *module.MasterClient, t
 		log.Printf("failed getting source file nodes %v", err)
 		return err
 	}
-
 	infoNodeMsgs := []*service.InfoNodesMessage{}
 
 	for {

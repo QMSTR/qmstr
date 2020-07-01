@@ -1,6 +1,7 @@
 package master
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -91,8 +92,11 @@ func (phase *serverPhaseAnalysis) GetAnalyzerConfig(in *service.AnalyzerConfigRe
 		config.PathSub = phase.masterConfig.Server.PathSub
 	}
 	phase.currentAnalyzer.PathSub = config.PathSub
-	return &service.AnalyzerConfigResponse{ConfigMap: config.Config, PathSub: config.PathSub,
-		Token: phase.currentToken, Name: config.Name}, nil
+	out, err := json.Marshal(config)
+	if err != nil {
+		return nil, err
+	}
+	return &service.AnalyzerConfigResponse{AnalyzerConfig: string(out), Token: phase.currentToken}, nil
 }
 
 func (phase *serverPhaseAnalysis) SendInfoNodes(stream service.AnalysisService_SendInfoNodesServer) error {

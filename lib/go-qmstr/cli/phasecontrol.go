@@ -25,8 +25,8 @@ var anaCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		setUpControlService()
-		masterConfig := startPhase(service.Phase_ANALYSIS)
-		startAnalyzerModules(masterConfig)
+		startPhase(service.Phase_ANALYSIS)
+		close(cli.PingAnalyzer) // Ping modules to start!
 		tearDownServer()
 	},
 }
@@ -38,8 +38,10 @@ var reportCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		setUpControlService()
-		masterConfig := startPhase(service.Phase_REPORT)
-		startReporterModules(masterConfig)
+		startPhase(service.Phase_REPORT)
+
+		// PING MODULES TO START
+
 		tearDownServer()
 	},
 }
@@ -72,44 +74,6 @@ func startPhase(phase service.Phase) config.MasterConfig {
 		os.Exit(ReturnCodeResponseFalseError)
 	}
 	return config
-}
-
-// start the analyzer modules configured in the qmstr.yaml
-func startAnalyzerModules(masterConfig config.MasterConfig) {
-	// PING MODULES TO START
-	close(cli.PingAnalyzer)
-
-	//loop through the analyzers in master config
-
-	for idx, anaConfig := range masterConfig.Analysis {
-		analyzerName := anaConfig.Analyzer
-		// Initialize analyzer
-		_, err := controlServiceClient.InitModule(context.Background(), &service.InitModuleRequest{ModuleName: analyzerName, ExtraConfig: anaConfig.TrustLevel})
-		if err != nil {
-			fmt.Printf("Failed initializing module %s: %v\n", analyzerName, err)
-			os.Exit(ReturnCodeServerCommunicationError)
-		}
-
-		// Run analyzer module
-		cmd := exec.Command(analyzerName, "--aserv", masterConfig.Server.RPCAddress, "--aid", fmt.Sprintf("%d", idx))
-		out, err := cmd.CombinedOutput()
-		if err != nil {
-			logModuleError(analyzerName, out)
-			errMsg := fmt.Sprintf("Analyzer %s failed: %v", analyzerName, err)
-			controlServiceClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{Message: errMsg, DB: true})
-			os.Exit(ReturnCodeServerCommunicationError)
-		}
-		msg := fmt.Sprintf("Analyzer %s successfully finished", analyzerName)
-		if _, err := controlServiceClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{Message: msg, DB: true}); err != nil {
-			fmt.Printf("Failed shutting down the module %s: %v\n", analyzerName, err)
-			os.Exit(ReturnCodeServerCommunicationError)
-		}
-		log.Printf("Analyzer %s finished successfully:\n%s\n", analyzerName, out)
-	}
-	// Now we need to notify the server that
-	// the analysis phase has finished its tasks
-	// and each ready to move on to the next phase
-	controlServiceClient.ClosePhase(context.Background(), &service.Request{})
 }
 
 // start the reporter modules configured in the qmstr.yaml

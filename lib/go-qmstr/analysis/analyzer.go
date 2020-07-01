@@ -1,6 +1,7 @@
 package analysis
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -9,6 +10,8 @@ import (
 
 	goflag "flag"
 
+	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/config"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	flag "github.com/spf13/pflag"
@@ -30,6 +33,7 @@ type AnalyzerModule interface {
 func NewAnalyzer(anaModule AnalyzerModule) *Analyzer {
 	var serviceAddress string
 	var anaID int32
+	// TODO: Connect to QMSTRADDRESS
 	flag.StringVar(&serviceAddress, "aserv", "localhost:50051", "Analyzer service address")
 	flag.Int32Var(&anaID, "aid", -1, "unique analyzer id")
 	flag.CommandLine.AddGoFlagSet(goflag.CommandLine)
@@ -50,10 +54,14 @@ func (a *Analyzer) RunAnalyzerModule() error {
 		log.Printf("Could not get configuration %v\n", err)
 		return fmt.Errorf("could not get analyzer configuration %v", err)
 	}
-
-	a.name = configResp.Name
-	cacheDir := configResp.ConfigMap["cachedir"]
-	outDir := configResp.ConfigMap["outputdir"]
+	var analyzerConfig *config.Analysis
+	err = json.Unmarshal([]byte(configResp.AnalyzerConfig), &analyzerConfig)
+	if err != nil {
+		return fmt.Errorf("fail unmarshalling analyzer config %v", err)
+	}
+	a.name = analyzerConfig.Analyzer
+	cacheDir := analyzerConfig.Config["cachedir"]
+	outDir := analyzerConfig.Config["outputdir"]
 
 	err = os.MkdirAll(cacheDir, os.ModePerm)
 	if err != nil {
@@ -65,7 +73,14 @@ func (a *Analyzer) RunAnalyzerModule() error {
 		return fmt.Errorf("failed to create output directory for module %s %v", a.GetModuleName(), err)
 	}
 
-	err = a.module.Configure(configResp.ConfigMap)
+	// Initialize analyzer
+	_, err = a.CtrlSvcClient.InitModule(context.Background(), &service.InitModuleRequest{
+		ModuleName: a.name, ExtraConfig: analyzerConfig.TrustLevel})
+	if err != nil {
+		return fmt.Errorf("%v: %v", err, cli.ReturnCodeServerCommunicationError)
+	}
+
+	err = a.module.Configure(analyzerConfig.Config)
 	if err != nil {
 		return fmt.Errorf("failed to configure analyzer module %s %v", a.GetModuleName(), err)
 	}
