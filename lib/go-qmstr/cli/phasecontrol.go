@@ -3,7 +3,6 @@ package cli
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -51,8 +50,8 @@ func init() {
 	rootCmd.AddCommand(reportCmd)
 }
 
-// start analysis/reporting phase and return the master config
-func startPhase(phase service.Phase) config.MasterConfig {
+// start analysis/reporting phase
+func startPhase(phase service.Phase) {
 	if verbose {
 		go printEvents()
 	}
@@ -62,18 +61,10 @@ func startPhase(phase service.Phase) config.MasterConfig {
 		fmt.Printf("Failed to communicate with qmstr-master server. %v\n", err)
 		os.Exit(ReturnCodeServerCommunicationError)
 	}
-	// export master config from the server
-	var config config.MasterConfig
-	err = json.Unmarshal([]byte(resp.MasterConfig), &config)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	if !resp.Success {
 		fmt.Printf("Server reported failure:\n%s\n", resp.Error)
 		os.Exit(ReturnCodeResponseFalseError)
 	}
-	return config
 }
 
 // start the reporter modules configured in the qmstr.yaml
