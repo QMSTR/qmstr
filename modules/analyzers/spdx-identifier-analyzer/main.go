@@ -11,6 +11,7 @@ import (
 	"regexp"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/analysis"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
@@ -24,10 +25,15 @@ type SpdxAnalyzer struct {
 
 func main() {
 	analyzer := analysis.NewAnalyzer(&SpdxAnalyzer{})
-	if err := analyzer.RunAnalyzerModule(); err != nil {
-		log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
-		os.Exit(master.ReturnAnalyzerFailed)
-	}
+	go func() {
+		<-cli.PingAnalyzer // wait for the analysis phase to start
+		log.Printf("Spdx identifier analyzer starts the analysis")
+		if err := analyzer.RunAnalyzerModule(); err != nil {
+			log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
+			os.Exit(master.ReturnAnalyzerFailed)
+		}
+		analysis.ReduceAnalyzerCounter()
+	}()
 }
 
 func (spdxalizer *SpdxAnalyzer) Configure(configMap map[string]string) error {

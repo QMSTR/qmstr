@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/analysis"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/tester"
@@ -29,10 +30,15 @@ type TestAnalyzer struct{}
 func main() {
 	fmt.Println("This is the testalyzer")
 	analyzer := analysis.NewAnalyzer(&TestAnalyzer{})
-	if err := analyzer.RunAnalyzerModule(); err != nil {
-		log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
-		os.Exit(master.ReturnAnalyzerFailed)
-	}
+	go func() {
+		<-cli.PingAnalyzer // wait for the analysis phase to start
+		log.Printf("Test analyzer starts the analysis")
+		if err := analyzer.RunAnalyzerModule(); err != nil {
+			log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
+			os.Exit(master.ReturnAnalyzerFailed)
+		}
+		analysis.ReduceAnalyzerCounter()
+	}()
 }
 
 func (testanalyzer *TestAnalyzer) Configure(configMap map[string]string) error {

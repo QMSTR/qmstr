@@ -33,14 +33,14 @@ type ScancodeAnalyzer struct {
 func main() {
 	analyzer := analysis.NewAnalyzer(&ScancodeAnalyzer{})
 	go func() {
-		<-cli.PingAnalyzer // wait for the analysis to start
+		<-cli.PingAnalyzer // wait for the analysis phase to start
 		log.Printf("Scancode analyzer starts the analysis")
 		if err := analyzer.RunAnalyzerModule(); err != nil {
 			log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
 			os.Exit(master.ReturnAnalyzerFailed)
 		}
+		analysis.ReduceAnalyzerCounter()
 	}()
-	analysis.ReduceAnalyzerCounter()
 }
 
 func (scanalyzer *ScancodeAnalyzer) Configure(configMap map[string]string) error {
