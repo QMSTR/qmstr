@@ -17,6 +17,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// ModulesAreDone is a signal channel to close
+// analysis/reporting phase once modules are done
+var ModulesAreDone chan struct{}
+
 var anaCmd = &cobra.Command{
 	Use:   "analyze",
 	Short: "Start analysis on the QMSTR master",
@@ -25,7 +29,6 @@ var anaCmd = &cobra.Command{
 
 		setUpControlService()
 		startPhase(service.Phase_ANALYSIS)
-		close(cli.PingAnalyzer) // Ping modules to start!
 		tearDownServer()
 	},
 }
@@ -38,9 +41,6 @@ var reportCmd = &cobra.Command{
 
 		setUpControlService()
 		startPhase(service.Phase_REPORT)
-
-		// PING MODULES TO START
-
 		tearDownServer()
 	},
 }
@@ -65,6 +65,16 @@ func startPhase(phase service.Phase) {
 		fmt.Printf("Server reported failure:\n%s\n", resp.Error)
 		os.Exit(ReturnCodeResponseFalseError)
 	}
+	close(cli.PingAnalyzer) // Ping modules to start!
+
+	// wait until all modules have finished
+	ModulesAreDone = make(chan struct{})
+	log.Printf("Waiting for modules to finish.. \n")
+	<-ModulesAreDone // <-- THIS MAY NOT WORK!!! Select{}
+	log.Printf("All modules have finished! \n")
+
+	// Close analysis/reporting phase
+	controlServiceClient.ClosePhase(context.Background(), &service.Request{})
 }
 
 // start the reporter modules configured in the qmstr.yaml

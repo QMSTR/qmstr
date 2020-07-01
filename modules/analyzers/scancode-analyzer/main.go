@@ -40,6 +40,7 @@ func main() {
 			os.Exit(master.ReturnAnalyzerFailed)
 		}
 	}()
+	analysis.ReduceAnalyzerCounter()
 }
 
 func (scanalyzer *ScancodeAnalyzer) Configure(configMap map[string]string) error {

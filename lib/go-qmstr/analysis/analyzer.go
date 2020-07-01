@@ -30,9 +30,13 @@ type AnalyzerModule interface {
 	PostAnalyze() error
 }
 
+// CountAnalyzers counts the analyzers that run in the current process
+var CountAnalyzers int32
+
 func NewAnalyzer(anaModule AnalyzerModule) *Analyzer {
 	var serviceAddress string
 	var anaID int32
+	CountAnalyzers++
 	// TODO: Connect to QMSTRADDRESS
 	flag.StringVar(&serviceAddress, "aserv", "localhost:50051", "Analyzer service address")
 	flag.Int32Var(&anaID, "aid", -1, "unique analyzer id")
@@ -89,5 +93,24 @@ func (a *Analyzer) RunAnalyzerModule() error {
 	if err != nil {
 		return fmt.Errorf("Analysis failed for analyzer module %s %v", a.GetModuleName(), err)
 	}
+
+	msg := fmt.Sprintf("Analyzer %s finished successfully ", a.name)
+	log.Println(msg)
+	// Ping master server that the analyzer finished
+	a.CtrlSvcClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{Message: msg, DB: true})
+
 	return nil
+}
+
+// ReduceAnalyzerCounter is called everytime an analyzer finishes its process.
+// When it reaches 0, it sends a signal to close the analysis phase
+func ReduceAnalyzerCounter() {
+	CountAnalyzers--
+	if CountAnalyzers == 0 { // all analyzers have finished
+		// close analysis phase
+		close(cli.ModulesAreDone)
+	}
+	if CountAnalyzers < 0 {
+		log.Printf("WARNING: Analyzer count cannot be minus")
+	}
 }
