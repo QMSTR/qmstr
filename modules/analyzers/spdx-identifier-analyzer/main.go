@@ -29,10 +29,13 @@ func main() {
 		<-cli.PingAnalyzer // wait for the analysis phase to start
 		log.Printf("Spdx identifier analyzer starts the analysis")
 		if err := analyzer.RunAnalyzerModule(); err != nil {
-			log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
+			msg := fmt.Sprintf("Analyzer %v failed: %v\n", analyzer.GetModuleName(), err)
+			log.Printf(msg)
+			analyzer.CtrlSvcClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{
+				Message: msg, DB: true})
 			os.Exit(master.ReturnAnalyzerFailed)
 		}
-		analysis.ReduceAnalyzerCounter()
+		analysis.ReduceAnalyzersCounter()
 	}()
 }
 

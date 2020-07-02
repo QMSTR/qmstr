@@ -102,15 +102,15 @@ func (a *Analyzer) RunAnalyzerModule() error {
 	return nil
 }
 
-// ReduceAnalyzerCounter is called everytime an analyzer finishes its process.
+// ReduceAnalyzersCounter is called everytime an analyzer finishes its process.
 // When it reaches 0, it sends a signal to close the analysis phase
-func ReduceAnalyzerCounter() {
+func ReduceAnalyzersCounter() {
 	CountAnalyzers--
 	if CountAnalyzers == 0 { // all analyzers have finished
 		// close analysis phase
 		close(cli.ModulesAreDone)
 	}
 	if CountAnalyzers < 0 {
-		log.Printf("WARNING: Analyzer count cannot be minus")
+		log.Printf("WARNING: Analyzers count cannot be minus")
 	}
 }

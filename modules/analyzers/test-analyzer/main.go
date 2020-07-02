@@ -11,7 +11,9 @@ import (
 	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
+	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/tester"
+	"golang.org/x/net/context"
 )
 
 const (
@@ -34,10 +36,13 @@ func main() {
 		<-cli.PingAnalyzer // wait for the analysis phase to start
 		log.Printf("Test analyzer starts the analysis")
 		if err := analyzer.RunAnalyzerModule(); err != nil {
-			log.Printf("%v failed: %v\n", analyzer.GetModuleName(), err)
+			msg := fmt.Sprintf("Analyzer %v failed: %v\n", analyzer.GetModuleName(), err)
+			log.Printf(msg)
+			analyzer.CtrlSvcClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{
+				Message: msg, DB: true})
 			os.Exit(master.ReturnAnalyzerFailed)
 		}
-		analysis.ReduceAnalyzerCounter()
+		analysis.ReduceAnalyzersCounter()
 	}()
 }
 
