@@ -9,8 +9,6 @@ import click
 import logging
 from pathlib import Path
 
-XML_NAMESPACES = {'POM':'http://maven.apache.org/POM/4.0.0'}
-
 @click.command()
 @click.option('-t', '--target',
               help='Path of the pom.xml to patch. Relative to root directory.')
@@ -40,18 +38,14 @@ def insert_build_plugin(target, plugin):
     if not pom_xml or not plugin_xml:
         return False
 
-    plugin_section = pom_xml.find('./POM:build/POM:plugins', XML_NAMESPACES)
-
     if not plugin_section:
         logging.info('Plugin section not found in pom.xml.')
-        build_section = pom_xml.find('./POM:build', XML_NAMESPACES)
+        build_section = pom_xml.find('./build')
         if not build_section:
             logging.info('Build section not found in pom.xml.')
             build_section = ET.SubElement(pom_xml.getroot(), 'build')
         plugin_section = ET.SubElement(build_section)
-    print(len(list(plugin_section)))
     plugin_section.append(plugin_xml.getroot())
-    print(ET.tostring(pom_xml.getroot()))
     return write_pom(pom_xml, pom_path)
 
 def find_pom():
@@ -92,7 +86,12 @@ def parse_xml(path):
     
     logging.info('Parsing {}'.format(str(path)))
     try:
-        return ET.parse(path)
+        it = ET.parse(path)
+        for _, el in it:
+            prefix, has_namespace, postfix = el.tag.partition('}')
+            if has_namespace:
+                el.tag = postfix
+        return it.getroot()
     except ET.ParseError as pe:
         logging.error('Failed to parse {}: {}'.format(str(path), pe))
         return None
