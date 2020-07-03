@@ -28,7 +28,8 @@ def insert_build_plugin(target, plugin):
         True: The patched pom.xml has been written
         False: Otherwise
     '''
-    
+
+    ET.register_namespace("", XML_NAMESPACES['POM'])
     if target:
         pom_path = target
     else:
