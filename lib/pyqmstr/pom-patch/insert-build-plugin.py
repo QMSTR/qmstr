@@ -3,7 +3,7 @@
 This script inserts a build plugin into an existing POM file.
 """
 
-import defusedxml.ElementTree as ET
+import xml.etree.ElementTree as ET
 import click
 
 import logging
