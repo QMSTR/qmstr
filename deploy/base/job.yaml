@@ -43,8 +43,8 @@ spec:
         - "git"
         - "clone"
         args:
-        - "https://github.com/pdurbin/maven-hello-world.git"
-        - "/home/git/buildroot/maven-hello-world"
+        - "https://github.com/google/guava.git"
+        - "/home/git/buildroot/guava"
         volumeMounts:
         - name: buildroot-volume
           mountPath: /home/git/buildroot
