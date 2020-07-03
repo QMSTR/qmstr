@@ -10,7 +10,7 @@ spec:
       containers:
       - name: qmstr-master
         image: endocodeci/qmstr-master
-        command: [ "sh", "./entrypoint.sh" ]
+        command: [ "sh", "-c", "/usr/local/bin/qmstr-master" ]
         args: [ "--config", "./config/qmstr.yaml"]
         ports:
         - containerPort: 50051
