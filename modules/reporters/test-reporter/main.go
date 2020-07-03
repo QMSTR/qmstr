@@ -7,6 +7,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/reporting"
@@ -20,12 +21,18 @@ var testprojectNode *service.ProjectNode
 
 func main() {
 	reporter := reporting.NewReporter(&TestReporter{})
-	if err := reporter.RunReporterModule(); err != nil {
-		log.Printf("%v failed: %v\n", reporter.GetModuleName(), err)
-		os.Exit(master.ReturnReporterFailed)
-	}
-	log.Printf("%v completed successfully\n", reporter.GetModuleName())
-
+	go func() {
+		<-cli.PingReporter // wait for the reporting phase to start
+		log.Printf("Test reporter starts the reporting\n")
+		if err := reporter.RunReporterModule(); err != nil {
+			msg := fmt.Sprintf("%v failed: %v\n", reporter.GetModuleName(), err)
+			log.Printf(msg)
+			reporter.CtrlSvcClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{
+				Message: msg, DB: false})
+			os.Exit(master.ReturnReporterFailed)
+		}
+		reporting.ReduceReportersCounter()
+	}()
 }
 
 // Configure sets up the working directory for this reporting run.
