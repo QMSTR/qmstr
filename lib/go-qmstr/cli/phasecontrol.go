@@ -6,13 +6,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"strings"
 
 	"golang.org/x/net/context"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
-	"github.com/QMSTR/qmstr/lib/go-qmstr/config"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	"github.com/spf13/cobra"
 )
@@ -29,6 +27,7 @@ var anaCmd = &cobra.Command{
 
 		setUpControlService()
 		startPhase(service.Phase_ANALYSIS)
+		startAnalyzers()
 		tearDownServer()
 	},
 }
@@ -41,6 +40,7 @@ var reportCmd = &cobra.Command{
 
 		setUpControlService()
 		startPhase(service.Phase_REPORT)
+		startReporters()
 		tearDownServer()
 	},
 }
@@ -65,45 +65,28 @@ func startPhase(phase service.Phase) {
 		fmt.Printf("Server reported failure:\n%s\n", resp.Error)
 		os.Exit(ReturnCodeResponseFalseError)
 	}
-	close(cli.PingAnalyzer) // Ping modules to start!
+}
 
+func startAnalyzers() {
+	close(cli.PingAnalyzer) // Ping modules to start!
+	waitModulesToFinish()
+
+	// Close analysis phase
+	controlServiceClient.ClosePhase(context.Background(), &service.Request{})
+}
+
+func startReporters() {
+	close(cli.PingReporter) // Ping modules to start!
+	waitModulesToFinish()
+	// No need to close phase
+}
+
+func waitModulesToFinish() {
 	// wait until all modules have finished
 	ModulesAreDone = make(chan struct{})
 	log.Printf("Waiting for modules to finish.. \n")
 	<-ModulesAreDone // <-- THIS MAY NOT WORK!!! Select{}
 	log.Printf("All modules have finished! \n")
-
-	// Close analysis/reporting phase
-	controlServiceClient.ClosePhase(context.Background(), &service.Request{})
-}
-
-// start the reporter modules configured in the qmstr.yaml
-func startReporterModules(masterConfig config.MasterConfig) {
-	//loop through the reporters in master config
-	for idx, reporterConfig := range masterConfig.Reporting {
-		reporterName := reporterConfig.Reporter
-		// Initialize reporter
-		_, err := controlServiceClient.InitModule(context.Background(), &service.InitModuleRequest{ModuleName: reporterName})
-		if err != nil {
-			fmt.Printf("Failed initializing module %s: %v\n", reporterName, err)
-			os.Exit(ReturnCodeServerCommunicationError)
-		}
-
-		// Run reporter module
-		cmd := exec.Command(reporterName, "--rserv", masterConfig.Server.RPCAddress, "--rid", fmt.Sprintf("%d", idx))
-		out, err := cmd.CombinedOutput()
-		if err != nil {
-			logModuleError(reporterName, out)
-			errMsg := fmt.Sprintf("Reporter %s failed: %v", reporterName, err)
-			controlServiceClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{Message: errMsg, DB: false})
-			os.Exit(ReturnCodeServerCommunicationError)
-		}
-		msg := fmt.Sprintf("Reporter %s successfully finished", reporterName)
-		controlServiceClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{Message: msg, DB: false})
-		log.Printf("Reporter %s finished successfully:\n%s\n", reporterName, out)
-	}
-	// No need to call ClosePhase() here.
-	// Once the reporters have finished we can quit the master server
 }
 
 func logModuleError(moduleName string, output []byte) {

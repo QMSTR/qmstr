@@ -2,12 +2,14 @@ package reporting
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"golang.org/x/net/context"
 
 	goflag "flag"
 
+	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/module"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	flag "github.com/spf13/pflag"
@@ -28,18 +30,21 @@ type ReporterModule interface {
 	PostReport() error
 }
 
+var CountReporters int32
+
 // NewReporter creates a new reporter.
 func NewReporter(repModule ReporterModule) *Reporter {
 	var serviceAddress string
-	var anaID int32
+	var rprID int32
+	CountReporters++
 	flag.StringVar(&serviceAddress, "rserv", "localhost:50051", "Reporting service address")
-	flag.Int32Var(&anaID, "rid", -1, "unique reporter id")
+	flag.Int32Var(&rprID, "rid", -1, "unique reporter id")
 	flag.CommandLine.AddGoFlagSet(goflag.CommandLine)
 	flag.Parse()
 
 	mc := module.NewMasterClient(serviceAddress)
 
-	return &Reporter{MasterClient: mc, id: anaID, module: repModule}
+	return &Reporter{MasterClient: mc, id: rprID, module: repModule}
 }
 
 // GetModuleName returns the module name
@@ -69,6 +74,12 @@ func (r *Reporter) RunReporterModule() error {
 		return fmt.Errorf("failed to create output directory \"%s\" for module %s: %v", outDir, r.GetModuleName(), err)
 	}
 
+	// Initialize reporter
+	_, err = r.CtrlSvcClient.InitModule(context.Background(), &service.InitModuleRequest{
+		ModuleName: r.name})
+	if err != nil {
+		return fmt.Errorf("%v: %v", err, cli.ReturnCodeServerCommunicationError)
+	}
 	err = r.module.Configure(configResp.ConfigMap)
 	if err != nil {
 		return fmt.Errorf("failed to configure reporter module %s: %v", r.GetModuleName(), err)
@@ -83,5 +94,23 @@ func (r *Reporter) RunReporterModule() error {
 		return fmt.Errorf("reporter %s failed in PostReport: %v", r.name, err)
 	}
 
+	msg := fmt.Sprintf("Reporter %s finished successfully", r.name)
+	log.Println(msg)
+	// Ping master server that the reporter finished
+	r.CtrlSvcClient.ShutdownModule(context.Background(), &service.ShutdownModuleRequest{Message: msg, DB: false})
+
 	return nil
+}
+
+// ReduceReportersCounter is called everytime a reporter finishes its process.
+// When it reaches 0, it sends a signal to close the reporting phase
+func ReduceReportersCounter() {
+	CountReporters--
+	if CountReporters == 0 { // all reporters have finished
+		// close reporting phase
+		close(cli.ModulesAreDone)
+	}
+	if CountReporters < 0 {
+		log.Printf("WARNING: Reporters count cannot be minus")
+	}
 }
