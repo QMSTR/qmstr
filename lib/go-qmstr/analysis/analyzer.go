@@ -38,7 +38,7 @@ func NewAnalyzer(anaModule AnalyzerModule) *Analyzer {
 	var anaID int32
 	CountAnalyzers++
 	// TODO: Connect to QMSTRADDRESS
-	flag.StringVar(&serviceAddress, "aserv", "localhost:50051", "Analyzer service address")
+	flag.StringVar(&serviceAddress, "aserv", "", "connect to analyzer service address")
 	flag.Int32Var(&anaID, "aid", -1, "unique analyzer id")
 	flag.CommandLine.AddGoFlagSet(goflag.CommandLine)
 	flag.Parse()

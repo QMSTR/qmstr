@@ -10,7 +10,6 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 	"github.com/spf13/cobra"
 )
@@ -68,7 +67,7 @@ func startPhase(phase service.Phase) {
 }
 
 func startAnalyzers() {
-	close(cli.PingAnalyzer) // Ping modules to start!
+	close(PingAnalyzer) // Ping modules to start!
 	waitModulesToFinish()
 
 	// Close analysis phase
@@ -76,7 +75,7 @@ func startAnalyzers() {
 }
 
 func startReporters() {
-	close(cli.PingReporter) // Ping modules to start!
+	close(PingReporter) // Ping modules to start!
 	waitModulesToFinish()
 	// No need to close phase
 }

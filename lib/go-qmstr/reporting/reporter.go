@@ -37,7 +37,7 @@ func NewReporter(repModule ReporterModule) *Reporter {
 	var serviceAddress string
 	var rprID int32
 	CountReporters++
-	flag.StringVar(&serviceAddress, "rserv", "localhost:50051", "Reporting service address")
+	flag.StringVar(&serviceAddress, "rserv", "", "connect to reporting service address")
 	flag.Int32Var(&rprID, "rid", -1, "unique reporter id")
 	flag.CommandLine.AddGoFlagSet(goflag.CommandLine)
 	flag.Parse()
