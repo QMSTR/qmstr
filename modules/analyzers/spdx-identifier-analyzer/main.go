@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sync"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/analysis"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
@@ -17,7 +18,10 @@ import (
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
-var spdxPattern = regexp.MustCompile(`SPDX-License-Identifier: (.+)\s*`)
+var (
+	spdxPattern = regexp.MustCompile(`SPDX-License-Identifier: (.+)\s*`)
+	wg          sync.WaitGroup
+)
 
 type SpdxAnalyzer struct {
 	basedir string
@@ -25,7 +29,10 @@ type SpdxAnalyzer struct {
 
 func main() {
 	analyzer := analysis.NewAnalyzer(&SpdxAnalyzer{})
+	log.Printf("Spdx identifier was initialized")
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		<-cli.PingAnalyzer // wait for the analysis phase to start
 		log.Printf("Spdx identifier analyzer starts the analysis")
 		if err := analyzer.RunAnalyzerModule(); err != nil {
@@ -37,6 +44,8 @@ func main() {
 		}
 		analysis.ReduceAnalyzersCounter()
 	}()
+	wg.Wait() // Waits until the goroutine is done
+	log.Printf("Spdx identifier finished")
 }
 
 func (spdxalizer *SpdxAnalyzer) Configure(configMap map[string]string) error {

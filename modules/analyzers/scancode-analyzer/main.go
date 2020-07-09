@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
+	"sync"
 	"syscall"
 
 	"golang.org/x/net/context"
@@ -30,9 +31,14 @@ type ScancodeAnalyzer struct {
 	scanData interface{}
 }
 
+var wg sync.WaitGroup
+
 func main() {
 	analyzer := analysis.NewAnalyzer(&ScancodeAnalyzer{})
+	log.Printf("Scancode analyzer was initialized")
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		<-cli.PingAnalyzer // wait for the analysis phase to start
 		log.Printf("Scancode analyzer starts the analysis")
 		if err := analyzer.RunAnalyzerModule(); err != nil {
@@ -44,6 +50,8 @@ func main() {
 		}
 		analysis.ReduceAnalyzersCounter()
 	}()
+	wg.Wait() // Waits until the goroutine is done
+	log.Printf("Analyzer scancode finished")
 }
 
 func (scanalyzer *ScancodeAnalyzer) Configure(configMap map[string]string) error {

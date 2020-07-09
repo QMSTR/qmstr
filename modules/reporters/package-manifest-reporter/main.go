@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/QMSTR/qmstr/lib/go-qmstr/cli"
 	"github.com/QMSTR/qmstr/lib/go-qmstr/master"
@@ -12,9 +13,14 @@ import (
 	"github.com/QMSTR/qmstr/lib/go-qmstr/service"
 )
 
+var wg sync.WaitGroup
+
 func main() {
 	reporter := reporting.NewReporter(&PkgManifestReporter{})
+	log.Printf("Package manifest reporter was initialized")
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		<-cli.PingReporter // wait for the reporting phase to start
 		log.Printf("Package manifest reporter starts the reporting\n")
 		if err := reporter.RunReporterModule(); err != nil {
@@ -26,4 +32,6 @@ func main() {
 		}
 		reporting.ReduceReportersCounter()
 	}()
+	wg.Wait() // Waits until the goroutine is done
+	log.Printf("Package manifest reporter finished")
 }
