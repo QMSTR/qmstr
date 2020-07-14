@@ -11,7 +11,7 @@ spec:
       - name: qmstr-master
         image: endocodeci/qmstr-master
         command: [ "sh", "-c", "/usr/local/bin/qmstr-master" ]
-        args: [ "--config", "./config/qmstr.yaml"]
+        args: [ "--config", "/home/qmstr/config/qmstr.yaml"]
         ports:
         - containerPort: 50051
         volumeMounts:
