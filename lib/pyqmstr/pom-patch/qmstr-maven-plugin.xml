@@ -3,7 +3,7 @@
   <artifactId>qmstr-maven-plugin</artifactId>
   <version>0.5</version>
   <configuration>
-    <qmstrAddress>${env.QMSTR_MASTER}</qmstrAddress>
+    <qmstrAddress>${env.QMSTRADDRENV}</qmstrAddress>
   </configuration>
   <executions>
     <execution>
