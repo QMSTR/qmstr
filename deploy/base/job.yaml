@@ -27,6 +27,10 @@ spec:
         env:
         - name: QMSTRADDRENV
           value: "localhost:50051"
+        - name: BUILDROOT
+          value: /home/qmstrclient/buildroot
+        - name: REPONAME
+          value: guava
         volumeMounts:
         - name: buildroot-volume
           mountPath: /home/qmstrclient/buildroot
