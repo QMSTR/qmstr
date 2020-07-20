@@ -34,7 +34,7 @@ RUN set -e && \
   mkdir -p /var/qmstr/ && \
   addgroup qmstrclient && \
   adduser --system qmstrclient --ingroup qmstrclient --uid $UID && \
-  chown -R qmstrclient:qmstrclient /var/qmstr/buildroot
+  chown -R qmstrclient:qmstrclient /var/qmstr/
 
 WORKDIR /home/qmstrclient
 USER qmstrclient
