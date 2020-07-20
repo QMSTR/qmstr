@@ -31,15 +31,17 @@ ARG UID=1000
 COPY --from=gobuilder /root/qmstr/out/* /usr/local/bin/
 
 RUN set -e && \
+  mkdir -p /var/qmstr/ && \
   addgroup qmstrclient && \
-  adduser --system qmstrclient --ingroup qmstrclient --uid $UID
+  adduser --system qmstrclient --ingroup qmstrclient --uid $UID && \
+  chown -R qmstrclient:qmstrclient /var/qmstr/buildroot
 
 WORKDIR /home/qmstrclient
 USER qmstrclient
 
 COPY --chown=qmstrclient ./docker/qmstr-client/entrypoint.sh ./entrypoint.sh
 
-VOLUME /home/qmstrclient/buildroot
+VOLUME /var/qmstr/buildroot
 
 ENTRYPOINT ["./entrypoint.sh"]
 

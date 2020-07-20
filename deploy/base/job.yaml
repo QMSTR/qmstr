@@ -18,7 +18,7 @@ spec:
         - name: config-volume
           mountPath: /home/qmstr/config/
         - name: buildroot-volume
-          mountPath: /home/qmstr/buildroot/
+          mountPath: /var/qmstr/buildroot/
       - name: dgraph
         image: dgraph/standalone:latest
       - name: qmstr-client
@@ -28,12 +28,10 @@ spec:
         - name: QMSTRADDRENV
           value: "localhost:50051"
         - name: BUILDROOT
-          value: /home/qmstrclient/buildroot
-        - name: REPONAME
-          value: guava
+          value: /var/qmstr/buildroot
         volumeMounts:
         - name: buildroot-volume
-          mountPath: /home/qmstrclient/buildroot
+          mountPath: /var/qmstr/buildroot
       initContainers:
       - name: volume-mount-hack
         image: busybox

@@ -1,7 +1,7 @@
 #/bin/bash
 
 set -e
-cd /home/qmstrclient/buildroot/guava
+cd /var/qmstr/buildroot/guava
 
 mvn -pl .,guava clean package
 
