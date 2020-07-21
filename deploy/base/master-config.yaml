@@ -11,7 +11,6 @@ data:
         message: "Hello World!"
       server:
         dbAddress: dgraph:9080
-        buildPath: /home/qmstr/self-test/
       analysis:
         - analyzer: test-analyzer
           name: "Simple CI Test Analyzer"
