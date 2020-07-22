@@ -9,9 +9,3 @@ data:
       name: "CI"
       metadata:
         message: "Hello World!"
-      analysis:
-        - analyzer: test-analyzer
-          name: "Simple CI Test Analyzer"
-          config:
-            workdir: "/home/qmstr/test/"
-            tests: "TestPackageNode;TestCI"
