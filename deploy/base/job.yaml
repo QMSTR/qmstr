@@ -15,8 +15,6 @@ spec:
         ports:
         - containerPort: 50051
         env:
-        - name: SERVER_DBADDRESS
-          value: "dgraph:9000"
         - name: SERVER_BUILDPATH
           value: "/var/qmstr/buildroot"
         volumeMounts:
