@@ -9,3 +9,5 @@ data:
       name: "CI"
       metadata:
         message: "Hello World!"
+      server:
+      analysis:
