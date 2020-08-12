@@ -10,5 +10,5 @@ data:
       metadata:
         message: "Hello World!"
       server:
-        dbAddress: "dgraph:9000"
+        dbAddress: "dgraph:9080"
       analysis:

@@ -3,3 +3,5 @@ kind: Kustomization
 resources:
   - base/job.yaml
   - base/master-config.yaml
+  - base/dgraph/service.yaml
+  - base/dgraph/statefulset.yaml
