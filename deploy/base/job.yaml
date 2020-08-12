@@ -5,9 +5,6 @@ metadata:
 spec:
   backoffLimit: 1
   template:
-    metadata:
-      labels:
-        app: qmstr
     spec:
       restartPolicy: Never
       containers:

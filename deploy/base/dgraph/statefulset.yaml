@@ -9,9 +9,6 @@ spec:
     matchLabels:
       app: qmstr
   template:
-    metadata:
-      labels:
-        app: qmstr
     spec:
       containers:
         - name: ratel
