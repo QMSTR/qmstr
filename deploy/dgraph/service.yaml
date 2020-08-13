@@ -4,8 +4,6 @@ metadata:
   name: dgraph
 spec:
   type: ClusterIP
-  selector:
-    app: qmstr
   ports:
     - name: grpc-zero
       port: 5080
