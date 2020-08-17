@@ -130,5 +130,5 @@ jobs:
         kustomize edit set image endocodeci/qmstr-client-mvn:sha-${{ env.GITHUB_SHA_SHORT }}
         kustomize edit set image endocodeci/git:sha-${{ env.GITHUB_SHA_SHORT }}
         kustomize edit set image endocodeci/pom-patch:sha-${{ env.GITHUB_SHA_SHORT }}
-        kubectl apply -k ./
+        kustomize build . | kubectl apply -f -
 
