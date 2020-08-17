@@ -9,7 +9,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: qmstr-master
-        image: endocodeci/qmstr-master:sha-c281aa8
+        image: endocodeci/qmstr-master
         command: [ "/usr/local/bin/qmstr-master" ]
         args: [ "--config", "/home/qmstr/config/qmstr.yaml"]
         ports:
@@ -23,7 +23,7 @@ spec:
         - name: buildroot-volume
           mountPath: /var/qmstr/buildroot/
       - name: qmstr-client
-        image: endocodeci/qmstr-client-mvn:sha-c281aa8
+        image: endocodeci/qmstr-client-mvn
         command: [ "sh", "./entrypoint.sh" ]
         env:
         - name: QMSTRADDRENV
@@ -41,7 +41,7 @@ spec:
         - name: buildroot-volume
           mountPath: /buildroot
       - name: repo-clone
-        image: endocodeci/git:sha-c281aa8
+        image: endocodeci/git
         command:
         - "git"
         - "clone"
@@ -52,7 +52,7 @@ spec:
         - name: buildroot-volume
           mountPath: /home/git/buildroot
       - name: pom-patch
-        image: endocodeci/pom-patch:sha-c281aa8
+        image: endocodeci/pom-patch
         command: ["python", "insert-build-plugin.py", "qmstr-maven-plugin.xml"]
         volumeMounts:
         - name: buildroot-volume
