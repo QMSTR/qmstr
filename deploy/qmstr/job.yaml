@@ -22,8 +22,6 @@ spec:
           mountPath: /home/qmstr/config/
         - name: buildroot-volume
           mountPath: /var/qmstr/buildroot/
-      - name: dgraph
-        image: dgraph/standalone:latest
       - name: qmstr-client
         image: endocodeci/qmstr-client-mvn
         command: [ "sh", "./entrypoint.sh" ]
@@ -66,6 +64,6 @@ spec:
         configMap:
           name: qmstr-config
           items:
-          - key: qmstrConfig
+          - key: qmstr.yaml
             path: qmstr.yaml
 

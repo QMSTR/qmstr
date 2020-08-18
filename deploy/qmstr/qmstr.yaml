@@ -1,0 +1,7 @@
+project:
+  name: "CI"
+  metadata:
+    message: "Hello World!"
+  server:
+    dbAddress: "dgraph:9080"
+  analysis:

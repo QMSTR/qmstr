@@ -125,10 +125,13 @@ jobs:
         gcloud container clusters get-credentials $GKE_CLUSTER \
         --zone $GKE_ZONE --project $GKE_PROJECT
         cd ./deploy
-        kustomize edit set nameprefix "sha-${{ env.GITHUB_SHA_SHORT }}-"
-        kustomize edit set image endocodeci/qmstr-master:sha-${{ env.GITHUB_SHA_SHORT }}
-        kustomize edit set image endocodeci/qmstr-client-mvn:sha-${{ env.GITHUB_SHA_SHORT }}
-        kustomize edit set image endocodeci/git:sha-${{ env.GITHUB_SHA_SHORT }}
-        kustomize edit set image endocodeci/pom-patch:sha-${{ env.GITHUB_SHA_SHORT }}
-        kubectl apply -k ./
+        export SHA_TAG="sha-${{ env.GITHUB_SHA_SHORT }}"
+        export NAMESPACE="qmstr-$SHA_TAG"
+        kubectl create namespace $NAMESPACE
+        kustomize edit set namespace $NAMESPACE
+        kustomize edit set image endocodeci/qmstr-master:$SHA_TAG
+        kustomize edit set image endocodeci/qmstr-client-mvn:$SHA_TAG
+        kustomize edit set image endocodeci/git:$SHA_TAG
+        kustomize edit set image endocodeci/pom-patch:$SHA_TAG
+        kustomize build . | kubectl apply -f -
 

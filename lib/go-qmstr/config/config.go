@@ -29,17 +29,17 @@ type Reporting struct {
 }
 
 type ServerConfig struct {
-	RPCAddress string
-	DBAddress  string
-	DBWorkers  int
-	OutputDir  string
-	CacheDir   string
+	RPCAddress string `yaml:"rpcAddress"`
+	DBAddress  string `yaml:"dbAddress"`
+	DBWorkers  int `yaml:"dbWorkers"`
+	OutputDir  string `yaml:"outputDir"`
+	CacheDir   string `yaml:"cacheDir"`
 	ImageName  string `yaml:"image"`
 	Debug      bool
-	ExtraEnv   map[string]string
-	ExtraMount map[string]string
-	BuildPath  string
-	PathSub    []*service.PathSubstitution
+	ExtraEnv   map[string]string `yaml:"extraEnv"`
+	ExtraMount map[string]string `yaml:"extraMount"`
+	BuildPath  string `yaml:"buildPath"`
+	PathSub    []*service.PathSubstitution `yaml:"pathSub"`
 }
 
 type MasterConfig struct {
