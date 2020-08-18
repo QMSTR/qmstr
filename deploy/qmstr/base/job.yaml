@@ -34,23 +34,32 @@ spec:
         - name: buildroot-volume
           mountPath: /var/qmstr/buildroot
       initContainers:
+      - name: git-sync
+        image: k8s.gcr.io/git-sync:v3.1.6
+        env:
+          - name: GIT_SYNC_REPO # overridable
+            value: https://github.com/google/guava.git
+          - name: GIT_SYNC_ROOT
+            value: /home/git/buildroot
+          - name: GIT_SYNC_DEST
+            value: project
+          - name: GIT_SYNC_ONE_TIME # exit after the initial checkout
+            value: "1"
+          - name: GIT_SYNC_DEPTH # shallow clone
+            value: "1"
+          - name: GIT_SYNC_SUBMODULES # shallow submodules
+            value: "shallow"
+        volumeMounts:
+          - name: buildroot-volume
+            mountPath: /home/git/buildroot
+        securityContext:
+          runAsUser: 0
       - name: volume-mount-hack
         image: busybox
         command: ["sh", "-c", "chown -R 1000:1000 /buildroot"]
         volumeMounts:
-        - name: buildroot-volume
-          mountPath: /buildroot
-      - name: repo-clone
-        image: endocodeci/git
-        command:
-        - "git"
-        - "clone"
-        args:
-        - "https://github.com/google/guava.git"
-        - "/home/git/buildroot/guava"
-        volumeMounts:
-        - name: buildroot-volume
-          mountPath: /home/git/buildroot
+          - name: buildroot-volume
+            mountPath: /buildroot
       - name: pom-patch
         image: endocodeci/pom-patch
         command: ["python", "insert-build-plugin.py", "qmstr-maven-plugin.xml"]
