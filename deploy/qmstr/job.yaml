@@ -1,0 +1,69 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: qmstr
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: qmstr-master
+        image: endocodeci/qmstr-master
+        command: [ "/usr/local/bin/qmstr-master" ]
+        args: [ "--config", "/home/qmstr/config/qmstr.yaml"]
+        ports:
+        - containerPort: 50051
+        env:
+        - name: SERVER_BUILDPATH
+          value: "/var/qmstr/buildroot"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /home/qmstr/config/
+        - name: buildroot-volume
+          mountPath: /var/qmstr/buildroot/
+      - name: qmstr-client
+        image: endocodeci/qmstr-client-mvn
+        command: [ "sh", "./entrypoint.sh" ]
+        env:
+        - name: QMSTRADDRENV
+          value: "localhost:50051"
+        - name: BUILDROOT
+          value: /var/qmstr/buildroot
+        volumeMounts:
+        - name: buildroot-volume
+          mountPath: /var/qmstr/buildroot
+      initContainers:
+      - name: volume-mount-hack
+        image: busybox
+        command: ["sh", "-c", "chown -R 1000:1000 /buildroot"]
+        volumeMounts:
+        - name: buildroot-volume
+          mountPath: /buildroot
+      - name: repo-clone
+        image: endocodeci/git
+        command:
+        - "git"
+        - "clone"
+        args:
+        - "https://github.com/google/guava.git"
+        - "/home/git/buildroot/guava"
+        volumeMounts:
+        - name: buildroot-volume
+          mountPath: /home/git/buildroot
+      - name: pom-patch
+        image: endocodeci/pom-patch
+        command: ["python", "insert-build-plugin.py", "qmstr-maven-plugin.xml"]
+        volumeMounts:
+        - name: buildroot-volume
+          mountPath: /home/configure/buildroot
+      volumes:
+      - name: buildroot-volume
+        emptyDir: {}
+      - name: config-volume
+        configMap:
+          name: qmstr-config
+          items:
+          - key: qmstr.yaml
+            path: qmstr.yaml
+

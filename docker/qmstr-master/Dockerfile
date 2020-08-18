@@ -42,6 +42,6 @@ USER qmstr
 EXPOSE 50051
 
 VOLUME /home/qmstr/config
-VOLUME /home/qmstr/buildroot
+VOLUME /var/qmstr/buildroot
 
 ENTRYPOINT ["/usr/local/bin/qmstr-master"]
