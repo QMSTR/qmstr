@@ -12,6 +12,10 @@ configMapGenerator:
 commonLabels:
   app: qmstr
 
+patchesStrategicMerge:
+  # Overridable repo URL
+  - repo-url.yaml
+
 # In case of manual deployment, insert the desired image tags here.
 #images:
 #  - name: endocodeci/qmstr-master
