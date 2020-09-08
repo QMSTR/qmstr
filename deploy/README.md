@@ -7,6 +7,8 @@
     kubectl apply -k dgraph
     ```
 
+1. Specify the Maven repository to be cloned in [`qmstr/repo-url.yaml`](qmstr/repo-url.yaml).
+
 1. Launch Quartermaster:
     ```bash
     kubectl apply -k qmstr
