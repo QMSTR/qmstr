@@ -19,10 +19,10 @@
 
 1. Forward two local ports to the following two ports on the DGraph Pod:
     ```bash
-    kubectl port-forward dgraph-0 8000:8000
+    kubectl port-forward statefulset/dgraph 8000:8000
     ```
     ```bash
-    kubectl port-forward dgraph-0 8080:8080
+    kubectl port-forward statefulset/dgraph 8080:8080
     ```
 
 1. Open [localhost:8000/?latest](http://localhost:8000/?latest) in your browser.
