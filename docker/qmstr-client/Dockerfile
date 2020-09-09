@@ -39,11 +39,9 @@ RUN set -e && \
 WORKDIR /home/qmstrclient
 USER qmstrclient
 
-COPY --chown=qmstrclient ./docker/qmstr-client/entrypoint.sh ./entrypoint.sh
-
 VOLUME /var/qmstr/buildroot
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT qmstrctl version && qmstr --help
 
 ################################################################################
 # STAGE 2a: Build Maven plugin dependencies                                    #
@@ -80,9 +78,9 @@ RUN set -e && \
 ADD ./docker/qmstr-client/settings.xml /usr/share/maven/conf/settings.xml
 
 COPY --from=javabuilder --chown=qmstrclient /root/.m2/repository ${M2_HOME}/repo
-COPY --chown=qmstrclient ./docker/qmstr-client/entrypoint-mvn.sh ./entrypoint.sh
+
+WORKDIR /var/qmstr/buildroot/project
 
 USER qmstrclient
 
-
-
+ENTRYPOINT mvn package
