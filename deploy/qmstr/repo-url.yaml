@@ -9,4 +9,4 @@ spec:
         - name: repo-cloner
           env:
             - name: GIT_SYNC_REPO
-              value: https://github.com/biojava/biojava
+              value: https://github.com/okteto/java-maven-getting-started
