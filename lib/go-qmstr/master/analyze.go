@@ -49,6 +49,7 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		phase.db.OpenInsertQueue()
 		phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: fmt.Sprintf("Running analyzer %s", analyzerName)})
 		cmd := exec.Command(analyzerName, "--aserv", phase.masterConfig.Server.RPCAddress, "--aid", fmt.Sprintf("%d", idx))
+		cmd.Dir = anaConfig.Config["workdir"]
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			logModuleError(analyzerName, out)
