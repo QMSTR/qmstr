@@ -52,8 +52,9 @@ func (phase *serverPhaseAnalysis) Activate() error {
 		cmd.Dir = anaConfig.Config["workdir"]
 		out, err := cmd.CombinedOutput()
 		if err != nil {
+			errMsg := fmt.Sprintf("Analyzer %s failed: %s (%s)", analyzerName, err, err.Error())
+			log.Print(errMsg)
 			logModuleError(analyzerName, out)
-			errMsg := fmt.Sprintf("Analyzer %s failed", analyzerName)
 			phase.server.publishEvent(&service.Event{Class: service.EventClass_MODULE, Message: errMsg})
 			phase.db.CloseInsertQueue()
 			return errors.New(errMsg)
