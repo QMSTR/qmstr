@@ -172,7 +172,7 @@ func scancode(workdir string, jobs int, resultfilepath string) (interface{}, err
 		defer os.Remove(tmpfile.Name())
 	}
 
-	cmdlineargs := []string{"--full-root", "--license", "--copyright", "--json-pp", resultfilepath}
+	cmdlineargs := []string{"--full-root", "--license", "--copyright", "--json", resultfilepath}
 	if jobs > 1 {
 		cmdlineargs = append(cmdlineargs, "--processes", fmt.Sprintf("%d", jobs))
 	}
