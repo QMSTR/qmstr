@@ -1,4 +1,12 @@
-./out/
-./doc/
-./venv/
-./Jenkinsfile
+*
+
+!go.mod
+!go.sum
+!versions.env
+!Makefile
+!clients
+!docker/qmstr-client/settings.xml
+!lib
+!masterserver
+!modules
+!proto
