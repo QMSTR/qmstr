@@ -14,7 +14,7 @@
     kubectl apply -k qmstr
     ```
 
-1. Wait for the building process to be over:
+1. Wait for the build and analysis phases to be over:
     ```bash
     kubectl logs --follow $(kubectl get pods --selector job-name=qmstr -o=name) qmstr-client
     ```
