@@ -36,55 +36,73 @@
 
 1. Navigate to the "Console" page.
 
-1. You should now be able to query the database:
+1. You should now be able to query the database:  
     ```graphql
     {
-        # *.class files
-        PackageNode(func: has(packageNodeType)) {
+        PackageNodes(func: has(packageNodeType)) @recurse(loop: true, depth: 3) {
             uid
             name
             version
-            buildConfig
-            timestamp
             packageNodeType
-            targets { # a.k.a. "target FileNodes"
-                uid
-                path
-                name
-                timestamp
-                fileNodeType
-            }
+            targets
+            additionalInfo
+            buildConfig
+            diagnosticInfo
+            timestamp
         }
-
-        # FileNodes of compiled outer and inner [anonymous] classes
-        FileNode(func: has(fileNodeType)) {
+    
+        FileNodes(func: has(fileNodeType)) @recurse(loop: true, depth: 3) {
             uid
             fileNodeType
             path
             name
+            fileData
             timestamp
-            fileData { # points to "target FileNodes"
-                uid
-                fileDataNodeType
-                hash
-            }
-            derivedFrom { # *.java files
-                uid
-                fileNodeType
-                path
-                name
-                timestamp
-                fileData { # outer FileData nodes
-                    uid
-                    fileDataNodeType
-                    hash
-                }
-            }
+            derivedFrom
+            dependencies
+        }
+    
+        FileDataNodes(func: has(fileDataNodeType)) @recurse(loop: true, depth: 3) {
+            uid
+            fileDataNodeType
+            hash
+            additionalInfo
+            diagnosticInfo
+        }
+    
+        InfoNodes(func: has(infoNodeType)) @recurse(loop: true, depth: 3) {
+            uid
+            infoNodeType
+            type
+            confidenceScore
+            analyzer
+            dataNodes
+            timestamp
+        }
+    
+        Analyzers(func: has(analyzerNodeType)) @recurse(loop: true, depth: 3) {
+            uid
+            name
+            analyzerNodeType
+            trustLevel
+            pathSub
+            old
+            new
+        }
+    
+        DataNodes(func: has(dataNodeType)) @recurse(loop: true, depth: 3) {
+            uid
+            dataNodeType
+            type
+            data
+            timestamp
         }
     }
     ```
 
-1. The generated Build Graph should look something like this:
+1. The generated graph should look something like this:
     <p align="center">
-        <img src="img/build_graph.png" alt="Generated Build Graph example"/>
+        <img src="img/graph.png" alt="Generated Build Graph example"/>
     </p>
+    Build graph is on the left, having (Java) package node as central ones.
+    License and compliance information is on the right, having analyzer nodes (e.g., scancode) as central ones. 
