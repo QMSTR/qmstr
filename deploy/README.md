@@ -104,5 +104,5 @@
     <p align="center">
         <img src="img/graph.png" alt="Generated Build Graph example"/>
     </p>
-    Build graph is on the left, having (Java) package node as central ones.
-    License and compliance information is on the right, having analyzer nodes (e.g., scancode) as central ones. 
+    The left part of the graph consists in the usual build graph, having in this case a single (Java) package node in green as the central node.
+        License and compliance information is on the right, having the analyzer node in pink right in the middle. 
