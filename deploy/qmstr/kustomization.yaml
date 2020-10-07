@@ -4,6 +4,9 @@ kind: Kustomization
 resources:
   - base/job.yaml
 configMapGenerator:
+  # Overridable repo URL
+  - name: repo-url
+    env: repo-url.env
   # Master configuration file
   - name: qmstr-config
     files:
@@ -11,10 +14,6 @@ configMapGenerator:
 
 commonLabels:
   app: qmstr
-
-patchesStrategicMerge:
-  # Overridable repo URL
-  - repo-url.yaml
 
 # In case of manual deployment, insert the desired image tags here.
 #images:
