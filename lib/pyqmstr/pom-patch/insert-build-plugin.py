@@ -49,7 +49,7 @@ def insert_build_plugin(target, plugin):
         if not build_section:
             logging.info('Build section not found in pom.xml.')
             build_section = ET.SubElement(pom_xml.getroot(), 'build')
-        plugin_section = ET.SubElement(build_section)
+        plugin_section = ET.SubElement(build_section, 'plugins')
     print(len(list(plugin_section)))
     plugin_section.append(plugin_xml.getroot())
     print(ET.tostring(pom_xml.getroot()))
