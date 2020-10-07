@@ -75,6 +75,9 @@ RUN set -e && \
   apt install -y --no-install-recommends openjdk-11-jdk openjfx maven && \
   mkdir -p ${M2_HOME}/conf
 
+ENV JAVA_HOME="/usr/lib/jvm/java-1.11.0-openjdk-amd64"
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
 ADD ./docker/qmstr-client/settings.xml /usr/share/maven/conf/settings.xml
 
 COPY --from=javabuilder --chown=qmstrclient /root/.m2/repository ${M2_HOME}/repo
