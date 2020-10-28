@@ -1,6 +1,7 @@
-# How to run Quartermaster on a Kubernetes cluster
+# Deployment instructions
 
-<!-- TODO Introduction -->
+[Quartermaster](http://qmstr.org) can be deployed both with GitHub Actions (see the [workflows folder](../.github/workflows))
+and manually, with the following instructions:
 
 1. Launch the DGraph database:
     ```bash
@@ -9,10 +10,15 @@
 
 1. Specify the Maven repository to be cloned in [`qmstr/repo-url.env`](qmstr/repo-url.env).
 
+1. Specify the desired QMSTR image tags to be deployed in the [QMSTR `kustomization.yaml` file](qmstr/kustomization.yaml).\
+   The list of QMSTR Docker images can be found [here](https://hub.docker.com/u/endocodeci).
+
 1. Launch Quartermaster:
     ```bash
     kubectl apply -k qmstr
     ```
+
+# Results
 
 1. Wait for the build and analysis phases to be over:
     ```bash
