@@ -15,7 +15,3 @@ the build is complete, the master executes a number of analysis tools,
 and finally a number of reporters. Which exactly is configured in  a
 configuration file called `qmstr.yaml` that usually resides in the
 root directory of the repository.
-
-All modules are executed in the context of the master, not the build
-machine. The master ships all dependencies of the modules without
-affecting the build client's file system (it runs in a container).
