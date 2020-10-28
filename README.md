@@ -3,15 +3,9 @@
 [Quartermaster](http://qmstr.org) is a suite of command line tools and build system extensions that instruments software builds to create
 FOSS compliance documentation and support compliance decisions. It executes as part of a software build process to generate reports about the analysed product.
 
-## Compilation and Installation
+## Usage
 
-The client and master side installation of Quartermaster is Makefile
-based. See the [installation instructions](https://qmstr.org/documentation/introduction/installation/) for
-details. The client side tools need to be installed on all build
-machines. The master is only needed once per build process.
-
-To develop on Quartermaster, a [few extra steps](https://qmstr.org/documentation/developer)
-may be required.
+See the [deployment instructions](deploy/README.md).
 
 ## Basics
 
@@ -25,5 +19,3 @@ root directory of the repository.
 All modules are executed in the context of the master, not the build
 machine. The master ships all dependencies of the modules without
 affecting the build clients file system (it runs in a container).
-
-Read more in the [Getting started](https://qmstr.org/documentation/introduction/getting-started/) page.
