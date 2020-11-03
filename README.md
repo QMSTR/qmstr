@@ -18,5 +18,4 @@ root directory of the repository.
 
 ## Current status
 
-As of now, Quartermaster only analyzes Maven projects and stores license and compliance information in its database.
-See how to see its content [here](deploy/README.md#results).
+As of now, Quartermaster only analyzes Maven projects and [stores license and compliance information in its database](deploy/README.md#results).
