@@ -12,63 +12,112 @@ jobs:
   build-master:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout VCS
-        uses: actions/checkout@master
-      - name: Set env
-        run: echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
-      - name: Build and Push
-        uses: docker/build-push-action@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare
+        id: prep
+        run: |
+          DOCKER_IMAGE=endocodeci/qmstr-master
+          TAGS="${DOCKER_IMAGE}:sha-${GITHUB_SHA::7}"
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
         with:
-          repository: endocodeci/qmstr-master
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          dockerfile: docker/qmstr-master/Dockerfile
-          tag_with_sha: true
-          push: true
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: docker/qmstr-master/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.prep.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
 
   build-client:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout VCS
-        uses: actions/checkout@master
-      - name: Set env
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare
+        id: prep
         run: |
-          echo "GITHUB_SHA_SHORT=$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_ENV
-          echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
-      - name: Build and Push Base Client
-        uses: docker/build-push-action@v1
+          DOCKER_IMAGE=endocodeci/qmstr-client
+          DOCKER_IMAGE_MVN=endocodeci/qmstr-client-mvn
+          TAGS="${DOCKER_IMAGE}:sha-${GITHUB_SHA::7}"
+          TAGS_MVN="${DOCKER_IMAGE_MVN}:sha-${GITHUB_SHA::7}"
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=tags-mvn::${TAGS_MVN}
+          echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
         with:
-          repository: endocodeci/qmstr-client
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          dockerfile: docker/qmstr-client/Dockerfile
-          target: base
-          tag_with_sha: true
-      - name: Build and Push Maven Client
-        uses: docker/build-push-action@v1
+      - name: Build and push base client
+        uses: docker/build-push-action@v2
         with:
-          repository: endocodeci/qmstr-client-mvn
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          dockerfile: docker/qmstr-client/Dockerfile
-          target: mvn
-          tag_with_sha: true
+          context: .
+          file: docker/qmstr-client/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.prep.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+      - name: Build and push Maven client
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: docker/qmstr-client/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.prep.outputs.tags-mvn }}
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
 
   build-init-containers:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout VCS
-        uses: actions/checkout@master
-      - name: Set env
-        run: echo "GITHUB_SHA_SHORT=$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_ENV
-      - name: Build and push endocodeci/pom-patch
-        uses: docker/build-push-action@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare
+        id: prep
+        run: |
+          DOCKER_IMAGE=endocodeci/pom-patch
+          TAGS="${DOCKER_IMAGE}:sha-${GITHUB_SHA::7}"
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
         with:
-          repository: endocodeci/pom-patch
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          dockerfile: docker/init/pom-patch/Dockerfile
-          tag_with_sha: true
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: docker/init/pom-patch/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.prep.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
 
   deploy-to-dev:
     runs-on: ubuntu-latest
@@ -76,8 +125,6 @@ jobs:
     steps:
       - name: Checkout VCS
         uses: actions/checkout@master
-      - name: Set env
-        run: echo "GITHUB_SHA_SHORT=$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_ENV
       - name: Setup Google SDK
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
@@ -95,12 +142,12 @@ jobs:
           gcloud container clusters get-credentials $GKE_CLUSTER \
           --zone $GKE_ZONE --project $GKE_PROJECT
           cd ./deploy
-          export SHA_TAG="sha-${{ env.GITHUB_SHA_SHORT }}"
+          export SHA_TAG="sha-${GITHUB_SHA::7}"
           export NAMESPACE="qmstr-$SHA_TAG"
           kubectl create namespace $NAMESPACE
           kustomize edit set namespace $NAMESPACE
           kustomize edit set image endocodeci/qmstr-master:$SHA_TAG
           kustomize edit set image endocodeci/qmstr-client-mvn:$SHA_TAG
           kustomize edit set image endocodeci/pom-patch:$SHA_TAG
-          kustomize build . | kubectl apply -f -
+          kubectl apply -k .
 
