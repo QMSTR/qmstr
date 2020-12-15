@@ -3,7 +3,7 @@ on: push
 
 env:
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: qmstr-dev
+  GKE_CLUSTER: fasten
   GKE_ZONE: europe-west3-a
   GOBUILDER_IMAGE: "golang:1.12-buster"
 
