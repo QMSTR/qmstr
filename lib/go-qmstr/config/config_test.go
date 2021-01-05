@@ -15,14 +15,14 @@ project:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   server:
-    rpcaddress: ":12345"
-    dbaddress: "testhost:54321"
-    dbworkers: 4
+    rpcAddress: ":12345"
+    dbAddress: "testhost:54321"
+    dbWorkers: 4
   analysis:
     - analyzer: test-analyzer
       name: "The Testalyzer"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -30,7 +30,7 @@ project:
     - analyzer: test-analyzer-2
       name: "The Testalyzer 2"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -72,14 +72,14 @@ project:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   server:
-    rpcaddress: ":12345"
-    dbaddress: "testhost:54321"
-    dbworkers: 4
+    rpcAddress: ":12345"
+    dbAddress: "testhost:54321"
+    dbWorkers: 4
   analysis:
     - analyzer: test-analyzer
       name: "The Testalyzer"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -87,7 +87,7 @@ project:
     - analyzer: test-analyzer-2
       name: "The Testalyzer 2"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -115,14 +115,14 @@ project:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   server:
-    rpcaddress: ":12345"
-    dbaddress: "testhost:54321"
-    dbworkers: 4
+    rpcAddress: ":12345"
+    dbAddress: "testhost:54321"
+    dbWorkers: 4
   analysis:
     - analyzer: test-analyzer
       name: "The Testalyzer"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -130,7 +130,7 @@ project:
     - analyzer: test-analyzer-2
       name: "The Testalyzer"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -159,13 +159,13 @@ project:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   server:
-    rpcaddress: ":12345"
-    dbaddress: "testhost:54321"
-    dbworkers: 4
+    rpcAddress: ":12345"
+    dbAddress: "testhost:54321"
+    dbWorkers: 4
   analysis:
     - name: "The Testalyzer"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -173,7 +173,7 @@ project:
     - analyzer: test-analyzer-2
       name: "The Testalyzer 2"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -202,14 +202,14 @@ project:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   server:
-    rpcaddress: ":12345"
-    dbaddress: "testhost:54321"
-    dbworkers: 4
+    rpcAddress: ":12345"
+    dbAddress: "testhost:54321"
+    dbWorkers: 4
   analysis:
     - name: "The Testalyzer"
       analyzer: test-analyzer
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -217,7 +217,7 @@ project:
     - analyzer: test-analyzer
       name: "The Testalyzer 2"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -244,14 +244,14 @@ project:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   server:
-    rpcaddress: ":12345"
-    dbaddress: "testhost:54321"
-    dbworkers: 4
+    rpcAddress: ":12345"
+    dbAddress: "testhost:54321"
+    dbWorkers: 4
   analysis:
     - analyzer: test-analyzer
       name: "The Testalyzer"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -259,7 +259,7 @@ project:
     - analyzer: test-analyzer-2
       name: "The_Testalyzer"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -288,14 +288,14 @@ project:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   server:
-    rpcaddress: "12345"
-    dbaddress: "testhost:54321"
-    dbworkers: 4
+    rpcAddress: "12345"
+    dbAddress: "testhost:54321"
+    dbWorkers: 4
   analysis:
     - analyzer: test-analyzer
       name: "The Testalyzer"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
@@ -306,7 +306,8 @@ project:
       config:
         tester: "Endocode"
 `
-	_, err := ReadConfigFromBytes([]byte(config))
+	ccc, err := ReadConfigFromBytes([]byte(config))
+	print(ccc)
 	if err == nil || err.Error() != "Invalid RPC address" {
 		t.Log(err)
 		t.Fail()
@@ -323,14 +324,14 @@ project:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   server:
-    rpcaddress: ":12345"
-    dbaddress: "testhost:54321"
-    dbworkers: 4
+    rpcAddress: ":12345"
+    dbAddress: "testhost:54321"
+    dbWorkers: 4
   analysis:
     - analyzer: test-analyzer
       name: "The Testalyzer"
       selector: sourcecode
-      pathsub:
+      pathSub:
         - old: "/the/path"
           new: "/buildroot"
       config:
