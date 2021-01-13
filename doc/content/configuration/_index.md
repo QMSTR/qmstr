@@ -19,9 +19,9 @@ project:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   server:
-    rpcaddress: ":50051"
-    dbaddress: "localhost:9080"
-    dbworkers: 4
+    rpcAddress: ":50051"
+    dbAddress: "localhost:9080"
+    dbWorkers: 4
   analysis:
     - analyzer: spdx-identifier-analyzer
       name: "Simple SPDX-Identifier Analyzer"
@@ -74,9 +74,9 @@ metadata:
     OcFossLiaison: "Mirko Boehm"
     OcComplianceContact: "foss@endocode.com"
   server:
-    rpcaddress: ":50051"
-    dbaddress: "localhost:9080"
-    dbworkers: 4
+    rpcAddress: ":50051"
+    dbAddress: "localhost:9080"
+    dbWorkers: 4
 ```
 
 ## Analyzers
