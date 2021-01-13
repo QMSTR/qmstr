@@ -102,10 +102,10 @@ install: install_qmstr_client
 
 # Installation targets
 install_qmstr_server: $(QMSTR_SERVER_BINARIES)
-	install -t $(prefix)/bin $^
+	install $^ $(prefix)/bin
 
 install_qmstr_client: $(QMSTR_CLIENT_BINARIES)
-	install -t $(prefix)/bin $^
+	install $^ $(prefix)/bin
 
 install_qmstr_all: install_qmstr_client install_qmstr_server
 
