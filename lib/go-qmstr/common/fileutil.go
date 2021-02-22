@@ -60,6 +60,17 @@ func SetRelativePath(node *service.FileNode, buildPath string, pathSub []*servic
 	if !filepath.IsAbs(node.Path) {
 		return nil
 	}
+
+	// Removing double quotes around paths
+	for _, s := range []*string{&buildPath, &node.Path} {
+		if len(*s) > 0 && (*s)[0] == '"' {
+			*s = (*s)[1:]
+		}
+		if len(*s) > 0 && (*s)[len(*s)-1] == '"' {
+			*s = (*s)[:len(*s)-1]
+		}
+	}
+
 	relPath, err := filepath.Rel(buildPath, node.Path)
 	if err != nil {
 		return err
